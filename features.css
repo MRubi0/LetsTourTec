@@ -24,3 +24,9 @@
   width: 3rem;
   height: 3rem;
 }
+.options-button-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+}
