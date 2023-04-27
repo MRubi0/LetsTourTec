@@ -11,13 +11,13 @@ class vista_registro(generic.CreateView):
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
 
-
+'''
 def login(request):
     return render(request, 'login.html')
 
 def register(request):
     return render(request, 'register.html')
-
+'''
 
 
 def login_view(request):
