@@ -40,7 +40,7 @@ def register_view(request):
             return redirect('index')
     else:
         form = UserCreationForm()
-    return render(request, 'LTtApp/register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form})
 
 
 def index(request):
