@@ -6,6 +6,10 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.urls import reverse_lazy
 from django.views import generic
 
+from django.shortcuts import render, redirect
+from .forms import GuideForm, AudioFileForm, ImageFileForm, LocationForm
+
+
 class vista_registro(generic.CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('login')
@@ -46,3 +50,25 @@ def register_view(request):
 def index(request):
     return render(request, 'index.html')
 # Create your views here.
+
+
+
+def create_guide(request):
+    # Lógica para crear una guía
+    # ...
+
+def edit_guide(request, guide_id):
+    # Lógica para editar una guía
+    # ...
+
+def upload_audio(request, guide_id):
+    # Lógica para subir archivos de audio
+    # ...
+
+def upload_image(request, guide_id):
+    # Lógica para subir imágenes
+    # ...
+
+def add_location(request, guide_id):
+    # Lógica para agregar ubicaciones
+    # ...
