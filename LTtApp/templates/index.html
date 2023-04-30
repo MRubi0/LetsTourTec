@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
+  {% load static %}
   <head><script src="../assets/js/color-modes.js"></script>
 
     <meta charset="utf-8">
@@ -12,10 +13,7 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/features/">
 
     
-
-    
-
-<link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
+   <link href="{% static 'assets/dist/css/bootstrap.min.css' %}" rel="stylesheet">
 
     <style>
       .bd-placeholder-img {
@@ -93,7 +91,7 @@
 
     
     <!-- Custom styles for this template -->
-    <link href="features.css" rel="stylesheet">
+    <link href= "{% static 'features.css' %}" rel="stylesheet"> 
   </head>
   <body>  
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -202,7 +200,7 @@
           Me animo a hacerlo!
         </a>          
         <br>
-          <img src="bares1.jpg" alt="bares de valladolid" width="300" height="200" style="margin-top: 10px;">
+          <img src="{% static 'bares1.jpg' %}"  alt="bares de valladolid" width="300" height="200" style="margin-top: 10px;">
       </div>
       <div class="feature col">
         <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-2 mb-3">
@@ -215,7 +213,7 @@
           Me animo a hacerlo!
         </a>
         <br>
-          <img src="almendros1.jpg" alt="ruta de los almendros" width="300" height="200" style="margin-top: 10px;">
+          <img src="{% static 'almendros1.jpg' %}" alt="ruta de los almendros" width="300" height="200" style="margin-top: 10px;">
       </div>
       <div class="feature col">
         <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-2 mb-3">
@@ -228,7 +226,7 @@
           Me animo a hacerlo!
         </a>
         <br>
-          <img src="caballeria1.jpg" alt="academia de caballeria" width="300" height="200" style="margin-top: 10px;">
+          <img src="{% static 'caballeria1.jpg' %}" alt="academia de caballeria" width="300" height="200" style="margin-top: 10px;">
       </div>
     </div>
     <div class="options-button-container">
@@ -253,7 +251,7 @@
 
     <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
       <div class="col">
-        <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg" style="background-image: url('testing_img.jpeg');">
+        <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg" style="background-image: url('{% static 'testing_img.jpeg' %}');">
           <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
             <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Roberto</h3>
             <ul class="d-flex list-unstyled mt-auto">
@@ -272,7 +270,7 @@
       </div>
 
       <div class="col">
-        <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg" style="background-image: url('OIP.jpeg');">
+        <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg" style="background-image: url('{% static 'OIP.jpeg' %}');">
           <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
             <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Cristina</h3>
             <ul class="d-flex list-unstyled mt-auto">
@@ -291,7 +289,7 @@
       </div>
 
       <div class="col">
-        <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg" style="background-image: url('R.jpeg');">
+        <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg" style="background-image: url('{% static 'R.jpeg' %}');">
           <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">
             <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">David</h3>
             <ul class="d-flex list-unstyled mt-auto">
