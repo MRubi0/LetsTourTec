@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.gis.db.models import PointField
+#from django.contrib.gis.db.models import PointField
 
 class User(models.Model):
     first_name = models.CharField(max_length=30)
@@ -30,6 +30,9 @@ class ImageFile(models.Model):
     # Otros campos relevantes
 
 class Location(models.Model):
-    guide = models.ForeignKey(Guide, on_delete=models.CASCADE)
-    location = PointField()
-    # Otros campos relevantes
+    name = models.CharField(max_length=255)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    def __str__(self):
+        return self.name

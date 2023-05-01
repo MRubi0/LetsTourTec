@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'LTtApp',
-    'django.contrib.gis',
+    #'django.contrib.gis',
 ]
 
 MIDDLEWARE = [
@@ -80,12 +80,8 @@ WSGI_APPLICATION = 'LetsTourTec.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'mydatabase',
-        'USER': 'mydatabaseuser',
-        'PASSWORD': 'mypassword',
-        'HOST': 'localhost',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -134,7 +130,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
- 
+''' 
 GDAL_LIBRARY_PATH = 'C:/Program Files/GDAL/gdal.dll'
 if sys.platform.startswith('win'):
     os.environ['PATH'] = GDAL_LIBRARY_PATH + ';' + os.environ['PATH']
+'''

@@ -19,4 +19,5 @@ class ImageFileForm(forms.ModelForm):
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
-        fields = ('location',)
+        fields = ['name', 'latitude', 'longitude']
+

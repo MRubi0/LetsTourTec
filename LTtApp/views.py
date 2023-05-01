@@ -56,19 +56,24 @@ def index(request):
 def create_guide(request):
     # Lógica para crear una guía
     # ...
+    return render(request, 'under_construction.html')
 
 def edit_guide(request, guide_id):
     # Lógica para editar una guía
     # ...
+    return render(request, 'under_construction.html')
 
 def upload_audio(request, guide_id):
     # Lógica para subir archivos de audio
     # ...
+    return render(request, 'under_construction.html')
 
 def upload_image(request, guide_id):
     # Lógica para subir imágenes
     # ...
+    return render(request, 'under_construction.html')
 
 def add_location(request, guide_id):
     # Lógica para agregar ubicaciones
     # ...
+    return render(request, 'under_construction.html')
