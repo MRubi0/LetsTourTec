@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Perfil de {{ user.first_name }}</h2>
+
+  <p>Email: {{ user.email }}</p>
+  <p>Nombre completo: {{ user.first_name }} {{ user.last_name }}</p>
+  <a href="{% url 'edit_profile' %}" class="btn btn-primary">Editar perfil</a>
+  <a href="{% url 'upload_tour' %}" class="btn btn-primary">Subir tour</a>
+
+  {# Aquí puedes agregar más campos y contenido relacionado con el perfil del usuario #}
+{% endblock %}

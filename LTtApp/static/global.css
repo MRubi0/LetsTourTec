@@ -1,0 +1,12 @@
+.content-wrapper {
+    max-width: 800px; /* Ajusta este valor según lo que consideres apropiado */
+    margin: 50 auto;
+    padding: 20px;
+  }
+
+  .extra-step label {
+    display: block;
+    margin-top: 10px;
+  }
+  
+  

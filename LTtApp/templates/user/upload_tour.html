@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .extra-step label {
+    display: block;
+    margin-top: 10px;
+  }
+  .form-group label {
+  display: block;
+  margin-top: 10px;
+}
+  
+</style>
+<div class="content-wrapper">
+  <h2>Subir tour</h2>
+  <form method="post" enctype="multipart/form-data" id="tour-form">
+    {% csrf_token %}
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for error in form.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <div class="form-group">
+      <label for="{{ form.titulo.id_for_label }}">Título del tour:</label>
+      {{ form.titulo }}
+    </div>
+    
+    <div class="form-group">
+      <label for="{{ form.descripcion.id_for_label }}">Descripción del tour:</label>
+      {{ form.descripcion }}
+    </div>
+    <div class="form-group">
+      <label for="{{ form.image.id_for_label }}">Imagen del tour:</label>
+      <input type="file" name="{{ form.image.name }}" id="{{ form.image.auto_id }}" accept="image/*">
+    </div>
+    <div class="form-group">
+      <label for="{{ form.audio.id_for_label }}">Audio del tour:</label>
+      <input type="file" name="{{ form.audio.name }}" id="{{ form.audio.auto_id }}" accept="audio/*">
+    </div>
+    <div class="form-group">
+      <label for="{{ form.latitude.id_for_label }}">Latitud:</label>
+      {{ form.latitude }}
+    </div>
+    <div class="form-group">
+      <label for="{{ form.longitude.id_for_label }}">Longitud:</label>
+      {{ form.longitude }}
+    </div>
+      <div id="extra-steps">
+        <!-- Aquí se agregarán los pasos adicionales -->
+      </div>
+      <button type="button" id="add-extra-step">Añadir un paso extra</button>
+      <button type="submit">Subir tour</button>
+    </form>
+
+  <script>
+    const MAX_EXTRA_STEPS = 100;
+    let extraStepsCount = 0;
+
+    const addExtraStep = () => {
+      if (extraStepsCount < MAX_EXTRA_STEPS) {
+        const extraStepsDiv = document.getElementById("extra-steps");
+
+        const stepDiv = document.createElement("div");
+        stepDiv.classList.add("extra-step");
+
+        const imageLabel = document.createElement("label");
+        imageLabel.textContent = "Imagen extra:";
+        const imageInput = document.createElement("input");
+        imageInput.type = "file";
+        imageInput.name = `extra_step_image_${extraStepsCount}`;
+        imageInput.accept = "image/*";
+        stepDiv.appendChild(imageLabel);
+        stepDiv.appendChild(imageInput);
+
+        const audioLabel = document.createElement("label");
+        audioLabel.textContent = "Audio extra:";
+        const audioInput = document.createElement("input");
+        audioInput.type = "file";
+        audioInput.name = `extra_step_audio_${extraStepsCount}`;
+        audioInput.accept = "audio/*";
+        stepDiv.appendChild(audioLabel);
+        stepDiv.appendChild(audioInput);
+
+        // Agrega los campos de latitud y longitud aquí
+        const latitudeLabel = document.createElement("label");
+        latitudeLabel.textContent = "Latitud extra:";
+        const latitudeInput = document.createElement("input");
+        latitudeInput.type = "number";
+        latitudeInput.name = `extra_step_latitude_${extraStepsCount}`;
+        latitudeInput.step = "any";
+        stepDiv.appendChild(latitudeLabel);
+        stepDiv.appendChild(latitudeInput);
+
+        const longitudeLabel = document.createElement("label");
+        longitudeLabel.textContent = "Longitud extra:";
+        const longitudeInput = document.createElement("input");
+        longitudeInput.type = "number";
+        longitudeInput.name = `extra_step_longitude_${extraStepsCount}`;
+        longitudeInput.step = "any";
+        stepDiv.appendChild(longitudeLabel);
+        stepDiv.appendChild(longitudeInput);
+
+        extraStepsDiv.appendChild(stepDiv);
+        extraStepsCount++;
+      }
+    };
+
+    const addExtraStepButton = document.getElementById("add-extra-step");
+    addExtraStepButton.addEventListener("click", addExtraStep);
+    
+  </script>
+</div>
+{% endblock %}

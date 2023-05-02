@@ -1,8 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="auto">
 <head>
+    
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'global.css' %}">
+
+    <header>
+        <!-- Agrega un contenedor en la parte superior para el botón -->
+      <div style="text-align: center; margin-top: 10px;">
+          <a href="{% url 'index' %}" class="button">LetsTourTec</a>
+      </div>
+
+  </header>
     <meta charset="UTF-8">
     <title>Let's Tour Tec</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/features/">
+
+    <script src="{% static 'assets/js/color-modes.js' %}"></script>
+    <link href="{% static 'assets/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <style>
+        /* Estilos personalizados aquí */
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        /* ... */
+
+        .bd-mode-toggle {
+            z-index: 1500;
+        }
+    </style>
+    <link href="{% static 'features.css' %}" rel="stylesheet">
 </head>
 <body>
     <div id="content">

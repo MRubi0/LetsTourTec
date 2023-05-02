@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2>¡Registro exitoso!</h2>
+    <p>Te has registrado correctamente. Ahora puedes iniciar sesión.</p>
+    <a href="{% url 'login' %}" class="btn btn-primary">Iniciar sesión</a>
+  </div>
+{% endblock %}

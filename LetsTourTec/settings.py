@@ -88,6 +88,8 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+AUTH_USER_MODEL = 'LTtApp.CustomUser'
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -116,6 +118,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+LOGIN_REDIRECT_URL = '/'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -135,3 +139,9 @@ GDAL_LIBRARY_PATH = 'C:/Program Files/GDAL/gdal.dll'
 if sys.platform.startswith('win'):
     os.environ['PATH'] = GDAL_LIBRARY_PATH + ';' + os.environ['PATH']
 '''
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'miguel6ortiz6@gmail.com'  # Tu dirección de correo electrónico
+EMAIL_HOST_PASSWORD = 'jlog0107'  # Tu contraseña de correo electrónico
