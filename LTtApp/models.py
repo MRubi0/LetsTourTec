@@ -96,6 +96,13 @@ class Tour(models.Model):
     longitude = models.FloatField(default=0.0)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+    TIPO_DE_TOUR_CHOICES = [
+        ('naturaleza', 'Naturaleza'),
+        ('cultural', 'Cultural'),
+        ('ocio', 'Ocio'),
+    ]
+    tipo_de_tour = models.CharField(max_length=10, choices=TIPO_DE_TOUR_CHOICES, default=None, blank=True, null=True)
+    
 
     def __str__(self):
         return self.titulo

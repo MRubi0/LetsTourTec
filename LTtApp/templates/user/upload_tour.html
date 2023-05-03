@@ -25,6 +25,32 @@
         </ul>
     </div>
     {% endif %}
+    {% if error_message %}
+<div class="alert alert-danger" role="alert">
+  {{ error_message }}
+</div>
+{% endif %}
+{% if form.errors %}
+<div class="alert alert-danger" role="alert">
+  <strong>Errores en el formulario:</strong>
+  <ul>
+    {% for field, errors in form.errors.items %}
+      {% for error in errors %}
+        <li>{{ field }}: {{ error }}</li>
+      {% endfor %}
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+    <div class="form-group">
+      <label for="{{ form.tipo_de_tour.id_for_label }}">Tipo de tour:</label>
+      <select name="{{ form.tipo_de_tour.name }}" id="{{ form.tipo_de_tour.auto_id }}">
+          
+          {% for value, display in form.tipo_de_tour.field.choices %}
+          <option value="{{ value }}"{% if form.tipo_de_tour.value == value %} selected{% endif %}>{{ display }}</option>
+          {% endfor %}
+      </select>
+  </div>
     <div class="form-group">
       <label for="{{ form.titulo.id_for_label }}">Título del tour:</label>
       {{ form.titulo }}

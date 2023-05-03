@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
+  {% extends "base.html" %}
   {% load static %}
+  {% block content %}
   <head>
     <script src="{% static 'assets/js/color-modes.js' %}"></script>
 
@@ -336,8 +338,6 @@
 </main>
 
     <script src="{% static 'assets/dist/js/bootstrap.bundle.min.js' %}"></script>
-
-
-      
   </body>
+  {% endblock %}
 </html>

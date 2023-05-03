@@ -116,6 +116,7 @@ def add_location(request, guide_id):
 
 @login_required
 def upload_tour(request):
+    error_message = None
     if request.method == 'POST':
         form = TourForm(request.POST, request.FILES)
         if form.is_valid():
@@ -125,19 +126,45 @@ def upload_tour(request):
 
             # Procesar pasos adicionales
             for i in range(100):
-                extra_image_key = f'extra_step_image_{i}'
                 extra_audio_key = f'extra_step_audio_{i}'
-                if extra_image_key in request.FILES and extra_audio_key in request.FILES:
-                    extra_image = request.FILES[extra_image_key]
+                
+                if extra_audio_key in request.FILES:
                     extra_audio = request.FILES[extra_audio_key]
-                    paso = Paso(tour=tour, image=extra_image, audio=extra_audio)
+                    
+                    extra_image = None
+                    extra_latitude = None
+                    extra_longitude = None
+
+                    extra_image_key = f'extra_step_image_{i}'
+                    if extra_image_key in request.FILES:
+                        extra_image = request.FILES[extra_image_key]
+
+                    extra_latitude_key = f'extra_step_latitude_{i}'
+                    if extra_latitude_key in request.POST and request.POST[extra_latitude_key]:
+                        extra_latitude = float(request.POST[extra_latitude_key])
+
+                    extra_longitude_key = f'extra_step_longitude_{i}'
+                    if extra_longitude_key in request.POST and request.POST[extra_longitude_key]:
+                        extra_longitude = float(request.POST[extra_longitude_key])
+
+                    paso = Paso(tour=tour, audio=extra_audio)
+                    
+                    if extra_image:
+                        paso.image = extra_image
+                    if extra_latitude:
+                        paso.latitude = extra_latitude
+                    if extra_longitude:
+                        paso.longitude = extra_longitude
+
                     paso.save()
                 else:
                     break
 
             return redirect('index')
+        else:
+            error_message = 'Hubo un error al subir el tour. Asegúrate de haber seleccionado una imagen y un archivo de audio válidos.'
     else:
         form = TourForm()
-    return render(request, 'user/upload_tour.html', {'form': form})
+    return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
 
 
