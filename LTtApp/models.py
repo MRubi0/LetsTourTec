@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.utils import timezone
-
+from PIL import Image
 
 #from django.contrib.gis.db.models import PointField
 
@@ -94,6 +94,9 @@ class Tour(models.Model):
     audio = models.FileField(upload_to='tour_audio/', null=True, blank=True)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
+    duracion = models.PositiveIntegerField("Duración en minutos", null=True, blank=True)
+    recorrido = models.FloatField(null=True, blank=True)   # Recorrido en kilómetros
+
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     TIPO_DE_TOUR_CHOICES = [
@@ -106,6 +109,31 @@ class Tour(models.Model):
 
     def __str__(self):
         return self.titulo
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.imagen:
+            img = Image.open(self.imagen.path)
+
+            if img.height > 150 or img.width > 150:
+                output_size = (150, 150)
+                img.thumbnail(output_size)
+                img.save(self.imagen.path)
+
+    def as_dict(self):
+        return {
+            "user": self.user.username if self.user else None,
+            "titulo": self.titulo,
+            "descripcion": self.descripcion,
+            "tipo_de_tour": self.tipo_de_tour,
+            "recorrido": self.recorrido,
+            "duracion": self.duracion,
+            "imagen": self.imagen.url if self.imagen else None,
+            "audio": self.audio.url if self.audio else None,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+        }
 
 class Paso(models.Model):
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)

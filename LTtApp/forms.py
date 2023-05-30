@@ -57,7 +57,7 @@ class EditProfileForm(UserChangeForm):
 class TourForm(forms.ModelForm):
     class Meta:
         model = Tour
-        fields = ['titulo', 'imagen', 'descripcion', 'audio', 'latitude', 'longitude', 'tipo_de_tour']
+        fields = ['titulo', 'imagen', 'descripcion', 'audio', 'latitude', 'longitude', 'tipo_de_tour', 'duracion', 'recorrido']
 
 class PasoForm(forms.ModelForm):
     class Meta:

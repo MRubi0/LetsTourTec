@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>{{ tour.titulo }}</h1>
+  <img src="{{ tour.imagen.url }}" alt="{{ tour.titulo }}" width="300" height="200">
+  <p>{{ tour.descripcion }}</p>
+  <p>Duración: {{ tour.duracion }} horas</p>
+  <p>Recorrido: {{ tour.recorrido }} km</p>
+{% endblock %}

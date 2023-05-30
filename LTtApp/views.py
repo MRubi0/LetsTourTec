@@ -1,22 +1,35 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from PIL import Image
+from django.db.models import F, Func, Q
+from django.db.models import ExpressionWrapper, FloatField
 
 from django.urls import reverse_lazy
 from django.views import generic
-
+from django.http import JsonResponse, HttpResponseBadRequest
+import sqlite3
+import math
 from .forms import GuideForm, AudioFileForm, ImageFileForm, LocationForm, CustomUserCreationForm
 from .models import Guide, AudioFile, ImageFile, Location, CustomUser, Tour
 
 from django.contrib import messages
 
 from .forms import EditProfileForm
+import random
 
 from django import forms
 from django.contrib.auth.decorators import login_required
 
 from .forms import TourForm
+from .models import Tour
+
+from django.db.models.expressions import RawSQL
+from django.db import connection
+
+from django.core.paginator import Paginator
+from django.core import serializers
 
 
 @login_required
@@ -83,8 +96,21 @@ def registration_success(request):
 
 
 def index(request):
-    return render(request, 'index.html')
-# Create your views here.
+    last_naturaleza = Tour.objects.filter(tipo_de_tour="naturaleza").order_by('-created_at').first()
+    last_cultural = Tour.objects.filter(tipo_de_tour="cultural").order_by('-created_at').first()
+    last_ocio = Tour.objects.filter(tipo_de_tour="ocio").order_by('-created_at').first()
+
+
+
+    # Crear una lista con los tours obtenidos
+    latest_tours = [last_ocio, last_naturaleza, last_cultural]
+
+    # Eliminar posibles valores None en caso de que no haya tours de algún tipo
+    latest_tours = [tour for tour in latest_tours if tour is not None]
+
+    context = {'tours': latest_tours}
+    return render(request, 'index.html', context)
+
 
 
 
@@ -122,6 +148,8 @@ def upload_tour(request):
         if form.is_valid():
             tour = form.save(commit=False)
             tour.user = request.user
+            tour.image = request.FILES['imagen'] if 'imagen' in request.FILES else None
+
             tour.save()
 
             # Procesar pasos adicionales
@@ -168,3 +196,196 @@ def upload_tour(request):
     return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
 
 
+def sqlite_haversine(lat1, lon1, lat2, lon2):
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    c = 2 * math.asin(math.sqrt(a))
+    return 6371 * c
+
+
+
+
+
+
+
+def get_nearest_tours(request):
+
+    connection.ensure_connection()
+    connection.connection.create_function("haversine", 4, sqlite_haversine)
+
+
+
+ 
+    latitude = float(request.GET.get('latitude', None))
+    longitude = float(request.GET.get('longitude', None))
+
+    if latitude is None or longitude is None:
+        return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
+
+    try:
+        latitude = float(latitude)
+        longitude = float(longitude)
+    except ValueError:
+        return JsonResponse({"error": "Los parámetros latitude y longitude deben ser números"}, status=400)
+    # Aquí iría la lógica para buscar los tours más cercanos
+    tour_categories = ['ocio', 'naturaleza', 'cultural']
+    nearest_tours = {}
+
+    for category in tour_categories:
+        tour = Tour.objects.annotate(
+    distance=RawSQL("haversine(%s, %s, latitude, longitude)", (latitude, longitude,))
+).filter(tipo_de_tour=category).order_by('distance').first()
+
+
+        if tour:
+            nearest_tours[category] = {
+                'id': tour.id,
+                'titulo': tour.titulo,
+                'descripcion': tour.descripcion,
+                'tipo_de_tour': tour.tipo_de_tour,
+                'imagen': {
+                    'url': tour.imagen.url
+                },
+                'distance': tour.distance,
+                'duracion': tour.duracion,
+                'recorrido': tour.recorrido, 
+            }
+
+    # Devolver los tours más cercanos como respuesta JSON
+    response_data = {
+        'tour_ocio': nearest_tours.get('ocio', None),
+        'tour_naturaleza': nearest_tours.get('naturaleza', None),
+        'tour_cultural': nearest_tours.get('cultural', None),
+    }
+    return JsonResponse(response_data)
+
+#return HttpResponseBadRequest()
+
+
+
+
+def tour_detail(request, tour_id):
+    tour = get_object_or_404(Tour, pk=tour_id)
+    context = {'tour': tour}
+    return render(request, 'tour_detail.html', context)
+
+
+
+def get_latest_tours(request):
+    # Lista de tipos de tours
+    tour_types = ['ocio', 'naturaleza', 'cultural']
+
+    # Consulta el último tour de cada tipo
+    tour_data = {}
+    for t in tour_types:
+        try:
+            latest_tour = Tour.objects.filter(tipo_de_tour=t).latest('created_at')
+            tour_data[t] = {
+                'id': latest_tour.id,
+                'titulo': latest_tour.titulo,
+                'descripcion': latest_tour.descripcion,
+                'tipo_de_tour': latest_tour.tipo_de_tour,
+                'imagen': {
+                    'url': latest_tour.imagen.url,
+                },
+                'recorrido': latest_tour.recorrido,
+                'duracion': latest_tour.duracion,
+            }
+        except Tour.DoesNotExist:
+            # No hay tours para este tipo
+            pass
+
+    return JsonResponse(tour_data)
+
+
+def get_random_tours(request):
+    # Obtén todos los tours de las categorías
+    ocio_tours = Tour.objects.filter(tipo_de_tour="ocio")
+    naturaleza_tours = Tour.objects.filter(tipo_de_tour="naturaleza")
+    cultural_tours = Tour.objects.filter(tipo_de_tour="cultural")
+
+    # Elige un tour aleatorio de cada categoría
+    random_tours = {
+        "ocio": random.choice(ocio_tours) if ocio_tours else None,
+        "naturaleza": random.choice(naturaleza_tours) if naturaleza_tours else None,
+        "cultural": random.choice(cultural_tours) if cultural_tours else None,
+    }
+
+    # Convierte los objetos de los tours en diccionarios para que puedan ser serializados a JSON
+    random_tours_json = {}
+    for key, tour in random_tours.items():
+        if tour:
+            random_tours_json[key] = tour.as_dict()
+
+    return JsonResponse(random_tours_json)
+
+
+def get_nearest_tours_all(request):
+    connection.ensure_connection()
+    connection.connection.create_function("haversine", 4, sqlite_haversine)
+
+    latitude_str = request.GET.get('latitude', None)
+    longitude_str = request.GET.get('longitude', None)
+
+    if latitude_str is not None and latitude_str != 'None':
+        latitude = float(latitude_str)
+    else:
+        latitude = None
+
+    if longitude_str is not None and longitude_str != 'None':
+        longitude = float(longitude_str)
+    else:
+        longitude = None
+
+    page = request.GET.get('page', 1)  # Obtiene el número de página de los parámetros GET
+    per_page = 15  # Establece la cantidad de tours por página
+
+    if latitude is None or longitude is None:
+        # Devuelve todos los tours sin ordenar por distancia
+        tours = Tour.objects.all()
+    else:
+        # Ordena los tours por distancia
+        tours = list(Tour.objects.annotate(
+            distance=RawSQL("haversine(%s, %s, latitude, longitude)", (latitude, longitude,))
+        ).order_by('distance'))
+
+    paginator = Paginator(tours, per_page)  # Divide la lista de tours en páginas
+    current_page_tours = paginator.get_page(page)  # Obtiene la página actual
+
+    # Serializa solo los objetos de tour en la página actual
+    serialized_tours = [{
+        'id': tour.id,
+        'titulo': tour.titulo,
+        'descripcion': tour.descripcion,
+        'tipo_de_tour': tour.tipo_de_tour,
+        'imagen': {
+            'url': tour.imagen.url
+        },
+        'distance': getattr(tour, 'distance', None),
+        'recorrido': tour.recorrido,
+        'duracion': tour.duracion,} for tour in current_page_tours]
+
+    response_data = {
+        'tours': serialized_tours,
+        'total_pages': paginator.num_pages  # Devuelve el número total de páginas
+    }
+
+    return JsonResponse(response_data)
+
+
+def all_tours(request):
+    # Obtenemos todos los tours disponibles
+    tours = Tour.objects.all()
+
+    # Pasamos los tours al contexto de la plantilla
+    context = {'tours': tours}
+    return render(request, 'all_tours.html', context)
+
+def custom_tours_page(request):
+    latitude = request.GET.get('latitude', None)
+    longitude = request.GET.get('longitude', None)
+    location = request.GET.get('location', 'la ubicación buscada')
+    context = {'latitude': latitude, 'longitude': longitude, 'location': location}
+    return render(request, 'custom_tours_page.html', context)

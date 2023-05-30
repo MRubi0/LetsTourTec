@@ -7,6 +7,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+#app_name = 'LTtApp'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
@@ -25,6 +27,13 @@ urlpatterns = [
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('profile/upload_tour/', upload_tour, name='upload_tour'),
+    path('get_nearest_tours/', views.get_nearest_tours, name='get_nearest_tours'),
+    path('tour/<int:tour_id>/', views.tour_detail, name='tour_detail'),
+    path('get_latest_tours/', views.get_latest_tours, name='get_latest_tours'),
+    path('get_random_tours/', views.get_random_tours, name='get_random_tours'),
+    path('get_nearest_tours_all/', views.get_nearest_tours_all, name='get_nearest_tours_all'),
+    path('all_tours/', views.all_tours, name='all_tours'),
+    path('custom_tours_page/', views.custom_tours_page, name='custom_tours_page'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

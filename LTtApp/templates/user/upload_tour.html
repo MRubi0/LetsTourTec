@@ -61,8 +61,8 @@
       {{ form.descripcion }}
     </div>
     <div class="form-group">
-      <label for="{{ form.image.id_for_label }}">Imagen del tour:</label>
-      <input type="file" name="{{ form.image.name }}" id="{{ form.image.auto_id }}" accept="image/*">
+      <label for="{{ form.imagen.id_for_label }}">Imagen del tour:</label>
+      <input type="file" name="{{ form.imagen.name }}" id="{{ form.imagen.auto_id }}" accept="image/*">
     </div>
     <div class="form-group">
       <label for="{{ form.audio.id_for_label }}">Audio del tour:</label>
@@ -75,6 +75,14 @@
     <div class="form-group">
       <label for="{{ form.longitude.id_for_label }}">Longitud:</label>
       {{ form.longitude }}
+    </div>
+    <div class="form-group">
+      <label for="{{ form.duracion.id_for_label }}">Duración del tour:</label>
+      {{ form.duracion }}
+    </div>
+    <div class="form-group">
+      <label for="{{ form.recorrido.id_for_label }}">Recorrido del tour:</label>
+      {{ form.recorrido }}
     </div>
       <div id="extra-steps">
         <!-- Aquí se agregarán los pasos adicionales -->

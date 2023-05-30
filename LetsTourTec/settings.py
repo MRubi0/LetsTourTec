@@ -145,3 +145,19 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'miguel6ortiz6@gmail.com'  # Tu dirección de correo electrónico
 EMAIL_HOST_PASSWORD = 'jlog0107'  # Tu contraseña de correo electrónico
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+        },
+    },
+}

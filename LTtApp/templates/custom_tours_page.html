@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+
+<style>
+    .custom-tour-row {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+<div class="container px-4 py-5" id="custom-cards">
+  <h1 class="my-4">Tours cerca de {{ location }}
+</h1>
+  </div>
+  <div class="row" id="custom-tours-container">
+    <div id="custom-tours-wrapper"></div>
+  </div>
+  
+  <script>
+    let currentLatitude = parseFloat('{{ latitude }}') || 0;
+    let currentLongitude = parseFloat('{{ longitude }}') || 0;
+    let sortByDistance = true;
+
+    function createTourElement(tour, showDistance=true) {
+        console.log('createTourElement', tour, showDistance);
+        let formattedDistance;
+        if (tour.distance !== null) {
+        formattedDistance = tour.distance.toFixed(2);
+    } else {
+        formattedDistance = "No disponible";
+    }
+      const div = document.createElement("div");
+      div.className = "feature col col-lg-4";
+      div.id = "tour-" + tour.id;
+      div.setAttribute("data-tipo-de-tour", tour.tipo_de_tour);
+
+      let distanceLine = "";
+  if (showDistance) {
+    const formattedDistance = tour.distance !== null ? tour.distance.toFixed(2) : "No disponible";
+    distanceLine = `<p>Distancia al punto de inicio: ${formattedDistance} km</p>`;
+  }
+
+      const tourTypeIcons = {
+        ocio: "bi-geo-fill",
+        naturaleza: "bi-flower3",
+        cultural: "bi-building",
+      };
+        console.log('Creating tour element for tour:', tour);
+      const icon = tourTypeIcons[tour.tipo_de_tour] || "geo-fill";
+
+      const imageUrl = tour.imagen && tour.imagen.url ? tour.imagen.url : (tour.imagen ? tour.imagen : "{% static 'image-not-found-1-scaled-1150x647.png' %}");
+      if (showDistance) {
+            div.setAttribute('data-distance', tour.distance);
+        }
+        
+      div.innerHTML = `
+        <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-2 mb-3">
+            <i class="${icon}"></i>
+        </div>
+        <h3 class="fs-2">
+          <a href="/tour/${tour.id}/">${tour.titulo}</a>
+        </h3>
+        <img src="${imageUrl}" alt="${tour.titulo}" width="300" height="200" id="tour-image-${tour.id}" style="margin-top: 10px;">
+        <p id="tour-description-${tour.id}">${tour.descripcion}</p>
+        <p>Duración: ${parseFloat(tour.duracion / 60).toFixed(2)} horas</p>
+        <p>Recorrido: ${tour.recorrido} km</p>
+        ${distanceLine}
+      `;
+
+
+      return div;
+    }
+
+    function loadAllTours(latitude = currentLatitude, longitude = currentLongitude, page = 1, callback = null) {
+  console.log('loadAllTours', latitude, longitude, page); 
+  const xhr = new XMLHttpRequest();
+
+  let latParam = sortByDistance && latitude !== 0 ? latitude : null;
+  let lngParam = sortByDistance && longitude !== 0 ? longitude : null;
+
+  if (latitude !== 0 && longitude !== 0) {
+    latParam = sortByDistance && latitude !== null ? latitude : 'None';
+    lngParam = sortByDistance && longitude !== null ? longitude : 'None';
+  }
+
+  const baseUrl = `/get_nearest_tours_all/?page=${page}`;
+  const url = latParam !== null && lngParam !== null ? `${baseUrl}&latitude=${latParam}&longitude=${lngParam}` : baseUrl;
+
+  xhr.open('GET', url, true);
+
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      const response = JSON.parse(xhr.responseText);
+      const tours = response.tours;
+      const totalPages = response.total_pages;
+      console.log('Processing response:', response);
+
+      // Limpia el contenedor de tours (no necesario)
+      const customToursWrapper = document.getElementById("custom-tours-wrapper");
+        customToursWrapper.innerHTML = '';
+
+      
+      let row;
+      for (let i = 0; i < tours.length; i++) {
+        const tourData = tours[i];
+        const tourElement = createTourElement(tourData, sortByDistance);
+
+        if (i % 2 === 0) {
+          row = document.createElement("div");
+          row.className = "row custom-tour-row";
+          document.getElementById("custom-tours-wrapper").appendChild(row);
+        }
+
+        row.appendChild(tourElement);
+if (i % 2 === 1 || i === tours.length - 1) {
+  document.getElementById("custom-tours-wrapper").appendChild(row);
+}
+      }
+      
+      console.log('Processing response:', response);
+      updatePagination(page, totalPages);
+      
+      // Ejecute la función de devolución de llamada (callback) si se proporciona
+      if (callback) {
+        callback();
+      }
+    }
+  };
+  xhr.send();
+}
+
+    if (currentLatitude !== 0 && currentLongitude !== 0) {
+        loadAllTours(currentLatitude, currentLongitude);
+    } else {
+        console.log("No se proporcionó una ubicación válida. Cargando todos los tours sin ordenar por distancia.");
+        loadAllTours();
+    }
+
+    function updatePagination(currentPage, totalPages) {
+  console.log('updatePagination', currentPage, totalPages);
+  const paginationElement = document.querySelector('.pagination');
+  paginationElement.innerHTML = '';
+
+  for (let i = 1; i <= totalPages; i++) {
+    const pageItem = document.createElement('li');
+    pageItem.className = 'page-item' + (i === currentPage ? ' active' : '');
+    pageItem.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
+    paginationElement.appendChild(pageItem);
+  }
+
+  paginationElement.querySelectorAll(".page-link").forEach((link) => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    const page = parseInt(event.target.getAttribute("data-page"));
+    console.log("Pagination click", page);
+    const container = document.getElementById("custom-tours-wrapper");
+    container.innerHTML = "";
+
+      if (sortByDistance) {
+        loadAllTours(currentLatitude, currentLongitude, page, function() {
+          sortToursByDistance();
+        });
+      } else {
+        loadAllTours(currentLatitude, currentLongitude, page);
+      }
+    });
+  });
+}
+
+    // Elimina la función toggleSortByDistance
+
+    // Elimina el código relacionado con el botón de ordenar por distancia
+</script>
+<div class="container px-4 py-5" id="custom-cards">
+    <nav>
+      <ul class="pagination">
+        <!-- Los elementos de la paginación se añadirán aquí mediante JavaScript -->
+      </ul>
+    </nav>
+  </div>
+{% endblock %}
