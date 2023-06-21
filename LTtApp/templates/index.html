@@ -180,11 +180,11 @@
       <header>
         <div class="login-register">
           {% if user.is_authenticated %}
-              <a href="{% url 'profile' %}">Mi perfil</a>
-              <a href="{% url 'logout' %}">Cerrar sesión</a>
+              <a href="{% url 'profile' %}">My user</a>
+              <a href="{% url 'logout' %}">Sign off</a>
           {% else %}
-              <a href="{% url 'login' %}">Iniciar sesión</a>
-              <a href="{% url 'register' %}">Registrarse</a>
+              <a href="{% url 'login' %}">Log in</a>
+              <a href="{% url 'register' %}">Sign in</a>
           {% endif %}
       </div>
         </header>
@@ -198,9 +198,9 @@
   <h2 class="pb-2 border-bottom" id="section-title">Últimos tours creados</h2>
 
   <button id="get-location" type="button" class="btn btn-primary">Ver los tours más cercanos a mí</button>
-  <button id="get-latest-tours" class="btn btn-primary">Mostrar últimos tours</button>
+  <button id="get-latest-tours" class="btn btn-primary">Show last tours</button>
   <button id="show-nearest-tours" class="btn btn-primary" style="display:none;">Tours más cercanos</button>
-  <button type="button" class="btn btn-primary" id="get-random-tours">Mostrar tours aleatorios</button>
+  <button type="button" class="btn btn-primary" id="get-random-tours">Show random tours</button>
   
   <div class="row g-4 py-5" id="tours-container">
     <!-- Contenedor para los últimos tours creados -->
@@ -222,9 +222,9 @@
           
           <img src="{{ tour.imagen.url }}" alt="{{ tour.titulo }}" width="300" height="200" id="tour-image-{{ tour.id }}" style="margin-top: 10px;">
           <p id="tour-description-{{ tour.id }}">{{ tour.descripcion }}</p>
-          <p>Duración: {{ tour.duracion|div:'60'|floatformat:2 }} horas</p>
+          <p>Length: {{ tour.duracion|div:'60'|floatformat:2 }} h</p>
 
-          <p>Recorrido: {{ tour.recorrido }} km</p>
+          <p>Distance: {{ tour.recorrido }} km</p>
           <p class="d-none">
             Distancia al punto de inicio: 
             <span id="tour-distance" data-tipo-de-tour="{{ tour.tipo_de_tour }}">Desconocida</span>
@@ -252,9 +252,9 @@
         console.log("Latitud:", latitude, "Longitud:", longitude);
 
         // Cambiar el texto del botón y el título
-        document.getElementById("get-location").innerText = "Actualizar ubicación";
+        document.getElementById("get-location").innerText = "Update location";
         document.getElementById("get-location").className = "btn btn-secondary";
-        document.getElementById("section-title").innerText = "Los tours más cercanos";
+        document.getElementById("section-title").innerText = "Closest tours";
 
 
         const xhr = new XMLHttpRequest();
@@ -317,8 +317,8 @@ function createTourElement(tour, showDistance) {
     </h3>
     <img src="${imageUrl}" alt="${tour.titulo}" width="300" height="200" id="tour-image-${tour.id}" style="margin-top: 10px;">
     <p id="tour-description-${tour.id}">${tour.descripcion}</p>
-    <p>Duración: ${parseFloat(tour.duracion / 60).toFixed(2)} horas</p>
-    <p>Recorrido: ${tour.recorrido} km</p>
+    <p>Length: ${parseFloat(tour.duracion / 60).toFixed(2)} h</p>
+    <p>Distance: ${tour.recorrido} km</p>
     ${showDistance ? `<p>Distancia al punto de inicio: ${tour.distance.toFixed(2)} km</p>` : ""}
   `;
 
@@ -328,9 +328,9 @@ function createTourElement(tour, showDistance) {
   console.log("Botón Mostrar tours aleatorios presionado");
 
   // Cambiar el texto del botón y el título
-  document.getElementById("get-location").innerText = "Mostrar tours cercanos";
-  document.getElementById("get-latest-tours").innerText = "Mostrar últimos tours";
-  document.getElementById("section-title").innerText = "Tours aleatorios";
+  document.getElementById("get-location").innerText = "Show closest tours";
+  document.getElementById("get-latest-tours").innerText = "Show last tours";
+  document.getElementById("section-title").innerText = "Random tours";
 
   // Mostrar los otros botones
   document.getElementById("get-location").style.display = "inline-block";
@@ -357,9 +357,9 @@ function createTourElement(tour, showDistance) {
       console.log("Botón Obtener últimos tours presionado");
 
       // Cambiar el texto del botón y el título
-      document.getElementById("get-location").innerText = "Mostrar tours cercanos";
+      document.getElementById("get-location").innerText = "Show closest tours";
       document.getElementById("get-location").className = "btn btn-primary";
-      document.getElementById("section-title").innerText = "Últimos tours";
+      document.getElementById("section-title").innerText = "Last tours";
 
       const xhr = new XMLHttpRequest();
       xhr.open("GET", "/get_latest_tours/");
@@ -384,19 +384,19 @@ function createTourElement(tour, showDistance) {
 
 </script>
 <div class="container px-4 py-5" id="custom-cards">
-<a href="{% url 'all_tours'%}" class="btn btn-primary mt-3">Más opciones</a>
+<a href="{% url 'all_tours'%}" class="btn btn-primary mt-3">More options</a>
 </div>
 
 
 
   <div class="b-example-divider"></div>
   <div class="container px-4 py-5" id="custom-cards">
-    <h2 class="pb-2 border-bottom" id="section-title" >Planea tu próximo viaje</h2>
+    <h2 class="pb-2 border-bottom" id="section-title" >Plan your next trip</h2>
     <!--<h2 class="fs-4 fw-bold text-uppercase text-muted mb-4" id="section-title"></h2>-->
 
   <form class="d-flex location-search-form" id="location-search-form" style="width: 50%; margin: 2rem auto;">
-    <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" id="location-search-input" style="width: 70%; margin-right: 1rem;">
-    <button class="btn btn-primary" type="submit">Buscar</button>
+    <input class="form-control me-2" type="search" placeholder="Where do you want to travel?" aria-label="Where do you want to travel?" id="location-search-input" style="width: 70%; margin-right: 1rem;">
+    <button class="btn btn-primary" type="submit">Search</button>
     <div id="search-results" class="list-group" style="display:none;"></div>
   </form>
 
@@ -447,7 +447,7 @@ searchForm.addEventListener("submit", async (e) => {
   <div class="b-example-divider"></div>
 
   <div class="container px-4 py-5" id="custom-cards">
-    <h2 class="pb-2 border-bottom"  id="section-title"  >Conoce a nuestros guias mas destacados</h2>
+    <h2 class="pb-2 border-bottom"  id="section-title"  >Meet our most outstanding guides</h2>
 
     <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
       <div class="col">
@@ -462,7 +462,7 @@ searchForm.addEventListener("submit", async (e) => {
               </li>
               <li class="d-flex align-items-center">
                 <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#speedometer"/></svg>
-                <small>enamorado de su ciudad</small>
+                <small>text</small>
               </li>
             </ul>
           </div>
@@ -481,7 +481,7 @@ searchForm.addEventListener("submit", async (e) => {
               </li>
               <li class="d-flex align-items-center">
                 <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#speedometer"/></svg>
-                <small>historiadora</small>
+                <small>text</small>
               </li>
             </ul>
           </div>
@@ -500,7 +500,7 @@ searchForm.addEventListener("submit", async (e) => {
               </li>
               <li class="d-flex align-items-center">
                 <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#speedometer"/></svg>
-                <small>experto en museo de la ciencia</small>
+                <small>text</small>
               </li>
             </ul>
           </div>

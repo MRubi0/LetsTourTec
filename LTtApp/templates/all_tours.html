@@ -10,8 +10,8 @@
 
 </style>
 <div class="container px-4 py-5" id="custom-cards">
-<button class="btn btn-primary" id="sort-button" onclick="toggleSortByDistance()">Ordenar por distancia</button>
-  <h1 class="my-4">Todos los tours</h1>
+<button class="btn btn-primary" id="sort-button" onclick="toggleSortByDistance()">Sort by distance</button>
+  <h1 class="my-4">All tours</h1>
 </div>
   <div class="row" id="all-tours-container">
     <div id="tours-wrapper"></div>
@@ -38,7 +38,7 @@
       let distanceLine = "";
   if (showDistance) {
     const formattedDistance = tour.distance !== null ? tour.distance.toFixed(2) : "No disponible";
-    distanceLine = `<p>Distancia al punto de inicio: ${formattedDistance} km</p>`;
+    distanceLine = `<p>Distance to start point: ${formattedDistance} km</p>`;
   }
 
       const tourTypeIcons = {
@@ -63,8 +63,8 @@
         </h3>
         <img src="${imageUrl}" alt="${tour.titulo}" width="300" height="200" id="tour-image-${tour.id}" style="margin-top: 10px;">
         <p id="tour-description-${tour.id}">${tour.descripcion}</p>
-        <p>Duración: ${parseFloat(tour.duracion / 60).toFixed(2)} horas</p>
-        <p>Recorrido: ${tour.recorrido} km</p>
+        <p>Length: ${parseFloat(tour.duracion / 60).toFixed(2)} h</p>
+        <p>Distance: ${tour.recorrido} km</p>
         ${distanceLine}
       `;
 
@@ -207,7 +207,7 @@ function updatePagination(currentPage, totalPages) {
 
 function toggleSortByDistance() {
   sortByDistance = !sortByDistance;
-  document.getElementById("sort-button").innerHTML = sortByDistance ? "Desactivar ordenar por distancia" : "Ordenar por distancia";
+  document.getElementById("sort-button").innerHTML = sortByDistance ? "Disable sort by distance" : "Sort by distance";
   
   document.getElementById("sort-button").classList.toggle("btn-primary");
   document.getElementById("sort-button").classList.toggle("btn-secondary");
