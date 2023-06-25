@@ -41,13 +41,14 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -123,11 +124,13 @@ LOGIN_REDIRECT_URL = '/'
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 #STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_collected')
 
 # Para archivos multimedia
 MEDIA_URL = '/media/'
+WHITENOISE_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
@@ -147,7 +150,7 @@ EMAIL_HOST_USER = 'miguel6ortiz6@gmail.com'  # Tu dirección de correo electrón
 EMAIL_HOST_PASSWORD = 'jlog0107'  # Tu contraseña de correo electrónico
 
 #ALLOWED_HOSTS = ['*.elasticbeanstalk.com', 'LetsTourTec.com', 'www.LetsTourTec.com']
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['letstourtec.com', 'www.letstourtec.com', '*.herokuapp.com']
 
 LOGGING = {
     'version': 1,
