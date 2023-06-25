@@ -132,6 +132,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_collected')
 MEDIA_URL = '/media/'
 WHITENOISE_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Whitenoise
 WHITENOISE_MAX_AGE = 31536000  # 1 año
 if not DEBUG:
