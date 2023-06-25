@@ -16,7 +16,7 @@ import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -25,10 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-u0cr33!p^qzjrpg#y$imtz3s2$%fs7m=l@%2wydz#82)=nexx*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
+DEBUG = False
 
 # Application definition
 
@@ -125,6 +122,8 @@ LOGIN_REDIRECT_URL = '/'
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_collected')
 
 # Para archivos multimedia
 MEDIA_URL = '/media/'
@@ -146,6 +145,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'miguel6ortiz6@gmail.com'  # Tu dirección de correo electrónico
 EMAIL_HOST_PASSWORD = 'jlog0107'  # Tu contraseña de correo electrónico
 
+#ALLOWED_HOSTS = ['*.elasticbeanstalk.com', 'LetsTourTec.com', 'www.LetsTourTec.com']
+ALLOWED_HOSTS = ['*']
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -161,3 +163,4 @@ LOGGING = {
         },
     },
 }
+
