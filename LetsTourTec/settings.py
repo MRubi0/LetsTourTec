@@ -150,7 +150,8 @@ EMAIL_HOST_USER = 'miguel6ortiz6@gmail.com'  # Tu dirección de correo electrón
 EMAIL_HOST_PASSWORD = 'jlog0107'  # Tu contraseña de correo electrónico
 
 #ALLOWED_HOSTS = ['*.elasticbeanstalk.com', 'LetsTourTec.com', 'www.LetsTourTec.com']
-ALLOWED_HOSTS = ['letstourtec.com', 'www.letstourtec.com', '*.herokuapp.com']
+
+ALLOWED_HOSTS = ['letstourtec.com', 'www.letstourtec.com', 'letstourtec-c393a22f9c2b.herokuapp.com', 'localhost', '127.0.0.1']
 
 LOGGING = {
     'version': 1,
