@@ -1,1 +1,1 @@
-web: gunicorn LetsTourTec.wsgis
+web: gunicorn LetsTourTec.wsgi:application
