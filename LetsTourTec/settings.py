@@ -132,7 +132,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_collected')
 MEDIA_URL = '/media/'
 WHITENOISE_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
+# Whitenoise
+WHITENOISE_MAX_AGE = 31536000  # 1 año
+if not DEBUG:
+    STATIC_HOST = os.environ.get('DJANGO_STATIC_HOST', '')
+    STATIC_URL = STATIC_HOST + '/static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
