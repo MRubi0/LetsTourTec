@@ -1,1 +1,1 @@
-web: gunicorn LetsTourTec.wsgi:application
+web: gunicorn LetsTourTec.wsgi:application --log-file -
