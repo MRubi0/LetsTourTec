@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages'
     'LTtApp',
     #'django.contrib.gis',
 ]
@@ -178,3 +179,17 @@ LOGGING = {
     },
 }
 
+AWS_ACCESS_KEY_ID = 'user-letstourtec-bucket'
+AWS_SECRET_ACCESS_KEY = 'letsTOUR**'
+AWS_STORAGE_BUCKET_NAME = 'letstourtec-heroku'
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+AWS_DEFAULT_ACL = 'public-read'
+
+# Configuración para archivos multimedia
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+MEDIA_URL = 'https://%s.s3.amazonaws.com/media/' % AWS_STORAGE_BUCKET_NAME
+
+#Console sign in URL https://736283691967.signin.aws.amazon.com/console
+#Usename user-letstourtec-bucket
+#Console password letsTOUR**
