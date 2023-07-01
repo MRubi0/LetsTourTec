@@ -139,7 +139,7 @@ class Tour(models.Model):
         # Construye el path de la imagen en S3
         key = f'tours/{self.id}/images/{self.imagen.name}'
         # Aquí necesitas configurar boto3 con tus credenciales de AWS y especificar el bucket y key adecuados
-        s3 = boto3.client('s3', aws_access_key_id='AKIA2W3PNRO7VOZUX2PC', aws_secret_access_key='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'))
+        s3 = boto3.client('s3', aws_access_key_id='AKIA2W3PNRO7VOZUX2PC', aws_secret_access_key='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')
         s3.upload_fileobj(buffer, 'letstourtec-heroku2',  key)
 
 
