@@ -285,13 +285,13 @@ def get_nearest_tours(request):
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
 
     
-    '''
-    try:
-        latitude = float(latitude)
-        longitude = float(longitude)
-    except ValueError:
-        return JsonResponse({"error": "Los parámetros latitude y longitude deben ser números"}, status=400)
-    '''
+    
+    #try:
+        #latitude = float(latitude)
+        #longitude = float(longitude)
+    #except ValueError:
+        #return JsonResponse({"error": "Los parámetros latitude y longitude deben ser números"}, status=400)
+    
     # Aquí iría la lógica para buscar los tours más cercanos
 
     tours = Tour.objects.all()
