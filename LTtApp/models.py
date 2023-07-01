@@ -7,6 +7,7 @@ from PIL import Image
 from io import BytesIO
 import requests
 import boto3
+import os
 
 
 
