@@ -396,7 +396,7 @@ def get_random_tours(request):
 
     return JsonResponse(random_tours_json)
 
-
+'''
 def get_nearest_tours_all(request):
     connection.ensure_connection()
     connection.connection.create_function("haversine", 4, sqlite_haversine)
@@ -447,6 +447,54 @@ def get_nearest_tours_all(request):
         'total_pages': paginator.num_pages  # Devuelve el número total de páginas
     }
 
+    return JsonResponse(response_data)
+'''
+
+
+def get_nearest_tours_all(request):
+    latitud_usuario = request.GET.get('latitude', None)
+    longitud_usuario = request.GET.get('longitude', None)
+
+    if latitud_usuario is None or longitud_usuario is None:
+        return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
+
+    latitud_usuario = float(latitud_usuario)
+    longitud_usuario = float(longitud_usuario)
+
+    # Obtener todos los tours
+    tours = Tour.objects.all()
+    tours_with_distances = []
+    for tour in tours:
+        distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
+        tours_with_distances.append({'tour': tour, 'distance': distance})
+
+    # Ordenar todos los tours por distancia
+    sorted_tours = sorted(tours_with_distances, key=lambda x: x['distance'])
+
+    per_page = 15  # Establece la cantidad de tours por página
+    page = request.GET.get('page', 1)  # Obtiene el número de página de los parámetros GET
+    # Paginar los resultados
+    paginator = Paginator(sorted_tours, per_page)
+    current_page_tours = paginator.get_page(page)
+
+    # Serializar solo los objetos de tour en la página actual
+    serialized_tours = [{
+        'id': tour['tour'].id,
+        'titulo': tour['tour'].titulo,
+        'descripcion': tour['tour'].descripcion,
+        'tipo_de_tour': tour['tour'].tipo_de_tour,
+        'imagen': {'url': tour['tour'].imagen.url},
+        'distance': tour['distance'],
+        'recorrido': tour['tour'].recorrido,
+        'duracion': tour['tour'].duracion,
+    } for tour in current_page_tours]
+
+    response_data = {
+        'tours': serialized_tours,
+        'total_pages': paginator.num_pages  # Devuelve el número total de páginas
+    }
+
+    # Devolver los tours más cercanos como respuesta JSON
     return JsonResponse(response_data)
 
 
