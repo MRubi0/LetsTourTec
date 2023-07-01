@@ -4,6 +4,11 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.utils import timezone
 from PIL import Image
+from io import BytesIO
+import requests
+import boto3
+
+
 
 #from django.contrib.gis.db.models import PointField
 
@@ -112,15 +117,38 @@ class Tour(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        # Obtén la URL de la imagen en S3
+        image_url = self.imagen.url
+
+        # Abre la imagen a través de la URL
+        response = requests.get(image_url)
+        img = Image.open(BytesIO(response.content))
+
+        if img.height > 150 or img.width > 150:
+            output_size = (150, 150)
+            img.thumbnail(output_size)
+            
+
+        # Guardar la imagen de nuevo en S3
+        # Esto implica el uso de boto3 (o cualquier otra librería) para subir el archivo modificado a S3
+        
+        # Convertir la imagen a bytes
+        buffer = BytesIO()
+        img.save(buffer, format="JPEG")
+        buffer.seek(0)
+        # Construye el path de la imagen en S3
+        key = f'tours/{self.id}/images/{self.imagen.name}'
+        # Aquí necesitas configurar boto3 con tus credenciales de AWS y especificar el bucket y key adecuados
+        s3 = boto3.client('s3', aws_access_key_id='AKIA2W3PNRO7VOZUX2PC', aws_secret_access_key='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'))
+        s3.upload_fileobj(buffer, 'letstourtec-heroku2',  key)
+
+
+
 
         if self.imagen:
             img = Image.open(self.imagen.path)
 
-            if img.height > 150 or img.width > 150:
-                output_size = (150, 150)
-                img.thumbnail(output_size)
-                img.save(self.imagen.path)
-
+            
     def as_dict(self):
         return {
             "user": self.user.username if self.user else None,

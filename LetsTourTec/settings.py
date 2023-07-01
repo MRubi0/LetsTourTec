@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 import sys
 import dj_database_url
+import boto3
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -194,3 +195,5 @@ MEDIA_URL = 'https://%s.s3.amazonaws.com/media/' % AWS_STORAGE_BUCKET_NAME
 #Console sign in URL https://736283691967.signin.aws.amazon.com/console
 #Usename user-letstourtec-bucket
 #Console password letsTOUR**
+boto3.setup_default_session(aws_access_key_id='AKIA2W3PNRO7VOZUX2PC',
+                            aws_secret_access_key='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')
