@@ -11,6 +11,7 @@ from django.views import generic
 from django.http import JsonResponse, HttpResponseBadRequest
 import sqlite3
 import math
+from math import radians, sin, cos, sqrt, atan2
 from .forms import GuideForm, AudioFileForm, ImageFileForm, LocationForm, CustomUserCreationForm
 from .models import Guide, AudioFile, ImageFile, Location, CustomUser, Tour
 
@@ -30,6 +31,26 @@ from django.db import connection
 
 from django.core.paginator import Paginator
 from django.core import serializers
+
+
+
+def haversine(lat1, lon1, lat2, lon2):
+    # Radio de la Tierra en km
+    R = 6371.0
+
+    lat1 = radians(lat1)
+    lon1 = radians(lon1)
+    lat2 = radians(lat2)
+    lon2 = radians(lon2)
+
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    return R * c
+
 
 
 @login_required
@@ -206,32 +227,86 @@ def sqlite_haversine(lat1, lon1, lat2, lon2):
 
 
 
+def get_nearest_tours(request):
+    latitud_usuario = float(request.GET.get('latitude', None))
+    longitud_usuario = float(request.GET.get('longitude', None))
+
+    if latitud_usuario is None or longitud_usuario is None:
+        return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
+
+    # Aquí iría la lógica para buscar los tours más cercanos
+    tours = Tour.objects.all()
+    tours_with_distances = []
+    for tour in tours:
+        distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
+        tours_with_distances.append({'tour': tour, 'distance': distance})
+
+    tour_categories = ['ocio', 'naturaleza', 'cultural']
+    nearest_tours = {}
+
+    for category in tour_categories:
+        # Ordenar por distancia y filtrar por categoría
+        filtered_tours = sorted(
+            filter(lambda x: x['tour'].tipo_de_tour == category, tours_with_distances),
+            key=lambda x: x['distance']
+        )
+        # Tomar el primer tour de la lista, que es el más cercano
+        if filtered_tours:
+            tour = filtered_tours[0]['tour']
+            nearest_tours[category] = {
+                'id': tour.id,
+                'titulo': tour.titulo,
+                'descripcion': tour.descripcion,
+                'tipo_de_tour': tour.tipo_de_tour,
+                'imagen': {'url': tour.imagen.url},
+                'distance': filtered_tours[0]['distance'],
+                'duracion': tour.duracion,
+                'recorrido': tour.recorrido,
+            }
+
+    # Devolver los tours más cercanos como respuesta JSON
+    return JsonResponse(nearest_tours)
 
 
-
+'''
 
 def get_nearest_tours(request):
 
-    connection.ensure_connection()
-    connection.connection.create_function("haversine", 4, sqlite_haversine)
+    #connection.ensure_connection()
+    #connection.connection.create_function("haversine", 4, sqlite_haversine)
 
 
 
  
-    latitude = float(request.GET.get('latitude', None))
-    longitude = float(request.GET.get('longitude', None))
+    latitud_usuario = float(request.GET.get('latitude', None))
+    longitud_usuario = float(request.GET.get('longitude', None))
 
-    if latitude is None or longitude is None:
+    if latitud_usuario is None or longitud_usuario is None:
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
 
+    
+    '''
     try:
         latitude = float(latitude)
         longitude = float(longitude)
     except ValueError:
         return JsonResponse({"error": "Los parámetros latitude y longitude deben ser números"}, status=400)
+    '''
     # Aquí iría la lógica para buscar los tours más cercanos
+
+    tours = Tour.objects.all()
+    tours_with_distances = []
+    for tour in tours:
+            distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
+            tours_with_distances.append({'tour': tour, 'distance': distance})    
+
     tour_categories = ['ocio', 'naturaleza', 'cultural']
     nearest_tours = {}
+    tours_with_distances.sort(key=lambda x: x['distance'])
+    nearest_tours = tours_with_distances[:5]
+
+        # Construye una respuesta JSON con la información de los tours
+    response_data = [{'tour_id': t['tour'].id, 'distance': t['distance']} for t in nearest_tours]
 
     for category in tour_categories:
         tour = Tour.objects.annotate(
@@ -262,7 +337,7 @@ def get_nearest_tours(request):
     return JsonResponse(response_data)
 
 #return HttpResponseBadRequest()
-
+'''
 
 
 
