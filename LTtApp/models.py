@@ -145,8 +145,8 @@ class Tour(models.Model):
 
 
 
-        if self.imagen:
-            img = Image.open(self.imagen.path)
+        #if self.imagen:
+            #img = Image.open(self.imagen.path)
 
             
     def as_dict(self):
