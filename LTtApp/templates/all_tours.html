@@ -159,7 +159,7 @@ function loadAllTours(latitude = currentLatitude, longitude = currentLongitude, 
   }
 }
 
-
+loadAllTours();
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(function(position) {
     currentLatitude = position.coords.latitude;
