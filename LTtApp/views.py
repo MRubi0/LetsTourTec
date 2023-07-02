@@ -478,7 +478,7 @@ def get_nearest_tours_all(request):
             tours_with_distances.append({'tour': tour, 'distance': distance})
         sorted_tours = sorted(tours_with_distances, key=lambda x: x['distance'])
     else:
-        tours_with_distances = tours
+        sorted_tours = tours
 
     # Ordenar todos los tours por distancia
     
