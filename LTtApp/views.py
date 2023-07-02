@@ -472,9 +472,12 @@ def get_nearest_tours_all(request):
     # Obtener todos los tours
     tours = Tour.objects.all()
     tours_with_distances = []
-    for tour in tours:
-        distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
-        tours_with_distances.append({'tour': tour, 'distance': distance})
+    if latitud_usuario != 'None' or longitud_usuario != 'None':
+        for tour in tours:
+            distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
+            tours_with_distances.append({'tour': tour, 'distance': distance})
+    else:
+        tours_with_distances = tours
 
     # Ordenar todos los tours por distancia
     sorted_tours = sorted(tours_with_distances, key=lambda x: x['distance'])
