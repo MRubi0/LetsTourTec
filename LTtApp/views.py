@@ -472,15 +472,16 @@ def get_nearest_tours_all(request):
     # Obtener todos los tours
     tours = Tour.objects.all()
     tours_with_distances = []
-    if latitud_usuario != 'None' or longitud_usuario != 'None':
+    if latitud_usuario != None or longitud_usuario != None:
         for tour in tours:
             distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
             tours_with_distances.append({'tour': tour, 'distance': distance})
+        sorted_tours = sorted(tours_with_distances, key=lambda x: x['distance'])
     else:
         tours_with_distances = tours
 
     # Ordenar todos los tours por distancia
-    sorted_tours = sorted(tours_with_distances, key=lambda x: x['distance'])
+    
 
     per_page = 15  # Establece la cantidad de tours por página
     page = request.GET.get('page', 1)  # Obtiene el número de página de los parámetros GET
