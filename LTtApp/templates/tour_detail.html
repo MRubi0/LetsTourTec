@@ -1,9 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>{{ tour.titulo }}</h1>
+</style>
+<div class="container px-4 py-5" id="custom-cards">
+ <h1 class="my-4">{{ tour.titulo }}</h1>
+ <img src="{{ tour.imagen.url }}" alt="{{ tour.titulo }}" width="300" height="200">
+ <p>{{ tour.descripcion }}</p>
+ <p>Duración: {{ tour.duracion }} horas</p>
+ <p>Recorrido: {{ tour.recorrido }} km</p>
+</div>
+  
+  <!--<h1>{{ tour.titulo }}</h1>
   <img src="{{ tour.imagen.url }}" alt="{{ tour.titulo }}" width="300" height="200">
   <p>{{ tour.descripcion }}</p>
   <p>Duración: {{ tour.duracion }} horas</p>
-  <p>Recorrido: {{ tour.recorrido }} km</p>
+  <p>Recorrido: {{ tour.recorrido }} km</p>-->
 {% endblock %}
