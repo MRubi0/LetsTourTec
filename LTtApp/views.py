@@ -458,8 +458,16 @@ def get_nearest_tours_all(request):
     if latitud_usuario is None or longitud_usuario is None:
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
 
-    latitud_usuario = float(latitud_usuario)
-    longitud_usuario = float(longitud_usuario)
+    if latitud_usuario != 'None':
+        latitud_usuario = float(latitud_usuario)
+    else:
+        latitud_usuario = None
+
+    if longitud_usuario != 'None':
+        longitud_usuario = float(longitud_usuario)
+    else:
+        longitud_usuario = None
+
 
     # Obtener todos los tours
     tours = Tour.objects.all()
