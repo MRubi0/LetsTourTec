@@ -6,13 +6,69 @@
  <h1 class="my-4">{{ tour.titulo }}</h1>
  <img src="{{ tour.imagen.url }}" alt="{{ tour.titulo }}" width="300" height="200">
  <p>{{ tour.descripcion }}</p>
- <p>Duración: {{ tour.duracion }} horas</p>
- <p>Recorrido: {{ tour.recorrido }} km</p>
+ <p>Length: {{ tour.duracion }} minutos</p>
+ <p>Distance: {{ tour.recorrido }} km</p>
+ <p id="distance">Waiting for user location...</p>
+
+ <a href="{% url 'directions' tour.id %}" class="btn btn-primary">Lets tour!</a>
+
 </div>
   
-  <!--<h1>{{ tour.titulo }}</h1>
-  <img src="{{ tour.imagen.url }}" alt="{{ tour.titulo }}" width="300" height="200">
-  <p>{{ tour.descripcion }}</p>
-  <p>Duración: {{ tour.duracion }} horas</p>
-  <p>Recorrido: {{ tour.recorrido }} km</p>-->
+<script>
+  // Puede que necesites ajustar la selección del elemento dependiendo de tu HTML.
+  const distanceElement = document.querySelector('#distance');
+
+  // Definimos las variables de latitud y longitud
+  let currentLatitude = 0;
+  let currentLongitude = 0;
+
+  // Intentamos obtener la ubicación del usuario
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      currentLatitude = position.coords.latitude;
+      currentLongitude = position.coords.longitude;
+
+      // Una vez obtenida la ubicación, llamamos a la función loadSingleTour
+      loadSingleTour({{ tour.id }}, currentLatitude, currentLongitude);
+    });
+  } else {
+    console.log("Geolocation is not supported by this browser.");
+  }
+
+  function loadSingleTour(tourId, latitude, longitude, callback = null) {
+    console.log('loadSingleTour', latitude, longitude); 
+    const xhr = new XMLHttpRequest();
+  
+    let latParam = latitude !== 0 ? latitude : null;
+    let lngParam = longitude !== 0 ? longitude : null;
+  
+    const baseUrl = `/get_tour_distance/?tourId=${tourId}`;
+    const url = latParam !== null && lngParam !== null ? `${baseUrl}&latitude=${latParam}&longitude=${lngParam}` : baseUrl;
+  
+    xhr.open('GET', url, true);
+  
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        console.log('Processing response:', response);
+  
+        // Si latParam y lngParam son nulos, entonces no se recibió la ubicación del usuario
+        if (latParam === null && lngParam === null) {
+          distanceElement.innerText = `It was not possible to get the user location`;
+        } else {
+          // Si se recibió la ubicación del usuario, se actualiza la distancia
+          distanceElement.innerText = `Distance to starting point: ${response.distance.toFixed(2)} km`;
+        }
+
+        
+  
+        // Ejecute la función de devolución de llamada (callback) si se proporciona
+        if (callback) {
+          callback();
+        }
+      }
+    };
+    xhr.send();
+  }
+</script>
 {% endblock %}

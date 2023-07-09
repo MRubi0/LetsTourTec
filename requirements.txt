@@ -70,3 +70,4 @@ psycopg2-binary==2.9.6
 boto3
 django-storages
 requests==2.31.0
+folium==0.14.0

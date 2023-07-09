@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html>
+    
+  <head>
+    <title>Simple Map</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnQMn3c3-WIDNl6dl7es1y57hAIxbrxrA&callback=initMap" async defer></script>
+    <style>
+        #tour-image {
+          /*max-width: 1500px;  /* Configura el tamaño máximo de la imagen */
+          /*height: auto;  /* Mantiene el aspect ratio de la imagen */
+          width:500px;
+          height:auto;
+        }
+  
+        #audio-button {
+          display: inline-block;
+          margin: 20px 0;
+          padding: 10px 20px;
+          color: #fff;
+          background-color: #007bff;
+          border-color: #007bff;
+          border-radius: .25rem;
+          text-decoration: none;  /* Elimina el subrayado del enlace */
+        }
+  
+        #audio-button:hover {
+          background-color: #0056b3;
+          border-color: #004085;
+        }
+      </style>
+    <script>
+      console.log("Tour Lat from Django: {{ tour.latitude }}");
+      console.log("Tour Lng from Django: {{ tour.longitude }}");
+
+      var tourLat = parseFloat('{{ tour.latitude }}');
+      var tourLng = parseFloat('{{ tour.longitude }}');
+      var tourImage = '{{ tour.imagen.url }}'; 
+      var tourAudio = '{{ tour.audio.url }}'; 
+
+      console.log("Parsed Tour Lat: " + tourLat);
+      console.log("Parsed Tour Lng: " + tourLng);
+      
+      var map;
+      var directionsDisplay;
+      var directionsService;
+
+      function initMap() {
+        console.log("initMap called");
+        directionsDisplay = new google.maps.DirectionsRenderer();
+        directionsDisplay.setPanel(document.getElementById('directions-panel')); // Aquí añades las direcciones al panel
+        directionsService = new google.maps.DirectionsService();
+
+        // Intentamos obtener la ubicación del usuario
+        if (navigator.geolocation) {
+          console.log("Attempting to get user location");
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var start = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            console.log("User Lat: " + start.lat);
+            console.log("User Lng: " + start.lng);
+
+            var end = {lat: tourLat, lng: tourLng};  
+            console.log("End Lat: " + end.lat);
+            console.log("End Lng: " + end.lng);
+
+            map = new google.maps.Map(document.getElementById('map'), {
+              zoom: 8,
+              center: start
+            });
+
+            directionsDisplay.setMap(map);
+
+            // Configuramos las direcciones
+            var request = {
+              destination: end,
+              origin: start,
+              travelMode: 'WALKING'
+            };
+
+            console.log("Routing from " + start.lat + "," + start.lng + " to " + end.lat + "," + end.lng);
+
+            directionsService.route(request, function(response, status) {
+              console.log(response);
+                if (status == 'OK') {
+                console.log("Directions request succeeded");
+                directionsDisplay.setDirections(response);
+              } else {
+                console.log('Directions request failed due to ' + status);
+              }
+            });
+          }, function() {
+            handleLocationError(true);
+          });
+        } else {
+          // El navegador no soporta geolocalización
+          handleLocationError(false);
+        }
+      }
+
+      function handleLocationError(browserHasGeolocation) {
+        console.log(browserHasGeolocation ?
+            'Error: Hubo un problema obteniendo la geolocalización.' :
+            'Error: Tu navegador no soporta geolocalización.');
+      }
+
+      // Event Listener para el botón de llegada
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('arrive-button').addEventListener('click', function() {
+          document.getElementById('map').style.display = 'none';
+          document.getElementById('directions-panel').style.display = 'none';
+          document.getElementById('arrive-button').style.display = 'none';
+          document.getElementById('tour-content').style.display = 'block';
+        });
+
+        document.getElementById('audio-button').addEventListener('click', function() {
+          var audio = new Audio(tourAudio);
+          audio.play();
+        });
+      });
+    </script>
+  </head>
+  <body>
+    
+    <div id="map" style="height: 500px; width: 100%;"></div>
+    <div style="display: flex; flex-direction: column; justify-content: space-between;">
+      <div id="directions-panel" style="margin-top:10px;background-color:#fff; height: 350px; overflow: auto;"></div>
+      <a href="#" id="arrive-button" class="btn btn-primary" style="margin-top:10px;">I arrived, Lets Tour!</a>
+    </div>
+    <div class="container px-4 py-5" id="custom-cards">
+    <div id="tour-content" style="display: none; display: flex; flex-direction: column;">
+      <img id="tour-image" src="{{ tour.imagen.url }}" alt="Tour Image" />
+    
+      <br>
+      <button id="audio-button">Play Audio</button>
+
+      </div>
+    </div>
+    
+  </body>
+</html>
+
+{% endblock %}

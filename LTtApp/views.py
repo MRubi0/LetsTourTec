@@ -32,6 +32,7 @@ from django.db import connection
 from django.core.paginator import Paginator
 from django.core import serializers
 
+import folium
 
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -68,20 +69,6 @@ def edit_profile(request):
 @login_required
 def profile(request):
     return render(request, 'user/profile.html', {'user': request.user})
-
-'''
-class vista_registro(generic.CreateView):
-    form_class = UserCreationForm
-    success_url = reverse_lazy('login')
-    template_name = 'registration/signup.html'
-
-
-def login(request):
-    return render(request, 'login.html')
-
-def register(request):
-    return render(request, 'register.html')
-'''
 
 
 def login_view(request):
@@ -268,82 +255,22 @@ def get_nearest_tours(request):
     return JsonResponse(nearest_tours)
 
 
-'''
-
-def get_nearest_tours(request):
-
-    #connection.ensure_connection()
-    #connection.connection.create_function("haversine", 4, sqlite_haversine)
-
-
-
- 
-    latitud_usuario = float(request.GET.get('latitude', None))
-    longitud_usuario = float(request.GET.get('longitude', None))
-
-    if latitud_usuario is None or longitud_usuario is None:
-        return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
-
-    
-    
-    #try:
-        #latitude = float(latitude)
-        #longitude = float(longitude)
-    #except ValueError:
-        #return JsonResponse({"error": "Los parámetros latitude y longitude deben ser números"}, status=400)
-    
-    # Aquí iría la lógica para buscar los tours más cercanos
-
-    tours = Tour.objects.all()
-    tours_with_distances = []
-    for tour in tours:
-            distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
-            tours_with_distances.append({'tour': tour, 'distance': distance})    
-
-    tour_categories = ['ocio', 'naturaleza', 'cultural']
-    nearest_tours = {}
-    tours_with_distances.sort(key=lambda x: x['distance'])
-    nearest_tours = tours_with_distances[:5]
-
-        # Construye una respuesta JSON con la información de los tours
-    response_data = [{'tour_id': t['tour'].id, 'distance': t['distance']} for t in nearest_tours]
-
-    for category in tour_categories:
-        tour = Tour.objects.annotate(
-    distance=RawSQL("haversine(%s, %s, latitude, longitude)", (latitude, longitude,))
-).filter(tipo_de_tour=category).order_by('distance').first()
-
-
-        if tour:
-            nearest_tours[category] = {
-                'id': tour.id,
-                'titulo': tour.titulo,
-                'descripcion': tour.descripcion,
-                'tipo_de_tour': tour.tipo_de_tour,
-                'imagen': {
-                    'url': tour.imagen.url
-                },
-                'distance': tour.distance,
-                'duracion': tour.duracion,
-                'recorrido': tour.recorrido, 
-            }
-
-    # Devolver los tours más cercanos como respuesta JSON
-    response_data = {
-        'tour_ocio': nearest_tours.get('ocio', None),
-        'tour_naturaleza': nearest_tours.get('naturaleza', None),
-        'tour_cultural': nearest_tours.get('cultural', None),
-    }
-    return JsonResponse(response_data)
-
-#return HttpResponseBadRequest()
-'''
-
-
-
 def tour_detail(request, tour_id):
+    # Obtener el tour
     tour = get_object_or_404(Tour, pk=tour_id)
-    context = {'tour': tour}
+
+    # Imprimir latitud y longitud
+    print("Tour Lat: ", tour.latitude)
+    print("Tour Lng: ", tour.longitude)
+    
+    if tour.imagen:
+        print("Image URL: ", tour.imagen.url)
+    if tour.audio:
+        print("Audio URL: ", tour.audio.url)
+    context = {
+        'tour': tour, 
+        'user': request.user,
+    }
     return render(request, 'tour_detail.html', context)
 
 
@@ -396,60 +323,34 @@ def get_random_tours(request):
 
     return JsonResponse(random_tours_json)
 
-'''
-def get_nearest_tours_all(request):
-    connection.ensure_connection()
-    connection.connection.create_function("haversine", 4, sqlite_haversine)
 
-    latitude_str = request.GET.get('latitude', None)
-    longitude_str = request.GET.get('longitude', None)
+def get_tour_distance(request):
+    tour_id = request.GET.get('tourId')
+    latitud_usuario = request.GET.get('latitude', None)
+    longitud_usuario = request.GET.get('longitude', None)
 
-    if latitude_str is not None and latitude_str != 'None':
-        latitude = float(latitude_str)
+    if latitud_usuario is None or longitud_usuario is None:
+        return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
+
+    if latitud_usuario != 'None':
+        latitud_usuario = float(latitud_usuario)
     else:
-        latitude = None
+        latitud_usuario = None
 
-    if longitude_str is not None and longitude_str != 'None':
-        longitude = float(longitude_str)
+    if longitud_usuario != 'None':
+        longitud_usuario = float(longitud_usuario)
     else:
-        longitude = None
+        longitud_usuario = None
 
-    page = request.GET.get('page', 1)  # Obtiene el número de página de los parámetros GET
-    per_page = 15  # Establece la cantidad de tours por página
+    tour = Tour.objects.get(id=tour_id)
 
-    if latitude is None or longitude is None:
-        # Devuelve todos los tours sin ordenar por distancia
-        tours = Tour.objects.all()
-    else:
-        # Ordena los tours por distancia
-        tours = list(Tour.objects.annotate(
-            distance=RawSQL("haversine(%s, %s, latitude, longitude)", (latitude, longitude,))
-        ).order_by('distance'))
+    distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
 
-    paginator = Paginator(tours, per_page)  # Divide la lista de tours en páginas
-    current_page_tours = paginator.get_page(page)  # Obtiene la página actual
-
-    # Serializa solo los objetos de tour en la página actual
-    serialized_tours = [{
-        'id': tour.id,
-        'titulo': tour.titulo,
-        'descripcion': tour.descripcion,
-        'tipo_de_tour': tour.tipo_de_tour,
-        'imagen': {
-            'url': tour.imagen.url
-        },
-        'distance': getattr(tour, 'distance', None),
-        'recorrido': tour.recorrido,
-        'duracion': tour.duracion,} for tour in current_page_tours]
-
-    response_data = {
-        'tours': serialized_tours,
-        'total_pages': paginator.num_pages  # Devuelve el número total de páginas
-    }
-
-    return JsonResponse(response_data)
-'''
-
+    tour_data = serializers.serialize('json', [tour])
+    return JsonResponse({
+        'tour': tour_data,
+        'distance': distance,
+    })
 
 def get_nearest_tours_all(request):
     latitud_usuario = request.GET.get('latitude', None)
@@ -526,3 +427,49 @@ def custom_tours_page(request):
     location = request.GET.get('location', 'la ubicación buscada')
     context = {'latitude': latitude, 'longitude': longitude, 'location': location}
     return render(request, 'custom_tours_page.html', context)
+
+
+def directions(request, tour_id):
+    tour = Tour.objects.get(pk=tour_id)
+    print(f"Latitud del tour: {tour.latitude}")
+    print(f"Longitud del tour: {tour.longitude}")
+    return render(request, 'directions.html', {'tour': tour})
+
+
+def get_tour_data():
+    tour_objects = Tour.objects.all()  # Esto obtiene todos los objetos de Tour en la base de datos
+    tour_data = []
+    for tour in tour_objects:
+        tour_data.append({
+            "latitude": tour.latitude,
+            "longitude": tour.longitude,
+            "titulo": tour.titulo
+        })
+    return tour_data
+
+def create_map(tour_data):
+    m = folium.Map(location=[20, 0], zoom_start=2.5)
+
+    for data in tour_data:
+        folium.Marker(
+            location=[data["latitude"], data["longitude"]],
+            popup=data["titulo"],
+            icon=folium.Icon(icon="cloud"),
+        ).add_to(m)
+
+    m.save('LTtApp/templates/LTtApp/map.html')
+
+
+def map_view(request):
+    tour_data = get_tour_data()
+    create_map(tour_data)
+    return render(request, 'LTtApp/map.html')
+
+def debug_tour(request, tour_id):
+    # asumimos que obtenes tu tour de esta manera
+    tour = Tour.objects.get(id=tour_id)
+    
+    # imprimimos todos los atributos y valores del tour
+    print(vars(tour))
+
+    

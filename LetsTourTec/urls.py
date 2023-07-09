@@ -34,6 +34,9 @@ urlpatterns = [
     path('get_nearest_tours_all/', views.get_nearest_tours_all, name='get_nearest_tours_all'),
     path('all_tours/', views.all_tours, name='all_tours'),
     path('custom_tours_page/', views.custom_tours_page, name='custom_tours_page'),
+    path('get_tour_distance/', views.get_tour_distance, name='get_tour_distance'),
+    path('directions/<int:tour_id>/', views.directions, name='directions'),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
