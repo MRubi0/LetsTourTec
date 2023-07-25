@@ -24,3 +24,45 @@
   width: 80% !important;
   margin-right: 2rem;
 }
+
+.mejs__controls {
+  background: #ffffff;  /* Cambia esto al color que prefieras */
+  height: auto;
+}
+.mejs__icon-play {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.mejs__time-rail .mejs__time-total,
+.mejs__time-rail .mejs__time-loaded,
+.mejs__time-rail .mejs__time-current {
+  height: 3px;  /* Puedes ajustar el grosor de la barra de progreso */
+}
+
+.mejs__time-rail .mejs__time-total {
+  background: #999;  /* Cambia esto al color que prefieras para la barra de progreso total */
+}
+
+.mejs__time-rail .mejs__time-loaded {
+  background: #666;  /* Cambia esto al color que prefieras para la barra de progreso cargada */
+}
+
+.mejs__time-rail .mejs__time-current {
+  background: #007bff;  /* Cambia esto al color que prefieras para la barra de progreso actual */
+}
+
+#audio-controls {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+#audio-control-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 0 10px;
+}
+

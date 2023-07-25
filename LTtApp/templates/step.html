@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %} 
+{% block content %}
+<!-- Importaciones y CSS -->
+
+<script>
+  var tourLat, tourLng;
+  var tourImage, tourAudio;
+
+  // Esta función se invocará cuando el usuario haga clic en "Next Step"
+  function nextStep(tourId) {
+    // Realiza una solicitud AJAX para obtener los datos del siguiente paso
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        // Actualiza el mapa con los datos del siguiente paso
+        var nextStepData = JSON.parse(this.responseText);
+        updateMap(nextStepData.latitude, nextStepData.longitude);
+        tourImage = nextStepData.image_url;
+        tourAudio = nextStepData.audio_url;
+        
+        // Actualiza la imagen y el audio
+        document.getElementById('tour-image').src = tourImage;
+        document.getElementById('audio-source').src = tourAudio;
+        
+        // Muestra la imagen y el audio
+        document.getElementById('tour-image').style.display = 'block';
+        document.getElementById('player').style.display = 'block';
+      }
+    };
+    xhttp.open('GET', '/api/tour/' + tourId + '/next_step', true);
+    xhttp.send();
+  }
+
+  function updateMap(latitude, longitude) {
+    // Aquí tendrías que actualizar el mapa con la nueva latitud y longitud
+    tourLat = parseFloat(latitude);
+    tourLng = parseFloat(longitude);
+  }
+  
+  // Asegúrate de que el documento esté completamente cargado antes de intentar adjuntar eventos a los elementos
+  document.addEventListener('DOMContentLoaded', function() {
+    var nextStepButton = document.getElementById('next-step');
+    nextStepButton.addEventListener('click', function() {
+      // Obtén el id del tour
+      var tourId = this.getAttribute('data-tour-id');
+      nextStep(tourId);
+    });
+  });
+</script>
+
+<body>
+  <!-- Tu cuerpo de la página se mantiene igual hasta aquí -->
+  <button id="next-step" class="btn btn-primary" data-tour-id="{{ tour.id }}">Next step</button>
+</body>
+{% endblock %}

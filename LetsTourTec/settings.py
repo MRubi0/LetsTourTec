@@ -133,6 +133,8 @@ LOGIN_REDIRECT_URL = '/'
 STATIC_URL = '/static/'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 #STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [BASE_DIR / 'LTtApp/static',]
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_collected')
 
 # Para archivos multimedia

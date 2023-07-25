@@ -1,14 +1,58 @@
 {% extends "base.html" %}
-
+{% load static %} 
 {% block content %}
-
-<!DOCTYPE html>
+<link rel="stylesheet" href="{% static 'mediaelement-6.0.3/build/mediaelementplayer.min.css' %}">
+    <script src="{% static 'mediaelement-6.0.3/build/mediaelement-and-player.min.js' %}"></script>
+    <img src="{% static 'mediaelement-6.0.3/build/mejs-controls.svg' %}" alt="Media Controls">
+    <!DOCTYPE html>
 <html>
     
   <head>
     <title>Simple Map</title>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnQMn3c3-WIDNl6dl7es1y57hAIxbrxrA&callback=initMap" async defer></script>
     <style>
+        
+.mejs__controls {
+  background: #ffffff;  /* Cambia esto al color que prefieras */
+  height: auto;
+}
+.mejs__icon-play {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.mejs__time-rail .mejs__time-total,
+.mejs__time-rail .mejs__time-loaded,
+.mejs__time-rail .mejs__time-current {
+  height: 3px;  /* Puedes ajustar el grosor de la barra de progreso */
+}
+
+.mejs__time-rail .mejs__time-total {
+  background: #999;  /* Cambia esto al color que prefieras para la barra de progreso total */
+}
+
+.mejs__time-rail .mejs__time-loaded {
+  background: #666;  /* Cambia esto al color que prefieras para la barra de progreso cargada */
+}
+
+.mejs__time-rail .mejs__time-current {
+  background: #007bff;  /* Cambia esto al color que prefieras para la barra de progreso actual */
+}
+
+#audio-controls {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+#audio-control-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 0 10px;
+}
+
         #tour-image {
           /*max-width: 1500px;  /* Configura el tamaño máximo de la imagen */
           /*height: auto;  /* Mantiene el aspect ratio de la imagen */
@@ -110,17 +154,34 @@
       }
 
       // Event Listener para el botón de llegada
-      document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('arrive-button').addEventListener('click', function() {
-          document.getElementById('map').style.display = 'none';
-          document.getElementById('directions-panel').style.display = 'none';
-          document.getElementById('arrive-button').style.display = 'none';
-          document.getElementById('tour-content').style.display = 'block';
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("Current step: ", "{{ current_step }}");
+
+    const player = new MediaElementPlayer('player');  
+    document.getElementById('arrive-button').addEventListener('click', function() {
+    document.getElementById('map').style.display = 'none';
+    document.getElementById('directions-panel').style.display = 'none';
+    document.getElementById('arrive-button').style.display = 'none';
+    document.getElementById('tour-content').style.display = 'block';
+    
+    var audioElement = document.getElementById('player');
+    document.getElementById('audio-source').src = tourAudio;
+    audioElement.style.display = 'block'; 
+    audioElement.load(); // Cargar el audio
+
+    // Inicializar MediaElementPlayer
+    
+    
+  });
+
+        document.getElementById('backward').addEventListener('click', function() {
+          var audioElement = document.getElementById('player');
+          audioElement.currentTime -= 15;  // Retrocede 15 segundos
         });
 
-        document.getElementById('audio-button').addEventListener('click', function() {
-          var audio = new Audio(tourAudio);
-          audio.play();
+        document.getElementById('forward').addEventListener('click', function() {
+          var audioElement = document.getElementById('player');
+          audioElement.currentTime += 15;  // Adelanta 15 segundos
         });
       });
     </script>
@@ -133,15 +194,47 @@
       <a href="#" id="arrive-button" class="btn btn-primary" style="margin-top:10px;">I arrived, Lets Tour!</a>
     </div>
     <div class="container px-4 py-5" id="custom-cards">
-    <div id="tour-content" style="display: none; display: flex; flex-direction: column;">
+        <div id="tour-content" style="display: none; flex-direction: column;">
+
       <img id="tour-image" src="{{ tour.imagen.url }}" alt="Tour Image" />
     
       <br>
-      <button id="audio-button">Play Audio</button>
+      <audio id="player" controls style="display: none;">
+        <source id="audio-source" src="{{ tour.audio.url }}" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+      </audio>
+      <div id="audio-controls">
+        <button id="backward" class="audio-control-button backward">
+            <img src="{% static 'mediaelement-6.0.3/media/atrasar.png' %}" alt="Retroceder 15 segundos" />
+        </button>
+        <button id="forward" class="audio-control-button forward">
+            <img src="{% static 'mediaelement-6.0.3/media/adelantar.png' %}" alt="Adelantar 15 segundos" />
 
+        </button>
+      </div>
+      <button id="next-step" class="btn btn-primary" data-tour-id="{{ tour.id }}" data-step-id="0">Next step</button>
+
+      <script>
+        // Asegúrate de que el documento esté completamente cargado antes de intentar adjuntar eventos a los elementos
+document.addEventListener('DOMContentLoaded', function() {
+    var nextStepButton = document.getElementById('next-step');
+    nextStepButton.addEventListener('click', function() {
+        // Obtén el id del tour
+        var tourId = this.getAttribute('data-tour-id');
+        var stepId = this.getAttribute('data-step-id');
+        console.log("Clicked next step button. Tour ID: ", tourId, "Step ID: ", stepId);
+        // Incrementa el stepId
+        var nextStepId = parseInt(stepId) + 1;
+        window.location.href = '/step/' + tourId + '/' + nextStepId;
+    });
+});
+
+        
+        
+        </script>
       </div>
     </div>
-    
+   
   </body>
 </html>
 

@@ -166,12 +166,22 @@ class Tour(models.Model):
 
 class Paso(models.Model):
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
+    step_number = models.IntegerField(default=0)
     imagen = models.ImageField(upload_to='pasos/', null=True, blank=True)
     audio = models.FileField(upload_to='paso_audio/', null=True, blank=True)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-
+    class Meta:
+        ordering = ['step_number']
+    def as_dict(self):
+        return {
+            "imagen": self.imagen.url if self.imagen else None,
+            "audio": self.audio.url if self.audio else None,
+            "latitude": self.latitude if self.latitude else None,
+            "longitude": self.longitude if self.longitude else None,
+            "step_number": self.step_number if self.step_number else None,
+        }
     def __str__(self):
-        return self.titulo
+        return str(self.step_number)  

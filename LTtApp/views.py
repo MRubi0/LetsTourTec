@@ -14,6 +14,7 @@ import math
 from math import radians, sin, cos, sqrt, atan2
 from .forms import GuideForm, AudioFileForm, ImageFileForm, LocationForm, CustomUserCreationForm
 from .models import Guide, AudioFile, ImageFile, Location, CustomUser, Tour
+#from .models import LTtApp_paso
 
 from django.contrib import messages
 
@@ -24,14 +25,14 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 
 from .forms import TourForm
-from .models import Tour
+from .models import Tour, Paso
 
 from django.db.models.expressions import RawSQL
 from django.db import connection
 
 from django.core.paginator import Paginator
 from django.core import serializers
-
+from django.core.exceptions import ObjectDoesNotExist
 import folium
 
 
@@ -433,7 +434,20 @@ def directions(request, tour_id):
     tour = Tour.objects.get(pk=tour_id)
     print(f"Latitud del tour: {tour.latitude}")
     print(f"Longitud del tour: {tour.longitude}")
-    return render(request, 'directions.html', {'tour': tour})
+     # Obtiene el primer paso del tour
+    try:
+        first_step = tour.paso_set.order_by('id').first()
+        if first_step:
+            step_id = first_step.id
+        else:
+            step_id = None
+            # Aquí podrías manejar el caso en el que un tour no tenga pasos
+    except Paso.DoesNotExist:
+        step_id = None
+        # Aquí podrías manejar el caso en el que un tour no tenga pasos
+
+    # Pasa el tour y el step_id al contexto de la plantilla
+    return render(request, 'directions.html', {'tour': tour, 'step_id': step_id})
 
 
 def get_tour_data():
@@ -472,4 +486,58 @@ def debug_tour(request, tour_id):
     # imprimimos todos los atributos y valores del tour
     print(vars(tour))
 
-    
+
+def next_step(request, tour_id, step_id=None):
+    print(f"Handling next_step request for tour_id={tour_id}, step_id={step_id}")
+
+    try:
+        # Encuentra el tour por su ID
+        tour = Tour.objects.get(pk=tour_id)
+        print(f"Found tour: {tour}")
+        # Encuentra el paso actual
+        current_step = Paso.objects.get(pk=step_id)
+        print(f"Found current step: {current_step}")
+
+        # Intenta encontrar el siguiente paso
+        try:
+            next_step = Paso.objects.filter(tour_id=tour_id, id__gt=step_id).order_by('id').first()
+            print(f"Found next step: {next_step}")
+        except Paso.DoesNotExist:
+            print(f"No more steps found for tour_id={tour_id}")
+            return JsonResponse({'error': 'No more steps'}, status=404)
+
+        # Retornar los datos del próximo paso
+        return JsonResponse({
+            'latitude': next_step.latitude,
+            'longitude': next_step.longitude
+            # Incluye cualquier otra información que necesites para el siguiente paso
+        })
+    except Tour.DoesNotExist:
+        print(f"No tour found with tour_id={tour_id}")
+        return JsonResponse({'error': 'Tour not found'}, status=404)
+    except Paso.DoesNotExist:
+        print(f"No step found with step_id={step_id}")
+        return JsonResponse({'error': 'Step not found'}, status=404)
+
+def step_detail(request, tour_id, step_id):
+    try:
+        # Encuentra el tour por su ID
+        tour = Tour.objects.get(pk=tour_id)
+
+        # Encuentra el paso por su ID
+        step = Paso.objects.get(pk=step_id)
+
+        # Verifica que el paso pertenezca al tour
+        if step.tour != tour:
+            raise Paso.DoesNotExist()
+
+        # Pasa el tour y el paso al contexto de la plantilla
+        return render(request, 'step.html', {'tour': tour, 'step': step})
+
+    except Tour.DoesNotExist:
+        # Manejo del error cuando no se encuentra el tour
+        return HttpResponseNotFound('Tour not found')
+
+    except Paso.DoesNotExist:
+        # Manejo del error cuando no se encuentra el paso o el paso no pertenece al tour
+        return HttpResponseNotFound('Step not found or does not belong to this tour')
