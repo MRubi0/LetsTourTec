@@ -161,7 +161,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'miguel6ortiz6@gmail.com'  # Tu dirección de correo electrónico
-EMAIL_HOST_PASSWORD = 'jlog0107'  # Tu contraseña de correo electrónico
+EMAIL_HOST_PASSWORD = 'miguel1928'  # Tu contraseña de correo electrónico
 
 #ALLOWED_HOSTS = ['*.elasticbeanstalk.com', 'LetsTourTec.com', 'www.LetsTourTec.com']
 
