@@ -500,18 +500,32 @@ def next_step(request, tour_id, step_id=None):
 
         # Intenta encontrar el siguiente paso
         try:
-            next_step = Paso.objects.filter(tour_id=tour_id, id__gt=step_id).order_by('id').first()
+            #next_step = Paso.objects.filter(tour_id=tour_id, id__gt=current_step.id).order_by('id').first()
+            next_step = Paso.objects.filter(tour_id=tour_id, id__gte=current_step.id).order_by('id').first()
+
             print(f"Found next step: {next_step}")
         except Paso.DoesNotExist:
             print(f"No more steps found for tour_id={tour_id}")
             return JsonResponse({'error': 'No more steps'}, status=404)
 
-        # Retornar los datos del próximo paso
-        return JsonResponse({
-            'latitude': next_step.latitude,
-            'longitude': next_step.longitude
-            # Incluye cualquier otra información que necesites para el siguiente paso
-        })
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            # Retornar los datos del próximo paso
+            if next_step is not None:
+                response = {
+                    'latitude': next_step.latitude,
+                    'longitude': next_step.longitude
+                    # Incluye cualquier otra información que necesites para el siguiente paso
+                }
+                print(f"Returning response: {response}")  # Imprime la respuesta antes de devolverla
+                return JsonResponse(response)
+            else:
+                return JsonResponse({'message': 'End of tour'}, status=200)
+
+        # Si no es una solicitud AJAX, renderiza una plantilla
+        else:
+            return render(request, 'step.html', {'tour': tour, 'step': next_step})
+
     except Tour.DoesNotExist:
         print(f"No tour found with tour_id={tour_id}")
         return JsonResponse({'error': 'Tour not found'}, status=404)
@@ -530,9 +544,16 @@ def step_detail(request, tour_id, step_id):
         # Verifica que el paso pertenezca al tour
         if step.tour != tour:
             raise Paso.DoesNotExist()
+        
+        # Intenta encontrar el siguiente paso
+        try:
+            next_step = Paso.objects.filter(tour_id=tour_id, id__gt=step_id).order_by('id').first()
+        except Paso.DoesNotExist:
+            next_step = None
+
 
         # Pasa el tour y el paso al contexto de la plantilla
-        return render(request, 'step.html', {'tour': tour, 'step': step})
+        return render(request, 'step.html', {'tour': tour, 'step': step, 'next_step': next_step})
 
     except Tour.DoesNotExist:
         # Manejo del error cuando no se encuentra el tour

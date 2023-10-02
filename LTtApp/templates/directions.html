@@ -221,14 +221,32 @@ document.addEventListener('DOMContentLoaded', function() {
     nextStepButton.addEventListener('click', function() {
         // Obtén el id del tour
         var tourId = this.getAttribute('data-tour-id');
-        var stepId = this.getAttribute('data-step-id');
+        var stepId = 0;
+        //var stepId = this.getAttribute('data-step-id');
         console.log("Clicked next step button. Tour ID: ", tourId, "Step ID: ", stepId);
         // Incrementa el stepId
         var nextStepId = parseInt(stepId) + 1;
-        window.location.href = '/step/' + tourId + '/' + nextStepId;
+        getNextStepData(tourId, nextStepId);
+        //window.location.href = '/step/' + tourId + '/' + nextStepId;
     });
 });
-
+function getNextStepData(tourId, stepId) {
+  // Realiza una solicitud AJAX para obtener los datos del siguiente paso
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      // Una vez que tienes los datos, redirige a 'step.html' y pasa los datos como parámetros
+      var nextStepData = JSON.parse(this.responseText);
+      window.location.href = '/step/' + tourId + '/' + stepId +
+        '?lat=' + nextStepData.latitude +
+        '&lng=' + nextStepData.longitude +
+        '&image=' + encodeURIComponent(nextStepData.image_url) +
+        '&audio=' + encodeURIComponent(nextStepData.audio_url);
+    }
+  };
+  xhttp.open('GET', '/api/tour/' + tourId + '/step/' + stepId, true);
+  xhttp.send();
+}
         
         
         </script>

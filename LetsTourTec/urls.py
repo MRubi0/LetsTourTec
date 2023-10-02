@@ -36,8 +36,9 @@ urlpatterns = [
     path('custom_tours_page/', views.custom_tours_page, name='custom_tours_page'),
     path('get_tour_distance/', views.get_tour_distance, name='get_tour_distance'),
     path('directions/<int:tour_id>/', views.directions, name='directions'),
-    #path('step/<int:tour_id>/<int:step_id>/', views.next_step, name='next_step'),
-    path('step/<int:tour_id>/<int:step_id>/', views.step_detail, name='step_detail'),
+    path('step/<int:tour_id>/<int:step_id>/', views.next_step, name='next_step'),
+    #path('step/<int:tour_id>/<int:step_id>/', views.step_detail, name='step_detail'),
+    path('api/tour/<int:tour_id>/step/<int:step_id>/', views.next_step, name='next_step'),
 
 
 

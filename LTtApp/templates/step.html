@@ -1,56 +1,184 @@
 {% extends "base.html" %}
 {% load static %} 
 {% block content %}
-<!-- Importaciones y CSS -->
+<link rel="stylesheet" href="{% static 'mediaelement-6.0.3/build/mediaelementplayer.min.css' %}">
+<script src="{% static 'mediaelement-6.0.3/build/mediaelement-and-player.min.js' %}"></script>
+<img src="{% static 'mediaelement-6.0.3/build/mejs-controls.svg' %}" alt="Media Controls">
+
+<style>
+  /* Aquí van los estilos del mapa y del audio */
+</style>
 
 <script>
+
   var tourLat, tourLng;
   var tourImage, tourAudio;
 
   // Esta función se invocará cuando el usuario haga clic en "Next Step"
-  function nextStep(tourId) {
-    // Realiza una solicitud AJAX para obtener los datos del siguiente paso
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        // Actualiza el mapa con los datos del siguiente paso
-        var nextStepData = JSON.parse(this.responseText);
+  
+function nextStep(tourId, stepId, redirect=false) {
+  // Realiza una solicitud AJAX para obtener los datos del siguiente paso
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var nextStepData = JSON.parse(this.responseText);
+      if (redirect) {
+        // Redirige a 'step.html' y pasa los datos como parámetros
+        window.location.href = '/step/' + tourId + '/' + (stepId + 1) +
+          '?lat=' + nextStepData.latitude +
+          '&lng=' + nextStepData.longitude +
+          '&image=' + encodeURIComponent(nextStepData.image_url) +
+          '&audio=' + encodeURIComponent(nextStepData.audio_url);
+      } else {
+        // Actualiza el mapa, la imagen y el audio
         updateMap(nextStepData.latitude, nextStepData.longitude);
         tourImage = nextStepData.image_url;
         tourAudio = nextStepData.audio_url;
-        
-        // Actualiza la imagen y el audio
+
         document.getElementById('tour-image').src = tourImage;
         document.getElementById('audio-source').src = tourAudio;
-        
-        // Muestra la imagen y el audio
+
         document.getElementById('tour-image').style.display = 'block';
         document.getElementById('player').style.display = 'block';
+        
+        // Actualiza el stepId
+        document.getElementById('next-step').setAttribute('data-step-id', stepId + 1);
       }
-    };
-    xhttp.open('GET', '/api/tour/' + tourId + '/next_step', true);
-    xhttp.send();
-  }
+    }
+  };
+  xhttp.open('GET', '/api/tour/' + tourId + '/step/' + nextStepId, true);
+  xhttp.send();
+}
 
   function updateMap(latitude, longitude) {
     // Aquí tendrías que actualizar el mapa con la nueva latitud y longitud
     tourLat = parseFloat(latitude);
     tourLng = parseFloat(longitude);
+
+    initMap();
   }
   
   // Asegúrate de que el documento esté completamente cargado antes de intentar adjuntar eventos a los elementos
   document.addEventListener('DOMContentLoaded', function() {
+    // Código para manejar el evento click del botón "next-step"
     var nextStepButton = document.getElementById('next-step');
     nextStepButton.addEventListener('click', function() {
-      // Obtén el id del tour
-      var tourId = this.getAttribute('data-tour-id');
-      nextStep(tourId);
+        var tourId = this.getAttribute('data-tour-id');
+        var stepId = -1;  // Como mencionaste, si estás en directions.html, este es el paso 0
+        var nextStepId = parseInt(stepId) + 1;
+        getNextStepData(tourId, nextStepId);
     });
-  });
+
+    // Código para obtener los parámetros de URL y actualizar la vista
+    var urlParams = new URLSearchParams(window.location.search);
+    var latitude = urlParams.get('lat');
+    var longitude = urlParams.get('lng');
+    var imageUrl = urlParams.get('image');
+    var audioUrl = urlParams.get('audio');
+
+    updateMap(latitude, longitude);
+    document.getElementById('tour-image').src = decodeURIComponent(imageUrl);
+    document.getElementById('audio-source').src = decodeURIComponent(audioUrl);
+});
+
+// Aquí va el código de inicialización del mapa y del audio
+var map;
+var directionsDisplay;
+var directionsService;
+
+function initMap() {
+    console.log("initMap called");
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsService = new google.maps.DirectionsService();
+    directionsDisplay.setPanel(document.getElementById('directions-panel')); // Aquí añades las direcciones al panel
+
+    // Intentamos obtener la ubicación del usuario
+    if (navigator.geolocation) {
+      console.log("Attempting to get user location");
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var start = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+
+        var end = {lat: tourLat, lng: tourLng}; 
+
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 8,
+          center: start
+        });
+
+        directionsDisplay.setMap(map);
+
+        // Configuramos las direcciones
+        var request = {
+          destination: end,
+          origin: start,
+          travelMode: 'WALKING'
+        };
+
+        directionsService.route(request, function(response, status) {
+          if (status == 'OK') {
+            directionsDisplay.setDirections(response);
+          } else {
+            console.log('Directions request failed due to ' + status);
+          }
+        });
+      }, function() {
+        handleLocationError(true);
+      });
+    } else {
+      // El navegador no soporta geolocalización
+      handleLocationError(false);
+    }
+  }
+
+function handleLocationError(browserHasGeolocation) {
+  console.log(browserHasGeolocation ?
+      'Error: Hubo un problema obteniendo la geolocalización.' :
+      'Error: Tu navegador no soporta geolocalización.');
+}
+
+const player = new MediaElementPlayer('player');  
 </script>
 
 <body>
-  <!-- Tu cuerpo de la página se mantiene igual hasta aquí -->
-  <button id="next-step" class="btn btn-primary" data-tour-id="{{ tour.id }}">Next step</button>
+  <div id="map" style="height: 500px; width: 100%;"></div>
+  <div style="display: flex; flex-direction: column; justify-content: space-between;">
+    <div id="directions-panel" style="margin-top:10px;background-color:#fff; height: 350px; overflow: auto;"></div>
+    <a href="#" id="arrive-button" class="btn btn-primary" style="margin-top:10px;">I arrived, Lets Tour!</a>
+  </div>
+  <div class="container px-4 py-5" id="custom-cards">
+    <div id="tour-content" style="display: none; flex-direction: column;">
+
+      <img id="tour-image" src="{{ tour.imagen.url }}" alt="Tour Image" />
+
+      <br>
+      <audio id="player" controls style="display: none;">
+        <source id="audio-source" src="{{ tour.audio.url }}" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+      </audio>
+      <div id="audio-controls">
+        <button id="backward" class="audio-control-button backward">
+            <img src="{% static 'mediaelement-6.0.3/media/atrasar.png' %}" alt="Retroceder 15 segundos" />
+        </button>
+        <button id="forward" class="audio-control-button forward">
+            <img src="{% static 'mediaelement-6.0.3/media/adelantar.png' %}" alt="Adelantar 15 segundos" />
+        </button>
+      </div>
+      <button id="next-step" class="btn btn-primary" data-tour-id="{{ tour.id }}" data-step-id="0">Next step</button>
+    </div>
+  </div>
+
+{% if next_step %}
+  <button id="next-step" class="btn btn-primary" 
+          onclick="location.href='{% url 'step_detail' tour.id next_step.id %}'">
+          Next step
+  </button>
+{% else %}
+  <p>No more steps.</p>
+{% endif %}
 </body>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnQMn3c3-WIDNl6dl7es1y57hAIxbrxrA&callback=initMap" async defer></script>
+
 {% endblock %}
