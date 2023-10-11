@@ -1,0 +1,61 @@
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px; 
+}
+
+.custom-header {
+    color: black;
+    font-size: 1.25rem;  
+    padding-left: 0;              
+    font-weight: auto;
+    margin-bottom: 40px; 
+    font-weight: 550;
+    
+}
+
+.search-card {
+    max-width: 80%; // Esto coincide con el ancho de tu .container-card
+    margin: 50px auto; // Alinea tu tarjeta en el centro y proporciona un margen vertical
+    padding: 20px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Una sombra suave, similar a la que mat-card podría tener
+}
+
+.search-content {
+    width: 100%;
+    max-width: 800px;  
+    margin: 0 auto;  
+}
+.search-input {
+    width: 300px; 
+    padding: 10px 15px; 
+    font-size: 16px; 
+    margin-right: 20px;    
+    border-radius: 4px;
+}
+
+
+.custom-button-color {
+    background-color: #0d6efd !important;
+    color: white !important;
+
+    & .mat-button-wrapper {
+        color: white !important;
+    }
+}
+
+.trip-message-row {
+    text-align: left; 
+}
+
+.trip-message {
+    color: black;
+    margin-bottom: 20px; 
+    text-align: left;  
+}
+.search-bar-row {
+    width: 100%; 
+    display: flex;
+    justify-content: center; 
+}

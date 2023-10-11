@@ -1,0 +1,55 @@
+<div class="ppal-container d-flex justify-content-center">
+    <div class="container-login text-center">
+      <div class="row mb-3">
+        <div class="col">
+          <div class="col-12">
+            <h3 data-cy="loginTitle">Login</h3>
+          </div>
+          <div class="alert alert-danger" *ngIf="authenticationError" data-cy="loginError">
+            <strong>¡El inicio de sesión ha fallado!</strong> Por favor, revise las credenciales e intente de nuevo.
+          </div>
+        </div>
+      </div>
+      <div class="row card" id="card-login">
+        <div class="card-body" id="card-login-body">
+          <form class="form" role="form"  [formGroup]="loginForm">
+            <div class="row mb-3">
+              <div class="col-3 label-login">
+                <label class="username-label" for="username">User</label>
+              </div>
+              <div class="col-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="username"
+                  id="login-pass"
+                  placeholder="Nombre de usuario"
+                  formControlName="username"
+                  #username
+                  data-cy="username"
+                />
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-3 label-login">
+                <label for="password">Password</label>
+              </div>
+              <div class="col-6">
+                <input
+                  type="password"
+                  class="form-control"
+                  name="password"
+                  id="login-pass"
+                  placeholder="Su contraseña"
+                  formControlName="password"
+                  data-cy="password"
+                />
+              </div>
+            </div>
+            <button mat-raised-button class="login button" type="submit" data-cy="submit">Iniciar sesión</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  

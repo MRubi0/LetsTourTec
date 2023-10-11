@@ -1,0 +1,98 @@
+.container {
+    margin: 0px;
+    padding: 30px;
+}
+
+.row-buttons {
+    width: 50%;
+}
+
+.image {
+    border-radius: 20px 20px 0px 0px;
+    height: 145px;
+    width: 100%;
+}
+
+mat-mdc-card-title {
+    font-size: 18px;
+}
+
+.container-card {
+    max-width: 33%;
+    margin: 10px 10px 10px 10px;
+    height: 100%;
+}
+
+.tour-card {
+    max-width: 18rem;
+    max-height: 450px;
+    min-height: 450px;
+    scroll-behavior: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.mt-3 {
+    margin-top: 16px;
+}
+
+.my-icon {
+    fill: #0d6efd !important;
+    color: #0d6efd !important;
+}
+
+.mat-mdc-card-title {
+    color: black;
+    font-size: 1.25rem;
+    padding-left: 0;
+    font-weight: auto;
+
+}
+
+
+.custom-button-color {
+    background-color: #0d6efd !important;
+
+    & .mat-button-wrapper {
+        color: white !important;
+    }
+}
+
+button.mat-raised-button.my-icon {
+    background-color: #0d6efd !important;
+
+    .mat-button-wrapper {
+        color: white;
+    }
+}
+
+.button-fab {
+    z-index: 1;
+    position: absolute;
+    background-color: #0d6efd !important;
+}
+
+.content {
+    overflow: auto;
+    height: 280px;
+    scrollbar-width: thin !important;
+    scrollbar-color: #0d6efd;
+}
+
+mat-card {
+    border-radius: 20px;
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    /* Ancho de la scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #0d6efd;
+    /* Color del thumb (barra deslizante) */
+    border-radius: 4px;
+    /* Borde redondeado del thumb */
+}
