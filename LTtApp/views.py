@@ -232,16 +232,18 @@ def get_nearest_tours(request):
     tour_categories = ['ocio', 'naturaleza', 'cultural']
     nearest_tours = {}
 
+    result = []
+
     for category in tour_categories:
         # Ordenar por distancia y filtrar por categoría
         filtered_tours = sorted(
             filter(lambda x: x['tour'].tipo_de_tour == category, tours_with_distances),
             key=lambda x: x['distance']
         )
-        # Tomar el primer tour de la lista, que es el más cercano
+    # Tomar el primer tour de la lista, que es el más cercano
         if filtered_tours:
             tour = filtered_tours[0]['tour']
-            nearest_tours[category] = {
+            tour_object = {
                 'id': tour.id,
                 'titulo': tour.titulo,
                 'descripcion': tour.descripcion,
@@ -251,9 +253,9 @@ def get_nearest_tours(request):
                 'duracion': tour.duracion,
                 'recorrido': tour.recorrido,
             }
+        result.append(tour_object)
 
-    # Devolver los tours más cercanos como respuesta JSON
-    return JsonResponse(nearest_tours)
+    return JsonResponse(result, safe=False)
 
 
 def tour_detail(request, tour_id):
@@ -282,10 +284,13 @@ def get_latest_tours(request):
 
     # Consulta el último tour de cada tipo
     tour_data = {}
+
+    result = []
+
     for t in tour_types:
         try:
             latest_tour = Tour.objects.filter(tipo_de_tour=t).latest('created_at')
-            tour_data[t] = {
+            tour_data = {
                 'id': latest_tour.id,
                 'titulo': latest_tour.titulo,
                 'descripcion': latest_tour.descripcion,
@@ -296,11 +301,12 @@ def get_latest_tours(request):
                 'recorrido': latest_tour.recorrido,
                 'duracion': latest_tour.duracion,
             }
+            result.append(tour_data)
         except Tour.DoesNotExist:
             # No hay tours para este tipo
             pass
 
-    return JsonResponse(tour_data)
+    return JsonResponse(result, safe=False)
 
 
 def get_random_tours(request):
@@ -318,11 +324,15 @@ def get_random_tours(request):
 
     # Convierte los objetos de los tours en diccionarios para que puedan ser serializados a JSON
     random_tours_json = {}
+    result=[]
     for key, tour in random_tours.items():
         if tour:
-            random_tours_json[key] = tour.as_dict()
-
-    return JsonResponse(random_tours_json)
+            random_tours_json= tour.as_dict()
+            random_tours_json['imagen']={
+                'url': random_tours_json['imagen']
+            }             
+            result.append(random_tours_json)
+    return JsonResponse(result,safe=False)
 
 
 def get_tour_distance(request):
