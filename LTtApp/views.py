@@ -355,13 +355,16 @@ def get_tour_distance(request):
 
     tour = Tour.objects.get(id=tour_id)
 
-    distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
+    
 
-    tour_data = serializers.serialize('json', [tour])
-    return JsonResponse({
-        'tour': tour_data,
-        'distance': distance,
-    })
+    distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
+    
+    tour_data = serializers.serialize('python', [tour])
+
+    tour_data[0]['fields']['distance']=distance
+    return JsonResponse(
+         tour_data, safe=False
+    )
 
 def get_nearest_tours_all(request):
     latitud_usuario = request.GET.get('latitude', None)
