@@ -22,6 +22,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AlltoursComponent } from './components/alltours/alltours.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { GenericCardComponent } from './components/generics/generic-card/generic-card.component';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { GenericCardComponent } from './components/generics/generic-card/generic
     MatIconModule,
     MatCardModule,
     FlexLayoutModule,
-    MatTooltipModule
+    MatTooltipModule,
+    NgxPaginationModule
   ],
   providers: [],
   bootstrap: [AppComponent]

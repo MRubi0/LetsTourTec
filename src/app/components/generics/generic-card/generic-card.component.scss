@@ -1,7 +1,3 @@
-.container {
-    margin: 0px;
-    padding: 30px;
-}
 
 .row-buttons {
     width: 50%;
@@ -18,13 +14,12 @@ mat-mdc-card-title {
 }
 
 .container-card {
-    max-width: 33%;
-    margin: 10px 10px 10px 10px;
-    height: 100%;
+    margin: 10px 0px 10px 0px;
 }
 
 .tour-card {
     max-width: 18rem;
+    min-width: 18rem;
     max-height: 450px;
     min-height: 450px;
     scroll-behavior: auto;

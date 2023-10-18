@@ -8,6 +8,12 @@ import { Component, Input } from '@angular/core';
 export class GenericCardComponent {
 
   @Input('toursdata') toursdata:any=[];
+  @Input('all-tours') view!:boolean;
+
+  p!: number;
+  pageSize:number=10;
+  autoHide=true
+  responsive=true
 
   ngOnInit(){
     this.toursdata.map((data:any)=>{

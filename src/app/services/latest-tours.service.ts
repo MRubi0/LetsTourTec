@@ -19,8 +19,9 @@ export class LatestToursService {
       }));
   }
 
-  getClosestTours() {    
-    return this.http.get(`${environment.apiUrl}get_nearest_tours/?latitude=4.653056&longitude=-74.1310464`)
+  getClosestTours(lat:string, long:string) {    
+    console.log(lat, long);
+    return this.http.get(`${environment.apiUrl}get_nearest_tours/?latitude=${lat}&longitude=${long}`)
       .pipe(map((data: any) => {        
         return data;
       }));
