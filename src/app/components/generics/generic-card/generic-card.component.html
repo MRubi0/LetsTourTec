@@ -3,7 +3,7 @@
         itemsPerPage: pageSize,
         currentPage: p,
         totalItems: toursdata.lenght }">
-        <mat-card class="tour-card">
+        <mat-card class="tour-card" routerLink="/tour/{{tours.id}}">
             <mat-card-header class="p-0">
                 <img class="image" mat-card-image src={{tours.imagen.url}} alt="Image">
                 <button class='button-fab' mat-fab data-bs-toggle="tooltip" matTooltip={{tours.tipo_de_tour}}

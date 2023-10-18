@@ -23,6 +23,7 @@ import { AlltoursComponent } from './components/alltours/alltours.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { GenericCardComponent } from './components/generics/generic-card/generic-card.component';
 import {NgxPaginationModule} from 'ngx-pagination';
+import { TourDetailComponent } from './components/tour-detail/tour-detail.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {NgxPaginationModule} from 'ngx-pagination';
     HomeComponent,
     SearchBarComponent,
     AlltoursComponent,
-    GenericCardComponent
+    GenericCardComponent,
+    TourDetailComponent
   ],
   imports: [
     BrowserModule,
