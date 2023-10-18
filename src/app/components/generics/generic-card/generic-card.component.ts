@@ -15,7 +15,8 @@ export class GenericCardComponent {
   autoHide=true
   responsive=true
 
-  ngOnInit(){
+  ngOnChanges(){
+    console.log("toursdata-->", this.toursdata);
     this.toursdata.map((data:any)=>{
       if(data.tipo_de_tour=='ocio'){
         data.tipo_de_tour='Leisure';
