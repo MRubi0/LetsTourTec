@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
 import { ToursDetailService } from 'src/app/services/tours-detail.service';
 
@@ -16,7 +16,8 @@ export class TourDetailComponent {
   constructor(
     private toursDetailService:ToursDetailService,
     private activatedRoute:ActivatedRoute,
-    private sharedService:SharedService
+    private sharedService:SharedService,
+    private router:Router
     ){
       this.$url=this.sharedService.getImage;
   }
@@ -29,10 +30,14 @@ export class TourDetailComponent {
   loadData(id:any){
     this.toursDetailService.getTourDetail(id).subscribe((data:any)=>{
       this.detail=data[0].fields;
+      console.log(this.detail);
     });
     this.$url.subscribe((url:any)=>{
       this.image_url=url;      
     });
+  }
+  letsTour(){
+    this.router.navigate(['/stepper']);
   }
   
 }

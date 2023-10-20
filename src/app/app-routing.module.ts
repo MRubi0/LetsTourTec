@@ -4,6 +4,7 @@ import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { AlltoursComponent } from './components/alltours/alltours.component';
 import { TourDetailComponent } from './components/tour-detail/tour-detail.component';
+import { StepperComponent } from './components/stepper/stepper.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
   { 
     path: 'tour/:id', 
     component: TourDetailComponent
+  },
+  { 
+    path: 'stepper', 
+    component: StepperComponent
   },
 ];
 

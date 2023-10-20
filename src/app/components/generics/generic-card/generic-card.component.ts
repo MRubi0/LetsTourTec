@@ -16,9 +16,7 @@ export class GenericCardComponent {
   autoHide=true
   responsive=true
 
-  constructor(private sharedService:SharedService){
-
-  }
+  constructor(private sharedService:SharedService){}
 
   ngOnChanges(){
     this.toursdata.map((data:any)=>{
@@ -34,9 +32,7 @@ export class GenericCardComponent {
       return data;
     });
   }
-
   sendImage(image:string){
-    console.log('url --<', image)
     this.sharedService.setImage=image;
   }
 }

@@ -24,6 +24,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { GenericCardComponent } from './components/generics/generic-card/generic-card.component';
 import {NgxPaginationModule} from 'ngx-pagination';
 import { TourDetailComponent } from './components/tour-detail/tour-detail.component';
+import { StepperComponent } from './components/stepper/stepper.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { TourDetailComponent } from './components/tour-detail/tour-detail.compon
     SearchBarComponent,
     AlltoursComponent,
     GenericCardComponent,
-    TourDetailComponent
+    TourDetailComponent,
+    StepperComponent
   ],
   imports: [
     BrowserModule,
