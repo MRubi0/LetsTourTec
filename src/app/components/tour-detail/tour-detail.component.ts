@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { SharedService } from 'src/app/services/shared.service';
 import { ToursDetailService } from 'src/app/services/tours-detail.service';
 
 @Component({
@@ -9,16 +11,28 @@ import { ToursDetailService } from 'src/app/services/tours-detail.service';
 export class TourDetailComponent {
 
   detail:any;
-
-  constructor(private toursDetailService:ToursDetailService){
-
+  $url!:any;
+  image_url:string='';
+  constructor(
+    private toursDetailService:ToursDetailService,
+    private activatedRoute:ActivatedRoute,
+    private sharedService:SharedService
+    ){
+      this.$url=this.sharedService.getImage;
   }
 
-  ngOnInit(){
-
-    this.toursDetailService.getTourDetail('13').subscribe((data:any)=>{
+  ngOnInit(){    
+  this.activatedRoute.params.subscribe((params:any)=>{
+      this.loadData(params.id);
+    });   
+  }
+  loadData(id:any){
+    this.toursDetailService.getTourDetail(id).subscribe((data:any)=>{
       this.detail=data[0].fields;
-      console.log(this.detail);
+    });
+    this.$url.subscribe((url:any)=>{
+      this.image_url=url;      
     });
   }
+  
 }

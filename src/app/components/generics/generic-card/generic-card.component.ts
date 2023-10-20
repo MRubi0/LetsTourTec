@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'app-generic-card',
@@ -15,6 +16,10 @@ export class GenericCardComponent {
   autoHide=true
   responsive=true
 
+  constructor(private sharedService:SharedService){
+
+  }
+
   ngOnChanges(){
     this.toursdata.map((data:any)=>{
       if(data.tipo_de_tour=='ocio'){
@@ -30,4 +35,8 @@ export class GenericCardComponent {
     });
   }
 
+  sendImage(image:string){
+    console.log('url --<', image)
+    this.sharedService.setImage=image;
+  }
 }
