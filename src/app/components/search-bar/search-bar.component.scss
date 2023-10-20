@@ -19,7 +19,9 @@
     max-width: 80%; // Esto coincide con el ancho de tu .container-card
     margin: 50px auto; // Alinea tu tarjeta en el centro y proporciona un margen vertical
     padding: 20px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Una sombra suave, similar a la que mat-card podría tener
+    border-radius: 20px;
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
+
 }
 
 .search-content {
@@ -58,4 +60,15 @@
     width: 100%; 
     display: flex;
     justify-content: center; 
+}
+.container {
+    margin: 0px;
+    padding: 30px;
+}
+
+.search-card container-card {
+    max-width: 80%;
+    margin: 50px auto;
+    height: auto;
+    
 }
