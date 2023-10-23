@@ -20,6 +20,14 @@ export class GenericCardComponent {
 
   ngOnChanges(){
     this.toursdata.map((data:any)=>{
+      
+      const partofUrl = data.imagen.url.split('/'); // Divide la URL en partes usando '/' como separador
+      const nombreDeImagen = partofUrl[partofUrl.length - 1];
+
+      console.log("tours data", nombreDeImagen);
+
+      data.imagen.url=nombreDeImagen;
+
       if(data.tipo_de_tour=='ocio'){
         data.tipo_de_tour='Leisure';
       }
@@ -31,6 +39,8 @@ export class GenericCardComponent {
       }
       return data;
     });
+
+   
   }
   sendImage(image:string){
     this.sharedService.setImage=image;

@@ -25,6 +25,8 @@ import { GenericCardComponent } from './components/generics/generic-card/generic
 import {NgxPaginationModule} from 'ngx-pagination';
 import { TourDetailComponent } from './components/tour-detail/tour-detail.component';
 import { StepperComponent } from './components/stepper/stepper.component';
+import {MatStepperModule} from '@angular/material/stepper';
+
 
 @NgModule({
   declarations: [
@@ -54,7 +56,8 @@ import { StepperComponent } from './components/stepper/stepper.component';
     MatCardModule,
     FlexLayoutModule,
     MatTooltipModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    MatStepperModule
   ],
   providers: [],
   bootstrap: [AppComponent]
