@@ -1,11 +1,12 @@
 <mat-card class="container-card">
     <mat-card-header class="mb-3">
-        <mat-card-title>Closest tours</mat-card-title>
+        <mat-card-title>{{ title }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>        
         <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px" class="mb-5">
-            <button mat-raised-button color="primary" class="custom-button-color" (click)="lastToursF()">Show last tours</button>
-            <button mat-raised-button color="primary" class="custom-button-color" (click)="randomToursF()">Show random tours </button>
+            <button mat-raised-button color="primary" class="custom-button-color" (click)="lastToursF()">{{ button1Text }}</button>
+            <button mat-raised-button color="primary" class="custom-button-color" (click)="closestToursF()">{{ button2Text }}</button>
+            <button mat-raised-button color="primary" class="custom-button-color" (click)="randomToursF()">{{ button3Text }}</button>
         </div>
         <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px" class="card-contianer" *ngIf="lastTours">       
             <app-generic-card [toursdata]=lastTours class="d-flex"></app-generic-card>
