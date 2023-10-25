@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { ConnectableObservable } from 'rxjs';
 
 @Component({
   selector: 'app-stepper',
@@ -15,4 +16,12 @@ export class StepperComponent {
   });
   isLinear = false;
   constructor(private _formBuilder: FormBuilder) {}
+
+  ngOnInit(){
+    this.data('prueba');
+  }
+
+  data(event:any){
+    console.log("event--<", event);
+  }
 }

@@ -26,6 +26,7 @@ import {NgxPaginationModule} from 'ngx-pagination';
 import { TourDetailComponent } from './components/tour-detail/tour-detail.component';
 import { StepperComponent } from './components/stepper/stepper.component';
 import {MatStepperModule} from '@angular/material/stepper';
+import { SigninComponent } from './components/signin/signin.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import {MatStepperModule} from '@angular/material/stepper';
     AlltoursComponent,
     GenericCardComponent,
     TourDetailComponent,
-    StepperComponent
+    StepperComponent,
+    SigninComponent
   ],
   imports: [
     BrowserModule,

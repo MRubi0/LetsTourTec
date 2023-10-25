@@ -5,6 +5,7 @@ import { HomeComponent } from './components/home/home.component';
 import { AlltoursComponent } from './components/alltours/alltours.component';
 import { TourDetailComponent } from './components/tour-detail/tour-detail.component';
 import { StepperComponent } from './components/stepper/stepper.component';
+import { SigninComponent } from './components/signin/signin.component';
 
 const routes: Routes = [
   {
@@ -31,6 +32,10 @@ const routes: Routes = [
   { 
     path: 'stepper', 
     component: StepperComponent
+  },
+  { 
+    path: 'sigin', 
+    component: SigninComponent
   },
 ];
 
