@@ -27,6 +27,7 @@ import { TourDetailComponent } from './components/tour-detail/tour-detail.compon
 import { StepperComponent } from './components/stepper/stepper.component';
 import {MatStepperModule} from '@angular/material/stepper';
 import { SigninComponent } from './components/signin/signin.component';
+import { CustomToursPageComponent } from './components/custom-tours-page/custom-tours-page.component';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { SigninComponent } from './components/signin/signin.component';
     GenericCardComponent,
     TourDetailComponent,
     StepperComponent,
-    SigninComponent
+    SigninComponent,
+    CustomToursPageComponent
   ],
   imports: [
     BrowserModule,

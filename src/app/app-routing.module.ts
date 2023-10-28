@@ -6,7 +6,7 @@ import { AlltoursComponent } from './components/alltours/alltours.component';
 import { TourDetailComponent } from './components/tour-detail/tour-detail.component';
 import { StepperComponent } from './components/stepper/stepper.component';
 import { SigninComponent } from './components/signin/signin.component';
-
+import { CustomToursPageComponent } from './components/custom-tours-page/custom-tours-page.component';
 const routes: Routes = [
   {
     path:'',
@@ -37,6 +37,11 @@ const routes: Routes = [
     path: 'sigin', 
     component: SigninComponent
   },
+  {
+     path: 'custom_tours_page', 
+     component: CustomToursPageComponent 
+  },
+
 ];
 
 @NgModule({

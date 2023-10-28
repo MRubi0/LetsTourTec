@@ -1,13 +1,18 @@
 <mat-card class="search-card container-card">
-  <div class="custom-header">
-      Plan your next trip
-  </div>
-  <mat-card-content class="search-bar-row">
-      <form class="search-form">
-          <input class="search-input" type="text" placeholder="Where do you want to travel?" />
-          <button mat-raised-button class="custom-button-color" type="submit">Search</button>
-      </form>
-  </mat-card-content>
+    <div class="custom-header">
+        Plan your next trip
+    </div>
+    <mat-card-content class="search-bar-row">
+        <form class="search-form" (submit)="searchLocation(); $event.preventDefault();">
+            <input name="searchInput" class="search-input" [(ngModel)]="searchText" (input)="searchLocation()" type="text" placeholder="Where do you want to travel?" />
+            <button mat-raised-button class="custom-button-color" type="submit">Search</button>
+        </form>
+        <div class="search-results" *ngIf="searchResults.length">
+            <div *ngFor="let result of searchResults" (click)="selectLocation(result)">
+                {{ result.display_name }}
+            </div>
+        </div>
+    </mat-card-content>
 </mat-card>
 
-
+  

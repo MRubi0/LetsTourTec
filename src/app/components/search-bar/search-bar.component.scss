@@ -36,6 +36,9 @@
     margin-right: 20px;    
     border-radius: 4px;
 }
+.search-form {
+    position: relative;
+}
 
 
 .custom-button-color {
@@ -72,3 +75,22 @@
     height: auto;
     
 }
+.search-results {
+    border: 1px solid gray;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    position: absolute;
+    z-index: 2;
+    background-color: white;
+  
+    div {
+      padding: 10px;
+      cursor: pointer;
+  
+      &:hover {
+        background-color: lightgray;
+      }
+    }
+  }
+  
