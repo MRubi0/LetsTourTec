@@ -12,7 +12,7 @@ export class GenericCardComponent {
   @Input('all-tours') view!:boolean;
 
   p!: number;
-  pageSize:number=10;
+  pageSize:number=12;
   autoHide=true
   responsive=true
 
