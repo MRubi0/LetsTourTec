@@ -5,7 +5,7 @@ import { HomeComponent } from './components/home/home.component';
 import { AlltoursComponent } from './components/alltours/alltours.component';
 import { TourDetailComponent } from './components/tour-detail/tour-detail.component';
 import { StepperComponent } from './components/stepper/stepper.component';
-import { SigninComponent } from './components/signin/signin.component';
+import { SignupComponent } from './components/signup/signup.component';
 import { CustomToursPageComponent } from './components/custom-tours-page/custom-tours-page.component';
 const routes: Routes = [
   {
@@ -34,8 +34,8 @@ const routes: Routes = [
     component: StepperComponent
   },
   { 
-    path: 'sigin', 
-    component: SigninComponent
+    path: 'sigup', 
+    component: SignupComponent
   },
   {
      path: 'custom_tours_page', 

@@ -26,7 +26,7 @@ import {NgxPaginationModule} from 'ngx-pagination';
 import { TourDetailComponent } from './components/tour-detail/tour-detail.component';
 import { StepperComponent } from './components/stepper/stepper.component';
 import {MatStepperModule} from '@angular/material/stepper';
-import { SigninComponent } from './components/signin/signin.component';
+import { SignupComponent } from './components/signup/signup.component';
 import { CustomToursPageComponent } from './components/custom-tours-page/custom-tours-page.component';
 
 
@@ -42,7 +42,7 @@ import { CustomToursPageComponent } from './components/custom-tours-page/custom-
     GenericCardComponent,
     TourDetailComponent,
     StepperComponent,
-    SigninComponent,
+    SignupComponent,
     CustomToursPageComponent
   ],
   imports: [
