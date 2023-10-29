@@ -28,6 +28,8 @@ import { StepperComponent } from './components/stepper/stepper.component';
 import {MatStepperModule} from '@angular/material/stepper';
 import { SignupComponent } from './components/signup/signup.component';
 import { CustomToursPageComponent } from './components/custom-tours-page/custom-tours-page.component';
+import { RegistrationSuccessComponent } from './components/registration-success/registration-success.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 
 @NgModule({
@@ -43,7 +45,9 @@ import { CustomToursPageComponent } from './components/custom-tours-page/custom-
     TourDetailComponent,
     StepperComponent,
     SignupComponent,
-    CustomToursPageComponent
+    CustomToursPageComponent,
+    RegistrationSuccessComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

@@ -7,6 +7,9 @@ import { TourDetailComponent } from './components/tour-detail/tour-detail.compon
 import { StepperComponent } from './components/stepper/stepper.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { CustomToursPageComponent } from './components/custom-tours-page/custom-tours-page.component';
+import { RegistrationSuccessComponent } from 'src/app/components/registration-success/registration-success.component';
+import { ProfileComponent } from 'src/app/components/profile/profile.component';
+
 const routes: Routes = [
   {
     path:'',
@@ -41,7 +44,18 @@ const routes: Routes = [
      path: 'custom_tours_page', 
      component: CustomToursPageComponent 
   },
-
+  {
+     path: 'registration-success',
+     component: RegistrationSuccessComponent 
+  },
+  {
+    path: 'registration-success',
+    component: RegistrationSuccessComponent
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent
+  },
 ];
 
 @NgModule({
