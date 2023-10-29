@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from PIL import Image
 from django.db.models import F, Func, Q
 from django.db.models import ExpressionWrapper, FloatField
-
+import json
 from django.urls import reverse_lazy
 from django.views import generic
 from django.http import JsonResponse, HttpResponseBadRequest
@@ -34,7 +34,7 @@ from django.core.paginator import Paginator
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 import folium
-
+from django.views.decorators.csrf import csrf_exempt
 
 def haversine(lat1, lon1, lat2, lon2):
     # Radio de la Tierra en km
@@ -86,19 +86,63 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
-
+'''
+@csrf_exempt
 def register_view(request):
     if request.method == 'POST':
+        print(request.POST)
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('registration_success')  # Redirige a la página de éxito
+            #return redirect('registration_success')  # Redirige a la página de éxito
+            return JsonResponse({"success": True, "message": "Registration successful!"})
         else:
+            errors = {}
+            for field, error_list in form.errors.as_data().items():
+                errors[field] = [str(error) for error in error_list]
+            print(errors)
             messages.error(request, "Ha ocurrido un error en el registro. Por favor, verifica tus datos e inténtalo de nuevo.")
+
+            return JsonResponse({
+            "success": False,
+            "message": "Error in registration. Please verify your data and try again.",
+            "errors": errors
+                })            
     else:
         form = CustomUserCreationForm()
-    return render(request, 'registration/register.html', {'form': form})
+    #return render(request, 'registration/register.html', {'form': form})
+    return JsonResponse({"success": False, "message": "Invalid request method."})
+'''
+@csrf_exempt
+def register_view(request):
+    if request.method == 'POST':
+        # Cargamos el cuerpo de la solicitud (que es un JSON) en un diccionario de Python
+        data = json.loads(request.body.decode('utf-8'))
+        print(data)
+        # En lugar de usar request.POST, usamos el diccionario data que acabamos de crear
+        form = CustomUserCreationForm(data)
+        
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return JsonResponse({"success": True, "message": "Registration successful!"})
+        else:
+            errors = {}
+            for field, error_list in form.errors.as_data().items():
+                errors[field] = [str(error) for error in error_list]
+            print(errors)
+            messages.error(request, "Ha ocurrido un error en el registro. Por favor, verifica tus datos e inténtalo de nuevo.")
+
+            return JsonResponse({
+                "success": False,
+                "message": "Error in registration. Please verify your data and try again.",
+                "errors": errors
+            })            
+    else:
+        form = CustomUserCreationForm()
+
+    return JsonResponse({"success": False, "message": "Invalid request method."})
 
 def registration_success(request):
     return render(request, 'registration/success.html')
