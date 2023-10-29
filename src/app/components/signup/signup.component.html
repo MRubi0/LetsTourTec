@@ -9,19 +9,19 @@
       </div>
       <div class="row card" id="card-login">
           <div class="card-body" id="card-login-body">
-              <form class="form" role="form" [formGroup]="loginForm">
-                  <div class="row mb-3 g-0">
+            <form class="form" role="form" [formGroup]="loginForm" (ngSubmit)="registerUser()">
+                <div class="row mb-3 g-0">
                       <div class="col-2 label-login">
-                          <label class="username-label" for="firstName">First Name</label>
+                          <label class="username-label" for="first_name">First Name</label>
                       </div>
                       <div class="col-3">
-                          <input type="text" class="form-control" name="firstName" id="login-firstName" placeholder="First Name" formControlName="firstName" data-cy="firstName" />
+                          <input type="text" class="form-control" name="first_name" id="login-firstName" placeholder="First Name" formControlName="first_name" data-cy="first_name" />
                       </div>
                       <div class="col-2 label-login">
-                          <label class="username-label" for="lastName">Last Name</label>
+                          <label class="username-label" for="last_name">Last Name</label>
                       </div>
                       <div class="col-3">
-                          <input type="text" class="form-control" name="lastName" id="login-lastName" placeholder="Last Name" formControlName="lastName" data-cy="lastName" />
+                          <input type="text" class="form-control" name="last_name" id="login-lastName" placeholder="Last Name" formControlName="last_name" data-cy="last_name" />
                       </div>
                   </div>
                   <div class="row mb-3">
@@ -30,21 +30,33 @@
                       </div>
                       <div class="col-8">
                           <input type="email" class="form-control" name="email" id="login-email" placeholder="Email" formControlName="email" data-cy="email" />
-                      </div>
+                          <div *ngIf="serverErrors?.email" class="error-message">
+                            {{ serverErrors?.email }}
+                        </div>
+                        </div>
+                      
+
                   </div>
                   <div class="row mb-3 g-0">
                       <div class="col-2 label-login">
-                          <label for="password">Password</label>
+                          <label for="password1">Password</label>
                       </div>
                       <div class="col-3">
-                          <input type="password" class="form-control" name="password" id="login-password" placeholder="Password" formControlName="password" data-cy="password" />
+                          <input type="password" class="form-control" name="password1" id="login-password" placeholder="Password" formControlName="password1" data-cy="password1" />
                       </div>
                       <div class="col-2 label-login">
-                          <label for="repeatPassword">Repeat Password</label>
+                          <label for="password2">Repeat Password</label>
                       </div>
                       <div class="col-3">
-                          <input type="password" class="form-control" name="repeatPassword" id="login-repeatPassword" placeholder="Repeat Password" formControlName="repeatPassword" data-cy="repeatPassword" />
+                          <input type="password" class="form-control" name="password2" id="login-repeatPassword" placeholder="Repeat Password" formControlName="password2" data-cy="password2" />
                       </div>
+                      <div *ngIf="loginForm.errors && loginForm.errors['mismatch'] && (loginForm.get('password')?.touched || loginForm.get('repeatPassword')?.touched)">
+                        Las contraseñas no coinciden.
+                    </div>
+                    <div *ngIf="serverErrors.password2" class="error-message">
+                        {{ serverErrors?.password2 }}
+                      </div>
+                    
                   </div>
                   <button mat-raised-button class="login button" type="submit" data-cy="submit">Register</button>
               </form>
