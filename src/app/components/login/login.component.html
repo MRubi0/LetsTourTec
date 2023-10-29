@@ -1,55 +1,54 @@
 <div class="ppal-container d-flex justify-content-center">
-    <div class="container-login text-center">
+  <div class="container-login text-center">
       <div class="row mb-3">
-        <div class="col">
-          <div class="col-12">
-            <h3 data-cy="loginTitle">Log in</h3>
+          <div class="col">
+              <div class="col-12">
+                  <h3 data-cy="loginTitle">Log in</h3>
+              </div>
+              <div class="alert alert-danger" *ngIf="authenticationError" data-cy="loginError">
+                  <strong>Oh, something went wrong!</strong> Please, check your credentials and try again.
+              </div>
           </div>
-          <div class="alert alert-danger" *ngIf="authenticationError" data-cy="loginError">
-            <strong>Oh, something went wrong!</strong> Please, check your credentials and try again.
-          </div>
-        </div>
       </div>
       <div class="row card" id="card-login">
-        <div class="card-body" id="card-login-body">
-          <form class="form" role="form"  [formGroup]="loginForm">
-            <div class="row mb-3">
-              <div class="col-3 label-login">
-                <label class="email-label" for="username">Email</label>
-              </div>
-              <div class="col-6">
-                <input
-                  type="text"
-                  class="form-control"
-                  name="email"
-                  id="login-pass"
-                  placeholder="Email"
-                  formControlName="email"
-                  #username
-                  data-cy="email"
-                />
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-3 label-login">
-                <label for="password">Password</label>
-              </div>
-              <div class="col-6">
-                <input
-                  type="password"
-                  class="form-control"
-                  name="password"
-                  id="login-pass"
-                  placeholder="Password"
-                  formControlName="password"
-                  data-cy="password"
-                />
-              </div>
-            </div>
-            <button mat-raised-button class="login button" type="submit" data-cy="submit">Log in</button>
-          </form>
-        </div>
+          <div class="card-body" id="card-login-body">
+              <form class="form" role="form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                  <div class="row mb-3">
+                      <div class="col-3 label-login">
+                          <label class="email-label" for="username">Email</label>
+                      </div>
+                      <div class="col-6">
+                          <input
+                              type="text"
+                              class="form-control"
+                              name="email"
+                              id="login-email" 
+                              placeholder="Email"
+                              formControlName="username" 
+                              #username
+                              data-cy="email"
+                          />
+                      </div>
+                  </div>
+                  <div class="row mb-3">
+                      <div class="col-3 label-login">
+                          <label for="password">Password</label>
+                      </div>
+                      <div class="col-6">
+                          <input
+                              type="password"
+                              class="form-control"
+                              name="password"
+                              id="login-pass"
+                              placeholder="Password"
+                              formControlName="password"
+                              data-cy="password"
+                          />
+                      </div> 
+                  </div>
+                  <button mat-raised-button class="login button" type="submit" data-cy="submit">Log in</button>
+              </form>
+          </div>
       </div>
-    </div>
   </div>
-  
+</div>

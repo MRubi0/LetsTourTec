@@ -30,7 +30,7 @@ import { SignupComponent } from './components/signup/signup.component';
 import { CustomToursPageComponent } from './components/custom-tours-page/custom-tours-page.component';
 import { RegistrationSuccessComponent } from './components/registration-success/registration-success.component';
 import { ProfileComponent } from './components/profile/profile.component';
-
+import { LoggingService } from './services/logging.service';
 
 @NgModule({
   declarations: [
@@ -67,7 +67,7 @@ import { ProfileComponent } from './components/profile/profile.component';
     NgxPaginationModule,
     MatStepperModule
   ],
-  providers: [],
+  providers: [LoggingService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
