@@ -6,7 +6,6 @@ from LTtApp import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 #app_name = 'LTtApp'
 
 urlpatterns = [
@@ -39,6 +38,8 @@ urlpatterns = [
     path('step/<int:tour_id>/<int:step_id>/', views.next_step, name='next_step'),
     #path('step/<int:tour_id>/<int:step_id>/', views.step_detail, name='step_detail'),
     path('api/tour/<int:tour_id>/step/<int:step_id>/', views.next_step, name='next_step'),
+    path('csrf-token/', views.csrf_token_view, name='csrf_token'),
+    #path('token-auth/', obtain_jwt_token),
 
 
 
