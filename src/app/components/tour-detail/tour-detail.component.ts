@@ -37,7 +37,7 @@ export class TourDetailComponent {
     });
   }
   letsTour(){
-    this.router.navigate(['/stepper']);
+    this.router.navigate(['/mapas']);
   }
   
 }

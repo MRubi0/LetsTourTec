@@ -31,6 +31,7 @@ import { CustomToursPageComponent } from './components/custom-tours-page/custom-
 import { RegistrationSuccessComponent } from './components/registration-success/registration-success.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { LoggingService } from './services/logging.service';
+import { MapsComponent } from './components/maps/maps.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { LoggingService } from './services/logging.service';
     SignupComponent,
     CustomToursPageComponent,
     RegistrationSuccessComponent,
-    ProfileComponent
+    ProfileComponent,
+    MapsComponent
   ],
   imports: [
     BrowserModule,

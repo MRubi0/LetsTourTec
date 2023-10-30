@@ -20,12 +20,10 @@ export class SearchBarComponent {
       console.log('searchText está vacío o solo contiene espacios.');
         return;
     }
-    console.log('Realizando llamada a la API con searchText:', this.searchText);
     this.searchResults = [];
     
 
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(this.searchText)}`;
-    console.log('URL:', url);
     try {
       const response = await fetch(url);
       const results = await response.json();

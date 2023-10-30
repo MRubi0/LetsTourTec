@@ -1,0 +1,12 @@
+.container-fluid{
+    height: 90vh;
+    width: 100%;
+}
+.maps{
+    width: 700px;
+    height: 400px;
+}
+ng-deep .leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar{
+    z-index: 1 !important;
+    position: fixed !important;
+}

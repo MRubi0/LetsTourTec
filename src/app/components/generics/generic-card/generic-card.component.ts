@@ -24,7 +24,7 @@ export class GenericCardComponent {
       const partofUrl = data.imagen.url.split('/'); // Divide la URL en partes usando '/' como separador
       const nombreDeImagen = partofUrl[partofUrl.length - 1];
 
-      console.log("tours data", nombreDeImagen);
+      console.log("data", data);
 
       data.imagen.url=nombreDeImagen;
 
@@ -38,11 +38,10 @@ export class GenericCardComponent {
         data.tipo_de_tour='Cultural';
       }
       return data;
-    });
-
-   
+    });   
   }
   sendImage(image:string){
-    this.sharedService.setImage=image;
+    console.log('image -->', image);
+    //this.sharedService.setImage=image;
   }
 }
