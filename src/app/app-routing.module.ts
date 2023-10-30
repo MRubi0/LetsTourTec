@@ -58,7 +58,7 @@ const routes: Routes = [
     component: ProfileComponent
   },  
   {
-    path: 'mapas',
+    path: 'maps',
     component: MapsComponent
   },
 ];

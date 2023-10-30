@@ -17,9 +17,10 @@ export class TourDetailComponent {
     private toursDetailService:ToursDetailService,
     private activatedRoute:ActivatedRoute,
     private sharedService:SharedService,
-    private router:Router
+    private router:Router,
     ){
       this.$url=this.sharedService.getImage;
+      
   }
 
   ngOnInit(){    
@@ -30,14 +31,14 @@ export class TourDetailComponent {
   loadData(id:any){
     this.toursDetailService.getTourDetail(id).subscribe((data:any)=>{
       this.detail=data[0].fields;
-      console.log(this.detail);
     });
     this.$url.subscribe((url:any)=>{
       this.image_url=url;      
     });
   }
-  letsTour(){
-    this.router.navigate(['/mapas']);
-  }
-  
+  letsTour(data:any){
+    console.log('data ', data);
+    this.sharedService.setCoordinates=data;
+    this.router.navigate(['/maps']);
+  }  
 }
