@@ -46,22 +46,39 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware'     
 ]
+'''
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+'''
+CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200"
-]
+CORS_ALLOW_CREDENTIALS = True
+
+
 
 ROOT_URLCONF = 'LetsTourTec.urls'
+
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+SESSION_COOKIE_HTTPONLY = True
 
 TEMPLATES = [
     {
@@ -168,9 +185,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'miguel6ortiz6@gmail.com'  # Tu dirección de correo electrónico
 EMAIL_HOST_PASSWORD = 'miguel1928'  # Tu contraseña de correo electrónico
 
-#ALLOWED_HOSTS = ['*.elasticbeanstalk.com', 'LetsTourTec.com', 'www.LetsTourTec.com']
-
-ALLOWED_HOSTS = ['letstourtec.com', 'www.letstourtec.com', 'letstourtec-c393a22f9c2b.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['letstourtec.com', 'www.letstourtec.com', 'letstourtec-c393a22f9c2b.herokuapp.com', 'localhost', '127.0.0.1', 'localhost:4200']
 
 LOGGING = {
     'version': 1,
@@ -185,6 +200,10 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'WARNING',
         },
+        'corsheaders': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        }
     },
 }
 
@@ -202,5 +221,18 @@ MEDIA_URL = 'https://%s.s3.amazonaws.com/media/' % AWS_STORAGE_BUCKET_NAME
 #Console sign in URL https://736283691967.signin.aws.amazon.com/console
 #Usename user-letstourtec-bucket
 #Console password letsTOUR**
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:4200", "https://localhost:4200"
+]
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:4200", "https://localhost:4200"
+]
+CSRF_COOKIE_NAME = 'csrftoken'
+SESSION_COOKIE_SAMESITE = None
+CSRF_COOKIE_SAMESITE = None
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
+
 boto3.setup_default_session(aws_access_key_id='AKIA2W3PNRO7VOZUX2PC',
                             aws_secret_access_key='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')
