@@ -314,7 +314,8 @@ def get_random_tours(request):
     ocio_tours = Tour.objects.filter(tipo_de_tour="ocio")
     naturaleza_tours = Tour.objects.filter(tipo_de_tour="naturaleza")
     cultural_tours = Tour.objects.filter(tipo_de_tour="cultural")
-
+        
+       
     # Elige un tour aleatorio de cada categoría
     random_tours = {
         "ocio": random.choice(ocio_tours) if ocio_tours else None,
@@ -323,15 +324,23 @@ def get_random_tours(request):
     }
 
     # Convierte los objetos de los tours en diccionarios para que puedan ser serializados a JSON
+    
     random_tours_json = {}
     result=[]
     for key, tour in random_tours.items():
+
         if tour:
+
             random_tours_json= tour.as_dict()
+            random_tours_json['id'] = tour.id
+            
             random_tours_json['imagen']={
                 'url': random_tours_json['imagen']
-            }             
+            }                       
             result.append(random_tours_json)
+                
+            
+    print(result)
     return JsonResponse(result,safe=False)
 
 
