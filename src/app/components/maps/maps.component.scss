@@ -21,3 +21,12 @@
         color: white !important;
     }
 }
+
+.leaflet-routing-container{
+    position: absolute !important;
+    top: 10px;      
+    right: 10px;    
+    width: 25%;     
+    z-index: 1000;  
+  }
+  

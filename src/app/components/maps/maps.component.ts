@@ -39,13 +39,23 @@ export class MapsComponent {
           L.latLng(Number(latitud), Number(longitud)),//punto 1 
           L.latLng(this.lat, this.long),
         ],
-        routeWhileDragging: true
+        routeWhileDragging: true,
+        collapsible: false, 
+        show: true,         
       }).addTo(map);
   
       control.on('routesfound', function (e) {
         const routes = e.routes;
         console.log(routes);
       });
+
+      setTimeout(() => {
+        const routingContainer = document.querySelector('.leaflet-routing-container');
+        const mapContainer = document.getElementById('map');
+        if (routingContainer && mapContainer && mapContainer.parentElement) {
+            mapContainer.parentElement.appendChild(routingContainer);
+        }
+    }, 0);
     });
   }
 
