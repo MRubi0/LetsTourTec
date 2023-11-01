@@ -55,7 +55,7 @@ export class MapsComponent {
         if (routingContainer && mapContainer && mapContainer.parentElement) {
             mapContainer.parentElement.appendChild(routingContainer);
         }
-    }, 0 );
+    }, 0  );
     });
   }
 
