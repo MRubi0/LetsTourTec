@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import 'leaflet-routing-machine';
@@ -12,20 +13,16 @@ import { SharedService } from 'src/app/services/shared.service';
 })
 export class MapsComponent {
 
-  $coordinates!:any;
   lat:number=0;
   long:number=0;
 
-  constructor(private sharedService:SharedService){
-    this.$coordinates=this.sharedService.getCoordinates;
+  constructor(private activatedRoute:ActivatedRoute,){
   }
 
   ngOnInit(){
-
-    this.$coordinates.subscribe((data:any)=>{
-      this.load(data);
-    });
-    
+    this.activatedRoute.params.subscribe((params:any)=>{
+      this.load(params);
+    }); 
   }
   ngAfterViewInit() {
     const map = L.map('map').setView([51.505, -0.09], 13);
@@ -39,7 +36,7 @@ export class MapsComponent {
   
       const control = L.Routing.control({
         waypoints: [
-          L.latLng(Number(latitud), Number(longitud)), 
+          L.latLng(Number(latitud), Number(longitud)),//punto 1 
           L.latLng(this.lat, this.long),
         ],
         routeWhileDragging: true
@@ -49,15 +46,11 @@ export class MapsComponent {
         const routes = e.routes;
         console.log(routes);
       });
-
     });
   }
 
-  load(coordenadas:any){
-    this.lat=coordenadas.latitude;
-    this.long=coordenadas.longitude;
-    console.log('this.lat ', this.lat);
-    console.log('this.long ', this.long);
+  load(coordenadas:any){    
+    this.lat=coordenadas.lat;
+    this.long=coordenadas.long;
   }
-
 }

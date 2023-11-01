@@ -24,8 +24,6 @@ export class GenericCardComponent {
       const partofUrl = data.imagen.url.split('/'); // Divide la URL en partes usando '/' como separador
       const nombreDeImagen = partofUrl[partofUrl.length - 1];
 
-      console.log("data", data);
-
       data.imagen.url=nombreDeImagen;
 
       if(data.tipo_de_tour=='ocio'){

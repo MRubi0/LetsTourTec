@@ -37,8 +37,7 @@ export class TourDetailComponent {
     });
   }
   letsTour(data:any){
-    console.log('data ', data);
     this.sharedService.setCoordinates=data;
-    this.router.navigate(['/maps']);
+    this.router.navigate([`/maps/${data.latitude}/${data.longitude}`]);
   }  
 }
