@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from 'src/app/services/auth.service';
 import { LoggingService } from 'src/app/services/logging.service';
 
@@ -22,7 +21,6 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private loggingService: LoggingService,
-    private cookieService: CookieService
   ) { }
 
 

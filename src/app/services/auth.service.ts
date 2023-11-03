@@ -6,8 +6,6 @@ import { tap, catchError } from 'rxjs/operators';
 import { LoggingService } from 'src/app/services/logging.service';
 import { mapTo, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { CookieService } from 'ngx-cookie-service';
-
 
 
 interface LoginResponse {
@@ -28,7 +26,6 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private loggingService: LoggingService,
-    private cookieService: CookieService
   ) { 
   }
 
