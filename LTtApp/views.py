@@ -36,11 +36,13 @@ from django.core.exceptions import ObjectDoesNotExist
 import folium
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
+from django.middleware.csrf import get_token
 
 @csrf_exempt
 def csrf_token_view(request):
     """Obtiene el token CSRF de Django."""
     csrf_token = get_token(request)
+    print('csrf_token ->', csrf_token);
     return JsonResponse({'csrf_token': csrf_token})
 '''
 def csrf_token_view(request):
