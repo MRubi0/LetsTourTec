@@ -6,6 +6,7 @@ import { tap, catchError } from 'rxjs/operators';
 import { LoggingService } from 'src/app/services/logging.service';
 import { mapTo, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
 
 
 
@@ -26,8 +27,10 @@ export class AuthService {
   private baseUrl = 'http://127.0.0.1:8000/';
   constructor(
     private http: HttpClient,
-    private loggingService: LoggingService
-  ) { }
+    private loggingService: LoggingService,
+    private cookieService: CookieService
+  ) { 
+  }
 
   private getCsrfToken(): Observable<string> {
     return this.http.get<CsrfResponse>(this.baseUrl + 'csrf-token/', {
@@ -36,9 +39,15 @@ export class AuthService {
     tap(response => {
       this.loggingService.log('CSRF response: ' + JSON.stringify(response));
     }),
-
+      
       switchMap((response) => {
+
+        console.log('res ------------>',response);
+
           const csrfToken = response.csrf_token;
+
+          console.log('crsf ----->',csrfToken);
+
           if (!csrfToken) {
               return throwError('CSRF token not found in the response');
           }
@@ -72,7 +81,7 @@ login(userData: { username?: string; password?: string; }): Observable<LoginResp
       switchMap((csrfToken) => {
         // Set the CSRF token cookie.
         document.cookie = `csrftoken=${csrfToken}; path=/`;
-
+        console.log('csrfToken 1', csrfToken); 
         // Make the login request with the CSRF token cookie.
         return this.makeLoginRequest(userData, csrfToken);
       })
