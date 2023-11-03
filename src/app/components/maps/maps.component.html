@@ -1,6 +1,7 @@
 <div class="container-fluid d-flex pt-5 flex-wrap">
     <div class="row d-flex justify-content-center">
-        <div class="maps col-12" id="map"></div>
+        <div class="maps col-12" id="map"(click)="stopEvent($event)" ></div>
+        <input class="input_map" type="text" disabled=true>
     </div>   
     <div class="row">  
         <div class="col-12">

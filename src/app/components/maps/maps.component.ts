@@ -37,18 +37,40 @@ export class MapsComponent {
       const control = L.Routing.control({
         waypoints: [
           L.latLng(Number(latitud), Number(longitud)),//punto 1 
-          L.latLng(this.lat, this.long),
+          L.latLng(this.lat, this.long)      
         ],
-        routeWhileDragging: true
+        addWaypoints:false,
+        routeWhileDragging: false,
+        collapsible: false, 
+        show: true,         
       }).addTo(map);
-  
+      
+      control.on('waypointschanged', (e: any) => {
+        e.waypoints.forEach((waypoint: any) => {
+          waypoint.dragging.disable();
+        });
+      });
+
       control.on('routesfound', function (e) {
         const routes = e.routes;
         console.log(routes);
       });
+
+      setTimeout(() => {
+        const routingContainer = document.querySelector('.leaflet-routing-container');
+        const mapContainer = document.getElementById('map');
+        if (routingContainer && mapContainer && mapContainer.parentElement) {
+            mapContainer.parentElement.appendChild(routingContainer);
+        }
+    }, 0  );
     });
   }
-
+  stopEvent(e: MouseEvent) {
+    console.log(e);
+    e.stopImmediatePropagation;
+    e.stopPropagation;
+  }
+  
   load(coordenadas:any){    
     this.lat=coordenadas.lat;
     this.long=coordenadas.long;
