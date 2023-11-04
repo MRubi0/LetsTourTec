@@ -5,6 +5,7 @@ from LTtApp.views import register_view, upload_tour
 from LTtApp import views
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 #app_name = 'LTtApp'
 
@@ -40,6 +41,10 @@ urlpatterns = [
     path('api/tour/<int:tour_id>/step/<int:step_id>/', views.next_step, name='next_step'),
     path('csrf-token/', views.csrf_token_view, name='csrf_token'),
     #path('token-auth/', obtain_jwt_token),
+    # JWT Auth
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
 
 
 

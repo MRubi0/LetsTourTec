@@ -57,18 +57,17 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware'     
 ]
-'''
+
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
-'''
+
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
@@ -232,7 +231,7 @@ SESSION_COOKIE_SAMESITE = None
 CSRF_COOKIE_SAMESITE = None
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
-
+CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
 boto3.setup_default_session(aws_access_key_id='AKIA2W3PNRO7VOZUX2PC',
                             aws_secret_access_key='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')
