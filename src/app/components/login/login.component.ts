@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { LoggingService } from 'src/app/services/logging.service';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -13,7 +13,7 @@ export class LoginComponent {
   authenticationError = false;
 
   loginForm = new FormGroup({
-    username: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),
   });
 
@@ -21,6 +21,7 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private loggingService: LoggingService,
+    private router: Router,
   ) { }
 
 
@@ -33,20 +34,24 @@ export class LoginComponent {
 
   onSubmit() { 
 
-    const username = this.loginForm.get('username')?.value || '';
+    const email = this.loginForm.get('email')?.value || '';
     const password = this.loginForm.get('password')?.value || '';
 
-    this.authService.login({ username, password }).subscribe( 
-      (response: any) => {
-        this.loggingService.log('Login successful: ' + JSON.stringify(response));
-        console.log(response);
+    this.authService.login(email, password).subscribe(
+      (response) => {
+        // Si la autenticación es exitosa, almacena el token y redirige
+        this.authService.setToken(response.access); // Suponiendo que tengas un método para guardar el token
+        this.router.navigate(['/profile']); // Cambia la ruta a la del perfil
       },
-      (error: any) => {
+      (error) => {
         this.loggingService.error('Login error: ' + JSON.stringify(error));
-        console.log(error);
+        console.error(error);
         this.authenticationError = true;
       }
     );
+    
+        
+        
 }
 
 }

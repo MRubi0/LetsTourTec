@@ -1,122 +1,92 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { LoggingService } from 'src/app/services/logging.service';
-import { mapTo, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
 
-
-interface LoginResponse {
-  token: string;
-  status: number;
-}
-interface CsrfResponse {
-  csrf_token: string;
-}
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
   private storeToken = false; 
-
   private baseUrl = 'http://127.0.0.1:8000/';
-  constructor(
-    private http: HttpClient,
-    private loggingService: LoggingService,
-  ) { 
-  }
 
-  private getCsrfToken(): Observable<string> {
-    return this.http.get<CsrfResponse>(this.baseUrl + 'csrf-token/', {
-      withCredentials: true
-  }).pipe(
-    tap(response => {
-      this.loggingService.log('CSRF response: ' + JSON.stringify(response));
-    }),
-      
-      switchMap((response) => {
+  constructor(private http: HttpClient, private loggingService: LoggingService) {}
 
-        console.log('res ------------>',response);
-
-          const csrfToken = response.csrf_token;
-
-          console.log('crsf ----->',csrfToken);
-
-          if (!csrfToken) {
-              return throwError('CSRF token not found in the response');
-          }
-          this.loggingService.log(`Obtained CSRF token: ${csrfToken}`);
-          return of(csrfToken); // Usamos 'of' para convertir el valor en un Observable
+  login(email: string, password: string): Observable<any> {
+    const csrfToken = this.getCsrfTokenFromCookie();
+    if (!csrfToken) {
+      this.loggingService.error("CSRF token is missing");
+      return throwError(() => new Error("CSRF token is missing"));
+    }
+    this.loggingService.log('Logging in with user data: ' + JSON.stringify({ email, password }));
+  
+    return this.makeLoginRequest({ email, password }, csrfToken).pipe(
+      tap(tokens => {
+        // Check if the backend response has the properties access and refresh
+        if (tokens.access && tokens.refresh) {
+          // Store both access and refresh tokens in local storage
+          localStorage.setItem('access_token', tokens.access);
+          localStorage.setItem('refresh_token', tokens.refresh);
+        } else {
+          throw new Error('Invalid token response');
+        }
       }),
-        catchError(error => {
-            this.loggingService.error('Error obtaining CSRF token: ' + JSON.stringify(error));
-            return throwError(error);
-        })
-    );
-  } 
-
-
-login(userData: { username?: string; password?: string; }): Observable<LoginResponse> {
-  if (!this.storeToken) {
-    localStorage.removeItem('auth_token');
-  }
-  if (!userData.username || !userData.password) {
-    this.loggingService.error("Username or password missing");
-    return throwError("Username or password missing");
-  }
-  this.loggingService.log('Logging in with user data: ' + JSON.stringify(userData));
-  // Check if the CSRF token cookie exists.
-  const csrfToken = this.getCookie('csrftoken');
-  this.loggingService.log('CSRF token from cookie: ' + csrfToken);
-
-  if (!csrfToken) {
-    // If the CSRF token cookie does not exist, get a new one.
-    return this.getCsrfToken().pipe(
-      switchMap((csrfToken) => {
-        // Set the CSRF token cookie.
-        document.cookie = `csrftoken=${csrfToken}; path=/`;
-        console.log('csrfToken 1', csrfToken); 
-        // Make the login request with the CSRF token cookie.
-        return this.makeLoginRequest(userData, csrfToken);
+      catchError(error => {
+        this.loggingService.error('Error during login: ' + JSON.stringify(error));
+        return throwError(() => error);
       })
     );
-  } else {
-    // Make the login request with the CSRF token cookie.
-    return this.makeLoginRequest(userData, csrfToken);
   }
-}
+  
 
-  private makeLoginRequest(userData: { username?: string; password?: string; }, csrfToken: string): Observable<LoginResponse> {
-  const httpOptions = {
-    headers: new HttpHeaders({
+
+
+  getCsrfTokenFromCookie(): string | null {
+    const csrfToken = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('csrftoken='))
+      ?.split('=')[1] || null; // Asegúrate de devolver null si no se encuentra la cookie
+
+    return csrfToken;
+  }
+  private makeLoginRequest(credentials: { email: string; password: string }, csrfToken: string): Observable<any> {
+    const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'X-CSRFToken': csrfToken
-    }),
-    withCredentials: true
-  };
-  this.loggingService.log('Making login request with headers: ' + JSON.stringify(httpOptions.headers));
-
-  // Log the CSRF token cookie.
-  this.loggingService.log(`CSRF token cookie: ${csrfToken}`);
-
-  return this.http.post<LoginResponse>(this.baseUrl + 'login/', userData, httpOptions).pipe(
-    tap(response => {
-      if (response && response.token && this.storeToken) {
-        localStorage.setItem('auth_token', response.token);
-      }
-      this.loggingService.log(`Response status code: ${response.status}`);
-      this.loggingService.log(`Response body: ${JSON.stringify(response)}`);
-    }),
-    catchError(error => {
-      this.loggingService.error('Error during login: ' + JSON.stringify(error));
-      return throwError(error);
-    })
-  );
-}
+    });
   
+    return this.http.post(this.baseUrl + 'api/token/', credentials, { headers });
+  }
+  makePostRequestWithCsrf(url: string, body: any): Observable<any> {
+    const csrfToken = this.getCsrfTokenFromCookie(); // Obtener el token CSRF de la cookie
+    if (!csrfToken) {
+      // Handle the missing CSRF token case
+      this.loggingService.error('CSRF token is missing');
+      return throwError(() => new Error('CSRF token is missing'));
+    }
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken // Usar el token obtenido
+    });
+
+    // Haz la petición POST con las cabeceras adecuadas
+    return this.http.post(url, body, { headers: headers, withCredentials: true });
+  }
+  setToken(token: string): void {
+    localStorage.setItem('access_token', token);
+   }
+   getToken(): string | null {
+    return localStorage.getItem('access_token');
+   }
+   clearToken(): void {
+    localStorage.removeItem('access_token');
+   }
+   isAuthenticated(): boolean {
+    const token = this.getToken();
+    return !!token;
+   }
+      
   private getCookie(name: string): string | null {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);

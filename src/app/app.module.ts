@@ -32,6 +32,7 @@ import { RegistrationSuccessComponent } from './components/registration-success/
 import { ProfileComponent } from './components/profile/profile.component';
 import { LoggingService } from './services/logging.service';
 import { MapsComponent } from './components/maps/maps.component';
+import { AuthGuard } from './services/auth.guard';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { MapsComponent } from './components/maps/maps.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    
     BrowserAnimationsModule,
     MatButtonModule, 
     HttpClientModule,
@@ -67,9 +69,13 @@ import { MapsComponent } from './components/maps/maps.component';
     FlexLayoutModule,
     MatTooltipModule,
     NgxPaginationModule,
-    MatStepperModule
+    MatStepperModule,
+    
   ],
-  providers: [LoggingService],
+  providers: [
+    LoggingService, 
+    AuthGuard
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

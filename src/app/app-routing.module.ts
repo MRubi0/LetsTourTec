@@ -10,6 +10,7 @@ import { CustomToursPageComponent } from './components/custom-tours-page/custom-
 import { RegistrationSuccessComponent } from 'src/app/components/registration-success/registration-success.component';
 import { ProfileComponent } from 'src/app/components/profile/profile.component';
 import { MapsComponent } from './components/maps/maps.component';
+import { AuthGuard } from './services/auth.guard';
 
 const routes: Routes = [
   {
@@ -53,14 +54,17 @@ const routes: Routes = [
     path: 'registration-success',
     component: RegistrationSuccessComponent
   },
-  {
-    path: 'profile',
-    component: ProfileComponent
-  },  
+
   {
     path: 'maps/:lat/:long',
     component: MapsComponent
   },
+  {
+    path: 'profile', 
+    component: ProfileComponent,
+    canActivate: [AuthGuard] 
+  },
+
 ];
 
 @NgModule({
