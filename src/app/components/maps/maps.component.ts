@@ -56,9 +56,9 @@ export class MapsComponent {
         console.log(routes);
         map.eachLayer((layer) => {
           if (layer instanceof L.Marker) {
-            // Asegúrate que 'dragging' existe antes de llamar 'disable'
+            
             layer.dragging?.disable();
-            // Asegúrate que 'getElement()' devuelve un HTMLElement no nulo
+            
             const element = layer.getElement();
             if (element) {
               L.DomUtil.removeClass(element, 'leaflet-marker-draggable');
