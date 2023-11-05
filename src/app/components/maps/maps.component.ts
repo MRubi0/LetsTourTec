@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
-import 'leaflet-routing-machine';
 import { Observable } from 'rxjs';
 import { SharedService } from 'src/app/services/shared.service';
 
