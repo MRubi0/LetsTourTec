@@ -1,0 +1,140 @@
+<div class="upload-tour-container">
+    <mat-card class="container-card">
+        <mat-card-header>
+            <mat-card-title>Subir Tour</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <form [formGroup]="tourForm" (ngSubmit)="submitTour()">
+                
+                <div class="form-field">
+                    <p>Tipo de tour</p>
+                    <mat-form-field appearance="fill">
+                        <mat-select formControlName="tipo_de_tour">
+                            <mat-option *ngFor="let option of opciones" [value]="option.value">{{ option.viewValue }}</mat-option>
+                          </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field">
+                    <p>Título</p>
+                    <mat-form-field appearance="fill">
+                        <input matInput formControlName="titulo">
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field">
+                    <p>Descripción</p>
+                    <mat-form-field appearance="fill">
+                        <textarea matInput formControlName="descripcion"></textarea>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field">
+                    <p>Imagen del tour</p>
+                    <input #imagenInput type="file" (change)="onFileSelect($event, 'imagen')" accept="image/*" hidden>
+                    <button mat-button (click)="imagenInput.click()">Seleccionar archivo</button>
+                </div>
+                
+                  
+
+                <div class="form-field">
+                    <p>Audio del tour</p>
+                    <input #audioInput type="file" (change)="onFileSelect($event, 'audio')" accept="audio/*" hidden>
+                    <button mat-button (click)="audioInput.click()">Seleccionar archivo</button>
+                </div>
+
+                <div class="form-field">
+                    <p>Latitud</p>
+                    <mat-form-field appearance="fill">
+                        <input matInput formControlName="latitude" type="number">
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field">
+                    <p>Longitud</p>
+                    <mat-form-field appearance="fill">
+                        <input matInput formControlName="longitude" type="number">
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field">
+                    <p>Duración (minutos)</p>
+                    <mat-form-field appearance="fill">
+                        <input matInput formControlName="duracion" type="number">
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field">
+                    <p>Recorrido (km)</p>
+                    <mat-form-field appearance="fill">
+                        <textarea matInput formControlName="recorrido"></textarea>
+                    </mat-form-field>
+                </div>
+
+
+                <div formArrayName="extraSteps">
+                    <div *ngFor="let extraStep of extraSteps.controls; let i = index" [formGroupName]="i">
+                        
+                        <div class="form-field">
+                            <p>Imagen del paso extra {{ i + 1 }}</p>
+                            <input type="file" (change)="onFileSelect($event, 'extraSteps.'+i+'.image')" accept="image/*" [formControlName]="'image'">
+                        </div>
+                        
+                        <div class="form-field">
+                            <p>Audio del paso extra {{ i + 1 }}</p>
+                            <input type="file" (change)="onFileSelect($event, 'extraSteps.'+i+'.audio')" accept="audio/*" [formControlName]="'audio'">
+                        </div>
+                        
+                        <div class="form-field">
+                            <p>Latitud extra {{ i + 1 }}</p>
+                            <mat-form-field appearance="fill">
+                                <input matInput type="number" [formControlName]="'latitude'">
+                            </mat-form-field>
+                        </div>
+                        
+                        <div class="form-field">
+                            <p>Longitud extra {{ i + 1 }}</p>
+                            <mat-form-field appearance="fill">
+                                <input matInput type="number" [formControlName]="'longitude'">
+                            </mat-form-field>
+                        </div>
+
+                        <div class="form-field">
+                            <p>Descripción {{ i + 1 }}</p>
+                            <mat-form-field appearance="fill">
+                                <input matInput formControlName="descripcion">
+                            </mat-form-field>
+                        </div>
+                        
+                        
+                        <!-- Botón para remover el paso extra, si se requiere -->
+                        <button mat-mini-fab color="warn" (click)="removeExtraStep(i)">
+                            <mat-icon>-</mat-icon>
+                        </button>
+                        
+                    </div>
+                </div>
+
+                <div class="tour-actions">
+                    <button mat-raised-button color="primary" type="button" (click)="addExtraStep()">Añadir un paso extra</button>
+                    <button mat-raised-button color="primary" type="submit">Subir tour</button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<style>
+    .form-field > p {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .form-field {
+        margin-bottom: 20px;
+    }
+    .tour-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+</style>

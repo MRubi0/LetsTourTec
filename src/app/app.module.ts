@@ -33,6 +33,8 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { LoggingService } from './services/logging.service';
 import { MapsComponent } from './components/maps/maps.component';
 import { AuthGuard } from './services/auth.guard';
+import { UploadTourComponent } from './components/upload-tour/upload-tour.component';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -50,12 +52,13 @@ import { AuthGuard } from './services/auth.guard';
     CustomToursPageComponent,
     RegistrationSuccessComponent,
     ProfileComponent,
-    MapsComponent
+    MapsComponent,
+    UploadTourComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    
+    MatSelectModule,
     BrowserAnimationsModule,
     MatButtonModule, 
     HttpClientModule,
@@ -70,6 +73,7 @@ import { AuthGuard } from './services/auth.guard';
     MatTooltipModule,
     NgxPaginationModule,
     MatStepperModule,
+    ReactiveFormsModule,
     
   ],
   providers: [

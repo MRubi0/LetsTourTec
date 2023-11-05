@@ -39,9 +39,9 @@ export class LoginComponent {
 
     this.authService.login(email, password).subscribe(
       (response) => {
-        // Si la autenticación es exitosa, almacena el token y redirige
-        this.authService.setToken(response.access); // Suponiendo que tengas un método para guardar el token
-        this.router.navigate(['/profile']); // Cambia la ruta a la del perfil
+        
+        this.authService.setToken(response.access); 
+        this.router.navigate(['/profile']);
       },
       (error) => {
         this.loggingService.error('Login error: ' + JSON.stringify(error));

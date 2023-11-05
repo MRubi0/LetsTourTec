@@ -1,4 +1,20 @@
 <div class="profile-container">
-    <h2>Mi Perfil</h2>
-    <!-- Aquí puedes añadir más contenido relacionado con el perfil del usuario -->
+    <mat-card class="container-card">
+        <mat-card-header>
+            <mat-card-title>My Profile</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="user-details">
+                <h3>Welcome back {{ emailOfUser }}!!</h3>
+                <p>Here is your personal area</p>
+            </div>
+            <div class="user-actions">
+                <button mat-raised-button color="primary" class="custom-button-color" (click)="uploadTour()">Upload a Tour</button>
+                <button mat-raised-button color="primary" class="custom-button-color" (click)="editProfile()">Edit my Profile</button>
+                <button mat-raised-button color="primary" class="custom-button-color" (click)="History()">History Tours</button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    
 </div>

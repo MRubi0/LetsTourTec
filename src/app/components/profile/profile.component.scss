@@ -1,0 +1,21 @@
+
+.profile-container {
+    max-width: 800px;
+    margin: auto;
+}
+
+.user-details h3 {
+    margin-bottom: 10px;
+}
+
+.user-actions button {
+    margin-right: 10px;
+}
+
+.mdc-button {
+    background-color: #0d6efd !important;
+
+    .mat-button-wrapper {
+        color: white;
+    }
+}
