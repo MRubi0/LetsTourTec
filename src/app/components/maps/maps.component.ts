@@ -16,7 +16,7 @@ export class MapsComponent {
   lat:number=0;
   long:number=0;
 
-  constructor(private activatedRoute:ActivatedRoute,){
+  constructor(private activatedRoute:ActivatedRoute){
   }
 
   ngOnInit(){
@@ -41,7 +41,8 @@ export class MapsComponent {
         ],
         routeWhileDragging: true,
         collapsible: false, 
-        show: true,         
+        show: true,  
+        addWaypoints: false,       
       }).addTo(map);
       
       control.on('waypointschanged', (e: any) => {
@@ -53,6 +54,18 @@ export class MapsComponent {
       control.on('routesfound', function (e) {
         const routes = e.routes;
         console.log(routes);
+        map.eachLayer((layer) => {
+          if (layer instanceof L.Marker) {
+            // Asegúrate que 'dragging' existe antes de llamar 'disable'
+            layer.dragging?.disable();
+            // Asegúrate que 'getElement()' devuelve un HTMLElement no nulo
+            const element = layer.getElement();
+            if (element) {
+              L.DomUtil.removeClass(element, 'leaflet-marker-draggable');
+              L.DomUtil.removeClass(element, 'leaflet-interactive');
+            }
+          }
+        });
       });
 
       setTimeout(() => {
@@ -64,14 +77,14 @@ export class MapsComponent {
     }, 0  );
     });
   }
-  stopEvent(e: MouseEvent) {
+  stopEvent(e: MouseEvent): void {
     console.log(e);
-    e.stopImmediatePropagation;
-    e.stopPropagation;
+    e.stopImmediatePropagation();
+    e.stopPropagation();
   }
   
-  load(coordenadas:any){    
-    this.lat=coordenadas.lat;
-    this.long=coordenadas.long;
+  load(coordenadas: any): void {    
+    this.lat = coordenadas.lat;
+    this.long = coordenadas.long;
   }
 }
