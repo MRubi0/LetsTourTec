@@ -7,7 +7,7 @@
 }
 .upload-tour-container {
     margin: auto;
-    max-width: 600px; // o el ancho que prefieras
+    max-width: 600px;
     padding: 20px;
   
     .container-card {
@@ -32,4 +32,15 @@
       }
     }
   }
-  
+.form-field > p {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.form-field {
+    margin-bottom: 20px;
+}
+.tour-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}

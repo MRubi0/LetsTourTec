@@ -35,8 +35,9 @@ export class UploadTourComponent implements OnInit{
     });
   }
   ngOnInit(): void {
-    // Aquí puedes inicializar cualquier lógica que necesites cuando el componente se crea.
-    // Si no necesitas hacer nada específico, puedes dejar este método vacío.
+    this.tourForm.valueChanges.subscribe(data=>{
+      console.log(' tour ', data);
+    });
   }
   get extraSteps() {
     return this.tourForm.get('extraSteps') as FormArray;
@@ -58,8 +59,7 @@ export class UploadTourComponent implements OnInit{
     this.extraSteps.removeAt(index);
   }
   submitTour() {
-    const formData = this.prepareSave();
-    this.uploadTourService.uploadTour(formData).subscribe(
+    this.uploadTourService.uploadTour(this.tourForm.value).subscribe(
       (response: any) => {
         console.log("error1")
       },
