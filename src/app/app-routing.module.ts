@@ -11,7 +11,7 @@ import { RegistrationSuccessComponent } from 'src/app/components/registration-su
 import { ProfileComponent } from 'src/app/components/profile/profile.component';
 import { MapsComponent } from './components/maps/maps.component';
 import { AuthGuard } from './services/auth.guard';
-import { UploadTourComponent } from './components/upload-tour/upload-tour.component';
+import { UploadTourComponent } from './components/upload-tour/upload-tour.component'; 
 
 const routes: Routes = [
   {
