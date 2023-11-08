@@ -185,18 +185,23 @@ def add_location(request, guide_id):
     return render(request, 'under_construction.html')
 
 
-@login_required
+##@login_required
+@csrf_exempt
 def upload_tour(request):
     error_message = None
+    data = json.loads(request.body.decode('utf-8'))
+
+    
     if request.method == 'POST':
-        form = TourForm(request.POST, request.FILES)
+        print(data)
+        form = TourForm(request.POST, request.FILES)       
         if form.is_valid():
             tour = form.save(commit=False)
             tour.user = request.user
             tour.image = request.FILES['imagen'] if 'imagen' in request.FILES else None
 
             tour.save()
-
+            print(tour)
             # Procesar pasos adicionales
             for i in range(100):
                 extra_audio_key = f'extra_step_audio_{i}'
@@ -237,7 +242,7 @@ def upload_tour(request):
         else:
             error_message = 'Hubo un error al subir el tour. Asegúrate de haber seleccionado una imagen y un archivo de audio válidos.'
     else:
-        form = TourForm()
+        form = TourForm()        
     return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
 
 
