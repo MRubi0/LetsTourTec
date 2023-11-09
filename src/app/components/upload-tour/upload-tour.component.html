@@ -31,7 +31,7 @@
                 <div class="form-field">
                     <p>Imagen del tour</p>
                     <input #imagenInput type="file" (change)="onFileSelect($event, 'imagen')" accept="image/*" hidden>
-                    <button mat-button (click)="imagenInput.click()">Seleccionar archivo</button>
+                    <button mat-button (click)="imagenInput.click()" type="button">Seleccionar archivo</button>
                 </div>
                 
                   
@@ -39,7 +39,7 @@
                 <div class="form-field">
                     <p>Audio del tour</p>
                     <input #audioInput type="file" (change)="onFileSelect($event, 'audio')" accept="audio/*" hidden>
-                    <button mat-button (click)="audioInput.click()">Seleccionar archivo</button>
+                    <button mat-button (click)="audioInput.click()" type="button">Seleccionar archivo</button>
                 </div>
 
                 <div class="form-field">

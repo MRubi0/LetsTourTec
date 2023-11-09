@@ -1,31 +1,35 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { HttpClient, HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from 'src/enviroment/enviroment';
+import { AuthService } from 'src/app/services/auth.service'; 
 
 @Injectable({
   providedIn: 'root'
 })
 export class UploadTourService {
-  private uploadUrl = environment.apiUrl;
+  private uploadUrl = environment.apiUrl; // Make sure you have the apiUrl defined in the environment
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
+
   uploadTour(formData: FormData): Observable<any> {
-
-    return this.http.post(`${this.uploadUrl}profile/upload_tour/`, {
-      user:7,
-      titulo:'titulo',
-      imagen:'img',
-      descripcion:'desc',
-      audio:'',
-      latitude:1.2,
-      longitude:1,
-      duracion:1,
-      recorrido:1,
-      created_at: '2023-07-01 05:02:09 +0000',
-      updated_at: '2023-07-01 05:02:09 +0000'
-    });
+    return this.http.post(`${this.uploadUrl}profile/upload_tour/`, formData, {
+      responseType: 'json', // Expecting a JSON response
+      withCredentials: true // This is important for session-based authentication
+    }).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error occurred:', error);
+        return throwError(() => new Error('An error occurred while uploading the tour.'));
+      })
+    );
   }
+
+  // Other service methods...
+
+  
+  
+  
 
   
  /* getLastestTours() {    

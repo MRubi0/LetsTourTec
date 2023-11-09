@@ -58,13 +58,19 @@ export class UploadTourComponent implements OnInit{
   removeExtraStep(index: number): void {
     this.extraSteps.removeAt(index);
   }
+
+    
+
   submitTour() {
-    this.uploadTourService.uploadTour(this.tourForm.value).subscribe(
+    const formData = this.prepareSave();
+    this.uploadTourService.uploadTour(formData).subscribe(
       (response: any) => {
-        console.log("error1")
+        
+        console.log("Tour uploaded successfully", response);
       },
       (error: any) => {
-        console.log("error2")
+        
+        console.log("Error uploading tour", error);
       }
     );
   }
@@ -102,6 +108,7 @@ export class UploadTourComponent implements OnInit{
   }
   
   onFileSelect(event: any, field: string) {
+    event.preventDefault();
     const file = event.target.files[0];
     if (file) {
       this.tourForm.get(field)?.setValue(file);

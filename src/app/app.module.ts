@@ -35,6 +35,8 @@ import { MapsComponent } from './components/maps/maps.component';
 import { AuthGuard } from './services/auth.guard';
 import { UploadTourComponent } from './components/upload-tour/upload-tour.component';
 import { MatSelectModule } from '@angular/material/select';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor'; 
 
 @NgModule({
   declarations: [
@@ -78,7 +80,9 @@ import { MatSelectModule } from '@angular/material/select';
   ],
   providers: [
     LoggingService, 
-    AuthGuard
+    AuthGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+
   ],
   bootstrap: [AppComponent]
 })

@@ -6,7 +6,7 @@ import { LoggingService } from 'src/app/services/logging.service';
 
 
 
-  interface AuthTokens {
+  export interface AuthTokens {
     access: string;
     refresh: string;
   }
@@ -50,7 +50,7 @@ export class AuthService {
     this.isAuthenticatedSubject.next(false);
   }
 
-  private saveTokens(tokens: AuthTokens): void {
+  public saveTokens(tokens: AuthTokens): void {
     localStorage.setItem('access_token', tokens.access);
     localStorage.setItem('refresh_token', tokens.refresh);
     this.isAuthenticatedSubject.next(true);
@@ -65,11 +65,29 @@ export class AuthService {
   private hasToken(): boolean {
     return !!this.getToken();
   }
+  
 
   getToken(): string | null {
     return localStorage.getItem('access_token');
   }
-
+  refreshToken(): Observable<AuthTokens> {
+    // Suponiendo que tengas un endpoint en tu backend para refrescar el token
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) {
+      throwError(() => new Error('No refresh token available.'));
+    }
+    
+    return this.http.post<AuthTokens>(this.baseUrl + 'api/refresh_token/', { 'refresh': refreshToken }).pipe(
+      tap((tokens: AuthTokens) => {
+        this.saveTokens(tokens);
+        this.isAuthenticatedSubject.next(true);
+      }),
+      catchError(error => {
+        this.logout(); // Asegúrate de manejar la limpieza aquí si el refresh también falla
+        return throwError(() => error);
+      })
+    );
+  }
   private getCsrfTokenFromCookie(): string | null {
     return document.cookie
       .split('; ')
