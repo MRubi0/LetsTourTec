@@ -8,7 +8,7 @@ from django.db.models import ExpressionWrapper, FloatField
 import json
 from django.urls import reverse_lazy
 from django.views import generic
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse
 import sqlite3
 import math
 from math import radians, sin, cos, sqrt, atan2
@@ -37,7 +37,18 @@ import folium
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
 from django.middleware.csrf import get_token
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
 
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def test_auth(request):
+    # Esta vista es solo para propósitos de testeo.
+    return Response({'message': 'El token es válido y el usuario está autenticado'}, status=status.HTTP_200_OK)
 @csrf_exempt
 def csrf_token_view(request):
     """Obtiene el token CSRF de Django."""
@@ -89,22 +100,120 @@ def edit_profile(request):
 def profile(request):
     return render(request, 'user/profile.html', {'user': request.user})
 
+# @csrf_exempt
+# def login_view(request):
+#     ###print('im here')
+#     if request.method == 'POST':
+#         form = AuthenticationForm(request, data=request.POST)
+#         print(form)
+#         if form.is_valid():
+#             print(form)
+#             user = form.get_user()
+#             print(f"User: {user}")
+#             login(request, user)
+#             return redirect('index')
+#         else:
+#             print("Form is not valid")
+#             print(form.errors)
+#     else:
+        
+#         form = AuthenticationForm()
+#         print(form)
+#     return render(request, 'registration/login.html', {'form': form})
+
 @csrf_exempt
 def login_view(request):
-    print('im here')
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            print(f"User: {user}")
+        # Assuming you send 'username' and 'password' in the request body
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
             login(request, user)
+            # Return a JSON response indicating success
+            return JsonResponse({'success': True})
+        else:
+            # Return a JSON response indicating failure
+            return JsonResponse({'error': 'Invalid credentials'}, status=401)
+
+    # If it's a GET request, you may want to handle it differently
+    # This part depends on your application's logic
+    return JsonResponse({'error': 'GET request not supported'}, status=405)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_tour(request):
+    error_message = None
+    auth_header = request.META.get('HTTP_AUTHORIZATION')
+    if auth_header:
+        token = auth_header.split(' ')[1]
+        print(f"Token recibido: {token}")
+    else:
+        print("No se encontró el header de autorización")
+    
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return Response({'error': 'Usuario no autenticado'}, status=401)
+        print(request.POST)  
+        print(request.FILES)  
+        
+        form = TourForm(request.POST, request.FILES)       
+        if form.is_valid():
+            tour = form.save(commit=False)
+            tour.user = request.user
+            tour.image = request.FILES['imagen'] if 'imagen' in request.FILES else None
+
+            tour.save()
+            print(tour)
+            # Procesar pasos adicionales
+            for i in range(100):
+                extra_audio_key = f'extra_step_audio_{i}'
+                
+                if extra_audio_key in request.FILES:
+                    extra_audio = request.FILES[extra_audio_key]
+                    
+                    extra_image = None
+                    extra_latitude = None
+                    extra_longitude = None
+
+                    extra_image_key = f'extra_step_image_{i}'
+                    if extra_image_key in request.FILES:
+                        extra_image = request.FILES[extra_image_key]
+
+                    extra_latitude_key = f'extra_step_latitude_{i}'
+                    if extra_latitude_key in request.POST and request.POST[extra_latitude_key]:
+                        extra_latitude = float(request.POST[extra_latitude_key])
+
+                    extra_longitude_key = f'extra_step_longitude_{i}'
+                    if extra_longitude_key in request.POST and request.POST[extra_longitude_key]:
+                        extra_longitude = float(request.POST[extra_longitude_key])
+
+                    paso = Paso(tour=tour, audio=extra_audio)
+                    
+                    if extra_image:
+                        paso.image = extra_image
+                    if extra_latitude:
+                        paso.latitude = extra_latitude
+                    if extra_longitude:
+                        paso.longitude = extra_longitude
+
+                    paso.save()
+                else:
+                    break
+
             return redirect('index')
         else:
-            print("Form is not valid")
+            
+
+            error_message = 'Hubo un error al subir el tour. Asegúrate de haber seleccionado una imagen y un archivo de audio válidos.'
             print(form.errors)
+            return Response({'errors': form.errors}, status=400)
     else:
-        form = AuthenticationForm()
-    return render(request, 'registration/login.html', {'form': form})
+        return Response({'error': 'Invalid request method'}, status=405)
+    return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
+
 
 @csrf_exempt
 def register_view(request):
@@ -184,66 +293,6 @@ def add_location(request, guide_id):
     # ...
     return render(request, 'under_construction.html')
 
-
-##@login_required
-@csrf_exempt
-def upload_tour(request):
-    error_message = None
-    data = json.loads(request.body.decode('utf-8'))
-
-    
-    if request.method == 'POST':
-        print(data)
-        form = TourForm(request.POST, request.FILES)       
-        if form.is_valid():
-            tour = form.save(commit=False)
-            tour.user = request.user
-            tour.image = request.FILES['imagen'] if 'imagen' in request.FILES else None
-
-            tour.save()
-            print(tour)
-            # Procesar pasos adicionales
-            for i in range(100):
-                extra_audio_key = f'extra_step_audio_{i}'
-                
-                if extra_audio_key in request.FILES:
-                    extra_audio = request.FILES[extra_audio_key]
-                    
-                    extra_image = None
-                    extra_latitude = None
-                    extra_longitude = None
-
-                    extra_image_key = f'extra_step_image_{i}'
-                    if extra_image_key in request.FILES:
-                        extra_image = request.FILES[extra_image_key]
-
-                    extra_latitude_key = f'extra_step_latitude_{i}'
-                    if extra_latitude_key in request.POST and request.POST[extra_latitude_key]:
-                        extra_latitude = float(request.POST[extra_latitude_key])
-
-                    extra_longitude_key = f'extra_step_longitude_{i}'
-                    if extra_longitude_key in request.POST and request.POST[extra_longitude_key]:
-                        extra_longitude = float(request.POST[extra_longitude_key])
-
-                    paso = Paso(tour=tour, audio=extra_audio)
-                    
-                    if extra_image:
-                        paso.image = extra_image
-                    if extra_latitude:
-                        paso.latitude = extra_latitude
-                    if extra_longitude:
-                        paso.longitude = extra_longitude
-
-                    paso.save()
-                else:
-                    break
-
-            return redirect('index')
-        else:
-            error_message = 'Hubo un error al subir el tour. Asegúrate de haber seleccionado una imagen y un archivo de audio válidos.'
-    else:
-        form = TourForm()        
-    return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
 
 
 def sqlite_haversine(lat1, lon1, lat2, lon2):

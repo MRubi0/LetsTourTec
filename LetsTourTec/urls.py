@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from LTtApp.views import register_view, upload_tour
+from LTtApp.views import register_view, upload_tour, test_auth
+
 from LTtApp import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -44,6 +45,8 @@ urlpatterns = [
     # JWT Auth
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/test_auth/', test_auth, name='test_auth'),
+
 
 
 

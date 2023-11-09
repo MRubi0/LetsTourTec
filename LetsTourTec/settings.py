@@ -15,6 +15,8 @@ import os
 import sys
 import dj_database_url
 import boto3
+from datetime import timedelta
+import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -206,13 +208,13 @@ LOGGING = {
     },
 }
 
-AWS_ACCESS_KEY_ID = 'AKIA2W3PNRO7VOZUX2PC'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'letstourtec-heroku2'
+AWS_ACCESS_KEY_ID = 'AKIAYTBLLQA7BS6GPBHU'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'letstourtec-bucket-2'
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
-AWS_DEFAULT_ACL = 'public-read'
-
+#AWS_DEFAULT_ACL = 'public-read'
+AWS_DEFAULT_ACL = None
 # Configuración para archivos multimedia
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 MEDIA_URL = 'https://%s.s3.amazonaws.com/media/' % AWS_STORAGE_BUCKET_NAME
@@ -232,6 +234,15 @@ CSRF_COOKIE_SAMESITE = None
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365), # Tiempo de vida del token de acceso
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365 * 3),       # Tiempo de vida del token de actualización
+}
+AWS_S3_REGION_NAME = 'eu-north-1'
 
-boto3.setup_default_session(aws_access_key_id='AKIA2W3PNRO7VOZUX2PC',
-                            aws_secret_access_key='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')
+logging.basicConfig(level=logging.DEBUG)
+boto3.set_stream_logger(name='botocore')
+
+
+boto3.setup_default_session(aws_access_key_id='AKIAYTBLLQA7BS6GPBHU',
+                            aws_secret_access_key='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')
