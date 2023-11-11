@@ -96,17 +96,30 @@ export class UploadTourComponent implements OnInit{
       }
       if (extraStep.audio) {
         formData.append(`extra_step_audio_${index}`, extraStep.audio);
+        console.log(extraStep.audio)
       }
-      formData.append(`extra_step_latitude_${index}`, extraStep.latitude);
-      formData.append(`extra_step_longitude_${index}`, extraStep.longitude);
+      if (extraStep.description) {
+        formData.append(`description_${index}`, extraStep.description);
+      }
+      if (extraStep.latitude) {
+        formData.append(`extra_step_latitude_${index}`, extraStep.latitude);
+      }
+      if (extraStep.longitude) {
+          formData.append(`extra_step_longitude_${index}`, extraStep.longitude);
+      }
+      
     });
-
+    for (let key of (formData as any).keys()) {
+      console.log(key, formData.get(key));
+    }
+    
     return formData;
   }
   openInput(fileInput: ElementRef) {
     fileInput.nativeElement.click();
   }
   
+
   onFileSelect(event: any, field: string) {
     event.preventDefault();
     const file = event.target.files[0];
@@ -115,3 +128,5 @@ export class UploadTourComponent implements OnInit{
     }
   }
 }
+
+
