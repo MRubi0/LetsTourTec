@@ -240,7 +240,7 @@ SIMPLE_JWT = {
 }
 AWS_S3_REGION_NAME = 'eu-north-1'
 
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 boto3.set_stream_logger(name='botocore')
 
 
