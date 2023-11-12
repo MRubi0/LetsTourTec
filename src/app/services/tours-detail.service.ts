@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from 'src/enviroment/enviroment';
 
 @Injectable({
@@ -8,13 +8,16 @@ import { environment } from 'src/enviroment/enviroment';
 })
 export class ToursDetailService {
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) { } 
 
-  getTourDetail(id:string) {    
-    return this.http.get(`${environment.apiUrl}get_tour_distance/?tourId=${id}
-    &latitude=4.6408516&longitude=-74.1445487`)
-      .pipe(map((data: any) => {        
+  getTourDetail(id: string) {
+    return this.http.get(`${environment.apiUrl}get_tour_distance/?tourId=${id}&latitude=4.6408516&longitude=-74.1445487`)
+      .pipe(map((data: any) => {
         return data;
       }));
+  }
+
+  getAdditionalLocations(tourId: number): Observable<any> {
+    return this.http.get(`http://localhost:8000/tour-locations/${tourId}`); 
   }
 }
