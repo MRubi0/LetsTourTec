@@ -46,6 +46,7 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/test_auth/', test_auth, name='test_auth'),
+    path('tour-locations/<int:tour_id>/', views.get_tour_locations, name='tour-locations'),
 
 
 

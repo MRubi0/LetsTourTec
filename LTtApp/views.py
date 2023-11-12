@@ -688,3 +688,18 @@ def step_detail(request, tour_id, step_id):
     except Paso.DoesNotExist:
         # Manejo del error cuando no se encuentra el paso o el paso no pertenece al tour
         return HttpResponseNotFound('Step not found or does not belong to this tour')
+    
+def get_tour_locations(request, tour_id):
+    try:
+        
+        tour = Tour.objects.get(id=tour_id)
+        
+        pasos = Paso.objects.filter(tour=tour)
+
+        
+        locations = [{'lat': paso.latitude, 'long': paso.longitude} for paso in pasos if paso.latitude and paso.longitude]
+
+        return JsonResponse({'locations': locations})
+
+    except Tour.DoesNotExist:
+        return JsonResponse({'error': 'Tour no encontrado'}, status=404)
