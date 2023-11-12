@@ -32,18 +32,7 @@ export class TourDetailComponent {
       this.loadData(params.id);
     });   
   }
-  // loadData(id:any){
-  //   this.toursDetailService.getTourDetail(id).subscribe((data:any)=>{
-  //     this.detail=data[0].fields;
-  //     console.log(this.detail);
-  //     this.toursDetailService.getAdditionalLocations(id).subscribe((locationsData: any) => {
-  //       const additionalLocations = locationsData.locations;
-  //       this.initMap(additionalLocations);
-  //   });
-  //   this.$url.subscribe((url:any)=>{
-  //     this.image_url=url;      
-  //   });
-  // }};
+
   letsTour(data:any){
   this.sharedService.setCoordinates=data;
 this.router.navigate([`/maps/${data.latitude}/${data.longitude}`]);
@@ -55,11 +44,11 @@ this.router.navigate([`/maps/${data.latitude}/${data.longitude}`]);
       this.toursDetailService.getAdditionalLocations(id).subscribe((locationsData: any) => {
         const additionalLocations = locationsData.locations;
         this.initMap(additionalLocations);
-      }); // Cierre de la suscripción a getAdditionalLocations
-    }); // Cierre de la suscripción a getTourDetail
+      }); 
+    }); 
     this.$url.subscribe((url: any) => {
       this.image_url = url;      
-    }); // Cierre de la suscripción a $url
+    }); 
   }
 
   initMap(additionalLocations: any[]) {
