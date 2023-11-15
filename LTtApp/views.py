@@ -575,9 +575,43 @@ def directions(request, tour_id):
     # Pasa el tour y el step_id al contexto de la plantilla
     return render(request, 'directions.html', {'tour': tour, 'step_id': step_id})
 
+@api_view(['GET'])
+##@permission_classes([IsAuthenticated])
+def get_tour_with_steps(request, tour_id):
+    try:
+        tour = get_object_or_404(Tour, pk=tour_id)
+        steps = Paso.objects.filter(tour=tour)
 
-def get_tour_data():
-    tour_objects = Tour.objects.all()  # Esto obtiene todos los objetos de Tour en la base de datos
+        tour_data = {
+            "id": tour.id,
+            "latitude": tour.latitude,
+            "longitude": tour.longitude,
+            "titulo": tour.titulo,
+            "image": tour.imagen.url,
+            "audio": tour.audio.url,
+            "steps": []
+        }
+
+        for step in steps:
+            tour_data["steps"].append({
+                "id": step.id,
+                "image":step.image.url if step.image else None,                
+                "audio": step.audio.url if step.audio else None,
+                "latitude":step.latitude,
+                "longitude":step.longitude,
+                "description": step.description,
+            })
+
+        return Response(tour_data)
+    except Tour.DoesNotExist:
+        return Response({"error": "Tour no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
+def get_tour_data(tour_id):
+    print('init')
+    tour_objects = Tour.objects.get(id=tour_id)  # Esto obtiene todos los objetos de Tour en la base de datos
     tour_data = []
     for tour in tour_objects:
         tour_data.append({
@@ -586,6 +620,7 @@ def get_tour_data():
             "titulo": tour.titulo
         })
     return tour_data
+
 
 def create_map(tour_data):
     m = folium.Map(location=[20, 0], zoom_start=2.5)
