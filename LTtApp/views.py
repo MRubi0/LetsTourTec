@@ -589,6 +589,7 @@ def get_tour_with_steps(request, tour_id):
             "titulo": tour.titulo,
             "image": tour.imagen.url,
             "audio": tour.audio.url,
+            "description": tour.descripcion,
             "steps": []
         }
 
