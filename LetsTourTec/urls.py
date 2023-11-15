@@ -47,6 +47,8 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/test_auth/', test_auth, name='test_auth'),
     path('tour-locations/<int:tour_id>/', views.get_tour_locations, name='tour-locations'),
+    path('api/get_tour_with_steps/<int:tour_id>/', views.get_tour_with_steps, name='get_tour_with_steps')
+
 
 
 
