@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ConnectableObservable } from 'rxjs';
 import { StepService } from 'src/app/services/step.service';
+import { environment } from 'src/enviroment/enviroment';
 
 @Component({
   selector: 'app-stepper',
@@ -19,11 +20,11 @@ export class StepperComponent {
 
   tour:any;
 
+  url=environment.bucket;
+
   constructor(private _formBuilder: FormBuilder, private stepService:StepService) {}
 
-  ngOnInit(){
-
-  }
+  ngOnInit(){}
   ngAfterViewInit(){
     this.data();
   }
