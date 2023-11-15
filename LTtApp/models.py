@@ -8,7 +8,7 @@ from io import BytesIO
 import requests
 import boto3
 import os
-
+from django.core.files.base import ContentFile
 
 
 #from django.contrib.gis.db.models import PointField
@@ -117,31 +117,30 @@ class Tour(models.Model):
         return self.titulo
 
     def save(self, *args, **kwargs):
+        # Guarda el objeto Tour como de costumbre
         super().save(*args, **kwargs)
-        # Obtén la URL de la imagen en S3
-        image_url = self.imagen.url
 
-        # Abre la imagen a través de la URL
-        response = requests.get(image_url)
-        img = Image.open(BytesIO(response.content))
+        if self.imagen:
+            # Obtén la URL de la imagen almacenada en S3
+            image_url = self.imagen.url
 
-        if img.height > 150 or img.width > 150:
-            output_size = (150, 150)
-            img.thumbnail(output_size)
-            
+            # Descarga la imagen usando requests y ábrela con PIL
+            response = requests.get(image_url)
+            img = Image.open(BytesIO(response.content))
 
-        # Guardar la imagen de nuevo en S3
-        # Esto implica el uso de boto3 (o cualquier otra librería) para subir el archivo modificado a S3
-        
-        # Convertir la imagen a bytes
-        buffer = BytesIO()
-        img.save(buffer, format="JPEG")
-        buffer.seek(0)
+            # Convierte la imagen a modo RGB si no lo está
+            if img.mode in ['P', 'RGBA']:
+                img = img.convert('RGB')
         # Construye el path de la imagen en S3
         key = f'tours/{self.id}/images/{self.imagen.name}'
         # Aquí necesitas configurar boto3 con tus credenciales de AWS y especificar el bucket y key adecuados
-        s3 = boto3.client('s3', aws_access_key_id='AKIAYTBLLQA7BS6GPBHU', aws_secret_access_key='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')
-        s3.upload_fileobj(buffer, 'letstourtec-heroku2',  key)
+        s3 = boto3.client(
+                            's3',
+                            aws_access_key_id='AKIAYTBLLQA7BS6GPBHU',
+                            aws_secret_access_key='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',
+                            region_name='eu-north-1'  # Asegúrate de que la región coincida con la del bucket
+                        )
+
 
 
 
@@ -166,23 +165,60 @@ class Tour(models.Model):
 
 class Paso(models.Model):
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
-    step_number = models.IntegerField(default=0)
-    imagen = models.ImageField(upload_to='pasos/', null=True, blank=True)
+    step_number = models.IntegerField(default=None)
+    image = models.ImageField(upload_to='pasos/', null=True, blank=True)
     audio = models.FileField(upload_to='paso_audio/', null=True, blank=True)
-    latitude = models.FloatField(default=0.0)
-    longitude = models.FloatField(default=0.0)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+    def save(self, *args, **kwargs):
+        if self.image:
+            # Descarga la imagen desde S3 y ábrela con PIL
+            response = requests.get(self.image.url)
+            if response.status_code == 200:
+                img = Image.open(BytesIO(response.content))
+
+                # Convierte la imagen a modo RGB si no lo está
+                if img.mode in ['P', 'RGBA']:
+                    img = img.convert('RGB')
+
+                # Redimensionamiento si es necesario
+                if img.height > 150 or img.width > 150:
+                    output_size = (150, 150)
+                    img.thumbnail(output_size)
+
+                # Guardar la imagen convertida en un objeto BytesIO
+                buffer = BytesIO()
+                img.save(buffer, format='JPEG')
+                buffer.seek(0)
+
+                # Reemplazar la imagen original por la convertida
+                file_name = self.image.name
+                self.image.delete(save=False)  # Elimina la imagen antigua
+                self.image.save(file_name, ContentFile(buffer.getvalue()), save=False)
+            else:
+                # Manejar el caso donde la respuesta no es exitosa
+                # Por ejemplo, podrías registrar un error o lanzar una excepción
+                pass
+
+        if not self.step_number:
+            existing_steps_count = Paso.objects.filter(tour=self.tour).count()
+            self.step_number = existing_steps_count + 1
+
+        super().save(*args, **kwargs)
     class Meta:
         ordering = ['step_number']
     def as_dict(self):
         return {
-            "imagen": self.imagen.url if self.imagen else None,
+            "image": self.image.url if self.image else None,
             "audio": self.audio.url if self.audio else None,
             "latitude": self.latitude if self.latitude else None,
             "longitude": self.longitude if self.longitude else None,
             "step_number": self.step_number if self.step_number else None,
+            "description": self.description if self.description else None,
         }
     def __str__(self):
         return str(self.step_number)  

@@ -145,6 +145,7 @@ def login_view(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_tour(request):
+    print("Solicitud recibida con los siguientes datos: %s", request.FILES)
     error_message = None
     auth_header = request.META.get('HTTP_AUTHORIZATION')
     if auth_header:
@@ -177,10 +178,17 @@ def upload_tour(request):
                     extra_image = None
                     extra_latitude = None
                     extra_longitude = None
+                    
+                    extra_description_key = f'description_{i}'
+                    if extra_description_key in request.POST:
+                        extra_description = request.POST.get(extra_description_key, '')
+
+                    paso = Paso(tour=tour, audio=extra_audio, description=extra_description)
 
                     extra_image_key = f'extra_step_image_{i}'
                     if extra_image_key in request.FILES:
                         extra_image = request.FILES[extra_image_key]
+                        paso.image = extra_image
 
                     extra_latitude_key = f'extra_step_latitude_{i}'
                     if extra_latitude_key in request.POST and request.POST[extra_latitude_key]:
@@ -190,10 +198,10 @@ def upload_tour(request):
                     if extra_longitude_key in request.POST and request.POST[extra_longitude_key]:
                         extra_longitude = float(request.POST[extra_longitude_key])
 
-                    paso = Paso(tour=tour, audio=extra_audio)
                     
-                    if extra_image:
-                        paso.image = extra_image
+                    print(paso)
+                    #if extra_image:
+                        #.image = extra_image
                     if extra_latitude:
                         paso.latitude = extra_latitude
                     if extra_longitude:
@@ -201,7 +209,13 @@ def upload_tour(request):
 
                     paso.save()
                 else:
+                    print
+                    print(i)
+                    print(request.POST)  
+                    print(request.FILES)  
+                    print("aviso a navegantes")
                     break
+                    
 
             return redirect('index')
         else:
@@ -674,3 +688,18 @@ def step_detail(request, tour_id, step_id):
     except Paso.DoesNotExist:
         # Manejo del error cuando no se encuentra el paso o el paso no pertenece al tour
         return HttpResponseNotFound('Step not found or does not belong to this tour')
+    
+def get_tour_locations(request, tour_id):
+    try:
+        
+        tour = Tour.objects.get(id=tour_id)
+        
+        pasos = Paso.objects.filter(tour=tour)
+
+        
+        locations = [{'lat': paso.latitude, 'long': paso.longitude} for paso in pasos if paso.latitude and paso.longitude]
+
+        return JsonResponse({'locations': locations})
+
+    except Tour.DoesNotExist:
+        return JsonResponse({'error': 'Tour no encontrado'}, status=404)
