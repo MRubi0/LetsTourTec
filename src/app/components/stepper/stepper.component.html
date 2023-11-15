@@ -10,12 +10,15 @@
             </ng-template>
             <ng-template matStepLabel *ngIf="i>0"><strong>Step {{i}}</strong></ng-template>
             <div>
-                <mat-card>
+                <mat-card *ngIf="i==0">
                     <mat-card-header>
                         <h2>Test</h2>
                     </mat-card-header>
                     <mat-card-content>
-                        <p>{{tour.description}}</p>
+                      <div class="d-flex justify-content-center w-100">
+                        <img src="{{tour.image}}" alt="">
+                      </div>                        
+                        <p align="left">{{tour.description}}</p>
                         <hr>
                         <div class="audio d-flex justify-content-center">
                             <audio id="player2" preload="none" controls style="max-width:100%;">
@@ -24,6 +27,23 @@
                         </div>
                     </mat-card-content>
                 </mat-card>
+                <mat-card *ngIf="i>0">
+                  <mat-card-header>
+                      <h2>Test</h2>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="d-flex justify-content-center w-100">
+                      <img src="{{step.image}}" alt="">
+                    </div>                        
+                      <p align="left">{{step.description}}</p>
+                      <hr>
+                      <div class="audio d-flex justify-content-center">
+                          <audio id="player2" preload="none" controls style="max-width:100%;">
+                              <source src="{{step.audio}}" type="audio/mp3">
+                          </audio>
+                      </div>
+                  </mat-card-content>
+              </mat-card>
               <button mat-button matStepperNext>Next</button>
             </div>
           </form>
