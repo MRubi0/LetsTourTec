@@ -25,7 +25,8 @@ export class AuthService {
 
   login(email: string, password: string): Observable<AuthTokens> {
     const csrfToken = this.getCsrfTokenFromCookie();
-    if (!csrfToken) {
+    console.log('csrfToken -->', csrfToken);
+   /* if (!csrfToken) {
       this.loggingService.error("CSRF token is missing");
       return throwError(new Error("CSRF token is missing"));
     }
@@ -33,9 +34,9 @@ export class AuthService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'X-CSRFToken': csrfToken
-    });
+    });*/
 
-    return this.http.post<AuthTokens>(this.baseUrl + 'api/token/', { email, password }, { headers }).pipe(
+    return this.http.post<AuthTokens>(this.baseUrl + 'api/token/', { email, password }).pipe(
       tap((tokens: AuthTokens) => this.saveTokens(tokens)),
 
       catchError(error => {

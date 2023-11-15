@@ -24,7 +24,7 @@ export class MapsComponent {
     }); 
   }
   ngAfterViewInit() {
-    const map = L.map('map').setView([51.505, -0.09], 13);
+    const map = L.map('maps').setView([51.505, -0.09], 13);
     navigator.geolocation.getCurrentPosition((position) => {
       const latitud = String(position.coords.latitude);
       const longitud = String(position.coords.longitude);
@@ -35,7 +35,7 @@ export class MapsComponent {
   
       const control = L.Routing.control({
         waypoints: [
-          L.latLng(Number(latitud), Number(longitud)),//punto 1 
+          L.latLng(Number(latitud), Number(longitud)),
           L.latLng(this.lat, this.long)      
         ],
         routeWhileDragging: true,

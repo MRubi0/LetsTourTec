@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ConnectableObservable } from 'rxjs';
+import { StepService } from 'src/app/services/step.service';
 
 @Component({
   selector: 'app-stepper',
@@ -15,13 +16,22 @@ export class StepperComponent {
     secondCtrl: ['', Validators.required],
   });
   isLinear = false;
-  constructor(private _formBuilder: FormBuilder) {}
+
+  tour:any;
+
+  constructor(private _formBuilder: FormBuilder, private stepService:StepService) {}
 
   ngOnInit(){
-    this.data('prueba');
+
+  }
+  ngAfterViewInit(){
+    this.data();
   }
 
-  data(event:any){
-    console.log("event--<", event);
+  data(){
+    this.stepService.getTourDetail('78').subscribe((data=>{
+      this.tour=data;
+      console.log('data ---->', data);
+    }));
   }
 }
