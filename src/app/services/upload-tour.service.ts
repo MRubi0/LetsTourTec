@@ -14,6 +14,7 @@ export class UploadTourService {
   constructor(private http: HttpClient) {}
 
   uploadTour(formData: FormData): Observable<any> {
+    console.log('formData -->', formData);
     return this.http.post(`${this.uploadUrl}profile/upload_tour/`, formData, {
       responseType: 'json', // Expecting a JSON response
       withCredentials: true // This is important for session-based authentication

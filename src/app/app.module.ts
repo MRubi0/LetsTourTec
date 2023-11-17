@@ -36,7 +36,8 @@ import { AuthGuard } from './services/auth.guard';
 import { UploadTourComponent } from './components/upload-tour/upload-tour.component';
 import { MatSelectModule } from '@angular/material/select';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './interceptors/auth.interceptor'; 
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { MyToursComponent } from './components/my-tours/my-tours.component'; 
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     RegistrationSuccessComponent,
     ProfileComponent,
     MapsComponent,
-    UploadTourComponent
+    UploadTourComponent,
+    MyToursComponent
   ],
   imports: [
     BrowserModule,

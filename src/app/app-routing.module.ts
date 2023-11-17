@@ -12,6 +12,7 @@ import { ProfileComponent } from 'src/app/components/profile/profile.component';
 import { MapsComponent } from './components/maps/maps.component';
 import { AuthGuard } from './services/auth.guard';
 import { UploadTourComponent } from './components/upload-tour/upload-tour.component'; 
+import { MyToursComponent } from './components/my-tours/my-tours.component';
 
 const routes: Routes = [
   {
@@ -69,6 +70,11 @@ const routes: Routes = [
   {
     path: 'upload-tour', 
     component: UploadTourComponent,
+    canActivate: [AuthGuard] 
+  },
+  {
+    path: 'my-tour', 
+    component: MyToursComponent,
     canActivate: [AuthGuard] 
   },
 
