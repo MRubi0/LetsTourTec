@@ -9,10 +9,10 @@
              <strong>{{tour.titulo | uppercase}}</strong> 
             </ng-template>
             <ng-template matStepLabel *ngIf="i>0"><strong>Step {{i}}</strong></ng-template>
-            <div>
+            <div>              
                 <mat-card *ngIf="i==0">
                     <mat-card-header>
-                        <h2>Test</h2>
+                        <h2>Test</h2>                       
                     </mat-card-header>
                     <mat-card-content>
                       <div class="d-flex justify-content-center w-100">
@@ -44,7 +44,7 @@
                       </div>
                   </mat-card-content>
               </mat-card>
-              <button mat-button matStepperNext>Next</button>
+                <button mat-button matStepperNext>Next</button>
             </div>
           </form>
         </mat-step>

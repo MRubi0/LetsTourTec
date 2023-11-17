@@ -24,15 +24,23 @@ export class StepperComponent {
 
   constructor(private _formBuilder: FormBuilder, private stepService:StepService) {}
 
-  ngOnInit(){}
+  ngOnInit(){
+    this.firstFormGroup.valueChanges.subscribe(data=>{
+      console.log(data);
+    });
+  }
   ngAfterViewInit(){
     this.data();
+    //this.firstFormGroup.get('firstCtrl')?.setValue(null);
   }
-
   data(){
     this.stepService.getTourDetail('78').subscribe((data=>{
-      this.tour=data;
-      console.log('data ---->', data);
+      this.tour=data;      
     }));
+  }
+
+  steps(){
+    console.log(' paso ');
+    //this.firstFormGroup.get('firstCtrl')?.setValue('r');
   }
 }

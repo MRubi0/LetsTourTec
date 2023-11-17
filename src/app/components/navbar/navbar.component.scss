@@ -2,5 +2,12 @@
     width: 240px;
 }
 .navbar {
+    width: 100%;
     background-color: #fff;
+    border-radius: 0px 0px 20px 20px;
+    box-shadow: 0px 3px 5px rgba(13, 110, 253, 0.8);
+}
+
+#navbarSearch{
+    width: 25%;
 }
