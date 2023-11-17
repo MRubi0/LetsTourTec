@@ -165,7 +165,7 @@ def upload_tour(request):
             tour = form.save(commit=False)
             tour.user = request.user
             tour.image = request.FILES['imagen'] if 'imagen' in request.FILES else None
-            
+
             if tour.tipo_de_tour=='leisure':
                 tour.tipo_de_tour='ocio'
             elif tour.tipo_de_tour=='nature':
@@ -180,6 +180,7 @@ def upload_tour(request):
                 if extra_audio_key in request.FILES:
                     extra_audio = request.FILES[extra_audio_key]
                     
+                    extra_description= None
                     extra_image = None
                     extra_latitude = None
                     extra_longitude = None
