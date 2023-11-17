@@ -106,9 +106,9 @@ class Tour(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     TIPO_DE_TOUR_CHOICES = [
-        ('naturaleza', 'Naturaleza'),
+        ('nature', 'Naturaleza'),
         ('cultural', 'Cultural'),
-        ('ocio', 'Ocio'),
+        ('leisure', 'Ocio'),
     ]
     tipo_de_tour = models.CharField(max_length=10, choices=TIPO_DE_TOUR_CHOICES, default=None, blank=True, null=True)
     

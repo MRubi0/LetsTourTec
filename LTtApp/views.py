@@ -165,6 +165,11 @@ def upload_tour(request):
             tour = form.save(commit=False)
             tour.user = request.user
             tour.image = request.FILES['imagen'] if 'imagen' in request.FILES else None
+            
+            if tour.tipo_de_tour=='leisure':
+                tour.tipo_de_tour='ocio'
+            elif tour.tipo_de_tour=='nature':
+                tour.tipo_de_tour='naturaleza'
 
             tour.save()
             print(tour)
