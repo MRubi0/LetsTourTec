@@ -2,8 +2,8 @@
 
     <div class="example-input-wrapper" *ngIf="tour">
       
-      <mat-vertical-stepper [linear]="false" #stepper [animationDuration]="'2000'">
-        <mat-step [stepControl]="firstFormGroup" *ngFor="let step of tour.steps;let i = index">
+      <mat-vertical-stepper>
+        <mat-step [stepControl]="firstFormGroup" *ngFor="let step of tour.steps;let i = index" >
           <form [formGroup]="firstFormGroup">
             <ng-template matStepLabel *ngIf="i==0">
              <strong>{{tour.titulo | uppercase}}</strong> 
@@ -12,7 +12,7 @@
             <div>              
                 <mat-card *ngIf="i==0">
                     <mat-card-header>
-                        <h2>Test</h2>                       
+                        <!-- <h2>Test</h2>   -->                    
                     </mat-card-header>
                     <mat-card-content>
                       <div class="d-flex justify-content-center w-100">
@@ -36,13 +36,13 @@
                     <!-- <button (click)="load(step.latitude, step.longitude, i)">ir</button>
                     <div class="maps col-12" id="maps{{i}}" (click)="stopEvent($event)" ></div>
                     <input class="input_map" type="text" disabled=true> -->
-                    <button (click)="openMapModal(step.latitude, step.longitude)">Abrir Mapa</button>
+                    <button mat-button (click)="openMapModal(step.latitude, step.longitude)"type="button">Open Map</button>
                   </div>
                   
 
                   <mat-card-content>
                     <div class="d-flex justify-content-center w-100">
-                      <img src="{{step.image}}" alt="">
+                      <img src="{{step.image}}" alt="" loading="lazy">
                     </div>                        
                       <p align="left">{{step.description}}</p>
                       <hr>
@@ -58,6 +58,7 @@
             </div>
           </form>
         </mat-step>
+
        <!--<mat-step [stepControl]="secondFormGroup">
           <form [formGroup]="secondFormGroup">
             <ng-template matStepLabel>Step 2</ng-template>

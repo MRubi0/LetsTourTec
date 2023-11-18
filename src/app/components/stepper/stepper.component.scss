@@ -1,7 +1,23 @@
 ::ng-deep .mat-step-header .mat-step-icon-selected, .mat-step-header .mat-step-icon-state-done, .mat-step-header .mat-step-icon-state-edit {
     background-color: #0d6efd !important;
+    .mat-mdc-button.mat-unthemed {
+        color: white !important;
+    }
 }
+
 .maps{
     width: 900px;
     height: 400px;
+}
+
+.mdc-button {
+    background-color: #0d6efd !important;
+
+    .mat-mdc-button.mat-unthemed {
+        color: white !important;
+    }
+}
+
+.mat-mdc-button.mat-mdc-button-base{
+    color: white !important;
 }

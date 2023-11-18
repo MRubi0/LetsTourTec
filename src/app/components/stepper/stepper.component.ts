@@ -32,8 +32,9 @@ export class StepperComponent {
   constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, private stepService:StepService) { }
 
   ngOnInit(){
-    this.firstFormGroup.valueChanges.subscribe(data=>{
-      console.log(data);
+    this.firstFormGroup = this._formBuilder.group({
+      
+      firstCtrl: ['', Validators.required]
     });
   }
   ngAfterViewInit(){

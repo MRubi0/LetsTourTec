@@ -40,6 +40,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { MyToursComponent } from './components/my-tours/my-tours.component';
 import { MapModalComponent } from './components/map-modal/map-modal.component'; 
 import { MatDialogModule } from '@angular/material/dialog';
+import { AboutUsComponent } from './components/about-us/about-us.component';
 @NgModule({
   declarations: [
     MapModalComponent,
@@ -60,6 +61,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MapsComponent,
     UploadTourComponent,
     MyToursComponent,
+    AboutUsComponent,
     
   ],
   imports: [
