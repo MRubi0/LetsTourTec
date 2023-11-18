@@ -29,8 +29,17 @@
                 </mat-card>
                 <mat-card *ngIf="i>0">
                   <mat-card-header>
-                      <h2>Test</h2>
+                      
                   </mat-card-header>
+                  <div *ngIf="step.latitude && step.longitude">
+                    <h2>The following step is in another location, open the map to continue the tour</h2>
+                    <!-- <button (click)="load(step.latitude, step.longitude, i)">ir</button>
+                    <div class="maps col-12" id="maps{{i}}" (click)="stopEvent($event)" ></div>
+                    <input class="input_map" type="text" disabled=true> -->
+                    <button (click)="openMapModal(step.latitude, step.longitude)">Abrir Mapa</button>
+                  </div>
+                  
+
                   <mat-card-content>
                     <div class="d-flex justify-content-center w-100">
                       <img src="{{step.image}}" alt="">
@@ -42,11 +51,7 @@
                               <source src="{{step.audio}}" type="audio/mp3">
                           </audio>
                       </div>                      
-                      <div *ngIf="step.latitude && step.longitude">
-                        <button (click)="load(step.latitude, step.longitude, i)">ir</button>
-                        <div class="maps col-12" id="maps{{i}}" (click)="stopEvent($event)" ></div>
-                        <input class="input_map" type="text" disabled=true>
-                      </div>
+                      
                   </mat-card-content>
               </mat-card>
                 <button mat-button matStepperNext>Next</button>

@@ -4,6 +4,9 @@ import { ConnectableObservable } from 'rxjs';
 import { StepService } from 'src/app/services/step.service';
 import { environment } from 'src/enviroment/enviroment';
 import * as L from 'leaflet';
+import { MatDialog } from '@angular/material/dialog';
+import { MapModalComponent } from 'src/app/components/map-modal/map-modal.component';
+
 
 @Component({
   selector: 'app-stepper',
@@ -25,7 +28,8 @@ export class StepperComponent {
   maps='maps';
   url=environment.bucket;
 
-  constructor(private _formBuilder: FormBuilder, private stepService:StepService) {}
+  // constructor( private _formBuilder: FormBuilder, private stepService:StepService) {}
+  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, private stepService:StepService) { }
 
   ngOnInit(){
     this.firstFormGroup.valueChanges.subscribe(data=>{
@@ -110,4 +114,14 @@ export class StepperComponent {
     console.log(' paso ');
     //this.firstFormGroup.get('firstCtrl')?.setValue('r');
   }
+  openMapModal(lat: number, lng: number): void {
+    const dialogRef = this.dialog.open(MapModalComponent, {
+      width: '250px',
+      data: { latitude: lat, longitude: lng }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  } 
 }

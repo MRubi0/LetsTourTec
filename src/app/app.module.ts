@@ -37,10 +37,12 @@ import { UploadTourComponent } from './components/upload-tour/upload-tour.compon
 import { MatSelectModule } from '@angular/material/select';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
-import { MyToursComponent } from './components/my-tours/my-tours.component'; 
-
+import { MyToursComponent } from './components/my-tours/my-tours.component';
+import { MapModalComponent } from './components/map-modal/map-modal.component'; 
+import { MatDialogModule } from '@angular/material/dialog';
 @NgModule({
   declarations: [
+    MapModalComponent,
     AppComponent,
     NavbarComponent,
     CardsComponent,
@@ -57,7 +59,8 @@ import { MyToursComponent } from './components/my-tours/my-tours.component';
     ProfileComponent,
     MapsComponent,
     UploadTourComponent,
-    MyToursComponent
+    MyToursComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -68,7 +71,7 @@ import { MyToursComponent } from './components/my-tours/my-tours.component';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    MatButtonModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
@@ -77,7 +80,7 @@ import { MyToursComponent } from './components/my-tours/my-tours.component';
     MatTooltipModule,
     NgxPaginationModule,
     MatStepperModule,
-    ReactiveFormsModule,
+    
     
   ],
   providers: [
