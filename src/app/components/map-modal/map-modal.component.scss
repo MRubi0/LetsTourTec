@@ -1,0 +1,48 @@
+.modal-dialog {
+    max-width: 100%;
+    width: 100vw !important; /* Anchura completa de la ventana */
+    height: 100vh  ;/* Altura completa de la ventana */
+    margin: 0;
+    display: flex; /* Asegura que el contenido se distribuya de manera flexible */
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+}
+
+.modal-content {
+  width: 100%; /* Anchura completa del contenedor */
+  height: auto; /* Altura automática para ajustarse al contenido */
+  display: flex;
+  flex-direction: column;
+}
+  
+.modal-body {
+  flex-grow: 1; /* Ocupa todo el espacio disponible */
+  padding: 0; /* Elimina cualquier relleno */
+}
+
+.modal-dialog {
+  width: full;
+}
+.cdk-overlay-pane {
+  width: 100vw !important; /* Forzar al ancho completo de la ventana */
+  max-width: none !important; /* Eliminar cualquier restricción de máximo ancho */
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface{
+  
+  min-width: 100vw!important;
+  max-width: 100vw!important;
+}
+.mat-mdc-dialog-container, .mat-mdc-dialog-container .mdc-dialog__container, .mat-mdc-dialog-container .mdc-dialog__surface {
+  max-height: inherit;
+  min-height: inherit;
+  min-width: 100vw!important;
+  max-width: 100vw!important;
+}
+
+.modal-title {
+  margin-left: 200px; 
+  font-size: 24px;
+  font-weight: bold;
+  color: #0d6efd;
+}

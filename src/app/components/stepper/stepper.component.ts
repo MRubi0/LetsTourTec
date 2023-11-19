@@ -117,7 +117,8 @@ export class StepperComponent {
   }
   openMapModal(lat: number, lng: number): void {
     const dialogRef = this.dialog.open(MapModalComponent, {
-      width: '250px',
+      width: '90vw',
+      maxWidth: 'none',
       data: { latitude: lat, longitude: lng }
     });
   

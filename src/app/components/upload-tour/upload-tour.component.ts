@@ -125,8 +125,32 @@ export class UploadTourComponent implements OnInit{
     const file = event.target.files[0];
     if (file) {
       this.tourForm.get(field)?.setValue(file);
+
+      let elementId = '';
+
+      if (field.startsWith('extraSteps')) {
+        const [_, index, subField] = field.split('.');
+        if (subField === 'image') {
+          elementId = 'nombreImagenExtra' + index;
+        } else if (subField === 'audio') {
+          elementId = 'nombreAudioExtra' + index;
+        }
+      } else {
+      switch(field) {
+        case 'imagen':
+          elementId = 'nombreImagen';
+          break;
+        case 'audio':
+          elementId = 'nombreAudio';
+          break;
+      }
+    }
+    const displayElement = document.getElementById(elementId);
+    if (displayElement) {
+      displayElement.textContent = file.name;
     }
   }
 }
 
 
+}

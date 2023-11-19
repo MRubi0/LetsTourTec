@@ -20,6 +20,9 @@ export class MapModalComponent implements OnInit {
   ngOnInit(): void {
     this.initializeMap();
   }
+  closeModal(): void {
+    this.dialogRef.close();
+  }
 
   initializeMap(): void {
     navigator.geolocation.getCurrentPosition((position) => {

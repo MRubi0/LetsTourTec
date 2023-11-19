@@ -32,6 +32,7 @@
                     <p>Imagen del tour</p>
                     <input #imagenInput type="file" (change)="onFileSelect($event, 'imagen')" accept="image/*" hidden>
                     <button mat-button (click)="imagenInput.click()" type="button">Seleccionar archivo</button>
+                    <span id="nombreImagen"></span> 
                 </div>
                 
                   
@@ -40,6 +41,7 @@
                     <p>Audio del tour</p>
                     <input #audioInput type="file" (change)="onFileSelect($event, 'audio')" accept="audio/*" hidden>
                     <button mat-button (click)="audioInput.click()" type="button">Seleccionar archivo</button>
+                    <span id="nombreAudio"></span> 
                 </div>
 
                 <div class="form-field">
@@ -94,12 +96,14 @@
                             <p>Imagen del paso extra {{ i + 1 }}</p>
                             <input #imagenInput type="file" (change)="onFileSelect($event, 'extraSteps.'+i+'.image')" accept="image/*" hidden>
                             <button mat-button (click)="imagenInput.click()" type="button">Seleccionar archivo</button>
+                            <span id="{{'nombreImagenExtra' + i}}"></span>
                         </div>
                         <!-- Input para el audio del paso extra -->
                         <div class="form-field">
                             <p>Audio del paso extra {{ i + 1 }}</p>
                             <input #audioInput type="file" (change)="onFileSelect($event, 'extraSteps.'+i+'.audio')" accept="audio/*" hidden>
                             <button mat-button (click)="audioInput.click()" type="button">Seleccionar archivo</button>
+                            <span id="{{'nombreAudioExtra' + i}}"></span>
                         </div> 
                                                 
                         <div class="form-field">
