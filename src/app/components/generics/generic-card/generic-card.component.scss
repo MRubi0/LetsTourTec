@@ -47,7 +47,6 @@ mat-mdc-card-title {
     font-size: 1.25rem;
     padding-left: 0;
     font-weight: auto;
-
 }
 
 
@@ -91,4 +90,9 @@ mat-card {
 ::-webkit-scrollbar-thumb {
     background-color: #0d6efd;
     border-radius: 4px;
+}
+.showMore{
+    color: #0d6efd;
+    font-weight: bold;
+    text-decoration: underline;
 }

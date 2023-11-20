@@ -15,6 +15,7 @@ export class GenericCardComponent {
   pageSize:number=12;
   autoHide=true
   responsive=true
+  showMore=false;
 
   constructor(private sharedService:SharedService){}
 

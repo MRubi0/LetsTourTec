@@ -45,7 +45,7 @@ export class MapsComponent {
 
       this.control.on('waypointschanged', (e: any) => {
         e.waypoints.forEach((waypoint: any) => {
-          waypoint.dragging.disable();
+          //waypoint.dragging.disable();
         });
       });
 

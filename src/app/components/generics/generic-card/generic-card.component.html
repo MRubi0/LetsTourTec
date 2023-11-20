@@ -1,5 +1,5 @@
-<div class="container row">
-    <div class="container-card col-4" *ngFor="let tours of toursdata | paginate: {
+<div class="container row d-flex justify-content-center">
+    <div class="container-card  col-xxl-4 col-lg-6 col-md-12 d-flex justify-content-center" *ngFor="let tours of toursdata | paginate: {
         itemsPerPage: pageSize,
         currentPage: p,
         totalItems: toursdata.lenght }">
@@ -22,7 +22,12 @@
             <mat-card-content class="content mt-2">
                 <mat-card-title>{{tours.titulo}}</mat-card-title>
                 <strong>Description: </strong>
-                <p>{{tours.descripcion}}</p>
+                <p>
+                    {{tours.descripcion.length > 20 ? tours.descripcion.slice(0, 20) + '...' : tours.descripcion}}
+                    <span *ngIf="tours.descripcion.length > 20">
+                      <p class="showMore">{{'Ver más'}}</p>
+                    </span>
+                  </p>
                 <ul>
                     <li><strong>Distance to starting point:</strong> {{tours.distance | number: '1.0-2'}} km</li>
                     <li><strong>Duration:</strong>{{tours.duracion}} minutes</li>
