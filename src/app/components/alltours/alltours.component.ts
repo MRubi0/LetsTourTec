@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { LatestToursService } from 'src/app/services/latest-tours.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-alltours',
@@ -9,7 +10,7 @@ import { LatestToursService } from 'src/app/services/latest-tours.service';
 export class AlltoursComponent {
 
   alltours:any;
-  constructor(private latestToursService:LatestToursService){
+  constructor(private latestToursService:LatestToursService, private http: HttpClient){
 
   }
 
@@ -18,4 +19,28 @@ export class AlltoursComponent {
       this.alltours=data;
     }));
   }
+
+  sortByDistance() {
+    this.getCoordenades();
+  }
+
+  getCoordenades() {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const latitud = String(position.coords.latitude);
+        const longitud = String(position.coords.longitude);
+
+        this.http.get('http://127.0.0.1:8000/get_nearest_tours_all', {
+          params: {latitude: latitud , longitude: longitud}})
+
+
+          .subscribe((data: any) => {
+            this.alltours = data;  
+          });
+      });
+    } else {
+      console.log("Geolocalización no es compatible en este navegador.");
+    }
+  }
+
 }
