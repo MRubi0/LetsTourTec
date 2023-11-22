@@ -25,6 +25,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('registration_success/', views.registration_success, name='registration_success'),
     path('profile/', views.profile, name='profile'),
+    path('profile/get', views.search_user_by_id, name='search_user_by_email'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('profile/upload_tour/', upload_tour, name='upload_tour'),

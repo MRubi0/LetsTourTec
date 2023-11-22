@@ -100,6 +100,33 @@ def edit_profile(request):
 def profile(request):
     return render(request, 'user/profile.html', {'user': request.user})
 
+def search_user_by_id(request):
+    if request.method == 'GET':
+        user_id = request.GET.get('id')
+
+        if user_id:
+            User = get_user_model()
+            try:
+                user = User.objects.get(id=user_id)
+            except User.DoesNotExist:
+                return JsonResponse({'error': 'El usuario con el ID proporcionado no existe'}, status=404)
+
+            user_data = {
+                'id': user.id,
+                'email': user.email,
+                'bio': user.bio,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'avatar': user.avatar.url if user.avatar else None,
+            }
+
+            return JsonResponse({'user': user_data})
+        else:
+            return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
 # @csrf_exempt
 # def login_view(request):
 #     ###print('im here')
