@@ -1,7 +1,11 @@
 <mat-card class="container-card">
     <mat-card-header class="mb-3">
         <mat-card-title>All tours</mat-card-title>
-    </mat-card-header>
+      </mat-card-header>      
+        <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px" class="mb-5">
+        <button mat-raised-button color="primary" class="custom-button-color" (click)="sortByDistance()">Sort by distance</button>
+    </div>
+
     <mat-card-content>        
         <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px" class="card-contianer" *ngIf="alltours">       
             <app-generic-card class="d-flex flex-wrap" [toursdata]=alltours.tours [all-tours]="true"></app-generic-card>
