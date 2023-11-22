@@ -26,7 +26,7 @@
                     {{tours.descripcion.length > 50 ? tours.descripcion.slice(0, 50) + '...' : tours.descripcion}}
 
                     <span *ngIf="tours.descripcion.length > 50" class="showMore">{{'Ver más'}}</span>
-        </p>
+                </p>
                 <ul>
                     <li><strong>Distance to starting point:</strong> {{tours.distance | number: '1.0-2'}} km</li>
                     <li><strong>Duration:</strong>{{tours.duracion}} minutes</li>
