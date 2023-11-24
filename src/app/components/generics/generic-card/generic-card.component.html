@@ -23,11 +23,10 @@
                 <mat-card-title>{{tours.titulo}}</mat-card-title>
                 <strong>Description: </strong>
                 <p>
-                    {{tours.descripcion.length > 20 ? tours.descripcion.slice(0, 20) + '...' : tours.descripcion}}
-                    <span *ngIf="tours.descripcion.length > 20">
-                      <p class="showMore">{{'Ver más'}}</p>
-                    </span>
-                  </p>
+                    {{tours.descripcion.length > 50 ? tours.descripcion.slice(0, 50) + '...' : tours.descripcion}}
+
+                    <span *ngIf="tours.descripcion.length > 50" class="showMore">{{'Ver más'}}</span>
+                </p>
                 <ul>
                     <li><strong>Distance to starting point:</strong> {{tours.distance | number: '1.0-2'}} km</li>
                     <li><strong>Duration:</strong>{{tours.duracion}} minutes</li>
