@@ -3,8 +3,10 @@
         itemsPerPage: pageSize,
         currentPage: p,
         totalItems: toursdata.lenght }">
-        <mat-card class="tour-card" routerLink="/tour/{{tours.id}}" (click)="sendImage(tours.id)">
-            
+        <!-- <mat-card class="tour-card" routerLink="/tour/{{tours.id}}" (click)="sendImage(tours.id)"> 
+            <mat-card class="tour-card" routerLink="/tour/{{tours.id}}" (click)="stopClickPropagate($event)">-->
+                <mat-card class="tour-card" (click)="sendImage(tours.id)">
+
             <mat-card-header class="p-0">       
                 <img class="image" mat-card-image 
                 src='https://letstourtec-bucket-2.s3.eu-north-1.amazonaws.com/tours/{{tours.imagen.url}}' 
@@ -22,11 +24,13 @@
             <mat-card-content class="content mt-2">
                 <mat-card-title>{{tours.titulo}}</mat-card-title>
                 <strong>Description: </strong>
-                <p>
-                    {{tours.descripcion.length > 50 ? tours.descripcion.slice(0, 50) + '...' : tours.descripcion}}
-
-                    <span *ngIf="tours.descripcion.length > 50" class="showMore">{{'Ver más'}}</span>
-                </p>
+                    <p>
+                        {{showFullDescription[tours.id] ? tours.descripcion : (tours.descripcion.length > 50 ? tours.descripcion.slice(0, 50) + '...' : tours.descripcion)}}
+                        <span *ngIf="tours.descripcion.length > 50" class="showMore" (click)="toggleDescription($event, tours.id)">
+                            {{showFullDescription[tours.id] ? 'Show less' : 'Show more'}}</span>
+                    </p>
+                    
+                
                 <ul>
                     <li><strong>Distance to starting point:</strong> {{tours.distance | number: '1.0-2'}} km</li>
                     <li><strong>Duration:</strong>{{tours.duracion}} minutes</li>
@@ -34,8 +38,11 @@
                 </ul>
             </mat-card-content>
             <mat-card-actions class="d-flex justify-content-center">
-                <!--<button mat-button color="primary">Let's do it!</button>-->
-                <button mat-raised-button color="primary" class="custom-button-color">Let's do it!</button>
+                <!--<button mat-button color="primary">Let's do it!</button>
+                <button mat-raised-button color="primary" class="custom-button-color">Let's do it!</button>-->
+                <button mat-raised-button color="primary" class="custom-button-color" [routerLink]="['/tour/', tours.id]">Let's do it!</button>
+
+                
             </mat-card-actions>
         </mat-card>
     </div>
