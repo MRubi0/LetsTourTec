@@ -4,7 +4,7 @@
 .image{
     height: 220px;
     img{
-        width: 30%;        
+        width: 100%;        
     }
 }
 .row{
@@ -45,4 +45,23 @@
       .maps{
         z-index: 0;
       }
+
+      .container-detail{
+        margin-top: 10px;
+    }
     
+    .mat-mdc-card {
+        width: 100%; /* Ocupa el 100% del ancho del contenedor padre */
+        margin: auto; /* Centra la tarjeta si el contenedor es más ancho */
+        max-width: 98%; /* O un valor que deje un pequeño margen a los lados */
+        box-sizing: border-box; /* Incluye el padding y el borde en el ancho total */
+    }
+    
+  
+        .mat-mdc-card {
+            max-width: 100%; /* En pantallas pequeñas, puede ocupar todo el ancho */
+        }
+    
+       .p-5 {
+            padding: 0.5rem!important;
+        }
