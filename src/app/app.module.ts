@@ -41,6 +41,8 @@ import { MyToursComponent } from './components/my-tours/my-tours.component';
 import { MapModalComponent } from './components/map-modal/map-modal.component'; 
 import { MatDialogModule } from '@angular/material/dialog';
 import { AboutUsComponent } from './components/about-us/about-us.component';
+import { HistoryToursComponent } from './components/history-tours/history-tours.component';
+import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
 @NgModule({
   declarations: [
     MapModalComponent,
@@ -62,6 +64,8 @@ import { AboutUsComponent } from './components/about-us/about-us.component';
     UploadTourComponent,
     MyToursComponent,
     AboutUsComponent,
+    HistoryToursComponent,
+    EditProfileComponent,
     
   ],
   imports: [

@@ -38,7 +38,7 @@ export class MapsComponent {
           L.latLng(this.lat, this.long)
         ],
         routeWhileDragging: true,
-        collapsible: false, 
+        collapsible: true, 
         show: true,  
         addWaypoints: false       
       }).addTo(map);

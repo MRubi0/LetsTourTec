@@ -21,12 +21,16 @@ export class StepperComponent {
     secondCtrl: ['', Validators.required],
   });
   isLinear = false;
-  
+  screenWidth: number = window.innerWidth;
+  screenHeight: number = window.innerHeight;
+
   lat:number=0;
   long:number=0;
   tour:any;
   maps='maps';
   url=environment.bucket;
+
+
 
   // constructor( private _formBuilder: FormBuilder, private stepService:StepService) {}
   constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, private stepService:StepService) { }
@@ -117,8 +121,8 @@ export class StepperComponent {
   }
   openMapModal(lat: number, lng: number): void {
     const dialogRef = this.dialog.open(MapModalComponent, {
-      width: '90vw',
-      maxWidth: 'none',
+      width: `${Math.min(this.screenWidth * 0.9, 800)}px`,
+            maxWidth: 'none',
       data: { latitude: lat, longitude: lng }
     });
   

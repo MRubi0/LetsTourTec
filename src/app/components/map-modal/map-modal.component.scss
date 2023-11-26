@@ -1,6 +1,6 @@
 .modal-dialog {
     max-width: 100%;
-    width: 100vw !important; /* Anchura completa de la ventana */
+    width: 90vw !important; /* Anchura completa de la ventana */
     height: 100vh  ;/* Altura completa de la ventana */
     margin: 0;
     display: flex; /* Asegura que el contenido se distribuya de manera flexible */
@@ -9,7 +9,7 @@
 }
 
 .modal-content {
-  width: 100%; /* Anchura completa del contenedor */
+  width: 90%; /* Anchura completa del contenedor */
   height: auto; /* Altura automática para ajustarse al contenido */
   display: flex;
   flex-direction: column;
@@ -36,13 +36,17 @@
 .mat-mdc-dialog-container, .mat-mdc-dialog-container .mdc-dialog__container, .mat-mdc-dialog-container .mdc-dialog__surface {
   max-height: inherit;
   min-height: inherit;
-  min-width: 100vw!important;
-  max-width: 100vw!important;
+  min-width: 90vw!important;
+  max-width: 90vw!important;
 }
 
 .modal-title {
-  margin-left: 200px; 
+  margin-left: auto; 
   font-size: 24px;
   font-weight: bold;
   color: #0d6efd;
+}
+.maps{
+  width: 85%;
+  height: 900px;
 }

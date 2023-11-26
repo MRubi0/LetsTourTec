@@ -53,7 +53,15 @@ this.router.navigate([`/maps/${data.latitude}/${data.longitude}`]);
 
   initMap(additionalLocations: any[]) {
     if (!this.detail) return;
-  
+    const defaultIcon = L.icon({
+      iconUrl: 'images/marker-icon.png',  
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowUrl: 'images/marker-shadow.png',
+      shadowSize: [41, 41]
+    });
+    L.Marker.prototype.options.icon = defaultIcon;
     const map = L.map('map').setView([this.detail.latitude, this.detail.longitude], 13);
   
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
