@@ -43,6 +43,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { AboutUsComponent } from './components/about-us/about-us.component';
 import { HistoryToursComponent } from './components/history-tours/history-tours.component';
 import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
+import { MusicPlayerComponent } from './components/generics/music-player/music-player.component';
 @NgModule({
   declarations: [
     MapModalComponent,
@@ -66,6 +67,7 @@ import { EditProfileComponent } from './components/edit-profile/edit-profile.com
     AboutUsComponent,
     HistoryToursComponent,
     EditProfileComponent,
+    MusicPlayerComponent,
     
   ],
   imports: [

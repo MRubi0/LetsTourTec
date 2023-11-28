@@ -1,0 +1,44 @@
+.control{
+    border: none;
+    background-color: transparent;
+    width: 60px;
+}
+.control_rest{
+    border: none;
+    background-color: transparent;
+    width: 40px;
+}
+.icon{
+    height: 100%;
+    width: 100%;
+}
+.progres-bar{
+    transform: rotate(-90deg);
+    display: flex;
+    flex-wrap: nowrap;
+    z-index: 5;
+    padding-bottom: 30px;
+}
+.volume-bar {
+    position: absolute;
+    top: -80px; 
+    left: 50%;
+    transform: translateX(-50%) rotate(-90deg);
+    z-index: 1;
+}
+
+.control_rest {
+    position: relative;
+    z-index: 2;
+}
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.progress-bar-audio {
+    width: 100%;
+    margin: 0 10px;
+}
