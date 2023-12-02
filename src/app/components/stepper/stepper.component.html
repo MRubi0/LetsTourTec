@@ -11,20 +11,17 @@
             <ng-template matStepLabel *ngIf="i>0"><strong>Step {{i}}</strong></ng-template>
             <div>              
                 <mat-card *ngIf="i==0">
-                    <mat-card-header>
-                        <!-- <h2>Test</h2>   -->                    
+                    <mat-card-header>                        
                     </mat-card-header>
                     <mat-card-content>
                       <div class="d-flex justify-content-center w-100">
                         <img src="{{tour.image}}" alt="">
-                      </div>                        
+                      </div>    
+                      <div class="w-100">
                         <p align="left">{{tour.description}}</p>
-                        <hr>
+                      </div>           
                         <div class="audio d-flex justify-content-center">
-                            <audio id="player2" preload="none" controls style="max-width:100%;">
-                                <source src="{{tour.audio}}" type="audio/mp3">
-                            </audio>
-                            <app-music-player></app-music-player>
+                            <app-music-player class="w-100" [audio]="tour.audio"></app-music-player>
                         </div>
                     </mat-card-content>
                 </mat-card>
@@ -34,9 +31,6 @@
                   </mat-card-header>
                   <div *ngIf="step.latitude && step.longitude">
                     <h2>The following step is in another location, open the map to continue the tour</h2>
-                    <!-- <button (click)="load(step.latitude, step.longitude, i)">ir</button>
-                    <div class="maps col-12" id="maps{{i}}" (click)="stopEvent($event)" ></div>
-                    <input class="input_map" type="text" disabled=true> -->
                     <button mat-button (click)="openMapModal(step.latitude, step.longitude)"type="button">Open Map</button>
                   </div>
                   
@@ -46,13 +40,9 @@
                       <img src="{{step.image}}" alt="" loading="lazy">
                     </div>                        
                       <p align="left">{{step.description}}</p>
-                      <hr>
-                      <div class="audio d-flex justify-content-center">
-                          <audio id="player2" preload="none" controls style="max-width:100%;">
-                              <source src="{{step.audio}}" type="audio/mp3">
-                          </audio>
-                      </div>                      
-                      
+                      <div class="audio d-flex justify-content-center w-100">
+                          <app-music-player class="w-100" [audio]="step.audio"></app-music-player>
+                      </div>             
                   </mat-card-content>
               </mat-card>
                 <button mat-button matStepperNext>Next</button>
@@ -60,38 +50,6 @@
           </form>
         </mat-step>
 
-       <!--<mat-step [stepControl]="secondFormGroup">
-          <form [formGroup]="secondFormGroup">
-            <ng-template matStepLabel>Step 2</ng-template>
-            <mat-card>
-                <mat-card-header>
-                    <h2>Test 2</h2>
-                </mat-card-header>
-                <mat-card-content>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt perspiciatis accusamus voluptates cupiditate veritatis, sint, officia, ducimus quasi autem nobis aliquam ratione explicabo qui quis quo consequuntur nulla neque. At?</p>
-                    <hr>
-                    <div class="audio d-flex justify-content-center">
-                        <audio id="player2" preload="none" controls style="max-width:100%;">
-                            <source src="https://letstourtec-bucket-2.s3.eu-north-1.amazonaws.com/tour_audio/audio2.opus" type="audio/mp3">
-                        </audio>
-                    </div>
-                </mat-card-content>
-            </mat-card>
-            <div>
-              <button mat-button matStepperPrevious>Back</button>
-              <button mat-button matStepperNext>Next</button>
-            </div>
-          </form>
-        </mat-step>
-        <mat-step>
-          <ng-template matStepLabel>Done</ng-template>
-          You are now done.
-          <div>
-            <button mat-button matStepperPrevious>Back</button>
-            <button mat-button (click)="stepper.reset()">Reset</button>
-          </div>
-        </mat-step>-->
-      </mat-vertical-stepper>
-      
+      </mat-vertical-stepper>      
     </div>
   </div>

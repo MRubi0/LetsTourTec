@@ -13,7 +13,7 @@ import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-
+import { SecondsToTimePipe } from './pipes/SecondsToTimePipe';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -68,7 +68,7 @@ import { MusicPlayerComponent } from './components/generics/music-player/music-p
     HistoryToursComponent,
     EditProfileComponent,
     MusicPlayerComponent,
-    
+    SecondsToTimePipe
   ],
   imports: [
     BrowserModule,

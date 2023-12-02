@@ -1,63 +1,44 @@
-<audio #audioPlayer src="../../../../assets/audios/audio1.opus" (timeupdate)="updateTime($event)"></audio>
-<div class="row">
-    <div class="progress-bar-container">
-        <span>{{ currentTimeInSeconds | date: 'mm:ss' }}</span>
-        <input type="range" class="progress-bar-audio" [value]="currentTimeInSeconds" [max]="durationInSeconds" (input)="seekTo($event)" />
-        <span>{{ (durationInSeconds - currentTimeInSeconds) | date: 'mm:ss' }}</span>
-    </div>
-</div>
-<div class="row">    
-    <div class="col-6">
-        <div class="row">
-            <div class="col-4">
-                <button (click)="skipBackward()" class="control">
-                    <img class="icon" src="../../../../assets/iconos/caret-left-fill-2.svg">
-                </button>
-            </div>
-            <div class="col-4">
-                <button class="control" (click)="togglePlayPause()">
-                    <img class="icon" src="../../../../assets/iconos/pause-circle-2.svg" *ngIf="isPlaying">
-                    <img class="icon" src="../../../../assets/iconos/play-circle-fill-2.svg" *ngIf="!isPlaying">
-                </button>
-            </div>
-            <div class="col-4">
-                <button (click)="skipForward()" class="control">
-                    <img class="icon" src="../../../../assets/iconos/caret-right-fill-2.svg">
-                </button>
-            </div>
+
+<div class="container-fluid w-100">
+    <audio #audioPlayer [src]=audio (timeupdate)="updateTime($event)"></audio>
+    <div class="row w-100">
+        <div class="progress-bar-container col-11">
+            <span>{{ currentTimeInSeconds | secondsToTime  }}</span>
+            <input type="range" class="progress-bar-audio" [value]="currentTimeInSeconds" [max]="durationInSeconds" (input)="seekTo($event)" />
+            <span>{{ (durationInSeconds - currentTimeInSeconds) | secondsToTime }}</span>
         </div>
-    </div>   
-    <div class="col-6">
-        <div class="row d-flex justify-content-end h-100 align-items-center">
-            <div class="col-2">
-                <button (click)="restart()" class="control_rest">
-                    <img class="icon" src="../../../../assets/iconos/arrow-clockwise-2.svg">
-                </button>
-            </div>
-            <div class="col-2" style="position: relative;">
-                <div class="volume-bar" *ngIf="bar_volume">
-                    <input type="range" min="0" max="1" step="0.01" [(ngModel)]="volume" (input)="setVolume(volume)" />
+        <div class="col-1">
+            <div class="row">
+                <div class="col-4">
+                    <button (click)="restart()" class="control_rest">
+                        <img class="icon" src="../../../../assets/iconos/arrow-clockwise-2.svg">
+                    </button>
                 </div>
-                <button class="control_rest" (click)="bar_volume=!bar_volume">
-                    <img class="icon" src="../../../../assets/iconos/volume-up-fill-2.svg" alt="Volumen">
-                </button>
-            </div>            
-            <div class="col-2">
-                <button type="button" class="control" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    x{{playbackRate}}
-                </button>
-                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Velocidad de reproduccion</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div *ngFor="let rate of playbackRates">
-                                    <div class="me-3" (click)="changePlaybackRate(rate)" data-bs-dismiss="modal">
-                                        {{ rate }}
+                <div class="col-4" style="position: relative;">
+                    <div class="volume-bar" *ngIf="bar_volume">
+                        <input type="range" min="0" max="1" step="0.01" [(ngModel)]="volume" (input)="setVolume(volume)" />
+                    </div>
+                    <button class="control_rest" (click)="bar_volume=!bar_volume">
+                        <img class="icon" src="../../../../assets/iconos/volume-up-fill-2.svg" alt="Volumen">
+                    </button>
+                </div>            
+                <div class="col-4">
+                    <button type="button" class="control" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        x{{playbackRate}}
+                    </button>
+                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Velocidad de reproduccion</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div *ngFor="let rate of playbackRates">
+                                        <div class="me-3" (click)="changePlaybackRate(rate)" data-bs-dismiss="modal">
+                                            {{ rate }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -65,7 +46,29 @@
                     </div>
                 </div>
             </div>
-        </div>
+            
+        </div>        
     </div>
-    
+    <div class="row">    
+        <div class="col-12">
+            <div class="row d-flex justify-content-center">
+                <div class="col-1">
+                    <button (click)="skipBackward()" class="control">
+                        <img class="icon" src="../../../../assets/iconos/caret-left-fill-2.svg">
+                    </button>
+                </div>
+                <div class="col-1">
+                    <button class="control" (click)="togglePlayPause()">
+                        <img class="icon" src="../../../../assets/iconos/pause-circle-2.svg" *ngIf="isPlaying">
+                        <img class="icon" src="../../../../assets/iconos/play-circle-fill-2.svg" *ngIf="!isPlaying">
+                    </button>
+                </div>
+                <div class="col-1">
+                    <button (click)="skipForward()" class="control">
+                        <img class="icon" src="../../../../assets/iconos/caret-right-fill-2.svg">
+                    </button>
+                </div>
+            </div>
+        </div>      
+    </div>
 </div>

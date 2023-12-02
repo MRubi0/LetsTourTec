@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-music-player',
@@ -7,6 +7,8 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 })
 export class MusicPlayerComponent {
   @ViewChild('audioPlayer') audioPlayerRef!: ElementRef;
+  @Input('audio') audio!:string;
+  
   audioPlayer!: HTMLAudioElement;
   isPlaying: boolean = false;
   volume: number = 0.5;
@@ -28,7 +30,7 @@ export class MusicPlayerComponent {
     this.audioPlayer.playbackRate = this.playbackRate;
 
     this.audioPlayerRef.nativeElement.onloadedmetadata = () => {
-      this.durationInSeconds = this.audioPlayerRef.nativeElement.duration;
+      this.durationInSeconds = Math.floor(this.audioPlayerRef.nativeElement.duration);
   };
   }
 
