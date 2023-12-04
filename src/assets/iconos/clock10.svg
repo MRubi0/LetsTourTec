@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" class="bi bi-arrow-clockwise">
+ <g class="layer">
+  <title>Layer 1</title>
+  <path d="m8,3a5,5 0 1 0 4.55,2.91a0.5,0.5 0 0 1 0.9,-0.41a6,6 0 1 1 -5.45,-3.5l0,1z" fill="#007fff" fill-rule="evenodd" id="svg_1" stroke="#000000" stroke-width="0"/>
+  <path d="m8,4.47l0,-3.94a0.25,0.25 0 0 1 0.41,-0.19l2.36,1.97c0.12,0.1 0.12,0.28 0,0.38l-2.36,1.97a0.25,0.25 0 0 1 -0.41,-0.19" fill="#007fff" id="svg_2" stroke="#000000" stroke-width="0"/>
+  <text fill="#007fff" font-family="Serif" font-size="24" id="svg_3" stroke="#000000" stroke-width="0" style="cursor: move;" text-anchor="middle" transform="matrix(0.266247 0 0 0.240569 4.94787 6.74832)" x="11.46" xml:space="preserve" y="14">10</text>
+ </g>
+</svg>
