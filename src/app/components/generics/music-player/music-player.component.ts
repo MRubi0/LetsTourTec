@@ -8,6 +8,7 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@
 export class MusicPlayerComponent {
   @ViewChild('audioPlayer') audioPlayerRef!: ElementRef;
   @Input('audio') audio!:string;
+  @Input('index') index!:number;
   @Output() stepChange = new EventEmitter<string>();
   audioPlayer!: HTMLAudioElement;
   isPlaying: boolean = false;

@@ -45,3 +45,15 @@
 .controls-row{
     max-width: 800px;
 }
+@media screen and (max-width: 980px) {
+    .icon {
+        width: 70%;
+        height: 70%;
+    }
+}
+@media screen and (max-width: 750px) {
+    .icon {
+        width: 50%;
+        height: 50%;
+    }
+}

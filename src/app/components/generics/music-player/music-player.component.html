@@ -1,13 +1,13 @@
 
 <div class="container-fluid w-100">
     <audio #audioPlayer [src]=audio (timeupdate)="updateTime($event)"></audio>
-    <div class="row w-100">
-        <div class="progress-bar-container col-10">
+    <div class="row w-100 mb-2">
+        <div class="progress-bar-container col-xxl-10 col-lg-10 col-md-8 col-sm-8">
             <span>{{ currentTimeInSeconds | secondsToTime  }}</span>
             <input type="range" class="progress-bar-audio" [value]="currentTimeInSeconds" [max]="durationInSeconds" (input)="seekTo($event)" />
             <span>{{ (durationInSeconds - currentTimeInSeconds) | secondsToTime }}</span>
         </div>
-        <div class="col-2">
+        <div class="col-xxl-2 col-lg-2 col-md-4 col-sm-4">
             <div class="row">
                 <div class="col-4">
                     <button (click)="restart()" class="control_rest">
@@ -23,10 +23,10 @@
                     </button>
                 </div>            
                 <div class="col-4">
-                    <button type="button" class="control" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    <button type="button" class="control" data-bs-toggle="modal" [attr.data-bs-target]="'#staticBackdrop' + index">
                         x{{playbackRate}}
                     </button>
-                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                    <div class="modal fade" [id]="'staticBackdrop' + index" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -52,12 +52,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
+            </div>            
         </div>        
     </div>
     <div class="row">    
-        <div class="col-12 d-flex justify-content-center">
+        <div class="col-xxl-10 col-lg-10 col-md-8 col-sm-8 d-flex justify-content-center">
             <div class="row g-0 controls-row">
                 <div class="col-2" (dblclick)="action('back')" (click)="restart()">
                     <button class="control">

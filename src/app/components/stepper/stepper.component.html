@@ -21,7 +21,7 @@
                         <p align="left">{{tour.description}}</p>
                       </div>           
                         <div class="audio d-flex justify-content-center">
-                            <app-music-player class="w-100" [audio]="tour.audio" (stepChange)="musicAction($event)" ></app-music-player>
+                            <app-music-player class="w-100" [audio]="tour.audio" [index]="i" (stepChange)="musicAction($event)" ></app-music-player>
                         </div>
                     </mat-card-content>
                 </mat-card>
@@ -41,7 +41,7 @@
                     </div>                        
                       <p align="left">{{step.description}}</p>
                       <div class="audio d-flex justify-content-center w-100">
-                          <app-music-player class="w-100" [audio]="step.audio" (stepChange)="musicAction($event)"></app-music-player>
+                          <app-music-player class="w-100" [audio]="step.audio" [index]="i" (stepChange)="musicAction($event)"></app-music-player>
                       </div>             
                   </mat-card-content>
               </mat-card>
