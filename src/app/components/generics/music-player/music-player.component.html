@@ -2,12 +2,12 @@
 <div class="container-fluid w-100">
     <audio #audioPlayer [src]=audio (timeupdate)="updateTime($event)"></audio>
     <div class="row w-100">
-        <div class="progress-bar-container col-11">
+        <div class="progress-bar-container col-10">
             <span>{{ currentTimeInSeconds | secondsToTime  }}</span>
             <input type="range" class="progress-bar-audio" [value]="currentTimeInSeconds" [max]="durationInSeconds" (input)="seekTo($event)" />
             <span>{{ (durationInSeconds - currentTimeInSeconds) | secondsToTime }}</span>
         </div>
-        <div class="col-1">
+        <div class="col-2">
             <div class="row">
                 <div class="col-4">
                     <button (click)="restart()" class="control_rest">
@@ -37,7 +37,14 @@
                                 <div class="modal-body">
                                     <div *ngFor="let rate of playbackRates">
                                         <div class="me-3" (click)="changePlaybackRate(rate)" data-bs-dismiss="modal">
-                                            {{ rate }}
+                                            <div class="row">
+                                                <div class="col-1">
+                                                    <span><img src="../../../../assets/iconos/check-circle-fill-blue.svg" *ngIf="rate==playbackRate"></span>
+                                                </div>
+                                                <div class="col-10">
+                                                    {{ rate }}
+                                                </div>
+                                            </div>                                        
                                         </div>
                                     </div>
                                 </div>
@@ -50,31 +57,31 @@
         </div>        
     </div>
     <div class="row">    
-        <div class="col-12">
-            <div class="row d-flex justify-content-center g-0 controls-row">
-                <div class="col-1">
+        <div class="col-12 d-flex justify-content-center">
+            <div class="row g-0 controls-row">
+                <div class="col-2" (dblclick)="action('back')" (click)="restart()">
                     <button class="control">
                         <img class="icon" src="../../../../assets/iconos/caret-left-fill-2.svg">
                     </button>
                 </div>
-                <div class="col-1">
+                <div class="col-2">
                     <button (click)="skipBackward()" class="control">
                         <img class="icon" src="../../../../assets/iconos/clock-10.svg">
                     </button>
                 </div>
-                <div class="col-1">
+                <div class="col-2">
                     <button class="control" (click)="togglePlayPause()">
                         <img class="icon" src="../../../../assets/iconos/pause-circle-2.svg" *ngIf="isPlaying">
                         <img class="icon" src="../../../../assets/iconos/play-circle-fill-2.svg" *ngIf="!isPlaying">
                     </button>
                 </div>
-                <div class="col-1">
+                <div class="col-2">
                     <button (click)="skipForward()" class="control">
                         <img class="icon" src="../../../../assets/iconos/clock10.svg">
                     </button>
                 </div>
-                <div class="col-1">
-                    <button class="control">
+                <div class="col-2">
+                    <button class="control" (click)="action('next')">
                         <img class="icon" src="../../../../assets/iconos/caret-right-fill-2.svg">
                     </button>
                 </div>

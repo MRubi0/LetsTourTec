@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-music-player',
@@ -8,7 +8,7 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 export class MusicPlayerComponent {
   @ViewChild('audioPlayer') audioPlayerRef!: ElementRef;
   @Input('audio') audio!:string;
-  
+  @Output() stepChange = new EventEmitter<string>();
   audioPlayer!: HTMLAudioElement;
   isPlaying: boolean = false;
   volume: number = 0.5;
@@ -80,9 +80,12 @@ export class MusicPlayerComponent {
     this.currentTime = audio.currentTime;
     this.currentTimeInSeconds = Math.floor(audio.currentTime);
 }
-
   seekTo(event: Event) {      
       const audio = this.audioPlayerRef.nativeElement as HTMLAudioElement;
       audio.currentTime = parseInt((event.target as HTMLInputElement).value);
+  }
+  action(event:string){
+    this.audioPlayer.pause();
+    this.stepChange.emit(event);
   }
 }
