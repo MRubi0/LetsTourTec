@@ -84,7 +84,7 @@ def haversine(lat1, lon1, lat2, lon2):
 
 
 
-@login_required
+@permission_classes([IsAuthenticated])
 def edit_profile(request):
     if request.method == 'POST':
         form = EditProfileForm(request.POST, request.FILES, instance=request.user)
@@ -366,7 +366,7 @@ def get_nearest_tours(request):
         distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
         tours_with_distances.append({'tour': tour, 'distance': distance})
 
-    tour_categories = ['ocio', 'naturaleza', 'cultural']
+    tour_categories = ['cultural', 'naturaleza', 'ocio']
     nearest_tours = {}
 
     result = []
@@ -417,7 +417,7 @@ def tour_detail(request, tour_id):
 
 def get_latest_tours(request):
     # Lista de tipos de tours
-    tour_types = ['ocio', 'naturaleza', 'cultural']
+    tour_types = ['cultural', 'naturaleza','ocio']
 
     # Consulta el último tour de cada tipo
     tour_data = {}
@@ -455,9 +455,10 @@ def get_random_tours(request):
        
     # Elige un tour aleatorio de cada categoría
     random_tours = {
-        "ocio": random.choice(ocio_tours) if ocio_tours else None,
-        "naturaleza": random.choice(naturaleza_tours) if naturaleza_tours else None,
         "cultural": random.choice(cultural_tours) if cultural_tours else None,
+
+        "naturaleza": random.choice(naturaleza_tours) if naturaleza_tours else None,
+        "ocio": random.choice(ocio_tours) if ocio_tours else None,        
     }
 
     # Convierte los objetos de los tours en diccionarios para que puedan ser serializados a JSON
