@@ -170,7 +170,7 @@ class Paso(models.Model):
     audio = models.FileField(upload_to='paso_audio/', null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-
+    tittle = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
@@ -222,3 +222,12 @@ class Paso(models.Model):
         }
     def __str__(self):
         return str(self.step_number)  
+
+
+class TourRecord(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.tour.titulo} - {self.date}"

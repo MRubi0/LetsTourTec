@@ -43,6 +43,8 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
+from .models import TourRecord
+from django.views.decorators.http import require_POST
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -126,6 +128,18 @@ def search_user_by_id(request):
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
+def get_user_tours(request):
+    if request.method == 'GET':
+        user_id = request.GET.get('id')
+
+        if user_id:
+            tours = Tour.objects.filter(user_id=user_id)
+            tours_data = [tour.as_dict() for tour in tours]
+            return JsonResponse({'tours': tours_data})
+        else:
+            return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 # @csrf_exempt
 # def login_view(request):
@@ -211,12 +225,17 @@ def upload_tour(request):
                     extra_image = None
                     extra_latitude = None
                     extra_longitude = None
+                    extra_tittle = None
                     
                     extra_description_key = f'description_{i}'
                     if extra_description_key in request.POST:
                         extra_description = request.POST.get(extra_description_key, '')
 
-                    paso = Paso(tour=tour, audio=extra_audio, description=extra_description)
+                    extra_tittle_key = f'tittle_{i}'  
+                    if extra_tittle_key in request.POST:
+                        extra_tittle = request.POST.get(extra_tittle_key, '')
+
+                    paso = Paso(tour=tour, audio=extra_audio, description=extra_description, tittle = extra_tittle)
 
                     extra_image_key = f'extra_step_image_{i}'
                     if extra_image_key in request.FILES:
@@ -773,3 +792,19 @@ def get_tour_locations(request, tour_id):
 
     except Tour.DoesNotExist:
         return JsonResponse({'error': 'Tour no encontrado'}, status=404)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_tour_record(request):
+    # Aquí asumimos que recibes el ID del tour en los datos POST
+    tour_id = request.POST.get('tour_id')
+
+    if not tour_id:
+        return JsonResponse({'error': 'Falta el ID del tour'}, status=400)
+
+    # Crear un nuevo TourRecord
+    tour_record = TourRecord(user=request.user, tour_id=tour_id)
+    tour_record.save()
+
+    return JsonResponse({'message': 'Tour registrado con éxito'})
