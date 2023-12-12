@@ -50,7 +50,8 @@ export class UploadTourComponent implements OnInit{
         audio: '',
         latitude: '',
         longitude: '',
-        description: ''
+        description: '',
+        tittle: ''
       });
       this.extraSteps.push(extraStepGroup);
     }
@@ -91,6 +92,9 @@ export class UploadTourComponent implements OnInit{
     formData.append('recorrido', formModel.recorrido);
 
     formModel.extraSteps.forEach((extraStep: any, index: number) => {
+      if (extraStep.tittle) {
+        formData.append(`tittle_${index}`, extraStep.tittle);
+      }
       if (extraStep.image) {
         formData.append(`extra_step_image_${index}`, extraStep.image);
       }
