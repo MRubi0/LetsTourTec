@@ -1,55 +1,59 @@
 <div class="container">
 
-    <div class="example-input-wrapper" *ngIf="tour">
-      
-      <mat-vertical-stepper>
-        <mat-step [stepControl]="firstFormGroup" *ngFor="let step of tour.steps;let i = index" >
-          <form [formGroup]="firstFormGroup">
-            <ng-template matStepLabel *ngIf="i==0">
-             <strong>{{tour.titulo | uppercase}}</strong> 
-            </ng-template>
-            <ng-template matStepLabel *ngIf="i>0"><strong>Step {{i}}</strong></ng-template>
-            <div>              
-                <mat-card *ngIf="i==0">
-                    <mat-card-header>                        
-                    </mat-card-header>
-                    <mat-card-content>
-                      <div class="d-flex justify-content-center w-100">
-                        <img src="{{tour.image}}" alt="">
-                      </div>    
-                      <div class="w-100">
-                        <p align="left">{{tour.description}}</p>
-                      </div>           
-                        <div class="audio d-flex justify-content-center">
-                            <app-music-player class="w-100" [audio]="tour.audio" [index]="i" (stepChange)="musicAction($event)" ></app-music-player>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-                <mat-card *ngIf="i>0">
-                  <mat-card-header>
-                      
-                  </mat-card-header>
-                  <div *ngIf="step.latitude && step.longitude">
-                    <h2>The following step is in another location, open the map to continue the tour</h2>
-                    <button mat-button (click)="openMapModal(step.latitude, step.longitude)"type="button">Open Map</button>
+  <div class="example-input-wrapper" *ngIf="tour">
+    <mat-vertical-stepper>
+      <mat-step [stepControl]="firstFormGroup" *ngFor="let step of tour.steps;let i = index">
+        <form [formGroup]="firstFormGroup">
+          <ng-template matStepLabel *ngIf="i==0">
+            <strong>{{tour.titulo | uppercase}}</strong>
+          </ng-template>
+          <ng-template matStepLabel *ngIf="i>0"><strong>Step {{i}}</strong></ng-template>
+          <div>
+            <mat-card *ngIf="i==0">
+              <mat-card-header>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="d-flex justify-content-center w-100">
+                  <img src="{{tour.image}}" alt="">
+                </div>
+                <div class="w-100">
+                  <p align="left">{{tour.description}}</p>
+                </div>
+                <div class="audio d-flex justify-content-center">
+                  <app-music-player class="w-100" [audio]="tour.audio" [index]="i"
+                    (stepChange)="musicAction($event)"></app-music-player>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            <mat-card *ngIf="i>0">
+              <mat-card-header>
+
+              </mat-card-header>
+              <div *ngIf="step.latitude && step.longitude">
+                <h2>The following step is in another location, open the map to continue the tour</h2>                
+              </div>
+
+
+              <mat-card-content>
+                <div class="d-flex justify-content-center w-100">
+                  <img src="{{step.image}}" alt="" loading="lazy">
+                </div>
+                <p align="left">{{step.description}}</p>
+                <div class="row">
+                  <div class="col-12">
+                    <button mat-button (click)="openMapModal(step.latitude, step.longitude)" type="button">Open Map</button>
                   </div>
-                  
+                </div>
+                <div class="audio d-flex justify-content-center w-100">
+                  <app-music-player class="w-100" [audio]="step.audio" [index]="i"
+                    (stepChange)="musicAction($event)"></app-music-player>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </form>
+      </mat-step>
 
-                  <mat-card-content>
-                    <div class="d-flex justify-content-center w-100">
-                      <img src="{{step.image}}" alt="" loading="lazy">
-                    </div>                        
-                      <p align="left">{{step.description}}</p>
-                      <div class="audio d-flex justify-content-center w-100">
-                          <app-music-player class="w-100" [audio]="step.audio" [index]="i" (stepChange)="musicAction($event)"></app-music-player>
-                      </div>             
-                  </mat-card-content>
-              </mat-card>
-                <button mat-button (click)="goToNextStep()">Next</button>
-            </div>
-          </form>
-        </mat-step>
-
-      </mat-vertical-stepper>      
-    </div>
+    </mat-vertical-stepper>
   </div>
+</div>
