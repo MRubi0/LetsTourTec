@@ -131,111 +131,9 @@ export class StepperComponent {
       console.log('The dialog was closed');
     });
   } 
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  goToNextStep() {
+    this.stepper.next();
+  }
 
   goToPreviousStep() {
     this.stepper.previous(); 
@@ -248,9 +146,6 @@ export class StepperComponent {
     }
   }
 }
-
-
-
 
 /* 
 hay que añadir la forma de crear un registro al clicar en el boton de finalizar tour
@@ -269,9 +164,6 @@ fetch('/create-tour-record/', {
 .then(response => response.json())
 .then(data => console.log(data))
 .catch(error => console.error('Error:', error));
-  goToNextStep() {
-    this.stepper.next();
-  }
 
 
 
