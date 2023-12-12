@@ -1,7 +1,12 @@
 .about-us-section {
     background-color: #f5f5f5;
     padding: 20px;
+
 }
+.about-section {
+    margin-bottom: 50px; /* Aumenta el espacio en la parte inferior de cada sección */
+}
+
 
 .card {
     background-color: #fff;
@@ -16,7 +21,9 @@
 }
 
 .card-title {
-    color: #333;
+    color: #0d6efd; /* Cambia el color a azul */
+    font-weight: bold; /* Hace el texto en negrita */
+    font-size: 24px; /* Aumenta el tamaño del texto */
 }
 
 .team-member {
@@ -24,7 +31,11 @@
 }
 
 .team-member .card-img-top {
-    width: 100px; 
-    height: auto;
-    border-radius: 50%;
+    width: 100%; /* Aumenta el ancho de la imagen */
+    height: auto; /* Mantiene la proporción de la imagen */
+
+}
+
+.card-text {
+    text-align: justify;
 }

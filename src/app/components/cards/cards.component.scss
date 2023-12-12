@@ -53,6 +53,7 @@ mat-mdc-card-title{
 
 .custom-button-color {
     background-color: #0d6efd !important;
+    min-height: 50px;
 
     & .mat-button-wrapper {
         color: white !important;
