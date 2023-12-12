@@ -131,9 +131,111 @@ export class StepperComponent {
       console.log('The dialog was closed');
     });
   } 
-  goToNextStep() {
-    this.stepper.next();
-  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   goToPreviousStep() {
     this.stepper.previous(); 
@@ -146,3 +248,33 @@ export class StepperComponent {
     }
   }
 }
+
+
+
+
+/* 
+hay que añadir la forma de crear un registro al clicar en el boton de finalizar tour
+ademas de crear ua pantalla de final
+mansaje de chatgpt sobre como hacerlo
+fetch('/create-tour-record/', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        // Asegúrate de incluir el token CSRF si lo estás utilizando
+    },
+    body: new URLSearchParams({
+        'tour_id': 'ID_DEL_TOUR'
+    })
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+  goToNextStep() {
+    this.stepper.next();
+  }
+
+
+
+
+ */
+

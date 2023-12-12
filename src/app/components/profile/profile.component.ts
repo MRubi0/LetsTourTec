@@ -40,4 +40,8 @@ export class ProfileComponent {
   History() {
     console.log("falta esto")
   }
+  toursUploaded() {
+    console.log("falta esto")
+    this.router.navigate(['/my-tours']);
+  } 
 }

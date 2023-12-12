@@ -40,5 +40,6 @@ export class HistoryToursComponent implements OnInit {
 
   deleteTour(id: number) {
       // Lógica para eliminar un tour
-  }
+ 
+    }
 }
