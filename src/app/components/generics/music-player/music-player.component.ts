@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-music-player',
@@ -19,8 +19,9 @@ export class MusicPlayerComponent {
   durationInSeconds: number = 0;
   currentTimeInSeconds: number = 0;
   currentTime: number = 0;
-  
-  constructor() {}
+  timer: any;
+
+  constructor(private cdRef: ChangeDetectorRef) {}
 
   ngOnInit(){
     this.playbackRates = this.generatePlaybackRates();
@@ -88,5 +89,17 @@ export class MusicPlayerComponent {
   action(event:string){
     this.audioPlayer.pause();
     this.stepChange.emit(event);
+  }
+  showVolumeBar() {
+    this.bar_volume = true;
+    this.timer = setTimeout(() => {
+      this.bar_volume = false; 
+      this.cdRef.detectChanges();
+    }, 1000);
+  }
+  cancelTimer() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
   }
 }
