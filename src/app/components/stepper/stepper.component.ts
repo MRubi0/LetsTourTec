@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ConnectableObservable } from 'rxjs';
 import { StepService } from 'src/app/services/step.service';
@@ -6,6 +6,7 @@ import { environment } from 'src/enviroment/enviroment';
 import * as L from 'leaflet';
 import { MatDialog } from '@angular/material/dialog';
 import { MapModalComponent } from 'src/app/components/map-modal/map-modal.component';
+import { MatStepper } from '@angular/material/stepper';
 
 
 @Component({
@@ -30,9 +31,9 @@ export class StepperComponent {
   maps='maps';
   url=environment.bucket;
 
+  @ViewChild(MatStepper) stepper!: MatStepper;
 
 
-  // constructor( private _formBuilder: FormBuilder, private stepService:StepService) {}
   constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, private stepService:StepService) { }
 
   ngOnInit(){
@@ -130,6 +131,7 @@ export class StepperComponent {
       console.log('The dialog was closed');
     });
   } 
+
 }
 
 
@@ -235,7 +237,17 @@ export class StepperComponent {
 
 
 
-
+  goToPreviousStep() {
+    this.stepper.previous(); 
+  }
+  musicAction(event:string){
+    if(event=='next'){
+      this.goToNextStep();
+    }else{
+      this.goToPreviousStep();
+    }
+  }
+}
 
 
 
@@ -257,7 +269,12 @@ fetch('/create-tour-record/', {
 .then(response => response.json())
 .then(data => console.log(data))
 .catch(error => console.error('Error:', error));
+  goToNextStep() {
+    this.stepper.next();
+  }
+
 
 
 
  */
+

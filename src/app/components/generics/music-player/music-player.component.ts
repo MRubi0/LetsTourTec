@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-music-player',
@@ -8,7 +8,8 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 export class MusicPlayerComponent {
   @ViewChild('audioPlayer') audioPlayerRef!: ElementRef;
   @Input('audio') audio!:string;
-  
+  @Input('index') index!:number;
+  @Output() stepChange = new EventEmitter<string>();
   audioPlayer!: HTMLAudioElement;
   isPlaying: boolean = false;
   volume: number = 0.5;
@@ -18,8 +19,9 @@ export class MusicPlayerComponent {
   durationInSeconds: number = 0;
   currentTimeInSeconds: number = 0;
   currentTime: number = 0;
-  
-  constructor() {}
+  timer: any;
+
+  constructor(private cdRef: ChangeDetectorRef) {}
 
   ngOnInit(){
     this.playbackRates = this.generatePlaybackRates();
@@ -80,9 +82,24 @@ export class MusicPlayerComponent {
     this.currentTime = audio.currentTime;
     this.currentTimeInSeconds = Math.floor(audio.currentTime);
 }
-
   seekTo(event: Event) {      
       const audio = this.audioPlayerRef.nativeElement as HTMLAudioElement;
       audio.currentTime = parseInt((event.target as HTMLInputElement).value);
+  }
+  action(event:string){
+    this.audioPlayer.pause();
+    this.stepChange.emit(event);
+  }
+  showVolumeBar() {
+    this.bar_volume = true;
+    this.timer = setTimeout(() => {
+      this.bar_volume = false; 
+      this.cdRef.detectChanges();
+    }, 1000);
+  }
+  cancelTimer() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
   }
 }

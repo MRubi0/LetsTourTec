@@ -1,11 +1,11 @@
 .modal-dialog {
     max-width: 100%;
-    width: 90vw !important; /* Anchura completa de la ventana */
-    height: 100vh  ;/* Altura completa de la ventana */
+    width: 100% !important;
+    height: 90vh;
     margin: 0;
-    display: flex; /* Asegura que el contenido se distribuya de manera flexible */
-    justify-content: center; /* Centra el contenido horizontalmente */
-    align-items: center; /* Centra el contenido verticalmente */
+    display: flex; 
+    justify-content: center;
+    align-items: center;
 }
 
 .modal-content {

@@ -1,3 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#000000" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
-  <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z" fill="#0d6efd"/>
+<?xml version="1.0"?>
+<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" class="bi bi-caret-left-fill">
+ <g class="layer">
+  <title>Layer 1</title>
+  <path d="m3.86,8.75l5.48,4.8c0.65,0.57 1.66,0.1 1.66,-0.75l0,-9.6a1,1 0 0 0 -1.66,-0.75l-5.48,4.8a1,1 0 0 0 0,1.5z" fill="#0d6efd" id="svg_1" transform="matrix(1 0 0 1 0 0)"/>
+  <line fill="#0d6efd" id="svg_2" points="null" stroke="#0f72fc" stroke-width="2" x1="2.61" x2="2.5" y1="1.93" y2="14.6"/>
+ </g>
 </svg>

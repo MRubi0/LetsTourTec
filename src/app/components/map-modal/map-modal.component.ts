@@ -10,15 +10,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class MapModalComponent implements OnInit, OnDestroy {
   private map!: L.Map;
-private control!: L.Routing.Control;
-private watchId!: number;
+  private control!: L.Routing.Control;
+  private watchId!: number;
 
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<MapModalComponent>
-  ) { 
-    console.log('Data received in MapModalComponent:', data);
+  ) {
   }
 
   ngOnInit(): void {
@@ -51,18 +50,18 @@ private watchId!: number;
           L.latLng(this.data.latitude, this.data.longitude)
         ],
         routeWhileDragging: true,
-        collapsible: true, 
-        show: true,  
-        addWaypoints: false, 
+        collapsible: true,
+        show: true,
+        addWaypoints: false,
       }).addTo(this.map);
 
       this.control.on('routesfound', (e) => {
         const waypoints = e.waypoints;
         const startMarker = L.marker(e.waypoints[0].latLng, { draggable: false }).addTo(this.map);
-  const endMarker = L.marker(e.waypoints[e.waypoints.length - 1].latLng, { draggable: false }).addTo(this.map);
+        const endMarker = L.marker(e.waypoints[e.waypoints.length - 1].latLng, { draggable: false }).addTo(this.map);
 
         [startMarker, endMarker].forEach(marker => {
-          marker.on('add', function() {
+          marker.on('add', function () {
             const element = marker.getElement();
             if (element) {
               L.DomUtil.removeClass(element, 'leaflet-marker-draggable');
@@ -77,12 +76,11 @@ private watchId!: number;
         const newLat = newPosition.coords.latitude;
         const newLng = newPosition.coords.longitude;
 
-        // Actualizar la primera waypoint con la nueva posición del usuario
         if (this.control) {
           const newWaypoint = L.Routing.waypoint(L.latLng(newLat, newLng));
-const waypoints = this.control.getWaypoints();
-waypoints[0] = newWaypoint;
-this.control.setWaypoints(waypoints);
+          const waypoints = this.control.getWaypoints();
+          waypoints[0] = newWaypoint;
+          this.control.setWaypoints(waypoints);
 
         }
       }, (error) => {
@@ -101,6 +99,4 @@ this.control.setWaypoints(waypoints);
       maximumAge: 0
     });
   }
-
-  // Otros métodos del componente...
 }

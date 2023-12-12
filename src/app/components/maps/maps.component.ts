@@ -45,13 +45,10 @@ export class MapsComponent {
 
       this.control.on('waypointschanged', (e: any) => {
         e.waypoints.forEach((waypoint: any) => {
-          //waypoint.dragging.disable();
         });
       });
 
       this.control.on('routesfound', (e) => {
-        const routes = e.routes;
-        console.log(routes);
         map.eachLayer((layer) => {
           if (layer instanceof L.Marker) {
             layer.dragging?.disable();
@@ -75,12 +72,7 @@ export class MapsComponent {
 
     this.watchId = navigator.geolocation.watchPosition((position) => {
       const latitud = position.coords.latitude;
-      const longitud = position.coords.longitude;
-
-
-      console.log(`Nueva posición del usuario: ${latitud}, ${longitud}`);
-
-      
+      const longitud = position.coords.longitude;   
       if (this.control) {
         this.control.setWaypoints([
           L.latLng(latitud, longitud),
