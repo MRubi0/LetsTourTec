@@ -1,8 +1,17 @@
 <div class="container">
-
   <div class="example-input-wrapper" *ngIf="tour">
-    <mat-vertical-stepper>
+    <div class="step-icon-home d-flex justify-content-center">
+      <img [src]="url_icon_home" alt="">
+    </div>
+    <mat-vertical-stepper (selectionChange)="onStepChange($event)">              
       <mat-step [stepControl]="firstFormGroup" *ngFor="let step of tour.steps;let i = index">
+        <div class="step-icon d-flex justify-content-center" *ngIf="i==0">
+          <img [src]="url_icon_home" alt="">
+        </div>
+        <div class="step-icon d-flex justify-content-center" *ngIf="i>0">
+          <img [src]="url_icon" alt="">
+        </div>
+
         <form [formGroup]="firstFormGroup">
           <ng-template matStepLabel *ngIf="i==0">
             <strong>{{tour.titulo | uppercase}}</strong>

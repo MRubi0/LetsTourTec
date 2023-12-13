@@ -1,11 +1,9 @@
-<div class="container row d-flex justify-content-center">
+<div class="container row d-flex justify-content-center m-0">
     <div class="container-card  col-xxl-4 col-lg-6 col-md-12 d-flex justify-content-center" *ngFor="let tours of toursdata | paginate: {
         itemsPerPage: pageSize,
         currentPage: p,
         totalItems: toursdata.lenght }">
-        <!-- <mat-card class="tour-card" routerLink="/tour/{{tours.id}}" (click)="sendImage(tours.id)"> 
-            <mat-card class="tour-card" routerLink="/tour/{{tours.id}}" (click)="stopClickPropagate($event)">-->
-                <mat-card class="tour-card" (click)="sendImage(tours.id)">
+            <mat-card class="tour-card" (click)="sendImage(tours.id)">
 
             <mat-card-header class="p-0">       
                 <img class="image" mat-card-image 

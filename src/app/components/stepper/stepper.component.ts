@@ -1,6 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnChanges, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ConnectableObservable } from 'rxjs';
 import { StepService } from 'src/app/services/step.service';
 import { environment } from 'src/enviroment/enviroment';
 import * as L from 'leaflet';
@@ -24,7 +23,8 @@ export class StepperComponent {
   isLinear = false;
   screenWidth: number = window.innerWidth;
   screenHeight: number = window.innerHeight;
-
+  url_icon='';
+  url_icon_home='../../../assets/iconos/home-white.svg'
   lat:number=0;
   long:number=0;
   tour:any;
@@ -34,16 +34,28 @@ export class StepperComponent {
   @ViewChild(MatStepper) stepper!: MatStepper;
 
 
-  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, private stepService:StepService) { }
+  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, 
+    private stepService:StepService, private elRef: ElementRef, private renderer: Renderer2) { }
 
   ngOnInit(){
-    this.firstFormGroup = this._formBuilder.group({
-      
+    this.firstFormGroup = this._formBuilder.group({      
       firstCtrl: ['', Validators.required]
     });
   }
   ngAfterViewInit(){
     this.data();
+  }
+  onStepChange(event:any){
+    console.log('event -> ', event);
+    if(event.previouslySelectedIndex>=0){
+      //this.url_icon='../../../assets/iconos/building-white.svg';
+      this.url_icon_home='../../../assets/iconos/home-white.svg'
+    }
+    if(event.selectedIndex >= 1){
+      this.url_icon='../../../assets/iconos/steps.svg';
+    }else{
+      this.url_icon_home='../../../assets/iconos/home-white.svg'
+    }
   }
   event() {
     const map = L.map(this.maps).setView([51.505, -0.09], 13);
@@ -114,11 +126,6 @@ export class StepperComponent {
     this.stepService.getTourDetail('78').subscribe((data=>{
       this.tour=data;      
     }));
-  }
-
-  steps(){
-    console.log(' paso ');
-    //this.firstFormGroup.get('firstCtrl')?.setValue('r');
   }
   openMapModal(lat: number, lng: number): void {
     const dialogRef = this.dialog.open(MapModalComponent, {
