@@ -1,5 +1,6 @@
 .logo{
     width: 240px;
+    
 }
 .navbar {
     width: 100%;
@@ -10,4 +11,29 @@
 
 #navbarSearch{
     width: 25%;
+}
+
+.container-fluid.d-flex {
+    display: flex;
+    justify-content: center; /* Centra todos los elementos horizontalmente */
+    align-items: center; /* Alinea los elementos verticalmente */
+}
+
+.navbar {
+    justify-content: space-between; /* Distribuye el espacio entre los elementos de la barra de navegación */
+}
+
+.navbar-brand {
+    position: relative; 
+    flex-grow: 1; 
+    text-align: center; 
+}
+#navbarNavLinks, #navbarSearch {
+    flex-basis: 50%;
+    flex-grow: 1; 
+}
+
+.logo {
+    max-width: 200%; 
+    height: auto; 
 }

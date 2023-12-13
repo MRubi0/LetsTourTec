@@ -76,19 +76,12 @@
                 <div formArrayName="extraSteps">
                     <div *ngFor="let extraStep of extraSteps.controls; let i = index" [formGroupName]="i">
                         
-                        <!-- <div class="form-field">
-                            <p>Imagen del paso extra {{ i + 1 }}</p>
-                            <input #imagenInput{{i}} type="file" (change)="onFileSelect($event, 'extraSteps.'+i+'.image')" accept="image/*" hidden>
-                            <button mat-button (click)="imagenInput.click()" type="button">Seleccionar archivo</button>
-                            
+                        <div class="form-field">
+                            <p>Titulo del paso extra {{ i + 1 }}</p>
+                            <mat-form-field appearance="fill">
+                                <input matInput formControlName="tittle">
+                            </mat-form-field>
                         </div>
-                    <div class="form-field">
-                            <p>Audio del paso extra {{ i + 1 }}</p>
-                            <input #audioInput{{i}} type="file" (change)="onFileSelect($event, 'extraSteps.'+i+'.audio')" accept="audio/*" hidden>
-                            <button mat-button (click)="audioInput.click()" type="button">Seleccionar archivo</button>
-                        </div>
-                    
-                    -->
                         
                         
                         <!-- Input para la imagen del paso extra -->

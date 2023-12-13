@@ -33,17 +33,21 @@
     width: 300px; 
     padding: 10px 15px; 
     font-size: 16px; 
-    margin-right: 20px;    
+    margin-right: auto;    
     border-radius: 4px;
 }
 .search-form {
-    position: relative;
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    gap: 10px; 
 }
 
 
 .custom-button-color {
     background-color: #0d6efd !important;
     color: white !important;
+    min-height: 50px;
 
     & .mat-button-wrapper {
         color: white !important;
