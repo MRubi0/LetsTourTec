@@ -49,7 +49,7 @@
                 </div>
                 <p align="left">{{step.description}}</p>
                 <div class="row">
-                  <div class="col-12">
+                  <div class="col-12" *ngIf="step.latitude">
                     <button mat-button (click)="openMapModal(step.latitude, step.longitude)" type="button">Open Map</button>
                   </div>
                 </div>

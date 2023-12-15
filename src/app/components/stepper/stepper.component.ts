@@ -48,7 +48,6 @@ export class StepperComponent {
   onStepChange(event:any){
     console.log('event -> ', event);
     if(event.previouslySelectedIndex>=0){
-      //this.url_icon='../../../assets/iconos/building-white.svg';
       this.url_icon_home='../../../assets/iconos/home-white.svg'
     }
     if(event.selectedIndex >= 1){
