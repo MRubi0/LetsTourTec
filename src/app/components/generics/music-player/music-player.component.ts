@@ -1,4 +1,5 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, ChangeDetectorRef, HostListener } from '@angular/core';
+import * as Hammer from 'hammerjs';
 
 @Component({
   selector: 'app-music-player',
@@ -6,6 +7,7 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, ChangeDe
   styleUrls: ['./music-player.component.scss']
 })
 export class MusicPlayerComponent {
+  @ViewChild('element') element!: ElementRef;
   @ViewChild('audioPlayer') audioPlayerRef!: ElementRef;
   @Input('audio') audio!:string;
   @Input('index') index!:number;
@@ -24,7 +26,7 @@ export class MusicPlayerComponent {
   constructor(private cdRef: ChangeDetectorRef) {}
 
   ngOnInit(){
-    this.playbackRates = this.generatePlaybackRates();
+    this.playbackRates = this.generatePlaybackRates();    
   }
   ngAfterViewInit() {
     this.audioPlayer = this.audioPlayerRef.nativeElement;
@@ -34,6 +36,12 @@ export class MusicPlayerComponent {
     this.audioPlayerRef.nativeElement.onloadedmetadata = () => {
       this.durationInSeconds = Math.floor(this.audioPlayerRef.nativeElement.duration);
   };
+
+  const mc = new Hammer(this.element.nativeElement); 
+    mc.get('doubletap').set({ event: 'doubletap' });
+    mc.on('doubletap', (ev:any) => {
+      this.onDoubleTap(ev);
+    });
   }
 
   generatePlaybackRates(): number[] {
@@ -101,5 +109,8 @@ export class MusicPlayerComponent {
     if (this.timer) {
       clearTimeout(this.timer);
     }
+  }
+  onDoubleTap(event: any): void {
+    this.action('back');
   }
 }
