@@ -49,7 +49,8 @@ urlpatterns = [
     path('api/test_auth/', test_auth, name='test_auth'),
     path('tour-locations/<int:tour_id>/', views.get_tour_locations, name='tour-locations'),
     path('api/get_user_tours', views.get_user_tours, name='get_user_tours'),
-    path('create-tour-record/', views.create_tour_record, name='create_tour_record'),
+    path('api/create-tour-record/', views.create_tour_record, name='create_tour_record'),
+    path('api/get_user_tour_records', views.get_user_tour_records, name='get_user_tour_records'),
     path('api/get_tour_with_steps/<int:tour_id>/', views.get_tour_with_steps, name='get_tour_with_steps')
 
 

@@ -228,6 +228,13 @@ class TourRecord(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
-
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "tour_id": self.tour.id,
+            "tour_title": self.tour.titulo,
+            "date": self.date.strftime("%Y-%m-%d %H:%M:%S"),
+            # Puedes añadir más campos si es necesario
+        }
     def __str__(self):
         return f"{self.user.username} - {self.tour.titulo} - {self.date}"

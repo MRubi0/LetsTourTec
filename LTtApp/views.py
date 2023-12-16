@@ -41,6 +41,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django.shortcuts import get_object_or_404
 
 
 from .models import TourRecord
@@ -128,6 +129,7 @@ def search_user_by_id(request):
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
+""" 
 def get_user_tours(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
@@ -139,7 +141,31 @@ def get_user_tours(request):
         else:
             return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
     else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405) 
+        
+"""
+
+def get_user_tours(request):
+    if request.method == 'GET':
+        user_id = request.GET.get('id')
+
+        if user_id:
+            tours = Tour.objects.filter(user_id=user_id)
+            tours_data = []
+            for tour in tours:
+                tour_data = tour.as_dict()
+                # Modificar imagen y audio para incluir una clave intermedia 'url'
+                if tour_data.get('imagen'):
+                    tour_data['imagen'] = {'url': tour_data['imagen']}
+                if tour_data.get('audio'):
+                    tour_data['audio'] = {'url': tour_data['audio']}
+                tours_data.append(tour_data)
+            return JsonResponse({'tours': tours_data})
+        else:
+            return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
+    else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
+
 
 # @csrf_exempt
 # def login_view(request):
@@ -794,17 +820,65 @@ def get_tour_locations(request, tour_id):
         return JsonResponse({'error': 'Tour no encontrado'}, status=404)
 
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_tour_record(request):
-    # Aquí asumimos que recibes el ID del tour en los datos POST
-    tour_id = request.POST.get('tour_id')
-
+    
+    tour_id = request.data.get('tour_id')
     if not tour_id:
+        print("Error: Falta el ID del tour")
         return JsonResponse({'error': 'Falta el ID del tour'}, status=400)
 
-    # Crear un nuevo TourRecord
-    tour_record = TourRecord(user=request.user, tour_id=tour_id)
-    tour_record.save()
+    # Verifica si el tour existe
+    tour = get_object_or_404(Tour, pk=tour_id)
 
-    return JsonResponse({'message': 'Tour registrado con éxito'})
+    # Verificar si ya existe un registro para este tour y usuario
+    if TourRecord.objects.filter(user=request.user, tour=tour).exists():
+        print("El usuario ya ha registrado este tour.")
+        return JsonResponse({'error': 'Este tour ya ha sido registrado por el usuario'}, status=400)
+
+    try:
+        tour_record = TourRecord(user=request.user, tour=tour)
+        tour_record.save()
+        print("Tour registrado con éxito para el usuario:", request.user.username)
+        return JsonResponse({'message': 'Tour registrado con éxito'})
+    except Exception as e:
+        print("Error al registrar el tour:", str(e))
+        return JsonResponse({'error': 'Error al registrar el tour'}, status=500)
+
+""" def get_user_tour_records(request):
+    if request.method == 'GET':
+        user_id = request.GET.get('id')
+
+        if user_id:
+            tour_records = TourRecord.objects.filter(user_id=user_id)
+            tours_data = [record.tour.as_dict() for record in tour_records]
+            print(tours_data)  # Imprimir para depuración
+            return JsonResponse({'tours': tours_data})
+        else:
+            return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+ """
+
+def get_user_tour_records(request):
+    if request.method == 'GET':
+        user_id = request.GET.get('id')
+
+        if user_id:
+            tour_records = TourRecord.objects.filter(user_id=user_id)
+            tours_data = []
+            for record in tour_records:
+                tour_data = record.tour.as_dict()
+                # Modificar imagen y audio para incluir una clave intermedia 'url'
+                if tour_data.get('imagen'):
+                    tour_data['imagen'] = {'url': tour_data['imagen']}
+                if tour_data.get('audio'):
+                    tour_data['audio'] = {'url': tour_data['audio']}
+                tours_data.append(tour_data)
+            return JsonResponse({'tours': tours_data})
+        else:
+            return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
