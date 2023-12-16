@@ -6,7 +6,7 @@ import * as L from 'leaflet';
 import { MatDialog } from '@angular/material/dialog';
 import { MapModalComponent } from 'src/app/components/map-modal/map-modal.component';
 import { MatStepper } from '@angular/material/stepper';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-stepper',
@@ -30,12 +30,19 @@ export class StepperComponent {
   tour:any;
   maps='maps';
   url=environment.bucket;
+  audioControlsVisible = false;
+
+  checkIfMapModalIsRequired(step: any) {
+    this.audioControlsVisible = !(step.latitude && step.longitude);
+    console.log("Audio Controls Visible:", this.audioControlsVisible);
+  }
+
 
   @ViewChild(MatStepper) stepper!: MatStepper;
 
 
   constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, 
-    private stepService:StepService, private elRef: ElementRef, private renderer: Renderer2) { }
+    private stepService:StepService, private elRef: ElementRef, private renderer: Renderer2, private router: Router) { }
 
   ngOnInit(){
     this.firstFormGroup = this._formBuilder.group({      
@@ -46,6 +53,8 @@ export class StepperComponent {
     this.data();
   }
   onStepChange(event:any){
+    const currentStep = this.tour.steps[event.selectedIndex];
+    this.checkIfMapModalIsRequired(currentStep);
     if(event.previouslySelectedIndex>=0){
       this.url_icon_home='../../../assets/iconos/home-white.svg'
     }
@@ -122,10 +131,12 @@ export class StepperComponent {
   }
   data(){
     this.stepService.getTourDetail('78').subscribe((data=>{
-      this.tour=data;      
+      this.tour=data; 
+      this.checkIfMapModalIsRequired(this.tour.steps[0]);     
     }));
   }
   openMapModal(lat: number, lng: number): void {
+    this.audioControlsVisible = false;
     const dialogRef = this.dialog.open(MapModalComponent, {
       width: `${Math.min(this.screenWidth * 0.9, 800)}px`,
             maxWidth: 'none',
@@ -133,6 +144,7 @@ export class StepperComponent {
     });
   
     dialogRef.afterClosed().subscribe(result => {
+      this.audioControlsVisible = true;
       console.log('The dialog was closed');
     });
   } 
@@ -143,13 +155,40 @@ export class StepperComponent {
   goToPreviousStep() {
     this.stepper.previous(); 
   }
-  musicAction(event:string){
-    if(event=='next'){
+  musicAction(event: string) {
+    console.log('musicAction called with event:', event);
+  
+    if (event === 'next') {
+      if (this.isLastStep()) {
+        
+        console.log('Último paso alcanzado, redirigiendo a /exit');
+        this.finishTour();
+        this.router.navigate(['/exit']);
+        return;
+      }
       this.goToNextStep();
-    }else{
+    } else {
       this.goToPreviousStep();
     }
   }
+  finishTour() {
+    const tourId = '78';
+    console.log('Intentando finalizar el tour con ID:', tourId);
+    console.log(this.tour)
+    this.stepService.createTourRecord(tourId).subscribe(
+      response => console.log('Tour finalizado:', response),
+      error => console.error('Error al finalizar el tour:', error)
+    );
+  }
+  
+  isLastStep(): boolean {
+    const currentIndex = this.stepper.selectedIndex;
+    console.log('Current index:', currentIndex, 'Total steps:', this.tour.steps.length);
+    return currentIndex === this.tour.steps.length - 1;
+  }
+  
+
+  
 }
 
 /* 

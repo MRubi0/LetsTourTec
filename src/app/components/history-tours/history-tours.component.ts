@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from 'src/app/services/auth.service';
+import { jwtDecode } from 'jwt-decode';
 
 
 
@@ -20,26 +23,24 @@ export interface Tour {
 
 
 export class HistoryToursComponent implements OnInit {
-  tours: Tour[] = [
-    { id: 1, title: 'Tour 1', date: new Date(), imageUrl: 'url-de-imagen', description: 'Descripción del Tour 1' },
-    // otros tours de prueba...
-  ];
-  constructor() { }
+  tourRecords: any[] = [];
+
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   ngOnInit() {
-      // Aquí cargarías los tours del usuario
+      this.loadTourRecords();
   }
 
-  viewTour(id: number) {
-      // Lógica para ver los detalles del tour
-  }
-
-  editTour(id: number) {
-      // Lógica para editar un tour
-  }
-
-  deleteTour(id: number) {
-      // Lógica para eliminar un tour
- 
+  loadTourRecords(): void {
+    const accessToken = this.authService.getToken();
+    if (accessToken) {
+        const decodedToken: any = jwtDecode(accessToken);
+        const userId = decodedToken.user_id;  
+        this.http.get(`http://localhost:8000/api/get_user_tour_records?id=${userId}`).subscribe(data => {
+            this.tourRecords = (data as any)['tours'];
+          }, (error: any) => {
+            console.error('Error al cargar los registros de tours:', error);
+        });
     }
+  }
 }
