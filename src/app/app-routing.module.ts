@@ -17,6 +17,9 @@ import { AboutUsComponent } from './components/about-us/about-us.component';
 import { MyToursComponent } from './components/my-tours/my-tours.component';
 import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
 import { HistoryToursComponent } from './components/history-tours/history-tours.component';
+import { ExitComponent } from './components/exit/exit.component'
+
+
 const routes: Routes = [
   {
     path:'',
@@ -93,6 +96,10 @@ const routes: Routes = [
     path: 'edit-profile', 
     component: EditProfileComponent,
     canActivate: [AuthGuard] 
+  },
+  {
+    path: 'exit', 
+    component: ExitComponent,
   },
 ];
 

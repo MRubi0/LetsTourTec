@@ -17,4 +17,12 @@ export class StepService {
         return data;
       }));
   }
+
+  createTourRecord(tourId: string) {
+    const url = `${environment.apiUrl}api/create-tour-record/`;
+    return this.http.post(url, { tour_id: tourId });
+  }
+  
+  
+
 }
