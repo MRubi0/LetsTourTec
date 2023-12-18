@@ -1,31 +1,32 @@
 
-<div class="container-fluid w-100">
+<div class="container-fluid w-100 p-0 d-flex justify-content-center flex-wrap">
     <audio #audioPlayer [src]=audio (timeupdate)="updateTime($event)"></audio>
     <div class="row w-100 mb-2">
-        <div class="progress-bar-container col-xxl-10 col-lg-10 col-md-8 col-sm-8">
+        <div class="progress-bar-container col-xxl-10 col-lg-10 col-md-12 col-sm-12 p-0">
             <span>{{ currentTimeInSeconds | secondsToTime  }}</span>
             <input type="range" class="progress-bar-audio" [value]="currentTimeInSeconds" [max]="durationInSeconds" (input)="seekTo($event)" />
             <span>{{ (durationInSeconds - currentTimeInSeconds) | secondsToTime }}</span>
         </div>
-        <div class="col-xxl-2 col-lg-2 col-md-4 col-sm-4">
+        <div class="col-xxl-2 col-lg-2 col-md-12 col-sm-12 p-0">
             <div class="row">
-                <div class="col-4">
-                    <button (click)="restart()" class="control_rest">
+                <div class="col-4 d-flex justify-content-start">
+                    <button (click)="restart()" class="control_rest d-flex">
                         <img class="icon" src="../../../../assets/iconos/arrow-clockwise-2.svg">
                     </button>
                 </div>
-                <div class="col-4" style="position: relative;">
+                <div class="col-4 d-flex justify-content-center" style="position: relative;">
                     <div class="volume-bar" *ngIf="bar_volume" (mouseenter)="cancelTimer()" (mouseleave)="showVolumeBar()">
                       <input type="range" min="0" max="1" step="0.01" [(ngModel)]="volume" (input)="setVolume(volume)" />
                     </div>
-                    <button class="control_rest" (click)="showVolumeBar()">
+                    <button class="control_rest d-flex justify-content-center" (click)="showVolumeBar()">
                       <img class="icon" src="../../../../assets/iconos/volume-up-fill-2.svg" alt="Volumen">
                     </button>
                   </div>
                             
-                <div class="col-4">
-                    <button type="button" class="control" data-bs-toggle="modal" [attr.data-bs-target]="'#staticBackdrop' + index">
-                        x{{playbackRate}}
+                <div class="col-4 d-flex justify-content-end">
+                    <button type="button" class="control" data-bs-toggle="modal" [attr.data-bs-target]="'#staticBackdrop' + index" style="
+                    text-align: end;">
+                        x{{playbackRate}} 
                     </button>
                     <div class="modal fade" [id]="'staticBackdrop' + index" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -57,30 +58,30 @@
         </div>        
     </div>
     <div class="row">    
-        <div class="col-xxl-10 col-lg-10 col-md-8 col-sm-8 d-flex justify-content-center">
+        <div class="col-xxl-10 col-lg-10 col-md-12 col-sm-12 p-0 d-flex justify-content-center">
             <div class="row g-0 controls-row">
-                <div class="col-2" (dblclick)="action('back')" (click)="restart()" #element>
+                <div class="col-2 m-1" (dblclick)="action('back')" (click)="restart()" #element>
                     <button class="control">
                         <img class="icon" src="../../../../assets/iconos/caret-left-fill-2.svg">
                     </button>
                 </div>
-                <div class="col-2">
+                <div class="col-2 m-1">
                     <button (click)="skipBackward()" class="control">
                         <img class="icon" src="../../../../assets/iconos/clock-10.svg">
                     </button>
                 </div>
-                <div class="col-2">
+                <div class="col-2 m-1">
                     <button class="control" (click)="togglePlayPause()">
                         <img class="icon" src="../../../../assets/iconos/pause-circle-2.svg" *ngIf="isPlaying">
                         <img class="icon" src="../../../../assets/iconos/play-circle-fill-2.svg" *ngIf="!isPlaying">
                     </button>
                 </div>
-                <div class="col-2">
+                <div class="col-2 m-1">
                     <button (click)="skipForward()" class="control">
                         <img class="icon" src="../../../../assets/iconos/clock10.svg">
                     </button>
                 </div>
-                <div class="col-2">
+                <div class="col-2 m-1">
                     <button class="control" (click)="action('next')">
                         <img class="icon" src="../../../../assets/iconos/caret-right-fill-2.svg">
                     </button>

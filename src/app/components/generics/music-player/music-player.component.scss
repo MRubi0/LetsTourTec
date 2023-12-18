@@ -56,10 +56,45 @@
         width: 70%;
         height: 70%;
     }
+    .volume-bar {
+        position: absolute;
+        right: 40%;
+        top:4px;
+        transform: translateX(-50%) rotate(0deg);
+        z-index: 1;
+    }
+    .velocity{
+        width: 100%;
+        display: flex;
+        text-align: end !important;
+    }
+    .control_rest{
+        display: flex;
+        width: 60px;
+        .icon{
+            height: 90%;
+        }
+    }
 }
 @media screen and (max-width: 750px) {
     .icon {
         width: 50%;
         height: 50%;
+    }
+    .volume-bar {
+        position: absolute;
+        right: 40%;
+        top:4px;
+        transform: translateX(-50%) rotate(0deg);
+        z-index: 1;
+    }
+    .control_rest{        
+        width: 60px;
+        .icon{
+            height: 90%;
+        }
+    }
+    .velocity{
+        text-align: end;
     }
 }
