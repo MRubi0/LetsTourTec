@@ -18,6 +18,7 @@ import { MyToursComponent } from './components/my-tours/my-tours.component';
 import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
 import { HistoryToursComponent } from './components/history-tours/history-tours.component';
 import { ExitComponent } from './components/exit/exit.component'
+import { MusicPlayerDetailComponent } from './components/generics/music-player-detail/music-player-detail.component';
 
 
 const routes: Routes = [
@@ -101,6 +102,10 @@ const routes: Routes = [
     path: 'exit', 
     component: ExitComponent,
   },
+  {
+    path:'music-detail',
+    component: MusicPlayerDetailComponent,
+  }
 ];
 
 @NgModule({

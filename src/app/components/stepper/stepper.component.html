@@ -30,7 +30,10 @@
                 </div>
                 <div class="audio d-flex justify-content-center">
                   <app-music-player class="w-100" [audio]="tour.audio" [index]="i"
-                    (stepChange)="musicAction($event)"></app-music-player>
+                    (stepChange)="musicAction($event)"></app-music-player>                    
+                </div>
+                <div class="d-flex justify-content-end">
+                  <button mat-button routerLink="/music-detail">detail</button>
                 </div>
               </mat-card-content>
             </mat-card>
@@ -53,15 +56,10 @@
                     <button mat-button (click)="openMapModal(step.latitude, step.longitude)" type="button">Open Map</button>
                   </div>
                 </div>
-                <!-- <div class="audio d-flex justify-content-center w-100">
-                  <app-music-player class="w-100" [audio]="step.audio" [index]="i"
-                    (stepChange)="musicAction($event)"></app-music-player>
-                </div> -->
                 <div class="audio d-flex justify-content-center w-100" *ngIf="audioControlsVisible">
                   <app-music-player class="w-100" [audio]="step.audio" [index]="i"
                     (stepChange)="musicAction($event)"></app-music-player>
-                </div>
-                
+                </div>                
               </mat-card-content>
             </mat-card>
           </div>
