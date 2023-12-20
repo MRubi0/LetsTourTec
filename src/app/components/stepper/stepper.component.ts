@@ -34,7 +34,6 @@ export class StepperComponent {
 
   checkIfMapModalIsRequired(step: any) {
     this.audioControlsVisible = !(step.latitude && step.longitude);
-    console.log("Audio Controls Visible:", this.audioControlsVisible);
   }
 
 
@@ -93,7 +92,6 @@ export class StepperComponent {
 
       control.on('routesfound', function (e) {
         const routes = e.routes;
-        console.log(routes);
         map.eachLayer((layer) => {
           if (layer instanceof L.Marker) {
             
@@ -118,7 +116,6 @@ export class StepperComponent {
     });
   }
   stopEvent(e: MouseEvent): void {
-    console.log(e);
     e.stopImmediatePropagation();
     e.stopPropagation();
   }
@@ -145,7 +142,6 @@ export class StepperComponent {
   
     dialogRef.afterClosed().subscribe(result => {
       this.audioControlsVisible = true;
-      console.log('The dialog was closed');
     });
   } 
   goToNextStep() {
@@ -156,12 +152,8 @@ export class StepperComponent {
     this.stepper.previous(); 
   }
   musicAction(event: string) {
-    console.log('musicAction called with event:', event);
-  
-    if (event === 'next') {
+  if (event === 'next') {
       if (this.isLastStep()) {
-        
-        console.log('Último paso alcanzado, redirigiendo a /exit');
         this.finishTour();
         this.router.navigate(['/exit']);
         return;
@@ -173,8 +165,6 @@ export class StepperComponent {
   }
   finishTour() {
     const tourId = '78';
-    console.log('Intentando finalizar el tour con ID:', tourId);
-    console.log(this.tour)
     this.stepService.createTourRecord(tourId).subscribe(
       response => console.log('Tour finalizado:', response),
       error => console.error('Error al finalizar el tour:', error)

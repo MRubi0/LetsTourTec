@@ -25,7 +25,6 @@ export class AuthService {
 
   login(email: string, password: string): Observable<AuthTokens> {
     const csrfToken = this.getCsrfTokenFromCookie();
-    console.log('csrfToken -->', csrfToken);
    /* if (!csrfToken) {
       this.loggingService.error("CSRF token is missing");
       return throwError(new Error("CSRF token is missing"));

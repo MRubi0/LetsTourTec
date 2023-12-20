@@ -100,7 +100,6 @@ export class UploadTourComponent implements OnInit{
       }
       if (extraStep.audio) {
         formData.append(`extra_step_audio_${index}`, extraStep.audio);
-        console.log(extraStep.audio)
       }
       if (extraStep.description) {
         formData.append(`description_${index}`, extraStep.description);
@@ -114,7 +113,6 @@ export class UploadTourComponent implements OnInit{
       
     });
     for (let key of (formData as any).keys()) {
-      console.log(key, formData.get(key));
     }
     
     return formData;

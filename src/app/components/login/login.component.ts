@@ -26,7 +26,6 @@ export class LoginComponent {
 
 
   ngOnInit(){
-
     this.loginForm.valueChanges.subscribe(data=>{
       console.log(data);
     });

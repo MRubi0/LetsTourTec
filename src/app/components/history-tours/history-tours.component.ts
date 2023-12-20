@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'src/app/services/auth.service';
 import { jwtDecode } from 'jwt-decode';
+import { environment } from 'src/enviroment/enviroment';
 
 
 
@@ -36,7 +37,7 @@ export class HistoryToursComponent implements OnInit {
     if (accessToken) {
         const decodedToken: any = jwtDecode(accessToken);
         const userId = decodedToken.user_id;  
-        this.http.get(`http://localhost:8000/api/get_user_tour_records?id=${userId}`).subscribe(data => {
+        this.http.get(`${environment.apiUrl}api/get_user_tour_records?id=${userId}`).subscribe(data => {
             this.tourRecords = (data as any)['tours'];
           }, (error: any) => {
             console.error('Error al cargar los registros de tours:', error);

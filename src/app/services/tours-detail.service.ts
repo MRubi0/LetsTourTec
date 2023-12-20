@@ -18,6 +18,6 @@ export class ToursDetailService {
   }
 
   getAdditionalLocations(tourId: number): Observable<any> {
-    return this.http.get(`http://localhost:8000/tour-locations/${tourId}`); 
+    return this.http.get(`${environment.apiUrl}tour-locations/${tourId}`); 
   }
 }

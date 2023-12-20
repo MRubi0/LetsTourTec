@@ -44,7 +44,6 @@ export class GenericCardComponent {
     });   
   }
   sendImage(image:string){
-    console.log('image -->', image);
     //this.sharedService.setImage=image;
   }
   stopClickPropagate(event: Event): void {

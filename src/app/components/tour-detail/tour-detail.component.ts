@@ -40,7 +40,6 @@ this.router.navigate([`/maps/${data.latitude}/${data.longitude}`]);
   loadData(id: any) {
     this.toursDetailService.getTourDetail(id).subscribe((data: any) => {
       this.detail = data[0].fields;
-      console.log(this.detail);
       this.toursDetailService.getAdditionalLocations(id).subscribe((locationsData: any) => {
         const additionalLocations = locationsData.locations;
         this.initMap(additionalLocations);

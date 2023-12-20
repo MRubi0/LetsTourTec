@@ -14,8 +14,6 @@ export class SearchBarComponent {
   constructor(private router: Router) {} 
 
   async searchLocation() {
-    console.log('Método searchLocation activado');
-    console.log('Valor actual de searchText:', this.searchText);
     if (!this.searchText.trim()) {
       console.log('searchText está vacío o solo contiene espacios.');
         return;
@@ -28,8 +26,6 @@ export class SearchBarComponent {
       const response = await fetch(url);
       const results = await response.json();
       if (results && Array.isArray(results)) {
-        console.log('Full response:', results);
-
          this.searchResults = results;
       } else {
          console.error("Unexpected response structure:", results);

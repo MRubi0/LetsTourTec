@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { environment } from 'src/enviroment/enviroment';
 
 @Component({
   selector: 'app-custom-tours-page',
@@ -26,14 +27,13 @@ export class CustomToursPageComponent implements OnInit {
   }
 
   async fetchTours() {
-      const baseUrl = 'http://localhost:8000'; 
-      const url = `${baseUrl}/get_nearest_tours_all/?page=1&latitude=${this.latitude}&longitude=${this.longitude}`;
+      const baseUrl = environment.apiUrl; 
+      const url = `${baseUrl}get_nearest_tours_all/?page=1&latitude=${this.latitude}&longitude=${this.longitude}`;
       
       try {
         const response = await fetch(url);
         
         const data = await response.json();
-        console.log("Data received:", data);
         this.tours = data.tours;
  
     } catch (error) {

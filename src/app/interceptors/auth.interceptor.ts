@@ -16,8 +16,6 @@ export class AuthInterceptor implements HttpInterceptor {
         }
 
         const authToken = this.authService.getToken(); // Obtiene el token del servicio de autenticación
-        console.log(`Sending request with token: ${authToken}`);
-
         // Si existe el token, lo añadimos al header de la solicitud
         if (authToken) {
             request = request.clone({

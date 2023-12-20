@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from 'src/enviroment/enviroment';
 
 
 function passwordMatchValidator(g: AbstractControl) {
@@ -41,10 +42,9 @@ export class SignupComponent {
     registerUser() {
         const formData = this.loginForm.value;
 
-        this.http.post('http://localhost:8000/register/', formData).subscribe({
+        this.http.post(`${environment.apiUrl}register/`, formData).subscribe({
             next: (response: any) => {
                 if (response.success) {
-                    console.log("Success");
                     this.router.navigate(['/registration-success']);
                 } else {
                     this.serverErrors = response.errors;
@@ -62,7 +62,6 @@ export class SignupComponent {
 
     ngOnInit() {
         this.loginForm.valueChanges.subscribe((data: any) => {
-            console.log('data --->', data);
         });
     }
 }
