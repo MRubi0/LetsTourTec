@@ -1,4 +1,5 @@
 markupsafe==1.1.1
+fcntl
 gunicorn==20.1.0
 cython>=0.29.21
 
