@@ -1,0 +1,8 @@
+<div class="playback-bar">
+    <div *ngIf="currentStep">
+      Reproduciendo: {{ currentStep.title }}
+      <!-- Agrega controles de reproducción según sea necesario -->
+    </div>
+    <button *ngIf="currentStep" (click)="openDetail()">Ver Detalles</button>
+  </div>
+  

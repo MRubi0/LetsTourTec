@@ -102,10 +102,9 @@ const routes: Routes = [
     path: 'exit', 
     component: ExitComponent,
   },
-  {
-    path:'music-detail',
-    component: MusicPlayerDetailComponent,
-  }
+  { path: 'music-detail/:tourId/:stepIndex', 
+  component: MusicPlayerDetailComponent }
+
 ];
 
 @NgModule({

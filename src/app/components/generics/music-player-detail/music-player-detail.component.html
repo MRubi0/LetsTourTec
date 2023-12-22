@@ -1,11 +1,17 @@
 
 <div class="container-fluid w-100 p-0 d-flex justify-content-center mt-5 flex-wrap p-xxl-5 p-xl-5 p-lg-5 p-md-3 p-sm-3">
     <mat-card class="container-card">
-        <mat-card-header class="mb-3">
-            <mat-card-title>Music Player</mat-card-title>
-        </mat-card-header>      
+        
+            <mat-card-header class="mb-3">
+                <mat-card-title>{{ title }}</mat-card-title>
+              </mat-card-header>
+              <div class="image-container">
+                <img *ngIf="imageUrl" [src]="imageUrl" alt="Tour Image">
+              </div>  
         <mat-card-content>        
-            <audio #audioPlayer [src]=audio (timeupdate)="updateTime($event)"></audio>
+            <audio #audioPlayer [src]="audio" (timeupdate)="updateTime($event)"></audio>
+
+
     <div class="row w-100 ">
         <div class="progress-bar-container col-xxl-10 col-lg-10 col-md-12 col-sm-12 p-0">
             <span>{{ currentTimeInSeconds | secondsToTime  }}</span>

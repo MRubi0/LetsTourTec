@@ -46,6 +46,7 @@ import { EditProfileComponent } from './components/edit-profile/edit-profile.com
 import { MusicPlayerComponent } from './components/generics/music-player/music-player.component';
 import { ExitComponent } from './components/exit/exit.component';
 import { MusicPlayerDetailComponent } from './components/generics/music-player-detail/music-player-detail.component';
+import { PlaybackBarComponent } from './components/playback-bar/playback-bar.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import { MusicPlayerDetailComponent } from './components/generics/music-player-d
     MusicPlayerComponent,
     SecondsToTimePipe,
     ExitComponent,
-    MusicPlayerDetailComponent
+    MusicPlayerDetailComponent,
+    PlaybackBarComponent
   ],
   imports: [
     BrowserModule,

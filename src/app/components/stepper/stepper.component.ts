@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MapModalComponent } from 'src/app/components/map-modal/map-modal.component';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-
+import { PlaybackService } from 'src/app/services/playback.service'
 @Component({
   selector: 'app-stepper',
   templateUrl: './stepper.component.html',
@@ -31,39 +31,65 @@ export class StepperComponent {
   maps='maps';
   url=environment.bucket;
   audioControlsVisible = false;
+  currentStep: any;
 
   checkIfMapModalIsRequired(step: any) {
     this.audioControlsVisible = !(step.latitude && step.longitude);
     console.log("Audio Controls Visible:", this.audioControlsVisible);
   }
-
-
   @ViewChild(MatStepper) stepper!: MatStepper;
 
+  
+  
 
-  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, 
+  constructor(private playbackService: PlaybackService, private dialog: MatDialog, private _formBuilder: FormBuilder, 
     private stepService:StepService, private elRef: ElementRef, private renderer: Renderer2, private router: Router) { }
 
-  ngOnInit(){
-    this.firstFormGroup = this._formBuilder.group({      
-      firstCtrl: ['', Validators.required]
-    });
-  }
+    ngOnInit() {
+      this.firstFormGroup = this._formBuilder.group({      
+        firstCtrl: ['', Validators.required]
+      });
+    
+      this.playbackService.getCurrentPlayback().subscribe(step => {
+        if (step) {
+          this.currentStep = step;
+        }
+      });
+    }
   ngAfterViewInit(){
     this.data();
   }
-  onStepChange(event:any){
-    const currentStep = this.tour.steps[event.selectedIndex];
-    this.checkIfMapModalIsRequired(currentStep);
-    if(event.previouslySelectedIndex>=0){
-      this.url_icon_home='../../../assets/iconos/home-white.svg'
+  onStepChange(event: any) {
+    const stepIndex = event.selectedIndex;
+    const stepData = this.tour.steps[stepIndex];
+
+    // Actualizar la propiedad currentStep para la barra de reproducción
+    this.currentStep = { data: stepData, index: stepIndex };
+
+    // Comprobar si se requiere el modal del mapa y actualizar iconos
+    this.checkIfMapModalIsRequired(stepData);
+    if (event.previouslySelectedIndex >= 0) {
+        this.url_icon_home = '../../../assets/iconos/home-white.svg';
     }
-    if(event.selectedIndex >= 1){
-      this.url_icon='../../../assets/iconos/steps.svg';
-    }else{
-      this.url_icon_home='../../../assets/iconos/home-white.svg'
+    if (stepIndex >= 1) {
+        this.url_icon = '../../../assets/iconos/steps.svg';
+    } else {
+        this.url_icon_home = '../../../assets/iconos/home-white.svg';
     }
+}
+  goToDetailPage(tourId: string, stepIndex: number) {
+    const stepData = this.tour.steps[stepIndex];
+    this.router.navigate(['/music-detail', tourId, stepIndex], {
+      state: {
+        step: stepData,
+        tourTitle: this.tour.titulo,
+        stepTitle: stepData.tittle 
+      }
+    });
   }
+  
+  
+  
   event() {
     const map = L.map(this.maps).setView([51.505, -0.09], 13);
     navigator.geolocation.getCurrentPosition((position) => {
@@ -129,12 +155,16 @@ export class StepperComponent {
     this.long = long;
     this.event();
   }
-  data(){
-    this.stepService.getTourDetail('78').subscribe((data=>{
-      this.tour=data; 
-      this.checkIfMapModalIsRequired(this.tour.steps[0]);     
-    }));
+  data() {
+    this.stepService.getTourDetail('78').subscribe(data => {
+      this.tour = data; 
+      this.checkIfMapModalIsRequired(this.tour.steps[0]);
+      if (this.tour && this.tour.steps && this.tour.steps.length > 0) {
+        this.currentStep = { data: this.tour.steps[0], index: 0 };
+      }
+    });
   }
+  
   openMapModal(lat: number, lng: number): void {
     this.audioControlsVisible = false;
     const dialogRef = this.dialog.open(MapModalComponent, {
@@ -190,27 +220,3 @@ export class StepperComponent {
 
   
 }
-
-/* 
-hay que añadir la forma de crear un registro al clicar en el boton de finalizar tour
-ademas de crear ua pantalla de final
-mansaje de chatgpt sobre como hacerlo
-fetch('/create-tour-record/', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        // Asegúrate de incluir el token CSRF si lo estás utilizando
-    },
-    body: new URLSearchParams({
-        'tour_id': 'ID_DEL_TOUR'
-    })
-})
-.then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.error('Error:', error));
-
-
-
-
- */
-

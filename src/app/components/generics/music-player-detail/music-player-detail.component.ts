@@ -1,11 +1,14 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { StepService } from 'src/app/services/step.service';
 
 @Component({
   selector: 'app-music-player-detail',
   templateUrl: './music-player-detail.component.html',
   styleUrls: ['./music-player-detail.component.scss']
 })
-export class MusicPlayerDetailComponent {
+export class MusicPlayerDetailComponent implements OnInit {
+  stepData: any;
   @ViewChild('element') element!: ElementRef;
   @ViewChild('audioPlayer') audioPlayerRef!: ElementRef;
   @Input('audio') audio!:string;
@@ -21,12 +24,55 @@ export class MusicPlayerDetailComponent {
   currentTimeInSeconds: number = 0;
   currentTime: number = 0;
   timer: any;
+  tourTitle: string = '';
+  stepTitle: string = '';
+  title: string = '';
+  imageUrl: string = '';
 
-  constructor(private cdRef: ChangeDetectorRef) {}
 
-  ngOnInit(){
-    this.playbackRates = this.generatePlaybackRates();    
+  constructor(private stepService:StepService, private cdRef: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {}
+
+  ngOnInit() {
+    const tourId = this.route.snapshot.params['tourId'];
+    const stepIndex = parseInt(this.route.snapshot.params['stepIndex']);
+  
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras.state) {
+      const state = navigation.extras.state;
+      this.stepData = state['step'];
+      this.setTitle(state, stepIndex);
+      this.setImage(state, stepIndex);
+      this.setAudioSource(state, stepIndex);
+    } else {
+      this.stepService.getTourDetail(tourId).subscribe(data => {
+        this.stepData = data.steps[stepIndex];
+        this.setTitle(data, stepIndex);
+        this.setImage(data, stepIndex);
+        this.setAudioSource(data, stepIndex);
+      });
+    }
+  
+    this.playbackRates = this.generatePlaybackRates();
   }
+
+  setTitle(data: any, stepIndex: number) {
+    if (stepIndex === 0) {
+      this.title = data.titulo + `- Starting point`; // Solo el título del tour para el paso 0
+    } else {
+      // Título del tour seguido por el título del paso o "Step X"
+      this.title = data.titulo + (this.stepData.tittle ? `- ${this.stepData.tittle}` : `. Step ${stepIndex}`);
+    }
+  }
+  private setImage(data: any, stepIndex: number) {
+    // Establece la imagen basándose en si es el paso 0 o un paso diferente
+    this.imageUrl = stepIndex === 0 ? data.image : this.stepData.image;
+  }
+  private setAudioSource(data: any, stepIndex: number) {
+    // Si es el paso 0, usa el audio del tour; de lo contrario, usa el audio del paso
+    this.audio = stepIndex === 0 ? data.audio : data.steps[stepIndex].audio;
+  }
+  
+
   ngAfterViewInit() {
     this.audioPlayer = this.audioPlayerRef.nativeElement;
     this.audioPlayer.volume = this.volume;
@@ -112,4 +158,6 @@ export class MusicPlayerDetailComponent {
   onDoubleTap(event: any): void {
     this.action('back');
   }
+
+
 }
