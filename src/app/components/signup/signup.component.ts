@@ -4,19 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from 'src/enviroment/enviroment';
 
-
-function passwordMatchValidator(g: AbstractControl) {
-    const passwordControl = g.get('password1'); 
-    const repeatPasswordControl = g.get('password2'); 
-
-    if (!passwordControl || !repeatPasswordControl) {
-        return null;
-    }
-
-    return passwordControl.value === repeatPasswordControl.value
-        ? null : {'mismatch': true};
-}
-
 @Component({
     selector: 'app-Signup',
     templateUrl: './Signup.component.html',
@@ -64,4 +51,16 @@ export class SignupComponent {
         this.loginForm.valueChanges.subscribe((data: any) => {
         });
     }
+}
+
+export function passwordMatchValidator(g: AbstractControl) {
+    const passwordControl = g.get('password1'); 
+    const repeatPasswordControl = g.get('password2'); 
+
+    if (!passwordControl || !repeatPasswordControl) {
+        return null;
+    }
+
+    return passwordControl.value === repeatPasswordControl.value
+        ? null : {'mismatch': true};
 }
