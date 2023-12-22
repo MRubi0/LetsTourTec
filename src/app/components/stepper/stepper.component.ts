@@ -6,7 +6,7 @@ import * as L from 'leaflet';
 import { MatDialog } from '@angular/material/dialog';
 import { MapModalComponent } from 'src/app/components/map-modal/map-modal.component';
 import { MatStepper } from '@angular/material/stepper';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-stepper',
@@ -27,6 +27,7 @@ export class StepperComponent {
   url_icon_home='../../../assets/iconos/home-white.svg'
   lat:number=0;
   long:number=0;
+  tour_id='';
   tour:any;
   maps='maps';
   url=environment.bucket;
@@ -41,11 +42,14 @@ export class StepperComponent {
 
 
   constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, 
-    private stepService:StepService, private elRef: ElementRef, private renderer: Renderer2, private router: Router) { }
+    private stepService:StepService, private elRef: ElementRef, private renderer: Renderer2, private activatedRoute: ActivatedRoute,private router: Router) { }
 
   ngOnInit(){
     this.firstFormGroup = this._formBuilder.group({      
       firstCtrl: ['', Validators.required]
+    });
+    this.activatedRoute.params.subscribe((params: any) => {
+      this.tour_id=params.id
     });
   }
   ngAfterViewInit(){
@@ -127,9 +131,13 @@ export class StepperComponent {
     this.event();
   }
   data(){
-    this.stepService.getTourDetail('78').subscribe((data=>{
+    this.stepService.getTourDetail('81').subscribe((data=>{
       this.tour=data; 
-      this.checkIfMapModalIsRequired(this.tour.steps[0]);     
+      if(this.tour.steps.length){        
+        this.checkIfMapModalIsRequired(this.tour.steps[0]);
+      }else{
+        this.tour.steps.push('tour');
+      }           
     }));
   }
   openMapModal(lat: number, lng: number): void {
@@ -164,7 +172,7 @@ export class StepperComponent {
     }
   }
   finishTour() {
-    const tourId = '78';
+    const tourId = this.tour_id;
     this.stepService.createTourRecord(tourId).subscribe(
       response => console.log('Tour finalizado:', response),
       error => console.error('Error al finalizar el tour:', error)
@@ -173,7 +181,6 @@ export class StepperComponent {
   
   isLastStep(): boolean {
     const currentIndex = this.stepper.selectedIndex;
-    console.log('Current index:', currentIndex, 'Total steps:', this.tour.steps.length);
     return currentIndex === this.tour.steps.length - 1;
   }
   

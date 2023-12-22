@@ -13,7 +13,7 @@ export class TourDetailComponent {
 
   lat:number=0;
   long:number=0;
-
+  tour_id:number=0;
   detail:any;
   $url!:any;
   image_url:string='';
@@ -35,9 +35,10 @@ export class TourDetailComponent {
 
   letsTour(data:any){
   this.sharedService.setCoordinates=data;
-this.router.navigate([`/maps/${data.latitude}/${data.longitude}`]);
+  this.router.navigate([`/maps/${data.latitude}/${data.longitude}/${this.tour_id}`]);
  }  
   loadData(id: any) {
+    this.tour_id=id;
     this.toursDetailService.getTourDetail(id).subscribe((data: any) => {
       this.detail = data[0].fields;
       this.toursDetailService.getAdditionalLocations(id).subscribe((locationsData: any) => {

@@ -44,7 +44,7 @@ const routes: Routes = [
     component: TourDetailComponent
   },
   { 
-    path: 'stepper', 
+    path: 'stepper/:id', 
     component: StepperComponent
   },
   { 
@@ -69,7 +69,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'maps/:lat/:long',
+    path: 'maps/:lat/:long/:id',
     component: MapsComponent
   },
   {

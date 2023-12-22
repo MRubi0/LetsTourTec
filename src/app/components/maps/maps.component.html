@@ -5,7 +5,7 @@
     </div>
     <div class="instructions-container row mt-3">  
         <div class="col-12 d-flex justify-content-center">
-            <button mat-raised-button color="primary" class="custom-button-color" routerLink="/stepper">I arrived, Let's tour</button>
+            <button mat-raised-button color="primary" class="custom-button-color" [routerLink]="'/stepper/' + tour_id">I arrived, Let's tour</button>
         </div>
     </div>
 </div>

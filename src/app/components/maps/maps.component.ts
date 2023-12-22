@@ -13,6 +13,7 @@ export class MapsComponent {
   long: number = 0;
   private watchId: number | null = null;
   private control: L.Routing.Control | null = null;
+  tour_id = 0;
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
@@ -97,6 +98,7 @@ export class MapsComponent {
   load(coordenadas: any): void {    
     this.lat = coordenadas.lat;
     this.long = coordenadas.long;
+    this.tour_id=coordenadas.id
   }
 
   ngOnDestroy() {
