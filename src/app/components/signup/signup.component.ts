@@ -21,7 +21,7 @@ export class SignupComponent {
         email: new FormControl('', [Validators.required, Validators.email]),
         password1: new FormControl('', [Validators.required]),  
         password2: new FormControl('', [Validators.required])  
-    }, { validators: passwordMatchValidator });
+    }, { validators: this.passwordMatchValidator });
 
     constructor(private http: HttpClient, private router: Router) { }  
 
@@ -51,16 +51,15 @@ export class SignupComponent {
         this.loginForm.valueChanges.subscribe((data: any) => {
         });
     }
-}
-
-export function passwordMatchValidator(g: AbstractControl) {
-    const passwordControl = g.get('password1'); 
-    const repeatPasswordControl = g.get('password2'); 
-
-    if (!passwordControl || !repeatPasswordControl) {
-        return null;
+    passwordMatchValidator(g: AbstractControl) {
+        const passwordControl = g.get('password1'); 
+        const repeatPasswordControl = g.get('password2'); 
+    
+        if (!passwordControl || !repeatPasswordControl) {
+            return null;
+        }
+    
+        return passwordControl.value === repeatPasswordControl.value
+            ? null : {'mismatch': true};
     }
-
-    return passwordControl.value === repeatPasswordControl.value
-        ? null : {'mismatch': true};
 }
