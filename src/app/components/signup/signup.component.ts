@@ -6,8 +6,8 @@ import { environment } from 'src/enviroment/enviroment';
 
 @Component({
     selector: 'app-Signup',
-    templateUrl: './Signup.component.html',
-    styleUrls: ['./Signup.component.scss']
+    templateUrl: './signup.component.html',
+    styleUrls: ['./signup.component.scss']
 })
 export class SignupComponent {
 
