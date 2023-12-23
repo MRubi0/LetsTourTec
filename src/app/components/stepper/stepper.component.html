@@ -96,5 +96,5 @@
     </mat-vertical-stepper>
   </div>
 
-  <app-playback-bar [currentStep]="currentStep" (detailRequested)="goToDetailPage(tour.id, currentStep.index)"></app-playback-bar>
+  <app-playback-bar *ngIf="isAudioPlaying" [currentStep]="currentStep" (detailRequested)="goToDetailPage(tour.id, currentStep.index)"></app-playback-bar>
 </div>

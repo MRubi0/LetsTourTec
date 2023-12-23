@@ -32,6 +32,8 @@ export class StepperComponent {
   url=environment.bucket;
   audioControlsVisible = false;
   currentStep: any;
+  isAudioPlaying = false;
+
 
   checkIfMapModalIsRequired(step: any) {
     this.audioControlsVisible = !(step.latitude && step.longitude);
@@ -53,6 +55,9 @@ export class StepperComponent {
       this.playbackService.getCurrentPlayback().subscribe(step => {
         if (step) {
           this.currentStep = step;
+          this.isAudioPlaying = true;  // Establecer a true cuando el audio se está reproduciendo
+        } else {
+          this.isAudioPlaying = false; // Establecer a false cuando no hay audio reproduciéndose
         }
       });
     }

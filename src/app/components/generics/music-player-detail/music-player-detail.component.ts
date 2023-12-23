@@ -1,6 +1,8 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { StepService } from 'src/app/services/step.service';
+import { PlaybackService } from 'src/app/services/playback.service';
+
 
 @Component({
   selector: 'app-music-player-detail',
@@ -30,7 +32,7 @@ export class MusicPlayerDetailComponent implements OnInit {
   imageUrl: string = '';
 
 
-  constructor(private stepService:StepService, private cdRef: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {}
+  constructor(private playbackService:PlaybackService, private stepService:StepService, private cdRef: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
     const tourId = this.route.snapshot.params['tourId'];
@@ -74,6 +76,17 @@ export class MusicPlayerDetailComponent implements OnInit {
   
 
   ngAfterViewInit() {
+    this.audioPlayer = this.audioPlayerRef.nativeElement;
+    this.playbackService.getCurrentAudioPosition().subscribe(position => {
+      this.audioPlayer.currentTime = position;
+    });
+  
+    this.playbackService.getIsPlaying().subscribe(isPlaying => {
+      if (isPlaying) {
+        this.audioPlayer.play();
+        this.isPlaying = true;
+      }
+    });
     this.audioPlayer = this.audioPlayerRef.nativeElement;
     this.audioPlayer.volume = this.volume;
     this.audioPlayer.playbackRate = this.playbackRate;
@@ -130,11 +143,12 @@ export class MusicPlayerDetailComponent implements OnInit {
     this.isPlaying = true;
   }
 
-  updateTime(event: Event) {    
-    const audio = event.target as HTMLAudioElement;    
+  updateTime(event: Event) {
+    const audio = event.target as HTMLAudioElement;
     this.currentTime = audio.currentTime;
     this.currentTimeInSeconds = Math.floor(audio.currentTime);
-}
+    this.playbackService.setCurrentAudioPosition(audio.currentTime);
+  }
   seekTo(event: Event) {      
       const audio = this.audioPlayerRef.nativeElement as HTMLAudioElement;
       audio.currentTime = parseInt((event.target as HTMLInputElement).value);

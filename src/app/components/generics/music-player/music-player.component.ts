@@ -1,5 +1,6 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, ChangeDetectorRef, HostListener, NgZone } from '@angular/core';
 import * as Hammer from 'hammerjs';
+import { PlaybackService } from 'src/app/services/playback.service';
 
 @Component({
   selector: 'app-music-player',
@@ -11,6 +12,7 @@ export class MusicPlayerComponent {
   @ViewChild('audioPlayer') audioPlayerRef!: ElementRef;
   @Input('audio') audio!:string;
   @Input('index') index!:number;
+  @Input('stepData') stepData!: any;
   @Output() stepChange = new EventEmitter<string>();
   audioPlayer!: HTMLAudioElement;
   isPlaying: boolean = false;
@@ -23,7 +25,7 @@ export class MusicPlayerComponent {
   currentTime: number = 0;
   timer: any;
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor(private playbackService: PlaybackService, private cdRef: ChangeDetectorRef, private ngZone: NgZone) {}
 
   ngOnInit(){
     this.playbackRates = this.generatePlaybackRates();    
@@ -52,11 +54,33 @@ export class MusicPlayerComponent {
     return rates;
   }
 
-  togglePlayPause() {
+/*   togglePlayPause() {
     if (this.isPlaying) {
       this.audioPlayer.pause();
     } else {
       this.audioPlayer.play();
+      this.ngZone.run(() => {
+        this.playbackService.setCurrentPlayback({ audio: this.audio, index: this.index });
+        this.cdRef.detectChanges();
+      });
+    }
+    this.isPlaying = !this.isPlaying;
+  } */
+  
+  togglePlayPause() {
+    if (this.isPlaying) {
+      this.audioPlayer.pause();
+      this.playbackService.setIsPlaying(false);
+    } else {
+      this.audioPlayer.play();
+      this.playbackService.setIsPlaying(true);
+      // Actualizar la barra de reproducción cuando el audio empieza a reproducirse
+      const stepData = {
+        // Asegúrate de tener los datos correctos aquí
+        data: { titulo: 'Título del Tour', tittle: 'Título del Paso'},
+        index: this.index
+      };
+      this.playbackService.setCurrentPlayback(stepData);
     }
     this.isPlaying = !this.isPlaying;
   }
@@ -85,17 +109,18 @@ export class MusicPlayerComponent {
     this.isPlaying = true;
   }
 
-  updateTime(event: Event) {    
+  updateTime(event: Event) {
     const audio = event.target as HTMLAudioElement;    
     this.currentTime = audio.currentTime;
     this.currentTimeInSeconds = Math.floor(audio.currentTime);
-}
+    this.playbackService.setCurrentAudioPosition(audio.currentTime);
+  }
   seekTo(event: Event) {      
       const audio = this.audioPlayerRef.nativeElement as HTMLAudioElement;
       audio.currentTime = parseInt((event.target as HTMLInputElement).value);
   }
   action(event:string){
-    this.audioPlayer.pause();
+    //this.audioPlayer.pause();
     this.stepChange.emit(event);
   }
   showVolumeBar() {
