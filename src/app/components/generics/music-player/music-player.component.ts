@@ -28,6 +28,7 @@ export class MusicPlayerComponent {
   constructor(private playbackService: PlaybackService, private cdRef: ChangeDetectorRef, private ngZone: NgZone) {}
 
   ngOnInit(){
+    console.log('Component music-player (general) initialized');
     this.playbackRates = this.generatePlaybackRates();    
   }
   ngAfterViewInit() {

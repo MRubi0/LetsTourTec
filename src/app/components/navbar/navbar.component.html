@@ -43,6 +43,12 @@
       <!-- Navigation Links Section -->
       <div class="navbar-nav d-flex flex-row">
         <a class="nav-link" routerLink="/about-us">About us</a>
+
+        <!-- Links shown only when user is not logged in -->
+        <a class="nav-link" *ngIf="!isLoggedIn" routerLink="/login">Log in</a>
+        <a class="nav-link" *ngIf="!isLoggedIn" routerLink="/signup">Sign up</a>
+
+        <!-- Links shown only when user is logged in -->
         <a class="nav-link" *ngIf="isLoggedIn" routerLink="/profile">My Profile</a>
         <button class="btn btn-link nav-link" *ngIf="isLoggedIn" (click)="logout()">Log Out</button>
       </div>
@@ -53,3 +59,4 @@
     </div>
   </nav>
 </div>
+

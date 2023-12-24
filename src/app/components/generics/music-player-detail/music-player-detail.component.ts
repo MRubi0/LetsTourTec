@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, 
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { StepService } from 'src/app/services/step.service';
 import { PlaybackService } from 'src/app/services/playback.service';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -30,11 +31,14 @@ export class MusicPlayerDetailComponent implements OnInit {
   stepTitle: string = '';
   title: string = '';
   imageUrl: string = '';
-
+  audioPositionSubscription?: Subscription;
+  isPlayingSubscription?: Subscription;
+  
 
   constructor(private playbackService:PlaybackService, private stepService:StepService, private cdRef: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
+    //console.log('Component music-player-detail initialized');
     const tourId = this.route.snapshot.params['tourId'];
     const stepIndex = parseInt(this.route.snapshot.params['stepIndex']);
   
@@ -55,8 +59,22 @@ export class MusicPlayerDetailComponent implements OnInit {
     }
   
     this.playbackRates = this.generatePlaybackRates();
+    this.playbackService.getCurrentAudioPosition().subscribe(position => {
+      console.log('[MusicPlayerDetailComponent] Current audio position from service:', position);
+      this.audioPlayer.currentTime = position;
+      this.updateUI();
+    });
+    this.audioPositionSubscription = this.playbackService.getCurrentAudioPosition().subscribe(/* ... */);
+  this.isPlayingSubscription = this.playbackService.getIsPlaying().subscribe(/* ... */);
   }
-
+  ngOnDestroy() {
+    if (this.audioPositionSubscription) {
+      this.audioPositionSubscription.unsubscribe();
+    }
+    if (this.isPlayingSubscription) {
+      this.isPlayingSubscription.unsubscribe();
+    }
+  }
   setTitle(data: any, stepIndex: number) {
     if (stepIndex === 0) {
       this.title = data.titulo + `- Starting point`; // Solo el título del tour para el paso 0
@@ -74,34 +92,78 @@ export class MusicPlayerDetailComponent implements OnInit {
     this.audio = stepIndex === 0 ? data.audio : data.steps[stepIndex].audio;
   }
   
+  updateUI() {
+    // Actualiza la UI para reflejar el estado actual del audio
+    this.isPlaying = !this.audioPlayer.paused;
+    this.currentTimeInSeconds = Math.floor(this.audioPlayer.currentTime);
+  }
 
   ngAfterViewInit() {
     this.audioPlayer = this.audioPlayerRef.nativeElement;
-    this.playbackService.getCurrentAudioPosition().subscribe(position => {
-      this.audioPlayer.currentTime = position;
+    this.audioPlayer.volume = this.volume;
+    this.audioPlayer.playbackRate = this.playbackRate;
+  
+    this.audioPlayer.onloadedmetadata = () => {
+      this.durationInSeconds = Math.floor(this.audioPlayer.duration);
+      console.log('[MusicPlayerDetailComponent] Metadata loaded, duration:', this.durationInSeconds);
+  
+      // Solo suscríbete una vez aquí, en lugar de dos veces como antes.
+      this.playbackService.getCurrentAudioPosition().subscribe(position => {
+        console.log('[MusicPlayerDetailComponent] Current audio position from service:', position);
+        if (this.audioPlayer) {
+          this.audioPlayer.currentTime = position;
+        } else {
+          console.error('[MusicPlayerDetailComponent] Audio player is not initialized yet.');
+        }
+      });
+  
+      this.playbackService.getIsPlaying().subscribe(isPlaying => {
+        console.log('[MusicPlayerDetailComponent] Is playing from service:', isPlaying);
+        if (isPlaying && this.audioPlayer.paused) {
+          this.audioPlayer.play();
+        }
+      });
+    };
+  
+    this.audioPlayer.onplay = () => {
+      console.log('[MusicPlayerDetailComponent] Audio Play Event');
+      this.isPlaying = true;
+    };
+  
+    this.audioPlayer.onpause = () => {
+      console.log('[MusicPlayerDetailComponent] Audio Pause Event');
+      this.isPlaying = false;
+    };
+  
+    this.audioPlayer.ontimeupdate = () => {
+      console.log('[MusicPlayerDetailComponent] Current Time Update:', this.audioPlayer.currentTime);
+      this.currentTimeInSeconds = Math.floor(this.audioPlayer.currentTime);
+    };
+  
+    const mc = new Hammer(this.element.nativeElement);
+    mc.get('doubletap').set({ event: 'doubletap' });
+    mc.on('doubletap', (ev: any) => {
+      this.onDoubleTap(ev);
     });
   
     this.playbackService.getIsPlaying().subscribe(isPlaying => {
-      if (isPlaying) {
+      console.log('[MusicPlayerDetailComponent] Is playing from service:', isPlaying);
+      if (isPlaying && this.audioPlayer.paused) {
         this.audioPlayer.play();
-        this.isPlaying = true;
       }
     });
-    this.audioPlayer = this.audioPlayerRef.nativeElement;
-    this.audioPlayer.volume = this.volume;
-    this.audioPlayer.playbackRate = this.playbackRate;
-
-    this.audioPlayerRef.nativeElement.onloadedmetadata = () => {
-      this.durationInSeconds = Math.floor(this.audioPlayerRef.nativeElement.duration);
-  };
-
-  const mc = new Hammer(this.element.nativeElement); 
-    mc.get('doubletap').set({ event: 'doubletap' });
-    mc.on('doubletap', (ev:any) => {
-      this.onDoubleTap(ev);
-    });
   }
-
+  
+  togglePlayPause() {
+    console.log('Toggle Play Pause');
+    if (this.audioPlayer.paused) {
+      this.audioPlayer.play();
+    } else {
+      this.audioPlayer.pause();
+    }
+  }
+  
+  
   generatePlaybackRates(): number[] {
     const rates: number[] = [];
     for (let rate = 0.25; rate <= 2; rate += 0.25) {
@@ -110,14 +172,7 @@ export class MusicPlayerDetailComponent implements OnInit {
     return rates;
   }
 
-  togglePlayPause() {
-    if (this.isPlaying) {
-      this.audioPlayer.pause();
-    } else {
-      this.audioPlayer.play();
-    }
-    this.isPlaying = !this.isPlaying;
-  }
+  
 
   skipForward() {
     this.audioPlayer.currentTime += 10;
