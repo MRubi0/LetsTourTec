@@ -131,7 +131,7 @@ export class StepperComponent {
     this.event();
   }
   data(){
-    this.stepService.getTourDetail('81').subscribe((data=>{
+    this.stepService.getTourDetail(this.tour_id).subscribe((data=>{
       this.tour=data; 
       if(this.tour.steps.length){        
         this.checkIfMapModalIsRequired(this.tour.steps[0]);
