@@ -1,39 +1,154 @@
-.logo{
-    width: 240px;
+// .logo{
+//     width: 240px;
     
-}
-.navbar {
-    width: 100%;
+// }
+// .navbar {
+//     width: 100%;
+//     background-color: #fff;
+//     border-radius: 0px 0px 20px 20px;
+//     box-shadow: 0px 3px 5px rgba(13, 110, 253, 0.8);
+// }
+
+// #navbarSearch{
+//     width: 25%;
+// }
+
+// .container-fluid.d-flex {
+//     display: flex;
+//     justify-content: center; /* Centra todos los elementos horizontalmente */
+//     align-items: center; /* Alinea los elementos verticalmente */
+// }
+
+// .navbar {
+//     justify-content: space-between; /* Distribuye el espacio entre los elementos de la barra de navegación */
+// }
+
+// .navbar-brand {
+//     position: relative; 
+//     flex-grow: 1; 
+//     text-align: center; 
+// }
+// #navbarNavLinks, #navbarSearch {
+//     flex-basis: 50%;
+//     flex-grow: 1; 
+// }
+
+// .logo {
+//     max-width: 200%; 
+//     height: auto; 
+// }
+
+.logo {
+    width: 240px; /* Adjust size as needed */
+  }
+  
+  .navbar {
     background-color: #fff;
     border-radius: 0px 0px 20px 20px;
     box-shadow: 0px 3px 5px rgba(13, 110, 253, 0.8);
-}
-
-#navbarSearch{
-    width: 25%;
-}
-
-.container-fluid.d-flex {
+    padding: 0.5rem 1rem;
+  }
+  
+  .navbar-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-top: 0.5rem;
+  }
+  
+  .navbar-brand {
     display: flex;
-    justify-content: center; /* Centra todos los elementos horizontalmente */
-    align-items: center; /* Alinea los elementos verticalmente */
-}
+    justify-content: center;
+    width: 100%;
+    margin-top: 0.75rem; /* Adjust this value as needed to position the logo */
+  }
+  .nav-link {
+    margin-right: 10px; /* Agrega un espacio a la derecha de cada enlace */
+  }
+  .navbar-nav button { /* Asegúrate de que esto también se aplique a los botones dentro de navbar-nav */
+    margin-right: 10px; /* Agrega un espacio a la derecha de cada enlace */
+    line-height: 1.5; /* Establece un line-height para asegurar la alineación vertical */
+    white-space: nowrap; /* Evita que los enlaces se rompan en varias líneas */
+    display: inline-flex; /* Utiliza flex para alinear verticalmente los ítems */
+    align-items: center; /* Alineación vertical al centro */
+  }
+  @media (max-width: 767px) {
+    .nav-link,
+  .navbar-nav button { /* Asegúrate de que los ajustes se apliquen también a los botones */
+    margin-right: 10px; /* Espaciado menor para dispositivos con pantalla pequeña */
+    font-size: 14px; /* Disminuye el tamaño de la fuente si es necesario */
+  }
+    .logo {
+      width: 180px; 
+      margin-top: 0.25rem;
+    }
+    .navbar-nav {
+        position: relative; /* Coloca navbar-nav dentro del flujo normal del documento */
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center; /* Esto asegurará que todos los elementos se alineen verticalmente */
+        margin-top: 0; /* Quita el margen superior para alinear con el inicio del contenedor */
+      }
+      .navbar-brand {
+        margin-top: 0.25rem; /* Valor aún más reducido para dispositivos móviles */
+      }
+  }
+  
 
-.navbar {
-    justify-content: space-between; /* Distribuye el espacio entre los elementos de la barra de navegación */
-}
 
-.navbar-brand {
-    position: relative; 
-    flex-grow: 1; 
-    text-align: center; 
-}
-#navbarNavLinks, #navbarSearch {
-    flex-basis: 50%;
-    flex-grow: 1; 
-}
-
-.logo {
-    max-width: 200%; 
-    height: auto; 
-}
+//   .navbar {
+//     background-color: #fff;
+//     border-radius: 0px 0px 20px 20px;
+//     box-shadow: 0px 3px 5px rgba(13, 110, 253, 0.8);
+//     padding: 0.5rem 1rem;
+//   }
+  
+//   .navbar-nav {
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     margin-top: 0.5rem;
+//     display: flex;
+//     align-items: center;
+//   }
+  
+//   .nav-link {
+//     margin-right: 10px; /* Espacio a la derecha de cada enlace */
+//     line-height: 1.5;
+//     white-space: nowrap;
+//   }
+  
+//   .navbar-brand {
+//     display: block; /* Esto permitirá que el logo se centre correctamente */
+//     width: 100%; /* Esto garantiza que el contenedor del logo use todo el ancho disponible */
+//     text-align: center; /* Centra el contenido (el logo) dentro del contenedor */
+//     margin-top: 1rem; /* Espacio entre los enlaces de navegación y el logo */
+//     margin-bottom: 1rem; /* Espacio debajo del logo si es necesario */
+//   }
+  
+//   .logo {
+//     width: auto; /* Usamos 'auto' para mantener las proporciones del logo */
+//     max-width: 240px; /* El tamaño máximo del logo en pantallas grandes */
+//     height: auto; /* Mantener las proporciones del logo */
+//   }
+  
+//   @media (max-width: 767px) {
+//     .logo {
+//       max-width: 180px; /* Tamaño del logo ajustado para dispositivos móviles */
+//     }
+    
+//     .navbar-nav {
+//       position: relative; /* Cambiamos a relative para que los enlaces no se posicionen fuera del flujo normal */
+//       margin-top: 0; /* Retiramos el margen extra en la parte superior */
+//       justify-content: center; /* Centramos los enlaces de navegación */
+//       width: 100%; /* El contenedor de navegación usa todo el ancho */
+//       padding-top: 1rem; /* Espacio por encima de los enlaces de navegación */
+//     }
+    
+//     .nav-link {
+//       margin-right: 5px; /* Espacio reducido entre los enlaces para dispositivos móviles */
+//       line-height: 1.5; /* Ajuste de la altura de la línea para la alineación vertical */
+//     }
+//   }
+  

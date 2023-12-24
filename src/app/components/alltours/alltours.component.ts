@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { LatestToursService } from 'src/app/services/latest-tours.service';
+import { environment } from 'src/enviroment/enviroment';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -29,8 +30,7 @@ export class AlltoursComponent {
       navigator.geolocation.getCurrentPosition((position) => {
         const latitud = String(position.coords.latitude);
         const longitud = String(position.coords.longitude);
-
-        this.http.get('http://127.0.0.1:8000/get_nearest_tours_all', {
+        this.http.get(`${environment.apiUrl}get_nearest_tours_all`, {
           params: {latitude: latitud , longitude: longitud}})
 
 
