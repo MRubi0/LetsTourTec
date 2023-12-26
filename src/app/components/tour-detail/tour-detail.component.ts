@@ -4,6 +4,8 @@ import { SharedService } from 'src/app/services/shared.service';
 import { ToursDetailService } from 'src/app/services/tours-detail.service';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
+// import { GraphHopperRouting } from 'leaflet-routing-machine/dist/leaflet-routing-machine';
+
 @Component({
   selector: 'app-tour-detail',
   templateUrl: './tour-detail.component.html',
@@ -67,6 +69,11 @@ export class TourDetailComponent {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
     }).addTo(map);
+
+    L.marker([this.detail.latitude, this.detail.longitude], { icon: defaultIcon }).addTo(map); //nuevo
+
+    
+
     const waypoints = [L.latLng(this.detail.latitude, this.detail.longitude)];
     const bounds = new L.LatLngBounds(waypoints[0], waypoints[0]);
   
@@ -80,14 +87,20 @@ export class TourDetailComponent {
       bounds.extend(waypoint); 
     });
   
-  
-    L.Routing.control({
-      waypoints: waypoints,
-      routeWhileDragging: true,
-      collapsible: false,
-      show: false,
-      addWaypoints: false,
-    }).addTo(map);
+  additionalLocations.forEach(location => {
+      const latLng = L.latLng(location.lat, location.long);
+      L.marker(latLng, { icon: defaultIcon }).addTo(map);
+      bounds.extend(latLng); 
+    });  //nuevos
+
+    
+    // L.Routing.control({
+    //   waypoints: waypoints,
+    //   routeWhileDragging: true,
+    //   collapsible: false,
+    //   show: false,
+    //   addWaypoints: false,
+    // }).addTo(map);
     map.fitBounds(bounds);
 
     map.eachLayer((layer) => {
