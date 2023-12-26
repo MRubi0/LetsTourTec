@@ -48,7 +48,7 @@ const routes: Routes = [
     component: StepperComponent
   },
   { 
-    path: 'sigup', 
+    path: 'signup', 
     component: SignupComponent
   },
   { 
