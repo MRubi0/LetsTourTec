@@ -16,7 +16,7 @@ import { LoggingService } from 'src/app/services/logging.service';
 
 
 export class AuthService {
-  private baseUrl = 'http://127.0.0.1:8000/';
+  private baseUrl = 'https://letstourtec-c393a22f9c2b.herokuapp.com/';
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
 
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
