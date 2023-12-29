@@ -28,6 +28,7 @@ export class StepperComponent {
   lat:number=0;
   long:number=0;
   tour_id='';
+  tittle='';
   tour:any;
   maps='maps';
   url=environment.bucket;
@@ -57,6 +58,7 @@ export class StepperComponent {
   }
   onStepChange(event:any){
     const currentStep = this.tour.steps[event.selectedIndex];
+    console.log('Paso actual:', currentStep);
     this.checkIfMapModalIsRequired(currentStep);
     if(event.previouslySelectedIndex>=0){
       this.url_icon_home='../../../assets/iconos/home-white.svg'
@@ -133,6 +135,7 @@ export class StepperComponent {
   data(){
     this.stepService.getTourDetail(this.tour_id).subscribe((data=>{
       this.tour=data; 
+      console.log(data)
       if(this.tour.steps.length){        
         this.checkIfMapModalIsRequired(this.tour.steps[0]);
       }else{
@@ -187,27 +190,4 @@ export class StepperComponent {
 
   
 }
-
-/* 
-hay que añadir la forma de crear un registro al clicar en el boton de finalizar tour
-ademas de crear ua pantalla de final
-mansaje de chatgpt sobre como hacerlo
-fetch('/create-tour-record/', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        // Asegúrate de incluir el token CSRF si lo estás utilizando
-    },
-    body: new URLSearchParams({
-        'tour_id': 'ID_DEL_TOUR'
-    })
-})
-.then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.error('Error:', error));
-
-
-
-
- */
 

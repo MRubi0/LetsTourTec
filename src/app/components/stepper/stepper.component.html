@@ -12,19 +12,28 @@
           <img [src]="url_icon" alt="">
         </div>
 
-        <form [formGroup]="firstFormGroup">
+        <!-- <form [formGroup]="firstFormGroup">
           <ng-template matStepLabel *ngIf="i==0">
             <strong>{{tour.titulo | uppercase}}</strong>
           </ng-template>
-          <ng-template matStepLabel *ngIf="i>0"><strong>Step {{i}}</strong></ng-template>
+          
+          <ng-template matStepLabel *ngIf="i>0"><strong>Step {{i}}</strong></ng-template> -->
+          <form [formGroup]="firstFormGroup">
+
+            <ng-template matStepLabel>
+              <strong *ngIf="i==0">{{tour.titulo | uppercase}}</strong>
+              <strong *ngIf="i>0 && step.tittle">{{step.tittle | uppercase}}</strong>
+              <strong *ngIf="i>0 && !step.tittle">Step {{i}}</strong>
+            </ng-template>
           <div>
             <mat-card *ngIf="i==0">
               <mat-card-header>
               </mat-card-header>
               <mat-card-content>
+                <div class="img-container">
                 <div class="d-flex justify-content-center w-100">
                   <img src="{{tour.image}}" alt="">
-                </div>
+                </div></div>
                 <div class="w-100">
                   <p>{{tour.description}}</p>
                 </div>

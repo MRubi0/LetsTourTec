@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
 import { ToursDetailService } from 'src/app/services/tours-detail.service';
+import { RoutingService } from 'src/app/services/routing.service';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 // import { GraphHopperRouting } from 'leaflet-routing-machine/dist/leaflet-routing-machine';
@@ -20,6 +21,7 @@ export class TourDetailComponent {
   $url!:any;
   image_url:string='';
   constructor(
+    private routingService: RoutingService,
     private toursDetailService:ToursDetailService,
     private activatedRoute:ActivatedRoute,
     private sharedService:SharedService,
@@ -55,8 +57,10 @@ export class TourDetailComponent {
 
   initMap(additionalLocations: any[]) {
     if (!this.detail) return;
+  
+    // Configuración inicial del ícono de los marcadores
     const defaultIcon = L.icon({
-      iconUrl: 'images/marker-icon.png',  
+      iconUrl: 'images/marker-icon.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
@@ -64,50 +68,37 @@ export class TourDetailComponent {
       shadowSize: [41, 41]
     });
     L.Marker.prototype.options.icon = defaultIcon;
-    const map = L.map('map').setView([this.detail.latitude, this.detail.longitude], 13);
   
+    // Creación del mapa
+    const map = L.map('map').setView([this.detail.latitude, this.detail.longitude], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
     }).addTo(map);
-
-    L.marker([this.detail.latitude, this.detail.longitude], { icon: defaultIcon }).addTo(map); //nuevo
-
-    
-
-    const waypoints = [L.latLng(this.detail.latitude, this.detail.longitude)];
-    const bounds = new L.LatLngBounds(waypoints[0], waypoints[0]);
   
-    waypoints.forEach(wp => {
-      bounds.extend(wp); 
-    });
+    // Crear el primer waypoint y marcador para la ubicación inicial
+    const initialLatLng = L.latLng(this.detail.latitude, this.detail.longitude);
+    L.marker(initialLatLng, { icon: defaultIcon }).addTo(map);
   
+    // Inicializar los límites del mapa con el primer waypoint
+    const bounds = new L.LatLngBounds(initialLatLng, initialLatLng);
+  
+    // Añadir waypoints adicionales y marcadores para cada ubicación
     additionalLocations.forEach(location => {
       const waypoint = L.latLng(location.lat, location.long);
-      waypoints.push(waypoint);
-      bounds.extend(waypoint); 
+      L.marker(waypoint, { icon: defaultIcon }).addTo(map);
+      bounds.extend(waypoint); // Extender los límites del mapa para incluir este waypoint
     });
   
-  additionalLocations.forEach(location => {
-      const latLng = L.latLng(location.lat, location.long);
-      L.marker(latLng, { icon: defaultIcon }).addTo(map);
-      bounds.extend(latLng); 
-    });  //nuevos
-
-    
-    // L.Routing.control({
-    //   waypoints: waypoints,
-    //   routeWhileDragging: true,
-    //   collapsible: false,
-    //   show: false,
-    //   addWaypoints: false,
-    // }).addTo(map);
     map.fitBounds(bounds);
-
+  
+    // Configurar y añadir el control de enrutamiento
+    const routerControl = this.routingService.getRouter('5b3ce3597851110001cf624862b9e2a13b0d4ab2be7475a8d4915b1d', [initialLatLng].concat(additionalLocations.map(location => L.latLng(location.lat, location.long))));
+    routerControl.addTo(map);
+  
+    // Deshabilitar la interacción con los marcadores
     map.eachLayer((layer) => {
       if (layer instanceof L.Marker) {
-        
         layer.dragging?.disable();
-        
         const element = layer.getElement();
         if (element) {
           L.DomUtil.removeClass(element, 'leaflet-marker-draggable');
@@ -116,4 +107,6 @@ export class TourDetailComponent {
       }
     });
   }
+  
+  
 }
