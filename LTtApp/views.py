@@ -680,7 +680,6 @@ def get_tour_with_steps(request, tour_id):
                 "latitude":step.latitude,
                 "longitude":step.longitude,
                 "description": step.description,
-                "tittle":step.tittle
             })
 
         return Response(tour_data)
