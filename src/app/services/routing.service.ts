@@ -88,56 +88,81 @@
 //   }
 // }
 
+
+
+
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+interface RouteResponse {
+  features: Array<{
+    properties: {
+      segments: Array<{
+        steps: Array<{
+          instruction: string;
+        }>
+      }>,
+      summary: {
+        distance: number,
+        duration: number
+      }
+    },
+    geometry: {
+      coordinates: Array<[number, number]>
+    }
+  }>
+}
+
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoutingService {
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   getRouter(apiKey: string) {
     const customRouter = {
       route: (waypoints: (L.LatLng | any)[], callback: (error: Error | null, routes?: any[]) => void, context?: any) => {
-        // Definir el tipo de la variable 'routes'
         let routes: any[] = [];
+        let completedRequests = 0;
+
         for (let index = 0; index < waypoints.length - 1; index++) {
-          let startPoint = waypoints[index];
-          let endPoint = waypoints[index + 1];
+          const start = waypoints[index];
+          const end = waypoints[index + 1];
+          const body = {
+            coordinates: [
+              [start.lng, start.lat],
+              [end.lng, end.lat]
+            ],
+            format: 'geojson'
+          };
 
-          let startCoordinates = startPoint instanceof L.LatLng ? `${startPoint.lat},${startPoint.lng}` : `${startPoint.latLng.lat},${startPoint.latLng.lng}`;
-          let endCoordinates = endPoint instanceof L.LatLng ? `${endPoint.lat},${endPoint.lng}` : `${endPoint.latLng.lat},${endPoint.latLng.lng}`;
+          const headers = new HttpHeaders({
+            'Authorization': apiKey,
+            'Content-Type': 'application/json'
+          });
 
-          let url = `/v2/directions/foot-walking/geojson?api_key=${apiKey}&start=${startCoordinates}&end=${endCoordinates}`;
-          //let url = `https://api.openrouteservice.org/directions/foot-walking/geojson?api_key=${apiKey}&start=${startCoordinates}&end=${endCoordinates}`;
-          
-          fetch(url)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-              }
-              return response.json();
-            })
-            .then(data => {
+          this.http.post<RouteResponse>('/v2/directions/foot-walking/geojson', body, { headers: headers })
+            .subscribe(data => {
               if (data.features && data.features.length > 0) {
                 const route = data.features[0];
                 routes.push({
-                  name: route.properties.segments.map((segment: any) => segment.steps.map((step: any) => step.instruction).join(", ")).join(", "),
+                  name: route.properties.segments.map((segment: { steps: Array<{ instruction: string }> }) => segment.steps.map((step: { instruction: string }) => step.instruction).join(", ")).join(", "),
                   coordinates: route.geometry.coordinates.map((coord: [number, number]) => L.latLng(coord[1], coord[0])),
                   summary: {
                     totalDistance: route.properties.summary.distance,
                     totalTime: route.properties.summary.duration
                   }
                 });
-                // Llamar al callback cuando se procesan todos los waypoints
-                if (index === waypoints.length - 2) {
-                  callback(null, routes);
-                }
               }
-            })
-            .catch((error: Error) => {
+              completedRequests++;
+              if (completedRequests === waypoints.length - 1) {
+                callback(null, routes);
+              }
+            }, error => {
               console.error("Error en la solicitud a la API:", error);
               callback(error, []);
             });
