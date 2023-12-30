@@ -110,8 +110,8 @@ export class RoutingService {
           let startCoordinates = startPoint instanceof L.LatLng ? `${startPoint.lat},${startPoint.lng}` : `${startPoint.latLng.lat},${startPoint.latLng.lng}`;
           let endCoordinates = endPoint instanceof L.LatLng ? `${endPoint.lat},${endPoint.lng}` : `${endPoint.latLng.lat},${endPoint.latLng.lng}`;
 
-          //let url = `/v2/directions/foot-walking/geojson?api_key=${apiKey}&start=${startCoordinates}&end=${endCoordinates}`;
-          let url = `https://api.openrouteservice.org/directions/foot-walking/geojson?api_key=${apiKey}&start=${startCoordinates}&end=${endCoordinates}`;
+          let url = `/v2/directions/foot-walking/geojson?api_key=${apiKey}&start=${startCoordinates}&end=${endCoordinates}`;
+          //let url = `https://api.openrouteservice.org/directions/foot-walking/geojson?api_key=${apiKey}&start=${startCoordinates}&end=${endCoordinates}`;
           
           fetch(url)
             .then(response => {
