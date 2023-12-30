@@ -7,6 +7,7 @@ from LTtApp import views
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from proxy.views import proxy_view
 
 #app_name = 'LTtApp'
 
@@ -51,6 +52,11 @@ urlpatterns = [
     path('api/get_user_tours', views.get_user_tours, name='get_user_tours'),
     path('api/create-tour-record/', views.create_tour_record, name='create_tour_record'),
     path('api/get_user_tour_records', views.get_user_tour_records, name='get_user_tour_records'),
+    path('v2/directions/foot-walking/geojson', proxy_view, {
+        'target_url': 'https://api.openrouteservice.org/v2/directions/foot-walking/geojson',
+        'http_method': 'post',
+        'auth_header': '5b3ce3597851110001cf624862b9e2a13b0d4ab2be7475a8d4915b1d'
+    }),
     path('api/get_tour_with_steps/<int:tour_id>/', views.get_tour_with_steps, name='get_tour_with_steps')
 
 
