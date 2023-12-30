@@ -3,6 +3,14 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const path = require('path');
 const app = express();
 
+
+// Registrar todas las solicitudes entrantes
+app.use((req, res, next) => {
+    console.log('Solicitud recibida:', req.method, req.url);
+    next();
+  });
+
+  
 // Configura el proxy
 app.use('/v2', createProxyMiddleware({
   target: 'https://api.openrouteservice.org',
