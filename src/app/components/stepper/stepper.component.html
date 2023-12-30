@@ -22,7 +22,7 @@
 
             <ng-template matStepLabel>
               <strong *ngIf="i==0">{{tour.titulo | uppercase}}</strong>
-              <strong *ngIf="i>0 && step.tittle">{{step.tittle | uppercase}}</strong>
+              <strong *ngIf="i>0 && step.tittle">Step {{i}}: {{step.tittle | uppercase}}</strong>
               <strong *ngIf="i>0 && !step.tittle">Step {{i}}</strong>
             </ng-template>
           <div>

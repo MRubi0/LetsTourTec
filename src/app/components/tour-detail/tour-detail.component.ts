@@ -92,8 +92,14 @@ export class TourDetailComponent {
     map.fitBounds(bounds);
   
     // Configurar y añadir el control de enrutamiento
-    const routerControl = this.routingService.getRouter('5b3ce3597851110001cf624862b9e2a13b0d4ab2be7475a8d4915b1d', [initialLatLng].concat(additionalLocations.map(location => L.latLng(location.lat, location.long))));
-    routerControl.addTo(map);
+    console.log("Inicializando enrutamiento con waypoints:", [initialLatLng].concat(additionalLocations));
+
+    const waypoints = [initialLatLng].concat(additionalLocations.map(location => L.latLng(location.lat, location.long)));
+    console.log("Waypoints finales:", waypoints);
+
+    const routerControl = this.routingService.getRouter('5b3ce3597851110001cf624862b9e2a13b0d4ab2be7475a8d4915b1d');
+    routerControl.setWaypoints(waypoints);
+  routerControl.addTo(map);
   
     // Deshabilitar la interacción con los marcadores
     map.eachLayer((layer) => {
