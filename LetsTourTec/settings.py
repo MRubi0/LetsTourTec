@@ -239,6 +239,7 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=365 * 3),       # Tiempo de vida del token de actualización
 }
 AWS_S3_REGION_NAME = 'eu-north-1'
+CORS_ALLOW_ALL_ORIGINS = True
 
 #logging.basicConfig(level=logging.DEBUG)
 boto3.set_stream_logger(name='botocore')
