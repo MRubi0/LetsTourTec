@@ -62,7 +62,7 @@ export class RoutingService {
             console.error("Error en la solicitud a la API:", error);
             callback(error, []);
           });
-        }
+        } 
     };
 
     return L.Routing.control({
