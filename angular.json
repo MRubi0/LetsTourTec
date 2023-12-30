@@ -78,7 +78,8 @@
               "browserTarget": "LETSTOURTEC:build:production"
             },
             "development": {
-              "browserTarget": "LETSTOURTEC:build:development"
+              "browserTarget": "LETSTOURTEC:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
