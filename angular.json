@@ -80,7 +80,8 @@
             "development": {
               "browserTarget": "LETSTOURTEC:build:development",
               "proxyConfig": "proxy.conf.json"
-            }
+            },
+            "allowedCommonJsDependencies": ["leaflet"]
           },
           "defaultConfiguration": "development"
         },
