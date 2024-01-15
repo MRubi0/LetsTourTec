@@ -6,6 +6,7 @@ from PIL import Image
 from django.db.models import F, Func, Q
 from django.db.models import ExpressionWrapper, FloatField
 import json
+import requests
 from django.urls import reverse_lazy
 from django.views import generic
 from django.http import JsonResponse
@@ -883,3 +884,21 @@ def get_user_tour_records(request):
             return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+@csrf_exempt
+@require_POST
+def get_routes(request):
+    if request.method == 'POST':
+        request_body = request.body
+        try:
+            data = json.loads(request_body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
+
+        key = '74f72b76-bb28-4bb8-b862-a756103cb2b1'
+        url = f'https://graphhopper.com/api/1/route?key={key}'
+
+        response = requests.post(url, json=data)
+        return JsonResponse(response.json(), safe=False)
+
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
