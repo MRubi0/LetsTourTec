@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
@@ -7,6 +8,13 @@ import { Component } from '@angular/core';
 })
 export class HomeComponent {
 
+  constructor(private translate:TranslateService){
+
+  }
   ngOnInit() {    
+
+  }
+  switch(lang:string){
+    this.translate.use(lang);
   }
 }

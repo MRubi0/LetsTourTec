@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -8,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { CardsComponent } from './components/cards/cards.component';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClientModule, HttpClient} from '@angular/common/http';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { FormsModule } from '@angular/forms';
@@ -46,6 +45,12 @@ import { EditProfileComponent } from './components/edit-profile/edit-profile.com
 import { MusicPlayerComponent } from './components/generics/music-player/music-player.component';
 import { ExitComponent } from './components/exit/exit.component';
 import { MusicPlayerDetailComponent } from './components/generics/music-player-detail/music-player-detail.component';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @NgModule({
   declarations: [
@@ -73,7 +78,7 @@ import { MusicPlayerDetailComponent } from './components/generics/music-player-d
     MusicPlayerComponent,
     SecondsToTimePipe,
     ExitComponent,
-    MusicPlayerDetailComponent
+    MusicPlayerDetailComponent,   
   ],
   imports: [
     BrowserModule,
@@ -93,8 +98,13 @@ import { MusicPlayerDetailComponent } from './components/generics/music-player-d
     MatTooltipModule,
     NgxPaginationModule,
     MatStepperModule,
-    
-    
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient],
+      },
+    })    
   ],
   providers: [
     LoggingService, 
@@ -102,6 +112,6 @@ import { MusicPlayerDetailComponent } from './components/generics/music-player-d
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
 
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }
