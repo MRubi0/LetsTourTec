@@ -45,3 +45,6 @@ export class MapService {
       );
   }
 }
+
+//            L.latLng(41.65205, -4.72851),  // Punto 1
+//           L.latLng(41.64786, -4.7294)    // Punto 2
