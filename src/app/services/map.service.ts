@@ -10,18 +10,21 @@ export class MapService {
 
   constructor(private http: HttpClient) { }  
 
-  createRoute() {
+  createRoute(lat_dest:number, long_dest:number, lat_org:number, long_org:number) {
+    console.log('lat_dest ', lat_org, long_org);
     const url = `${environment.apiUrl}api/get_routes`;
     return this.http.post(url, 
       {
         "points": [
           [
-            11.539421,
-            48.118477
+            long_dest,
+            lat_dest
+            
           ],
           [
-            11.559023,
-            48.12228
+            lat_org,
+            long_org
+            
           ]
         ],
         "snap_preventions": [
@@ -33,7 +36,7 @@ export class MapService {
           "road_class",
           "surface"
         ],
-        "profile": "car",
+        "profile": "foot",
         "locale": "en",
         "instructions": true,
         "calc_points": true,
@@ -42,3 +45,6 @@ export class MapService {
       );
   }
 }
+
+//            L.latLng(41.65205, -4.72851),  // Punto 1
+//           L.latLng(41.64786, -4.7294)    // Punto 2
