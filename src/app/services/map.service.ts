@@ -11,7 +11,7 @@ export class MapService {
   constructor(private http: HttpClient) { }  
 
   createRoute(lat_dest:number, long_dest:number, lat_org:number, long_org:number) {
-    console.log('lat_dest y long_dest ', long_dest, lat_dest)
+    console.log('lat_dest y long_dest ', lat_dest, long_dest)
     console.log('lat_org y long_org ', lat_org, long_org);
     const url = `${environment.apiUrl}api/get_routes`;
     return this.http.post(url, 
