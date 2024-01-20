@@ -15,7 +15,7 @@
                     </button>
                 </div>
                 <div class="col-4 d-flex justify-content-center" style="position: relative;">
-                    <div class="volume-bar" *ngIf="bar_volume" (mouseenter)="cancelTimer()" (mouseleave)="showVolumeBar()">
+                    <div class="volume-bar" (mouseenter)="cancelTimer()" (mouseleave)="showVolumeBar()">
                       <input type="range" min="0" max="1" step="0.01" [(ngModel)]="volume" (input)="setVolume(volume)" />
                     </div>
                     <button class="control_rest d-flex justify-content-center" (click)="showVolumeBar()">
