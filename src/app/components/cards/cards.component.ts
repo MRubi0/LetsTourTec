@@ -25,7 +25,7 @@ export class CardsComponent {
   lastToursF() {
     this.latestToursService.getLastestTours().subscribe((data: any) => {
       this.lastTours = data;
-    this.title = 'Last Tours uploaded';
+    this.title = 'Last tours uploaded';
     this.button1Text = 'Update tours';
     this.button2Text = 'Show closest tours';
     this.button3Text = 'Show random tours';
@@ -34,7 +34,7 @@ export class CardsComponent {
   randomToursF() {
     this.latestToursService.getRadomTours().subscribe((data: any) => {
       this.lastTours = data;
-    this.title = 'Random Tours';
+    this.title = 'Random tours';
     this.button1Text = 'Show last tours';
     this.button2Text = 'Show closest tours';
     this.button3Text = 'Show random tours';
@@ -42,7 +42,7 @@ export class CardsComponent {
   }
   closestToursF() {
     this.getCoordenades();
-    this.title = 'Closest Tours';
+    this.title = 'Closest tours';
     this.button1Text = 'Show last tours';
     this.button2Text = 'Update location';
     this.button3Text = 'Show random tours';
