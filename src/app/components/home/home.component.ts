@@ -14,7 +14,5 @@ export class HomeComponent {
   ngOnInit() {    
 
   }
-  switch(lang:string){
-    this.translate.use(lang);
-  }
+
 }
