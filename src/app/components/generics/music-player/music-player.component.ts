@@ -7,6 +7,10 @@ import * as Hammer from 'hammerjs';
   styleUrls: ['./music-player.component.scss']
 })
 export class MusicPlayerComponent {
+  @HostListener('window:resize', ['$event'])
+  onResize(event:any) {
+    this.getScreenSize();
+  }
   @ViewChild('element') element!: ElementRef;
   @ViewChild('audioPlayer') audioPlayerRef!: ElementRef;
   @Input('audio') audio!:string;
@@ -22,11 +26,15 @@ export class MusicPlayerComponent {
   currentTimeInSeconds: number = 0;
   currentTime: number = 0;
   timer: any;
+  screenHeight!: number;
+  screenWidth!: number;
+  bar_volume_small:boolean=true;
 
   constructor(private cdRef: ChangeDetectorRef) {}
 
   ngOnInit(){
-    this.playbackRates = this.generatePlaybackRates();    
+    this.playbackRates = this.generatePlaybackRates();  
+    this.getScreenSize();  
   }
   ngAfterViewInit() {
     this.audioPlayer = this.audioPlayerRef.nativeElement;
@@ -112,5 +120,15 @@ export class MusicPlayerComponent {
   }
   onDoubleTap(event: any): void {
     this.action('back');
+  }
+  getScreenSize() {
+    this.screenWidth = window.innerWidth;
+    if(this.screenWidth<=991){
+      this.bar_volume=false;
+      this.bar_volume_small=true;
+      return;
+    }
+    this.bar_volume=true;
+    this.bar_volume_small=false;
   }
 }

@@ -1,27 +1,33 @@
-.control{
+.control {
     border: none;
     background-color: transparent;
     width: 60px;
 }
-.control_rest{
+
+.control_rest {
     border: none;
     background-color: transparent;
     width: 40px;
 }
-.icon{
+.control_rest:disabled{
+    opacity: 1;
+}
+.icon {
     height: 100%;
     width: 100%;
 }
-.progres-bar{
+
+.progres-bar {
     transform: rotate(-90deg);
     display: flex;
     flex-wrap: nowrap;
     z-index: 5;
     padding-bottom: 30px;
 }
+
 .volume-bar {
     position: absolute;
-    top: -80px; 
+    top: -80px;
     left: 50%;
     transform: translateX(-50%) rotate(-90deg);
     z-index: 1;
@@ -31,6 +37,7 @@
     position: relative;
     z-index: 2;
 }
+
 .progress-bar-container {
     display: flex;
     align-items: center;
@@ -42,71 +49,57 @@
     width: 100%;
     margin: 0 10px;
 }
-.controls-row{
+
+.controls-row {
     max-width: 800px;
 }
-.icon:hover, .control:hover{
+
+.icon:hover,
+.control:hover {
     transition: 0.3 ease-in-out;
     transform: scale(1.1);
     z-index: 10;
     opacity: 0.8;
 }
+
 @media screen and (max-width: 1000px) {
     .icon {
         width: 70%;
         height: 70%;
     }
-    .volume-bar {
-        position: absolute;
-        left: 220px;
-        top:4px;
-        transform: translateX(-50%) rotate(0deg);
-        z-index: 1;
+    .row{
+        display: flex;
+        justify-content: center;
     }
-    .velocity{
+    .velocity {
         width: 100%;
         display: flex;
         text-align: end !important;
     }
-    .control_rest{
+
+    .control_rest {
         display: flex;
         width: 60px;
-        .icon{
+
+        .icon {
             height: 90%;
         }
     }
 }
-@media screen and (max-width: 750px) {
-    .icon {
-        width: 50%;
-        height: 50%;
-    }
-    .volume-bar {
-        position: absolute;
-        left: 150px;
-        top:4px;
-        transform: translateX(-50%) rotate(0deg);
-        z-index: 1;
-    }
-    .control_rest{        
-        width: 60px;
-        .icon{
-            height: 90%;
-        }
-    }
-    .velocity{
-        text-align: end;
+
+.volume-bar-small {
+    width: 100%;
+    display: flex;
+    align-self: center;
+    input{
+        width: 100%;
     }
 }
-@media screen and (max-width: 500px) {
-    .volume-bar {
-        position: absolute;
-        left: 100px;
-        top:4px;
-        transform: translateX(-50%) rotate(0deg);
-        z-index: 1;
-        input{
-            width: 80px;
-        }
-    }
+.colunm{
+    width: auto;
+    padding: 0;
+}
+.colunm-bar{
+    width: 25%;
+    padding: 0;
 }
