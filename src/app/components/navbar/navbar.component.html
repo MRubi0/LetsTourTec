@@ -42,15 +42,15 @@
     <div class="container-fluid">
       <!-- Navigation Links Section -->
       <div class="navbar-nav d-flex flex-row">
-        <a class="nav-link" routerLink="/about-us">About us</a>
+        <a class="nav-link" routerLink="/about-us">{{ 'NAVBAR.About_us' | translate }}</a>
 
         <!-- Links shown only when user is not logged in -->
-        <a class="nav-link" *ngIf="!isLoggedIn" routerLink="/login">Log in</a>
-        <a class="nav-link" *ngIf="!isLoggedIn" routerLink="/signup">Sign up</a>
+        <a class="nav-link" *ngIf="!isLoggedIn" routerLink="/login">{{ 'NAVBAR.Log_in' | translate }}</a>
+        <a class="nav-link" *ngIf="!isLoggedIn" routerLink="/signup">{{ 'NAVBAR.Sign_up' | translate }}</a>
 
         <!-- Links shown only when user is logged in -->
-        <a class="nav-link" *ngIf="isLoggedIn" routerLink="/profile">My Profile</a>
-        <button class="btn btn-link nav-link" *ngIf="isLoggedIn" (click)="logout()">Log Out</button>
+        <a class="nav-link" *ngIf="isLoggedIn" routerLink="/profile">{{ 'NAVBAR.My_profile' | translate }}</a>
+        <button class="btn btn-link nav-link" *ngIf="isLoggedIn" (click)="logout()">{{ 'NAVBAR.Log_out' | translate }}</button>
       </div>
       <!-- Logo Section -->
       <a class="navbar-brand" href="#">
