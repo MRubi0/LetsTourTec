@@ -7,10 +7,10 @@ import { LatestToursService } from 'src/app/services/latest-tours.service';
   styleUrls: ['./cards.component.scss']
 })
 export class CardsComponent {
-  title: string = 'Closest tours'; // valor inicial
-  button1Text: string = 'Show last tours'; // valor inicial
-  button2Text: string = 'Update location'; // valor inicial
-  button3Text: string = 'Show random tours'; // valor inicial
+  title: string = 'CARDS.Closest_tours';
+  button1Text: string = 'CARDS.Show_last_tours'; 
+  button2Text: string = 'CARDS.Update_location'; 
+  button3Text: string = 'CARDS.Show_random_tours';
 
 
   lastTours: any;
@@ -25,27 +25,27 @@ export class CardsComponent {
   lastToursF() {
     this.latestToursService.getLastestTours().subscribe((data: any) => {
       this.lastTours = data;
-    this.title = 'Last tours uploaded';
-    this.button1Text = 'Update tours';
-    this.button2Text = 'Show closest tours';
-    this.button3Text = 'Show random tours';
+    this.title = 'CARDS.Last_tours_uploaded';
+    this.button1Text = 'CARDS.Update_tours';
+    this.button2Text = "CARDS.Show_closest_tours";
+    this.button3Text = 'CARDS.Show_random_tours';
     });
   }
   randomToursF() {
     this.latestToursService.getRadomTours().subscribe((data: any) => {
       this.lastTours = data;
     this.title = 'Random tours';
-    this.button1Text = 'Show last tours';
-    this.button2Text = 'Show closest tours';
-    this.button3Text = 'Show random tours';
+    this.button1Text = 'CARDS.Show_last_tours';
+    this.button2Text = "CARDS.Show_closest_tours";
+    this.button3Text = 'CARDS.Show_random_tours';
     });
   }
   closestToursF() {
     this.getCoordenades();
-    this.title = 'Closest tours';
-    this.button1Text = 'Show last tours';
-    this.button2Text = 'Update location';
-    this.button3Text = 'Show random tours';
+    this.title = 'CARDS.Closest_tours';
+    this.button1Text = 'CARDS.Show_last_tours';
+    this.button2Text = 'CARDS.Update_location';
+    this.button3Text = 'CARDS.Show_random_tours';
   }
   
 

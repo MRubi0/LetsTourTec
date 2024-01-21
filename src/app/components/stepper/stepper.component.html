@@ -19,11 +19,11 @@
           
           <ng-template matStepLabel *ngIf="i>0"><strong>Step {{i}}</strong></ng-template> -->
           <form [formGroup]="firstFormGroup">
-
+            
             <ng-template matStepLabel>
               <strong *ngIf="i==0">{{tour.titulo | uppercase}}</strong>
-              <strong *ngIf="i>0 && step.tittle">Step {{i}}: {{step.tittle | uppercase}}</strong>
-              <strong *ngIf="i>0 && !step.tittle">Step {{i}}</strong>
+              <strong *ngIf="i>0 && step.tittle">{{ "STEPPER.Step" | translate }} {{i}}: {{step.tittle | uppercase}}</strong>
+              <strong *ngIf="i>0 && !step.tittle">{{ "STEPPER.Step" | translate }} {{i}}</strong>
             </ng-template>
           <div>
             <mat-card *ngIf="i==0">
