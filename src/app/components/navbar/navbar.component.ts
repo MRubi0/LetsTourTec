@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-navbar', 
@@ -14,7 +15,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private authSubscription!: Subscription;
 
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private translate: TranslateService) {}
 
   ngOnInit() {
     this.authSubscription = this.authService.isAuthenticated$.subscribe(
@@ -30,5 +31,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout();
+  }
+
+
+  switch(lang: string) {
+    this.translate.use(lang);
+    localStorage.setItem('language', lang);
   }
 }

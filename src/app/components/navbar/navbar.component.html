@@ -1,40 +1,3 @@
-<!-- <div class="container-fluid p-0">
-  <nav class="navbar navbar-expand-lg">
-      <div class="container-fluid d-flex justify-content-between">
-        
-        <div class="collapse navbar-collapse d-flex justify-content-start" id="navbarNavLinks">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/about-us">About us</a>
-            </li>
-
-            <li class="nav-item" *ngIf="!isLoggedIn">
-              <a class="nav-link" routerLink="/login">Log in</a>
-            </li>
-            <li class="nav-item" *ngIf="!isLoggedIn">
-              <a class="nav-link" routerLink="/signup">Sign up</a>
-            </li>
-            <li class="nav-item" *ngIf="isLoggedIn">
-              <a class="nav-link" routerLink="/profile">My Profile</a>
-            </li>
-
-            <li class="nav-item" *ngIf="isLoggedIn">
-              <button class="btn btn-link nav-link" (click)="logout()">Log Out</button>
-            </li>
-            
-          </ul>
-        </div>
-
-        <a class="navbar-brand mx-auto" href="#">
-          <img class="logo" src="../../../assets/logo/logo_png.png" alt="">
-        </a>
-
-        <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarSearch">
-        
-        </div>
-      </div>
-  </nav>
-</div> -->
 
 
 <div class="container-fluid p-0">
@@ -42,20 +5,29 @@
     <div class="container-fluid">
       <!-- Navigation Links Section -->
       <div class="navbar-nav d-flex flex-row">
-        <a class="nav-link" routerLink="/about-us">About us</a>
+        <a class="nav-link" routerLink="/about-us">{{ 'NAVBAR.About_us' | translate }}</a>
 
         <!-- Links shown only when user is not logged in -->
-        <a class="nav-link" *ngIf="!isLoggedIn" routerLink="/login">Log in</a>
-        <a class="nav-link" *ngIf="!isLoggedIn" routerLink="/signup">Sign up</a>
+        <a class="nav-link" *ngIf="!isLoggedIn" routerLink="/login">{{ 'NAVBAR.Log_in' | translate }}</a>
+        <a class="nav-link" *ngIf="!isLoggedIn" routerLink="/signup">{{ 'NAVBAR.Sign_up' | translate }}</a>
 
         <!-- Links shown only when user is logged in -->
-        <a class="nav-link" *ngIf="isLoggedIn" routerLink="/profile">My Profile</a>
-        <button class="btn btn-link nav-link" *ngIf="isLoggedIn" (click)="logout()">Log Out</button>
+        <a class="nav-link" *ngIf="isLoggedIn" routerLink="/profile">{{ 'NAVBAR.My_profile' | translate }}</a>
+        <button class="btn btn-link nav-link" *ngIf="isLoggedIn" (click)="logout()">{{ 'NAVBAR.Log_out' | translate }}</button>
       </div>
       <!-- Logo Section -->
       <a class="navbar-brand" href="#">
         <img class="logo" src="../../../assets/logo/logo_png.png" alt="">
       </a>
+      <!-- Sección de cambio de idioma -->
+      <div class="language-switcher ml-auto">
+        <a class="nav-item nav-link" href="#" (click)="switch('en')">
+          <img src="../../../assets/flags/UK-flag.png" alt="English" style="width: 30px;">
+        </a>
+        <a class="nav-item nav-link" href="#" (click)="switch('es')">
+          <img src="../../../assets/flags/ESP-flag.png" alt="Español" style="width: 30px;">
+        </a>
+      </div>
     </div>
   </nav>
 </div>

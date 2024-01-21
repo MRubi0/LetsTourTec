@@ -1,11 +1,11 @@
 <mat-card class="search-card container-card">
     <div class="custom-header">
-        Plan your next trip
+        {{ 'SEARCH-BAR.Plan_your_next_trip' | translate }}
     </div>
     <mat-card-content class="search-bar-row">
         <form class="search-form" (submit)="searchLocation(); $event.preventDefault();">
-            <input name="searchInput" class="search-input" [(ngModel)]="searchText" (input)="searchLocation()" type="text" placeholder="Where do you want to travel?" />
-            <button mat-raised-button class="custom-button-color" type="submit">Search</button>
+            <input name="searchInput" class="search-input" [(ngModel)]="searchText" (input)="searchLocation()" type="text" placeholder="{{ 'SEARCH-BAR.Where_do_you_want_to_travel?' | translate }}" />
+            <button mat-raised-button class="custom-button-color" type="submit">{{ 'SEARCH-BAR.Search' | translate }}</button>
         </form>
         <div class="search-results" *ngIf="searchResults.length">
             <div *ngFor="let result of searchResults" (click)="selectLocation(result)">
