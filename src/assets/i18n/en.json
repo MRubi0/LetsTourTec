@@ -14,6 +14,8 @@
   "CARDS.Update_location": "Update location",
   "CARDS.Show_random_tours": "Show random tours",
   "CARDS.More_options": "More options",
+  "GENERIC-CARD.Show_less": "Show less",
+  "GENERIC-CARD.Show_more": "Show more",
   "GENERIC-CARD.Description:": "Description:",
   "GENERIC-CARD.Distance_to_starting_point": "Distance to starting point",
   "GENERIC-CARD.Duration": "Duration",

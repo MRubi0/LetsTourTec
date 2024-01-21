@@ -22,20 +22,20 @@
             </mat-card-header>
             <mat-card-content class="content mt-2">
                 <mat-card-title>{{tours.titulo}}</mat-card-title>
-                <strong>Description: </strong>
+                <strong>{{ 'GENERIC-CARD.Description' | translate }}: </strong>
                     <p>
                         {{showFullDescription[tours.id] ? tours.descripcion : (tours.descripcion.length > 50 ? tours.descripcion.slice(0, 50) + '...' : tours.descripcion)}}
                         <span *ngIf="tours.descripcion.length > 50" class="showMore" (click)="toggleDescription($event, tours.id)">
-                            {{showFullDescription[tours.id] ? 'Show less' : 'Show more'}}</span>
+                            {{showFullDescription[tours.id] ? ('GENERIC-CARD.Show_less' | translate) : ('GENERIC-CARD.Show_more' | translate)}}</span>
                     </p>      
                 <ul>
-                    <li><strong>Distance to starting point:</strong> {{tours.distance | number: '1.0-2'}} km</li>
-                    <li><strong>Duration:</strong>{{tours.duracion}} minutes</li>
-                    <li><strong>Covered distance:</strong>{{tours.recorrido}} km</li>
+                    <li><strong>{{ 'GENERIC-CARD.Distance_to_starting_point' | translate }}: </strong> {{tours.distance | number: '1.0-2'}} km</li>
+                    <li><strong>{{ 'GENERIC-CARD.Duration' | translate }}: </strong>{{tours.duracion}} min.</li>
+                    <li><strong>{{ 'GENERIC-CARD.Covered_distance' | translate }}: </strong>{{tours.recorrido}} km</li>
                 </ul>
             </mat-card-content>
             <mat-card-actions class="d-flex justify-content-center">
-                <button mat-raised-button color="primary" class="custom-button-color" [routerLink]="['/tour/', tours.id]">Let's do it!</button>                
+                <button mat-raised-button color="primary" class="custom-button-color" [routerLink]="['/tour/', tours.id]">{{ "GENERIC-CARD.Let's_do_it!" | translate }}</button>                
             </mat-card-actions>
         </mat-card>
     </div>
