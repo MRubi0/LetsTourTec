@@ -19,11 +19,11 @@
           
           <ng-template matStepLabel *ngIf="i>0"><strong>Step {{i}}</strong></ng-template> -->
           <form [formGroup]="firstFormGroup">
-
+            
             <ng-template matStepLabel>
               <strong *ngIf="i==0">{{tour.titulo | uppercase}}</strong>
-              <strong *ngIf="i>0 && step.tittle">Step {{i}}: {{step.tittle | uppercase}}</strong>
-              <strong *ngIf="i>0 && !step.tittle">Step {{i}}</strong>
+              <strong *ngIf="i>0 && step.tittle">{{ "STEPPER.Step" | translate }} {{i}}: {{step.tittle | uppercase}}</strong>
+              <strong *ngIf="i>0 && !step.tittle">{{ "STEPPER.Step" | translate }} {{i}}</strong>
             </ng-template>
           <div>
             <mat-card *ngIf="i==0">
@@ -51,7 +51,7 @@
 
               </mat-card-header>
               <div *ngIf="step.latitude && step.longitude">
-                <h2>The following step is in another location, open the map to continue the tour</h2>                
+                <h2>{{ "STEPPER.The_following_step_is_in_another_location,_open_the_map_to_continue_the_tour" | translate }}</h2>                
               </div>
 
               <mat-card-content>
@@ -62,7 +62,7 @@
                 <p align="left">{{step.description}}</p>
                 <div class="row">
                   <div class="col-12" *ngIf="step.latitude">
-                    <button mat-button (click)="openMapModal(step.latitude, step.longitude)" type="button">Open Map</button>
+                    <button mat-button (click)="openMapModal(step.latitude, step.longitude)" type="button">{{ "STEPPER.Open_map" | translate }}</button>
                   </div>
                 </div>
                 <div class="audio d-flex justify-content-center w-100" *ngIf="audioControlsVisible">

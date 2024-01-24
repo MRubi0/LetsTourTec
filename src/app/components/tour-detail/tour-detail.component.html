@@ -18,24 +18,26 @@
         <mat-card-content>
             <div class="row mt-4">
                 <div class="col-12">
-                    <span  class="subtitle">Created at:</span> <br>
+                    <span  class="subtitle">{{ "TOUR-DETAIL.Created_at" | translate }}: </span> <br>
                     <span>{{detail.created_at | date :'longDate'}}</span>
                 </div> 
                  <div class="col-12">
                     <hr>
-                    <span  class="subtitle">Description:</span>                    
+                    <span  class="subtitle">{{ 'TOUR-DETAIL.Description' | translate }}: </span>                    
                         {{detail.descripcion}} <br>
                     <p>
                     </p>
                 </div>
+                <hr>
                 <div class="col-12">
-                   <span class="subtitle">Duration:</span> {{detail.duracion}} minutes
+                   <span class="subtitle">{{ 'TOUR-DETAIL.Duration' | translate }}: </span> {{detail.duracion}} min.
                     <hr>
-                    <span class="subtitle">Covered distance:</span> {{detail.recorrido}} km                   
+                    <span class="subtitle">{{ 'TOUR-DETAIL.Covered_distance' | translate }}: </span> {{detail.recorrido}} km                   
                 </div>
+
             </div>
             <div class="d-flex justify-content-center mt-3">
-                <button mat-raised-button color="primary" class="custom-button-color" (click)="letsTour(detail)">Let's tour</button>
+                <button mat-raised-button color="primary" class="custom-button-color" (click)="letsTour(detail)">{{ "TOUR-DETAIL.Let's_tour" | translate }}</button>
             </div>
         </mat-card-content>
     </mat-card >
