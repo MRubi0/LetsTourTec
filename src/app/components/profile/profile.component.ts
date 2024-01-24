@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router'; 
 import { ProfileService } from 'src/app/services/profile.service';
 import { jwtDecode } from 'jwt-decode';
+import { SnackService } from 'src/app/services/snack.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 
@@ -13,7 +15,8 @@ import { jwtDecode } from 'jwt-decode';
 })
 export class ProfileComponent {
   profile:any;
-  constructor(private router: Router, private profileservice:ProfileService) {}
+  constructor(private router: Router, private profileservice:ProfileService, 
+    private snackbarService:SnackService) {}
 
   ngOnInit(){
     let decodedToken!:any;
@@ -34,11 +37,13 @@ export class ProfileComponent {
   }
 
   editProfile() {
-    console.log("falta esto")
+    console.log("falta esto");
   }
 
   History() {
-    console.log("falta esto")
+    console.log("falta esto");
+    this.snackbarService.openSnackBar('Cargado correctamente',
+    'OK');
   }
   toursUploaded() {
     console.log("falta esto")

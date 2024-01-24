@@ -47,6 +47,7 @@ import { ExitComponent } from './components/exit/exit.component';
 import { MusicPlayerDetailComponent } from './components/generics/music-player-detail/music-player-detail.component';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -98,6 +99,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatTooltipModule,
     NgxPaginationModule,
     MatStepperModule,
+    MatSnackBarModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
