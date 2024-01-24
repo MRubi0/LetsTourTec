@@ -28,7 +28,7 @@ export class MapsComponent {
     navigator.geolocation.getCurrentPosition((position) => {
       const latitud = Number(position.coords.latitude);
       const longitud = Number(position.coords.longitude);
-      this.mapService.createRoute(this.lat, this.long,latitud,longitud).subscribe((data: any) => {
+      this.mapService.createRoute(this.lat, this.long,longitud, latitud).subscribe((data: any) => {
         this.lat = data.paths[0].points.coordinates[0][1];
         this.long = data.paths[0].points.coordinates[0][0];
         this.displayRouteOnMap(data);
