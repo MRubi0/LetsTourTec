@@ -28,11 +28,21 @@ export class MapsComponent {
     navigator.geolocation.getCurrentPosition((position) => {
       const latitud = Number(position.coords.latitude);
       const longitud = Number(position.coords.longitude);
-      this.mapService.createRoute(this.lat, this.long,longitud, latitud).subscribe((data: any) => {
-        this.lat = data.paths[0].points.coordinates[0][1];
-        this.long = data.paths[0].points.coordinates[0][0];
-        this.displayRouteOnMap(data);
+      try {
+        this.mapService.createRoute(this.lat, this.long,longitud, latitud).subscribe((data: any) => {
+        if(data.message){
+         console.log(data.message); 
+         this.alternative();
+        }else{
+          this.lat = data.paths[0].points.coordinates[0][1];
+          this.long = data.paths[0].points.coordinates[0][0];
+          this.displayRouteOnMap(data);
+        }
+        
       });
+      } catch (routeError) {
+        console.error('Error al crear la ruta:', routeError);
+      }
     });    
   }
 
@@ -73,34 +83,7 @@ export class MapsComponent {
     });  
     map.fitBounds(routeLine.getBounds());
   }  
-}
-/* 
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import * as L from 'leaflet';
-import 'leaflet-routing-machine';
-
-@Component({
-  selector: 'app-maps',
-  templateUrl: './maps.component.html',
-  styleUrls: ['./maps.component.scss']
-})
-export class MapsComponent {
-  lat: number = 0;
-  long: number = 0;
-  private watchId: number | null = null;
-  private control: L.Routing.Control | null = null;
-  tour_id = 0;
-
-  constructor(private activatedRoute: ActivatedRoute) {}
-
-  ngOnInit() {
-    this.activatedRoute.params.subscribe((params: any) => {
-      this.load(params);
-    });
-  }
-
-  ngAfterViewInit() {
+  alternative(){
     const map = L.map('maps').setView([51.505, -0.09], 13);
     navigator.geolocation.getCurrentPosition((position) => {
       const latitud = position.coords.latitude;
@@ -165,23 +148,5 @@ export class MapsComponent {
       timeout: 5000
     });
   }
-
-  stopEvent(e: MouseEvent): void {
-    console.log(e);
-    e.stopImmediatePropagation();
-    e.stopPropagation();
-  }
-
-  load(coordenadas: any): void {    
-    this.lat = coordenadas.lat;
-    this.long = coordenadas.long;
-    this.tour_id=coordenadas.id
-  }
-
-  ngOnDestroy() {
-    if (this.watchId !== null) {
-      navigator.geolocation.clearWatch(this.watchId);
-    }
-  }
+  
 }
- */

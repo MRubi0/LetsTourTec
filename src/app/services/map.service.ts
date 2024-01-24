@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { catchError, throwError } from 'rxjs';
 import { environment } from 'src/enviroment/enviroment';
 
 @Injectable({
@@ -10,40 +11,29 @@ export class MapService {
 
   constructor(private http: HttpClient) { }  
 
-  createRoute(lat_dest:number, long_dest:number, lat_org:number, long_org:number) {
-    console.log('lat_dest y long_dest ', lat_dest, long_dest)
-    console.log('lat_org y long_org ', lat_org, long_org);
+  createRoute(lat_dest: number, long_dest: number, lat_org: number, long_org: number) {
     const url = `${environment.apiUrl}api/get_routes`;
-    return this.http.post(url, 
+    console.log('lat_org ', lat_org, long_org);
+    return this.http.post(url,
       {
         "points": [
-          [
-            long_dest,
-            lat_dest
-            
-          ],
-          [
-            lat_org,
-            long_org
-            
-          ]
+          [long_dest, lat_dest],
+          [lat_org, long_org]
         ],
-        "snap_preventions": [
-          "motorway",
-          "ferry",
-          "tunnel"
-        ],
-        "details": [
-          "road_class",
-          "surface"
-        ],
+        "snap_preventions": ["motorway", "ferry", "tunnel"],
+        "details": ["road_class", "surface"],
         "profile": "foot",
         "locale": "en",
         "instructions": true,
         "calc_points": true,
         "points_encoded": false
-      },
-      );
+      }
+    ).pipe(
+      catchError((error:any) => {
+        console.error('Error en createRoute:', error);
+        return throwError('Error en la solicitud de ruta');
+      })
+    );
   }
 }
 
