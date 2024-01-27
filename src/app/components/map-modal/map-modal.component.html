@@ -1,7 +1,7 @@
 <div class="modal-dialog" style="max-width: none; width: 100%; margin: 0 auto;">
   <div class="modal-content">
       <div class="modal-header text-center">
-          <h5 class="modal-title w-100">Let's go to the next point</h5>
+          <h5 class="modal-title w-100">{{ "MAP-MODAL.Let's_go_to_the_next_point" | translate }}</h5>
           <button type="button" class="close" aria-label="Close" (click)="closeModal()">
             <span aria-hidden="true">X</span>
         </button>
@@ -10,7 +10,7 @@
           <div id="map" style="width: 100%; height: 65vh; position: relative;"></div>
       </div>
       <div class="modal-footer d-flex justify-content-center mt-3">
-          <button type="button" class="btn btn-primary" (click)="closeModal()">I arrived</button> 
+          <button type="button" class="btn btn-primary" (click)="closeModal()">{{ "MAP-MODAL.I_arrived" | translate }}</button> 
       </div>
   </div>
 </div>
