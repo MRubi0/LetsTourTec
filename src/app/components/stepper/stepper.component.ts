@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MapModalComponent } from 'src/app/components/map-modal/map-modal.component';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MusicPlayerComponent } from '../generics/music-player/music-player.component';
 
 @Component({
   selector: 'app-stepper',
@@ -14,6 +15,8 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./stepper.component.scss']
 })
 export class StepperComponent {
+  @ViewChild(MusicPlayerComponent) musicPlayer!: MusicPlayerComponent;
+  next: any;
   firstFormGroup = this._formBuilder.group({
     firstCtrl: ['', Validators.required],
   });
@@ -23,16 +26,18 @@ export class StepperComponent {
   isLinear = false;
   screenWidth: number = window.innerWidth;
   screenHeight: number = window.innerHeight;
-  url_icon='';
-  url_icon_home='../../../assets/iconos/home-white.svg'
-  lat:number=0;
-  long:number=0;
-  tour_id='';
-  tittle='';
-  tour:any;
-  maps='maps';
-  url=environment.bucket;
+  url_icon = '';
+  url_icon_home = '../../../assets/iconos/home-white.svg'
+  lat: number = 0;
+  long: number = 0;
+  tour_id = '';
+  tittle = '';
+  tour: any;
+  maps = 'maps';
+  url = environment.bucket;
   audioControlsVisible = false;
+  evento: any
+
 
   checkIfMapModalIsRequired(step: any) {
     this.audioControlsVisible = !(step.latitude && step.longitude);
@@ -42,31 +47,33 @@ export class StepperComponent {
   @ViewChild(MatStepper) stepper!: MatStepper;
 
 
-  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, 
-    private stepService:StepService, private elRef: ElementRef, private renderer: Renderer2, private activatedRoute: ActivatedRoute,private router: Router) { }
+  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder,
+    private stepService: StepService, private elRef: ElementRef, private renderer: Renderer2, private activatedRoute: ActivatedRoute, private router: Router) { }
 
-  ngOnInit(){
-    this.firstFormGroup = this._formBuilder.group({      
+  ngOnInit() {
+    this.firstFormGroup = this._formBuilder.group({
       firstCtrl: ['', Validators.required]
     });
     this.activatedRoute.params.subscribe((params: any) => {
-      this.tour_id=params.id
+      this.tour_id = params.id
     });
   }
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.data();
   }
-  onStepChange(event:any){
+  onStepChange(event: any) {
     const currentStep = this.tour.steps[event.selectedIndex];
-    console.log('Paso actual:', currentStep);
     this.checkIfMapModalIsRequired(currentStep);
-    if(event.previouslySelectedIndex>=0){
-      this.url_icon_home='../../../assets/iconos/home-white.svg'
+    if (event.previouslySelectedIndex >= 0) {
+      this.url_icon_home = '../../../assets/iconos/home-white.svg'
     }
-    if(event.selectedIndex >= 1){
-      this.url_icon='../../../assets/iconos/steps.svg';
-    }else{
-      this.url_icon_home='../../../assets/iconos/home-white.svg'
+    if (event.selectedIndex >= 1) {
+      this.url_icon = '../../../assets/iconos/steps.svg';
+    } else {
+      this.url_icon_home = '../../../assets/iconos/home-white.svg'
+    }
+    if(this.evento=='next_auto'){
+      this.next=event.selectedIndex;
     }
   }
   event() {
@@ -78,18 +85,18 @@ export class StepperComponent {
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
       }).addTo(map);
-  
+
       const control = L.Routing.control({
         waypoints: [
           L.latLng(Number(latitud), Number(longitud)),
-          L.latLng(this.lat, this.long)      
+          L.latLng(this.lat, this.long)
         ],
         routeWhileDragging: true,
-        collapsible: false, 
-        show: true,  
-        addWaypoints: false,       
+        collapsible: false,
+        show: true,
+        addWaypoints: false,
       }).addTo(map);
-      
+
       control.on('waypointschanged', (e: any) => {
         e.waypoints.forEach((waypoint: any) => {
           waypoint.dragging.disable();
@@ -100,9 +107,9 @@ export class StepperComponent {
         const routes = e.routes;
         map.eachLayer((layer) => {
           if (layer instanceof L.Marker) {
-            
+
             layer.dragging?.disable();
-            
+
             const element = layer.getElement();
             if (element) {
               L.DomUtil.removeClass(element, 'leaflet-marker-draggable');
@@ -116,63 +123,62 @@ export class StepperComponent {
         const routingContainer = document.querySelector('.leaflet-routing-container');
         const mapContainer = document.getElementById('map');
         if (routingContainer && mapContainer && mapContainer.parentElement) {
-            mapContainer.parentElement.appendChild(routingContainer);
+          mapContainer.parentElement.appendChild(routingContainer);
         }
-    }, 0  );
+      }, 0);
     });
   }
   stopEvent(e: MouseEvent): void {
     e.stopImmediatePropagation();
     e.stopPropagation();
   }
-  
-  load(lat:number, long:number, i:number): void {
-    this.maps='maps'+i;
+
+  load(lat: number, long: number, i: number): void {
+    this.maps = 'maps' + i;
     this.lat = lat;
     this.long = long;
     this.event();
   }
-  data(){
-    this.stepService.getTourDetail(this.tour_id).subscribe((data=>{
-      this.tour=data; 
-      console.log(data)
-      if(this.tour.steps.length){        
+  data() {
+    this.stepService.getTourDetail(this.tour_id).subscribe((data => {
+      this.tour = data;
+      if (this.tour.steps.length) {
         this.checkIfMapModalIsRequired(this.tour.steps[0]);
-      }else{
+      } else {
         this.tour.steps.push('tour');
-      }           
+      }
     }));
   }
   openMapModal(lat: number, lng: number): void {
     this.audioControlsVisible = false;
     const dialogRef = this.dialog.open(MapModalComponent, {
       width: `${Math.min(this.screenWidth * 0.9, 800)}px`,
-            maxWidth: 'none',
+      maxWidth: 'none',
       data: { latitude: lat, longitude: lng }
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       this.audioControlsVisible = true;
     });
-  } 
-  goToNextStep() {
+  }
+  goToNextStep(event:string) {
+    this.evento=event;
     this.stepper.next();
   }
-
   goToPreviousStep() {
-    this.stepper.previous(); 
+    this.stepper.previous();
   }
   musicAction(event: string) {
-  if (event === 'next') {
+    if (event === 'next' || event === 'next_auto') {
       if (this.isLastStep()) {
         this.finishTour();
         this.router.navigate(['/exit']);
         return;
       }
-      this.goToNextStep();
+      this.goToNextStep(event);
     } else {
-      this.goToPreviousStep();
-    }
+        this.goToPreviousStep();
+      }
   }
   finishTour() {
     const tourId = this.tour_id;
@@ -181,13 +187,10 @@ export class StepperComponent {
       error => console.error('Error al finalizar el tour:', error)
     );
   }
-  
+
   isLastStep(): boolean {
     const currentIndex = this.stepper.selectedIndex;
     return currentIndex === this.tour.steps.length - 1;
   }
-  
-
-  
 }
 

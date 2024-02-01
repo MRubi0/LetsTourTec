@@ -1,5 +1,5 @@
 <div class="container-fluid w-100 p-0 d-flex justify-content-center flex-wrap">
-    <audio #audioPlayer [src]=audio (timeupdate)="updateTime($event)"></audio>
+    <audio #audioPlayer [src]=audio (timeupdate)="updateTime($event)" [id]="index"></audio>
     <div class="row w-100 mb-2">
         <div class="progress-bar-container col-xxl-10 col-lg-10 col-md-12 col-sm-12 p-0">
             <span>{{ currentTimeInSeconds | secondsToTime }}</span>
@@ -82,7 +82,7 @@
                     </button>
                 </div>
                 <div class="col-2 m-1">
-                    <button class="control" (click)="togglePlayPause()">
+                    <button class="control" (click)="togglePlayPause()" [id]="'buttonPlay' + index">
                         <img class="icon" src="../../../../assets/iconos/pause-circle-2.svg" *ngIf="isPlaying">
                         <img class="icon" src="../../../../assets/iconos/play-circle-fill-2.svg" *ngIf="!isPlaying">
                     </button>
