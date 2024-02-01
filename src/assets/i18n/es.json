@@ -37,5 +37,7 @@
   "STEPPER.The_following_step_is_in_another_location,_open_the_map_to_continue_the_tour": "El tour continua en otra ubicación, abre el mapa para continuar el tour",
   "STEPPER.Open_map": "Abrir mapa",
   "EXIT.Thank_you_for_exploring_with_Us!": "¡Gracias por explorar con nosotros!",
-  "MY-PROFILE.Welcome_back": "Bienvenido de nuevo"
+  "MY-PROFILE.Welcome_back": "Bienvenido de nuevo",
+  "MAP-MODAL.Let's_go_to_the_next_point": "Vayamos al siguiente punto",
+  "MAP-MODAL.I_arrived":"Llegué"
 }
