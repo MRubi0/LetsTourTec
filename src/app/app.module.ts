@@ -48,6 +48,8 @@ import { MusicPlayerDetailComponent } from './components/generics/music-player-d
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CountdownComponent } from './components/generics/countdown/countdown.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -79,7 +81,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     MusicPlayerComponent,
     SecondsToTimePipe,
     ExitComponent,
-    MusicPlayerDetailComponent,   
+    MusicPlayerDetailComponent,
+    CountdownComponent,   
   ],
   imports: [
     BrowserModule,
@@ -106,7 +109,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         useFactory: HttpLoaderFactory,
         deps: [HttpClient],
       },
-    })    
+    }),
+    NgbModule    
   ],
   providers: [
     LoggingService, 

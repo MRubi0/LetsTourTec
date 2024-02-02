@@ -1,0 +1,14 @@
+<div class="container d-flex justify-content-center flex-wrap">
+    <div class="title">
+      <h1>¿Esta seguro que desea terminar?</h1>
+    </div>
+    <div>
+        <h2>
+            {{countdown}}
+        </h2> 
+    </div>    
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="accept()" >Aceptar</button>
+</div>

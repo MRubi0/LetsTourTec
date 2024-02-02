@@ -8,6 +8,8 @@ import { MapModalComponent } from 'src/app/components/map-modal/map-modal.compon
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MusicPlayerComponent } from '../generics/music-player/music-player.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CountdownComponent } from '../generics/countdown/countdown.component';
 
 @Component({
   selector: 'app-stepper',
@@ -48,7 +50,9 @@ export class StepperComponent {
 
 
   constructor(private dialog: MatDialog, private _formBuilder: FormBuilder,
-    private stepService: StepService, private elRef: ElementRef, private renderer: Renderer2, private activatedRoute: ActivatedRoute, private router: Router) { }
+    private stepService: StepService, private elRef: ElementRef, private renderer: Renderer2, private activatedRoute: ActivatedRoute,
+    private ngbModal: NgbModal
+    ) { }
 
   ngOnInit() {
     this.firstFormGroup = this._formBuilder.group({
@@ -170,11 +174,11 @@ export class StepperComponent {
   }
   musicAction(event: string) {
     if (event === 'next' || event === 'next_auto') {
-      if (this.isLastStep()) {
-        this.finishTour();
-        this.router.navigate(['/exit']);
+      if (this.isLastStep()) {        
+        this.ngbModal.open(CountdownComponent,{ size: 'sm'});
         return;
       }
+      this.finishTour();
       this.goToNextStep(event);
     } else {
         this.goToPreviousStep();

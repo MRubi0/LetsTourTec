@@ -16,6 +16,7 @@ export class MusicPlayerComponent implements OnChanges {
   @Input('audio') audio!: string;
   @Input('index') index!: number;
   @Input('next') next!: any;
+  @Input('last') last!: any;  
   @Output() stepChange = new EventEmitter<string>();
   audioPlayer!: HTMLAudioElement;
   isPlaying: boolean = false;
@@ -145,6 +146,7 @@ export class MusicPlayerComponent implements OnChanges {
     this.bar_volume = true;
     this.bar_volume_small = false;
   }
+
   /*nextMusic(){
     this.audioPlayer = this.audioPlayerRef.nativeElement;
     this.audioPlayer.play();

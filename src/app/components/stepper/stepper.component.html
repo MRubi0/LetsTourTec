@@ -4,7 +4,7 @@
       <img [src]="url_icon_home" alt="">
     </div>
     <mat-vertical-stepper (selectionChange)="onStepChange($event)">              
-      <mat-step [stepControl]="firstFormGroup" *ngFor="let step of tour.steps;let i = index">
+      <mat-step [stepControl]="firstFormGroup" *ngFor="let step of tour.steps;let i = index; let last = last">
         <div class="step-icon d-flex justify-content-center" *ngIf="i==0">
           <img [src]="url_icon_home" alt="">
         </div>
@@ -66,7 +66,7 @@
                   </div>
                 </div>
                 <div class="audio d-flex justify-content-center w-100" *ngIf="audioControlsVisible">
-                  <app-music-player class="w-100" [audio]="step.audio" [index]="i" [next]="next"
+                  <app-music-player class="w-100" [audio]="step.audio" [index]="i" [next]="next" [last]="last"
                     (stepChange)="musicAction($event)"></app-music-player>
                 </div>                
               </mat-card-content>
