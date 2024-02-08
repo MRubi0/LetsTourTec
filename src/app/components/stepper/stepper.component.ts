@@ -17,6 +17,7 @@ import { CountdownComponent } from '../generics/countdown/countdown.component';
   styleUrls: ['./stepper.component.scss']
 })
 export class StepperComponent {
+  @ViewChild(MatStepper) stepper!: MatStepper;
   @ViewChild(MusicPlayerComponent) musicPlayer!: MusicPlayerComponent;
   next: any;
   firstFormGroup = this._formBuilder.group({
@@ -30,6 +31,7 @@ export class StepperComponent {
   screenHeight: number = window.innerHeight;
   url_icon = '';
   url_icon_home = '../../../assets/iconos/home-white.svg'
+  url_icon_flag = '../../../assets/iconos/flag-white.svg'
   lat: number = 0;
   long: number = 0;
   tour_id = '';
@@ -39,15 +41,12 @@ export class StepperComponent {
   url = environment.bucket;
   audioControlsVisible = false;
   evento: any
+  last_step=false;
 
 
   checkIfMapModalIsRequired(step: any) {
     this.audioControlsVisible = !(step.latitude && step.longitude);
   }
-
-
-  @ViewChild(MatStepper) stepper!: MatStepper;
-
 
   constructor(private dialog: MatDialog, private _formBuilder: FormBuilder,
     private stepService: StepService, private elRef: ElementRef, private renderer: Renderer2, private activatedRoute: ActivatedRoute,

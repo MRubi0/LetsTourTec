@@ -54,6 +54,16 @@ mat-card {
     margin-left: 25px;
     margin-top: 23px;
 }
+.step-icon-last{
+    width: 26px;
+    height: 26px;
+    background-color: #0d6efd;
+    border-radius: 100%;
+    z-index: 100;
+    position: absolute;
+    margin-left: 25px;
+    margin-top: -51px;
+}
 
 .img-container img {
     max-width: 100%; 
