@@ -9,7 +9,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class CountdownComponent {
   countdown:number=5;
-
+  validate=false;
   constructor(public ngbModal: NgbModal, private router: Router,){
     
   }
@@ -22,18 +22,22 @@ export class CountdownComponent {
       if (this.countdown > 0) {
         this.countdown--;
       } else {
-        clearInterval(countdownInterval);
-        this.router.navigate(['/exit']);
+        clearInterval(countdownInterval);        
+        if(!this.validate){
+          this.router.navigate(['/exit']);
+        }
         this.ngbModal.dismissAll("close")
       }
     }, 1000);
   }
   accept(): void {
     this.router.navigate(['/exit']);
-    this.ngbModal.dismissAll("close")
+    this.ngbModal.dismissAll("close");
+    this.validate=true;
   }
 
   cancel(): void {
-    this.ngbModal.dismissAll("close")
+    this.ngbModal.dismissAll("close");
+    this.validate=true;
   }
 }

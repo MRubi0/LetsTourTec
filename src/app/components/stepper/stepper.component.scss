@@ -55,13 +55,14 @@ mat-card {
     margin-top: 23px;
 }
 .step-icon-last{
-    width: 26px;
-    height: 26px;
+    padding: 3px;
+    width: 35px;
+    height: 35px;
     background-color: #0d6efd;
     border-radius: 100%;
     z-index: 100;
     position: absolute;
-    margin-left: 25px;
+    margin-left: 22px;
     margin-top: -51px;
 }
 
@@ -71,5 +72,20 @@ mat-card {
     height: auto; 
     display: block; 
     margin: 0 auto; 
+  }
+  .exit {
+    padding: auto !important;
+    color: #333333 !important;
+    border: none !important;
+    border-radius: 20px !important;
+    height: 50px !important;
+    background-color: #cdd1dd !important;
+    box-shadow: inset 0 0 0 0 #f5f3f7 !important;
+    transition: ease-out 0.8s !important;
+    outline: none !important;
+  }
+  .exit:hover {
+    color: #ffff !important ;
+    box-shadow: inset 300px 0 0 0 #0d6efd !important;
   }
   

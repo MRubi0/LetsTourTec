@@ -31,7 +31,7 @@ export class StepperComponent {
   screenHeight: number = window.innerHeight;
   url_icon = '';
   url_icon_home = '../../../assets/iconos/home-white.svg'
-  url_icon_flag = '../../../assets/iconos/flag-white.svg'
+  url_icon_flag = '../../../assets/iconos/win_flag.svg'
   lat: number = 0;
   long: number = 0;
   tour_id = '';
@@ -41,7 +41,7 @@ export class StepperComponent {
   url = environment.bucket;
   audioControlsVisible = false;
   evento: any
-  last_step=false;
+  last_step=true;
 
 
   checkIfMapModalIsRequired(step: any) {
@@ -65,18 +65,24 @@ export class StepperComponent {
     this.data();
   }
   onStepChange(event: any) {
-    const currentStep = this.tour.steps[event.selectedIndex];
+    const currentStep = this.tour.steps[event.selectedIndex];   
     this.checkIfMapModalIsRequired(currentStep);
-    if (event.previouslySelectedIndex >= 0) {
+    if (event.previouslySelectedIndex == 0) {
       this.url_icon_home = '../../../assets/iconos/home-white.svg'
-    }
-    if (event.selectedIndex >= 1) {
+    }    
+    if (event.selectedIndex >= 1){
       this.url_icon = '../../../assets/iconos/steps.svg';
-    } else {
+      
+    } else{
       this.url_icon_home = '../../../assets/iconos/home-white.svg'
     }
     if(this.evento=='next_auto'){
       this.next=event.selectedIndex;
+    }
+    if(this.tour.steps.length-1==event.selectedIndex){
+      this.last_step=false;
+    }else{
+      this.last_step=true;
     }
   }
   event() {
