@@ -115,9 +115,28 @@ export class TourDetailComponent {
       console.log(instruction.text);
     }); 
      
+    const startIcon = L.icon({
+      iconUrl: '../../../assets/iconos/home_red.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    });
+    
+    const endIcon = L.icon({
+      iconUrl: '../../../assets/iconos/finsh.png',
+      iconSize: [41, 41],
+      iconAnchor: [12, 41],
+    });
+
     const flippedCoordinates = this.convertedCoordinates.map(coord => [coord[1], coord[0]]);
-    flippedCoordinates.forEach((coord: any) => {
-       L.marker(coord).addTo(map);
+    flippedCoordinates.forEach((coord: any, index: number) => {
+      let marker;
+      if (index === 0) {
+        marker = L.marker(coord, { icon: startIcon }).addTo(map); 
+      } else if (index === flippedCoordinates.length - 1) {
+        marker = L.marker(coord, { icon: endIcon }).addTo(map); 
+      } else {
+        marker = L.marker(coord).addTo(map);
+      }
     });
     map.fitBounds(routeLine.getBounds());
   }  
