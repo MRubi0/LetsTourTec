@@ -105,15 +105,18 @@ export class TourDetailComponent {
   
     const coordinates = data.paths[0].points.coordinates.map((coord:any) => [coord[1], coord[0]]);
     
-    const routeLine = L.polyline(coordinates, { color: 'blue' }).addTo(map);
-  
-    const startMarker = L.marker(coordinates[0]).addTo(map);
-    const endMarker = L.marker(coordinates[coordinates.length - 1]).addTo(map);
+
+    const routeLine = L.polyline(coordinates, { color: 'blue' }).addTo(map);  
   
     const instructions = data.paths[0].instructions;
     instructions.forEach((instruction: any) => {
       console.log(instruction.text);
-    });  
+    }); 
+     
+    const flippedCoordinates = this.convertedCoordinates.map(coord => [coord[1], coord[0]]);
+    flippedCoordinates.forEach((coord: any) => {
+       L.marker(coord).addTo(map);
+    });
     map.fitBounds(routeLine.getBounds());
   }  
   alternative(){
@@ -155,7 +158,7 @@ export class TourDetailComponent {
         });
       });
 
-      setTimeout(() => {
+     setTimeout(() => {
         const routingContainer = document.querySelector('.leaflet-routing-container');
         const mapContainer = document.getElementById('map');
         if (routingContainer && mapContainer && mapContainer.parentElement) {
