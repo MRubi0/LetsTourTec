@@ -28,7 +28,8 @@ export class TourDetailComponent {
     private toursDetailService:ToursDetailService,
     private activatedRoute:ActivatedRoute,
     private sharedService:SharedService,
-    private mapService:MapService
+    private mapService:MapService,
+    private router:Router,
     ){
       this.$url=this.sharedService.getImage;
       
@@ -42,6 +43,7 @@ export class TourDetailComponent {
 
   letsTour(data:any){
   this.sharedService.setCoordinates=data;
+  this.router.navigate([`/maps/${data.latitude}/${data.longitude}/${this.tour_id}`]);
  }  
   loadData(id: any) {
     this.tour_id=id;
