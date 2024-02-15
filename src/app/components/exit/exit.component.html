@@ -1,18 +1,304 @@
+
 <div class="about-us-section container mt-5">
     <div class="card">
         <div class="card-header">
-            <h2>Thank You for Exploring with Us!</h2>
+            <h2>¡Muchas gracias por hacer TOURismo con nosotros!</h2>
         </div>
         <div class="card-body">
             <div class="about-section">
-                <h3 class="card-title">Your Adventure</h3>
-                <p class="card-text">We hope you enjoyed your journey and discovered many wonderful sights...</p>
+                <h3 class="card-title">Esperamos que hayas disfrutado de tu aventura y hayas aprendido muchas cosas...</h3>
+                <p class="card-text">Recuerda que hay más tours a tu disposición para que puedas seguir explorando</p>
             </div>
             <div class="about-section">
-                <h3 class="card-title">Stay in Touch</h3>
-                <p class="card-text">Don't forget to follow us on social media and share your experiences...</p>
+                <h3 class="card-title">Mantente en contacto</h3>
+                <p class="card-text">Agradeceríamos que realizaras una pequeña encuesta para ayudarnos a mejorar</p>
             </div>
-            <!-- Agregar más secciones según sea necesario -->
+        </div>
+    </div>
+</div>
+
+<div class="about-us-section container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h2>Encuesta</h2>
+        </div>
+        <div class="card-body">
+            <form>
+                <!-- Sección de preguntas sobre el usuario -->
+                <div class="user-questions">
+                    <h3 class="card-title">Preguntas sobre el usuario</h3>
+                    <div class="mb-3"></div>
+                    <div class="form-group">
+                        <label for="pregunta1">1. Edad: </label>
+                        <input type="text" class="form-control" id="pregunta1" name="pregunta1">
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta2">2. Género: </label>
+                        <select class="form-control" id="pregunta2" name="pregunta2">
+                            <option>Masculino</option>
+                            <option>Femenino</option>
+                            <option>Prefiero no decirlo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta3">3. Nacionalidad: </label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta3" autocomplete="off"> Española
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta3" autocomplete="off"> Otra
+                            </label>
+                        </div>
+                        <div class="subpregunta">
+                            <label for="subpregunta3-1">Si es otra ¿Cuál?</label>
+                            <input type="text" class="form-control" id="subpregunta3-1" name="subpregunta3-1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta4">4. ¿Cuántos viajes haces al año?</label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta4" autocomplete="off"> Menos de 3
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta4" autocomplete="off"> Entre 3 y 5
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta4" autocomplete="off"> Más de 5
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta5">5. ¿Y cuántos tours haces al año?</label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta5" autocomplete="off"> Menos de 3
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta5" autocomplete="off"> Entre 3 y 5
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta5" autocomplete="off"> Más de 5
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3"></div>
+                
+                <!-- Sección de preguntas sobre el producto -->
+                <div class="product-questions">
+                    <h3 class="card-title">Preguntas sobre el producto</h3>
+                    <div class="mb-3"></div>
+                    <div class="form-group">
+                        <label for="pregunta6">6. Valora el tour realizado: </label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta6" autocomplete="off"> Muy poco satisfecho
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta6" autocomplete="off"> Poco satisfecho
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta6" autocomplete="off"> Normal
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta6" autocomplete="off"> Satisfecho
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta6" autocomplete="off"> Muy satisfecho
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta7">7. Valora el contenido del tour realizado: </label>
+                        <select class="form-control" id="pregunta7" name="pregunta7">
+                            <option>Muy poco satisfecho</option>
+                            <option>Poco satisfecho</option>
+                            <option>Normal</option>
+                            <option>Satisfecho</option>
+                            <option>Muy satisfecho</option>
+                        </select>
+                        <div class="subpregunta">
+                            <label for="subpregunta7">a. ¿Qué otro tipo de contenido te gustaría encontrar en la App?</label>
+                            <input type="text" class="form-control" id="subpregunta7" name="subpregunta7">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta8">8. Valora el formato en el que se ha presentado el tour:</label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta8" autocomplete="off"> Muy poco satisfecho
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta8" autocomplete="off"> Poco satisfecho
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta8" autocomplete="off"> Normal
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta8" autocomplete="off"> Satisfecho
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta8" autocomplete="off"> Muy satisfecho
+                            </label>
+                        </div>
+                        <div class="subpregunta">
+                            <label for="subpregunta8-1">¿Qué es lo que más te ha gustado?</label>
+                            <input type="text" class="form-control" id="subpregunta8-1" name="subpregunta8-1">
+                        </div>
+                        <div class="subpregunta">
+                            <label for="subpregunta8-2">¿Y lo que menos?</label>
+                            <input type="text" class="form-control" id="subpregunta8-2" name="subpregunta8-2">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta8">9. Valora la duración del tour:</label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta9" autocomplete="off"> Largo
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta9" autocomplete="off"> Adecuado
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta9" autocomplete="off"> Corto
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta10">10. ¿Cuál crees que sería la duración óptima para este tipo de tours?</label>
+                        <input type="text" class="form-control" id="pregunta10" name="pregunta10">
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta10">11. ¿El producto te ayuda a lograr tus objetivos?</label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta11" autocomplete="off"> Sí
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta11" autocomplete="off"> No
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta12">12. ¿Qué características del producto consideras más valiosas?</label>
+                        <input type="text" class="form-control" id="pregunta12" name="pregunta12">
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta13">13. ¿Y la menos valiosa?</label>
+                        <input type="text" class="form-control" id="pregunta13" name="pregunta13">
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta14">14. ¿Qué puntos de fricción has encontrado al usar el producto? Si pudieras, ¿qué mejorarías?</label>
+                        <input type="text" class="form-control" id="pregunta14" name="pregunta14">
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta15">15. ¿Utilizarías el producto en tus próximas vacaciones?</label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta15" autocomplete="off"> Sí
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta15" autocomplete="off"> No
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta16">16. ¿Qué tan probable es que recomiendes "Let's Tour Tec" a otras personas?</label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta16" autocomplete="off"> Muy improbable
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta16" autocomplete="off"> Improbable
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta16" autocomplete="off"> Normal
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta16" autocomplete="off"> Probable
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta16" autocomplete="off"> Muy probable
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta17">17. ¿Qué probabilidad hay de que vuelvas a realizar un tour con "Let's Tour Tec"?</label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta17" autocomplete="off"> Muy improbable
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta17" autocomplete="off"> Improbable
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta17" autocomplete="off"> Normal
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta17" autocomplete="off"> Probable
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta17" autocomplete="off"> Muy probable
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta18">18. ¿Crees que la flexibilidad de horarios e idioma es una ventaja competitiva respecto a los tours convencionales?</label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta18" autocomplete="off"> Sí
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta18" autocomplete="off"> No
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta19">19. ¿Cuál crees que es la mejor manera de tener acceso a este tipo de tours?</label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta19" autocomplete="off"> Pagar antes de realizar el tour una cantidad fija
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta19" autocomplete="off"> Pagar al final del tour la cantidad que consideres
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta19" autocomplete="off"> Poder tener otras opciones de pagar el tour. Por ejemplo, viendo anuncios.
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta19" autocomplete="off"> Pagar una suscripción mensual
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta20">20. ¿Cuánto estarías dispuesto a pagar por uno de estos tours?</label>
+                        <input type="text" class="form-control" id="pregunta20" name="pregunta20">
+                    </div>
+                    <div class="form-group">
+                        <label for="pregunta21">21. ¿Le gustaría que la aplicación tuviera formato red social para poder compartir o encontrar los viajes y tours que mejor se adaptan a su estilo de vida?</label>
+                        <div>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta21" autocomplete="off"> Sí
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="pregunta21" autocomplete="off"> No
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Sección de preguntas sobre el usuario -->
+                <div class="mail-questions">
+                    <div class="mb-3"></div>
+                    <h3 class="card-title">Correo (Opcional)</h3>
+                    <div class="mb-3"></div>
+                    <div class="form-group">
+                        <label for="pregunta22">22. Si quisieras mantenerte al tanto de nuestras actualizaciones nos encantaría disponer de tu correo electrónico: </label>
+                        <input type="text" class="form-control" id="pregunta22" name="pregunta22">
+                </div></div></div>
+                <div class="mb-3"></div>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
         </div>
     </div>
 </div>
