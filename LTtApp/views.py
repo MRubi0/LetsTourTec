@@ -14,10 +14,11 @@ import sqlite3
 import math
 from math import radians, sin, cos, sqrt, atan2
 from .forms import GuideForm, AudioFileForm, ImageFileForm, LocationForm, CustomUserCreationForm
-from .models import Guide, AudioFile, ImageFile, Location, CustomUser, Tour
+from .models import Guide, AudioFile, ImageFile, Location, CustomUser, Tour, Encuesta 
 #from .models import LTtApp_paso
 
 from django.contrib import messages
+
 
 from .forms import EditProfileForm
 import random
@@ -307,6 +308,44 @@ def upload_tour(request):
         return Response({'error': 'Invalid request method'}, status=405)
     return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
 
+
+@api_view(['POST'])
+def upload_encuesta(request):
+    print("Solicitud recibida con los siguientes datos: %s", request.POST)
+    error_message = None
+    
+    if request.method == 'POST':
+        print(request.POST)  
+        print(request.FILES)  
+        
+        # Aquí debes adaptar el formulario para la encuesta
+        form = EncuestaForm(request.POST)       
+        if form.is_valid():
+            encuesta = form.save(commit=False)
+            # Aquí asigna los campos de la encuesta según los datos recibidos en request.POST
+            encuesta.save()
+
+            return redirect('index')  # Ajusta el nombre de la vista de redirección según tu proyecto
+        else:
+            error_message = 'Hubo un error al subir la encuesta. Asegúrate de completar todos los campos correctamente.'
+            print(form.errors)
+            return Response({'errors': form.errors}, status=400)
+    else:
+        return Response({'error': 'Invalid request method'}, status=405)
+    return render(request, 'user/upload_encuesta.html', {'form': form, 'error_message': error_message})
+
+def encuesta_view(request):
+    if request.method == 'POST':
+        form = EncuestaForm(request.POST)
+        if form.is_valid():
+            # Guardar los datos de la encuesta en la base de datos
+            form.save()
+            # Redirigir a una página de confirmación o a donde desees
+            return render(request, 'encuesta_confirmacion.html')
+    else:
+        # Si es una solicitud GET, mostrar el formulario en blanco
+        form = EncuestaForm()
+    return render(request, 'encuesta.html', {'form': form})
 
 @csrf_exempt
 def register_view(request):

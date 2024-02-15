@@ -238,3 +238,34 @@ class TourRecord(models.Model):
         }
     def __str__(self):
         return f"{self.user.username} - {self.tour.titulo} - {self.date}"
+
+
+class Encuesta(models.Model):
+    edad = models.CharField(max_length=100)
+    genero = models.CharField(max_length=100)
+    nacionalidad = models.CharField(max_length=100)
+    viajes_al_anio = models.CharField(max_length=100)
+    tours_al_anio = models.CharField(max_length=100)
+    valoracion_tour = models.CharField(max_length=100)
+    valoracion_contenido = models.CharField(max_length=100)
+    otro_contenido = models.TextField(blank=True, null=True)
+    valoracion_formato = models.CharField(max_length=100)
+    gusta_formato = models.TextField(blank=True, null=True)
+    menos_gusta_formato = models.TextField(blank=True, null=True)
+    valoracion_duracion = models.CharField(max_length=100)
+    duracion_optima = models.CharField(max_length=100)
+    ayuda_a_lograr_objetivos = models.CharField(max_length=100)
+    caracteristicas_valiosas = models.TextField(blank=True, null=True)
+    caracteristicas_menos_valiosas = models.TextField(blank=True, null=True)
+    puntos_friccion = models.TextField(blank=True, null=True)
+    usar_producto_en_proximas_vacaciones = models.CharField(max_length=3)
+    recomendar_producto = models.CharField(max_length=100)
+    probabilidad_de_volver_a_realizar_tour = models.CharField(max_length=100)
+    flexibilidad_de_horarios_idioma = models.CharField(max_length=3)
+    acceso_a_tours = models.CharField(max_length=100)
+    precio_dispuesto_a_pagar = models.CharField(max_length=100)
+    formato_red_social = models.CharField(max_length=3)
+    correo = models.EmailField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Encuesta {self.id}"

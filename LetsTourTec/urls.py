@@ -42,6 +42,7 @@ urlpatterns = [
     #path('step/<int:tour_id>/<int:step_id>/', views.step_detail, name='step_detail'),
     path('api/tour/<int:tour_id>/step/<int:step_id>/', views.next_step, name='next_step'),
     path('csrf-token/', views.csrf_token_view, name='csrf_token'),
+    path('encuesta/', views.encuesta_view, name='encuesta'),
     #path('token-auth/', obtain_jwt_token),
     # JWT Auth
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
