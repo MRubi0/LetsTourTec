@@ -5,6 +5,7 @@ import { ToursDetailService } from 'src/app/services/tours-detail.service';
 import { RoutingService } from 'src/app/services/routing.service';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
+import { MapService } from 'src/app/services/map.service';
 // import { GraphHopperRouting } from 'leaflet-routing-machine/dist/leaflet-routing-machine';
 
 @Component({
@@ -17,15 +18,17 @@ export class TourDetailComponent {
   lat:number=0;
   long:number=0;
   tour_id:number=0;
+  private watchId: number | null = null;
+  private control: L.Routing.Control | null = null;
   detail:any;
   $url!:any;
   image_url:string='';
+  convertedCoordinates: Array<any>=[];
   constructor(
-    private routingService: RoutingService,
     private toursDetailService:ToursDetailService,
     private activatedRoute:ActivatedRoute,
     private sharedService:SharedService,
-    private router:Router,
+    private mapService:MapService
     ){
       this.$url=this.sharedService.getImage;
       
@@ -39,7 +42,6 @@ export class TourDetailComponent {
 
   letsTour(data:any){
   this.sharedService.setCoordinates=data;
-  this.router.navigate([`/maps/${data.latitude}/${data.longitude}/${this.tour_id}`]);
  }  
   loadData(id: any) {
     this.tour_id=id;
@@ -47,14 +49,140 @@ export class TourDetailComponent {
       this.detail = data[0].fields;
       this.toursDetailService.getAdditionalLocations(id).subscribe((locationsData: any) => {
         const additionalLocations = locationsData.locations;
-        this.initMap(additionalLocations);
+        this.convertedCoordinates = additionalLocations.map((coord:any) => [coord.long, coord.lat]);
+        this.convertedCoordinates.unshift([this.detail.longitude,this.detail.latitude]);
+        this.loadMap();
       }); 
     }); 
     this.$url.subscribe((url: any) => {
       this.image_url = url;      
     }); 
   }
+  loadMap(){
+    try {
+      this.mapService.createRouteDetail(this.convertedCoordinates).subscribe((data: any) => {
+      if(data.message){
+       console.log(data.message); 
+       this.alternative();
+      }else{
+        this.lat = data.paths[0].points.coordinates[0][1];
+        this.long = data.paths[0].points.coordinates[0][0];
+        this.displayRouteOnMap(data);
+      }
+      
+    });
+    } catch (routeError) {
+      console.error('Error al crear la ruta:', routeError);
+    }  
+  }
+  ngAfterViewInit() {
+            
+  }
 
+  stopEvent(e: MouseEvent): void {
+    console.log(e);
+    e.stopImmediatePropagation();
+    e.stopPropagation();
+  }
+
+  load(coordenadas: any): void {    
+    this.lat = coordenadas.lat;
+    this.long = coordenadas.long;
+    this.tour_id=coordenadas.id
+  }
+
+  ngOnDestroy() {
+    if (this.watchId !== null) {
+      navigator.geolocation.clearWatch(this.watchId);
+    }
+  }
+
+  displayRouteOnMap(data: any): void {
+    const map = L.map('map').setView(this.convertedCoordinates[0], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+  
+    const coordinates = data.paths[0].points.coordinates.map((coord:any) => [coord[1], coord[0]]);
+    
+    const routeLine = L.polyline(coordinates, { color: 'blue' }).addTo(map);
+  
+    const startMarker = L.marker(coordinates[0]).addTo(map);
+    const endMarker = L.marker(coordinates[coordinates.length - 1]).addTo(map);
+  
+    const instructions = data.paths[0].instructions;
+    instructions.forEach((instruction: any) => {
+      console.log(instruction.text);
+    });  
+    map.fitBounds(routeLine.getBounds());
+  }  
+  alternative(){
+    const map = L.map('maps').setView([51.505, -0.09], 13);
+    navigator.geolocation.getCurrentPosition((position) => {
+      const latitud = position.coords.latitude;
+      const longitud = position.coords.longitude;
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+      }).addTo(map);
+
+      this.control = L.Routing.control({
+        waypoints: [
+          L.latLng(latitud, longitud),
+          L.latLng(this.lat, this.long)
+        ],
+        routeWhileDragging: true,
+        collapsible: true, 
+        show: true,  
+        addWaypoints: false       
+      }).addTo(map);
+
+      this.control.on('waypointschanged', (e: any) => {
+        e.waypoints.forEach((waypoint: any) => {
+        });
+      });
+
+      this.control.on('routesfound', (e) => {
+        map.eachLayer((layer) => {
+          if (layer instanceof L.Marker) {
+            layer.dragging?.disable();
+            const element = layer.getElement();
+            if (element) {
+              L.DomUtil.removeClass(element, 'leaflet-marker-draggable');
+              L.DomUtil.removeClass(element, 'leaflet-interactive');
+            }
+          }
+        });
+      });
+
+      setTimeout(() => {
+        const routingContainer = document.querySelector('.leaflet-routing-container');
+        const mapContainer = document.getElementById('map');
+        if (routingContainer && mapContainer && mapContainer.parentElement) {
+          mapContainer.parentElement.appendChild(routingContainer);
+        }
+      }, 0);
+    });
+
+    this.watchId = navigator.geolocation.watchPosition((position) => {
+      const latitud = position.coords.latitude;
+      const longitud = position.coords.longitude;   
+      if (this.control) {
+        this.control.setWaypoints([
+          L.latLng(latitud, longitud),
+          L.latLng(this.lat, this.long)
+        ]);
+      }
+    }, (error) => {
+      console.error(error);
+    }, {
+      enableHighAccuracy: true,
+      maximumAge: 10000,
+      timeout: 5000
+    });
+  }
+
+  /*
   initMap(additionalLocations: any[]) {
     if (!this.detail) return;
   
@@ -113,6 +241,5 @@ export class TourDetailComponent {
       }
     });
   }
-  
-  
+  */  
 }

@@ -35,6 +35,29 @@ export class MapService {
       })
     );
   }
+  createRouteDetail(route:any) {
+    const url = `${environment.apiUrl}api/get_routes`;
+    console.log('route ',route);
+    return this.http.post(url,
+      {
+        "points": 
+          route
+        ,
+        "snap_preventions": ["motorway", "ferry", "tunnel"],
+        "details": ["road_class", "surface"],
+        "profile": "foot",
+        "locale": "en",
+        "instructions": true,
+        "calc_points": true,
+        "points_encoded": false
+      }
+    ).pipe(
+      catchError((error:any) => {
+        console.error('Error en createRoute:', error);
+        return throwError('Error en la solicitud de ruta');
+      })
+    );
+  }
 }
 
 //            L.latLng(41.65205, -4.72851),  // Punto 1
