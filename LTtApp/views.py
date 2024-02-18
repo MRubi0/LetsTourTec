@@ -311,12 +311,12 @@ def upload_tour(request):
 
 @api_view(['POST'])
 def upload_encuesta(request):
-    print("Solicitud recibida con los siguientes datos: %s", request.POST)
+    print("Solicitud recibida con los siguientes datos:", request.POST)
     error_message = None
     
     if request.method == 'POST':
-        print(request.POST)  
-        print(request.FILES)  
+        print(request.POST)
+        print(request.FILES)
         
         # Aquí debes adaptar el formulario para la encuesta
         form = EncuestaForm(request.POST)       
@@ -327,25 +327,13 @@ def upload_encuesta(request):
 
             return redirect('index')  # Ajusta el nombre de la vista de redirección según tu proyecto
         else:
+            print("Errores de validación:", form.errors)
             error_message = 'Hubo un error al subir la encuesta. Asegúrate de completar todos los campos correctamente.'
-            print(form.errors)
             return Response({'errors': form.errors}, status=400)
     else:
         return Response({'error': 'Invalid request method'}, status=405)
     return render(request, 'user/upload_encuesta.html', {'form': form, 'error_message': error_message})
 
-def encuesta_view(request):
-    if request.method == 'POST':
-        form = EncuestaForm(request.POST)
-        if form.is_valid():
-            # Guardar los datos de la encuesta en la base de datos
-            form.save()
-            # Redirigir a una página de confirmación o a donde desees
-            return render(request, 'encuesta_confirmacion.html')
-    else:
-        # Si es una solicitud GET, mostrar el formulario en blanco
-        form = EncuestaForm()
-    return render(request, 'encuesta.html', {'form': form})
 
 @csrf_exempt
 def register_view(request):
