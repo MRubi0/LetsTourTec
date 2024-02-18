@@ -13,7 +13,7 @@ from django.http import JsonResponse
 import sqlite3
 import math
 from math import radians, sin, cos, sqrt, atan2
-from .forms import GuideForm, AudioFileForm, ImageFileForm, LocationForm, CustomUserCreationForm
+from .forms import GuideForm, AudioFileForm, ImageFileForm, LocationForm, CustomUserCreationForm, EncuestaForm
 from .models import Guide, AudioFile, ImageFile, Location, CustomUser, Tour, Encuesta 
 #from .models import LTtApp_paso
 
