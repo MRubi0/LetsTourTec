@@ -60,3 +60,11 @@
         font-size: 20px;
     }
 }
+select.form-control {
+    appearance: none; /* Esto quita el aspecto nativo */
+
+    background-repeat: no-repeat;
+    background-position: right 10px center; /* Ajusta según necesidades */
+    background-size: 15px; /* Ajusta el tamaño del icono */
+    /* Asegúrate de incluir otros estilos para mantener la usabilidad */
+}
