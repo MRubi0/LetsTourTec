@@ -309,31 +309,76 @@ def upload_tour(request):
     return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
 
 
+# @api_view(['POST'])
+# def upload_encuesta(request):
+#     if request.method == 'POST':
+#         form = EncuestaForm(request.POST)
+#         if form.is_valid():
+#             # Crea una instancia de tu modelo a partir de los datos del formulario
+#             # Esto requiere que manualmente asignes los datos del formulario a los campos del modelo.
+#             encuesta_data = form.cleaned_data
+#             encuesta = Encuesta()  # Crea una nueva instancia de tu modelo Encuesta
+            
+#             # Asigna los campos del formulario a los atributos del modelo
+#             for field, value in encuesta_data.items():
+#                 setattr(encuesta, field, value)
+            
+#             # Guarda la instancia del modelo en la base de datos
+#             encuesta.save()
+            
+#             # Puedes redireccionar o responder con un mensaje de éxito
+#             return Response({'success': 'Encuesta guardada correctamente'}, status=200)
+#         else:
+#             # Manejo de errores de validación del formulario
+#             return Response({'errors': form.errors}, status=400)
+#     else:
+#         # Método HTTP no permitido
+#         return Response({'error': 'Invalid request method'}, status=405)
+
 @api_view(['POST'])
 def upload_encuesta(request):
-    print("Solicitud recibida con los siguientes datos:", request.POST)
-    error_message = None
-    
     if request.method == 'POST':
-        print(request.POST)
-        print(request.FILES)
-        
-        # Aquí debes adaptar el formulario para la encuesta
-        form = EncuestaForm(request.POST)       
-        if form.is_valid():
-            encuesta = form.save(commit=False)
-            # Aquí asigna los campos de la encuesta según los datos recibidos en request.POST
-            encuesta.save()
+        # Mapeo de los nombres de campos del formulario a los nombres de campos del modelo
+        mapeo_campos = {
+            'pregunta1': 'edad',
+            'pregunta2': 'genero',
+            'pregunta3': 'nacionalidad',
+            'pregunta4': 'viajes_al_anio',
+            'pregunta5': 'tours_al_anio',
+            'pregunta6': 'valoracion_tour',
+            'pregunta7': 'valoracion_contenido',
+            'subpregunta7': 'otro_contenido',
+            'pregunta8': 'valoracion_formato',
+            'subpregunta8_1': 'gusta_formato',
+            'subpregunta8_2': 'menos_gusta_formato',
+            'pregunta9': 'valoracion_duracion',
+            'pregunta10': 'duracion_optima',
+            'pregunta11': 'ayuda_a_lograr_objetivos',
+            'pregunta12': 'caracteristicas_valiosas',
+            'pregunta13': 'caracteristicas_menos_valiosas',
+            'pregunta14': 'puntos_friccion',
+            'pregunta15': 'usar_producto_en_proximas_vacaciones',
+            'pregunta16': 'recomendar_producto',
+            'pregunta17': 'probabilidad_de_volver_a_realizar_tour',
+            'pregunta18': 'flexibilidad_de_horarios_idioma',
+            'pregunta19': 'acceso_a_tours',
+            'pregunta20': 'precio_dispuesto_a_pagar',
+            'pregunta21': 'formato_red_social',
+            'pregunta22': 'correo',
+        }
 
-            return redirect('index')  # Ajusta el nombre de la vista de redirección según tu proyecto
-        else:
-            print("Errores de validación:", form.errors)
-            error_message = 'Hubo un error al subir la encuesta. Asegúrate de completar todos los campos correctamente.'
-            return Response({'errors': form.errors}, status=400)
-    else:
-        return Response({'error': 'Invalid request method'}, status=405)
-    return render(request, 'user/upload_encuesta.html', {'form': form, 'error_message': error_message})
+        # Crear la instancia del modelo Encuesta sin guardarla aún
+        encuesta = Encuesta()
 
+        for clave_form, clave_modelo in mapeo_campos.items():
+            valor = request.data.get(clave_form)
+            if valor is not None:  # Esto manejará el caso de campos vacíos o no enviados
+                setattr(encuesta, clave_modelo, valor)
+
+        encuesta.save()  # Guardar la instancia en la base de datos
+        return Response({'success': 'Encuesta guardada correctamente'})
+
+    return Response({'error': 'Método no permitido'}, status=405)
 
 @csrf_exempt
 def register_view(request):
