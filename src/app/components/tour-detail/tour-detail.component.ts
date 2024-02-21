@@ -127,6 +127,12 @@ export class TourDetailComponent {
       iconAnchor: [12, 41],
     });
 
+    const standard = L.icon({
+      iconUrl: '../../../assets/iconos/marker-icon.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    });
+
     const flippedCoordinates = this.convertedCoordinates.map(coord => [coord[1], coord[0]]);
     flippedCoordinates.forEach((coord: any, index: number) => {
       let marker;
@@ -135,7 +141,7 @@ export class TourDetailComponent {
       } else if (index === flippedCoordinates.length - 1) {
         marker = L.marker(coord, { icon: endIcon }).addTo(map); 
       } else {
-        marker = L.marker(coord).addTo(map);
+        marker = L.marker(coord, { icon: standard }).addTo(map); 
       }
     });
     map.fitBounds(routeLine.getBounds());
