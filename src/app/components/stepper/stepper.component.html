@@ -14,13 +14,6 @@
         <div class="step-icon d-flex justify-content-center" *ngIf="last && tour.steps.length> 1">
           <img [src]="url_icon_flag" alt="">
         </div>
-
-        <!-- <form [formGroup]="firstFormGroup">
-          <ng-template matStepLabel *ngIf="i==0">
-            <strong>{{tour.titulo | uppercase}}</strong>
-          </ng-template>
-          
-          <ng-template matStepLabel *ngIf="i>0"><strong>Step {{i}}</strong></ng-template> -->
           <form [formGroup]="firstFormGroup">
             
             <ng-template matStepLabel>

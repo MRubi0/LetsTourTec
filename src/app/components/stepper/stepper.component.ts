@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MusicPlayerComponent } from '../generics/music-player/music-player.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CountdownComponent } from '../generics/countdown/countdown.component';
+import { MsgInicioModalComponent } from '../msg-inicio-modal/msg-inicio-modal.component';
 
 @Component({
   selector: 'app-stepper',
@@ -60,6 +61,7 @@ export class StepperComponent {
     this.activatedRoute.params.subscribe((params: any) => {
       this.tour_id = params.id
     });
+    this.openWelcomeModal();
   }
   ngAfterViewInit() {
     this.data();
@@ -201,5 +203,10 @@ export class StepperComponent {
     const currentIndex = this.stepper.selectedIndex;
     return currentIndex === this.tour.steps.length - 1;
   }
+  openWelcomeModal(): void {
+    const dialogRef = this.dialog.open(MsgInicioModalComponent, {
+      width: '500px'
+    });
 }
 
+}
