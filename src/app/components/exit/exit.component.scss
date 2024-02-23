@@ -71,3 +71,65 @@ select.form-control {
 .subpregunta-input {
     font-size: 0.85rem; /* Ajusta el tamaño de fuente según tus necesidades */
 }
+
+
+/* Aumentar el espaciado entre secciones de preguntas */
+.user-questions, .product-questions, .mail-questions {
+    margin-bottom: 30px; /* Aumenta el espacio entre secciones */
+}
+
+/* Mejorar la visibilidad de los títulos de las secciones */
+.card-title {
+    color: #007bff; /* Ajusta el color si es necesario */
+    font-weight: bold;
+    margin-bottom: 15px; /* Aumenta el espacio debajo del título */
+    font-size: 22px; /* Ajusta el tamaño del texto */
+}
+
+/* Estilizar los inputs y selects */
+.form-control {
+    border-radius: 5px; /* Bordes redondeados */
+    border: 1px solid #ced4da; /* Ajusta el color del borde si es necesario */
+    padding: 10px; /* Aumenta el padding para un mejor aspecto */
+}
+
+.form-control:focus {
+    border-color: #80bdff; /* Color del borde al enfocar */
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); /* Sombra sutil al enfocar */
+}
+
+/* Estilizar los selects para que sean más atractivos */
+select.form-control {
+    /* Estilos adicionales si son necesarios */
+}
+
+/* Usar sombras y bordes en las tarjetas o secciones */
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    border: none; /* Opcional: quitar el borde si prefieres un look sin bordes */
+}
+
+/* Animaciones o transiciones sutiles para los inputs */
+.form-control {
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Suaviza la transición de sombras y bordes */
+}
+
+/* Mejoras visuales adicionales */
+.mb-3 {
+    margin-bottom: 1.5rem !important; /* Asegúrate de que .mb-3 tenga suficiente margen */
+}
+
+/* Para los subtítulos de las preguntas, si necesitas diferenciarlos */
+.subpregunta-input {
+    margin-top: 0.5rem; /* Añade un poco de espacio encima de las subpreguntas */
+    font-style: italic; /* Estilo cursiva para diferenciar */
+}
+/* Estilos para aumentar el espacio entre preguntas individuales */
+.form-group {
+    margin-bottom: 20px; /* Aumenta el margen inferior para crear más espacio entre preguntas */
+}
+
+/* Opcionalmente, si quieres que el último elemento de cada sección tenga menos margen */
+.form-group:last-child {
+    margin-bottom: 10px; /* Reduce el margen inferior del último elemento de cada sección */
+}
