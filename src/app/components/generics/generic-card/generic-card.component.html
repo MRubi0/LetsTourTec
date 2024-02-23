@@ -42,11 +42,11 @@
 </div>
 <div class="paginator row w-100 mt-4" *ngIf="view">
     <div class="col-12 d-flex justify-content-center">
-        <pagination-controls (pageChange)="p = $event"
-                                (autoHide)=autoHide
-                                (responsive)=responsive
-                                previousLabel="Previous"
-                                 nextLabel="Next"                                
-        ></pagination-controls>
+        <pagination-controls (pageChange)="onPageChange()" 
+                             (autoHide)="autoHide" 
+                             (responsive)="responsive" 
+                             previousLabel="Previous" 
+                             nextLabel="Next">
+        </pagination-controls>
     </div>
 </div>

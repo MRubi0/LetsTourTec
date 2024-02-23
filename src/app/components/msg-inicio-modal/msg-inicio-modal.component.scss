@@ -1,8 +1,14 @@
 .modal-image {
-    width: 65%; /* Ajusta el ancho de la imagen al contenedor */
-    height: auto; /* Mantiene la proporción de la imagen */
-    margin-bottom: 25px; /* Espacio debajo de la imagen */
+    width: 65%;
+    height: auto; 
+    margin-bottom: 25px; 
 }
 .modal-content p {
-    font-size: 11px; /* Reduce el tamaño de las letras de los párrafos dentro de .modal-content */
+    font-size: 11px;
+}
+.text{
+    text-align: justify;
+}
+.modal-image{
+    border-radius: 5px;
 }

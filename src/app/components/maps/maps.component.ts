@@ -31,8 +31,7 @@ export class MapsComponent {
       try {
         this.mapService.createRoute(this.lat, this.long,longitud, latitud).subscribe((data: any) => {
         if(data.message){
-         console.log(data.message); 
-         this.alternative();
+          this.alternative();
         }else{
           this.lat = data.paths[0].points.coordinates[0][1];
           this.long = data.paths[0].points.coordinates[0][0];
@@ -73,14 +72,19 @@ export class MapsComponent {
     const coordinates = data.paths[0].points.coordinates.map((coord:any) => [coord[1], coord[0]]);
     
     const routeLine = L.polyline(coordinates, { color: 'blue' }).addTo(map);
-  
-    const startMarker = L.marker(coordinates[0]).addTo(map);
-    const endMarker = L.marker(coordinates[coordinates.length - 1]).addTo(map);
-  
+    
+    const standard = L.icon({
+      iconUrl: '../../../assets/iconos/marker-icon.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    });
+
     const instructions = data.paths[0].instructions;
     instructions.forEach((instruction: any) => {
       console.log(instruction.text);
-    });  
+    });
+    L.marker(coordinates[0],{ icon: standard }).addTo(map);
+    L.marker(coordinates[coordinates.length - 1], { icon: standard }).addTo(map);     
     map.fitBounds(routeLine.getBounds());
   }  
   alternative(){
@@ -91,7 +95,7 @@ export class MapsComponent {
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-      }).addTo(map);
+      }).addTo(map);     
 
       this.control = L.Routing.control({
         waypoints: [
@@ -133,12 +137,19 @@ export class MapsComponent {
 
     this.watchId = navigator.geolocation.watchPosition((position) => {
       const latitud = position.coords.latitude;
-      const longitud = position.coords.longitude;   
+      const longitud = position.coords.longitude;  
+      const standard = L.icon({
+        iconUrl: '../../../assets/iconos/marker-icon.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+      }); 
       if (this.control) {
-        this.control.setWaypoints([
+        L.marker([latitud, longitud],{ icon: standard }).addTo(map);
+        L.marker([this.lat, this.long], { icon: standard }).addTo(map); 
+        /*this.control.setWaypoints([
           L.latLng(latitud, longitud),
-          L.latLng(this.lat, this.long)
-        ]);
+          L.latLng([this.lat, this.long], {icon: standard})
+        ]);*/
       }
     }, (error) => {
       console.error(error);
@@ -146,7 +157,7 @@ export class MapsComponent {
       enableHighAccuracy: true,
       maximumAge: 10000,
       timeout: 5000
-    });
+    });    
   }
   
 }

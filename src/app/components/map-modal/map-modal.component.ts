@@ -85,6 +85,11 @@ export class MapModalComponent implements OnInit, OnDestroy {
     instructions.forEach((instruction: any) => {
       console.log(instruction.text);
     });  
+    const standard = L.icon({
+      iconUrl: '../../../assets/iconos/marker-icon.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    });     
     map.fitBounds(routeLine.getBounds());
   }  
   alternative(){
@@ -138,11 +143,14 @@ export class MapModalComponent implements OnInit, OnDestroy {
     this.watchId = navigator.geolocation.watchPosition((position) => {
       const latitud = position.coords.latitude;
       const longitud = position.coords.longitude;   
+      const standard = L.icon({
+        iconUrl: '../../../assets/iconos/marker-icon.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+      }); 
       if (this.control) {
-        this.control.setWaypoints([
-          L.latLng(latitud, longitud),
-          L.latLng(this.lat, this.long)
-        ]);
+        L.marker([latitud, longitud],{ icon: standard }).addTo(map);
+        L.marker([this.lat, this.long], { icon: standard }).addTo(map); 
       }
     }, (error) => {
       console.error(error);

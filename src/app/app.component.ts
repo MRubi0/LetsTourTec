@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { ScrollService } from './services/scroll.service';
 
 @Component({
   selector: 'app-root',
@@ -7,14 +8,14 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  constructor(private translate: TranslateService) {
-    this.initializeAppLanguage();
+  constructor(private translate: TranslateService, private scrollService:ScrollService) {
+    this.initializeAppLanguage();    
   }
-
-  initializeAppLanguage() {
-    // Obtener el idioma del navegador o usar 'en' como predeterminado si es undefined
+  ngAfterViewInit(){
+    this.scrollService.init();
+  }
+  initializeAppLanguage() {  
     const browserLang = this.translate.getBrowserLang() || 'en';
-    // Verificar si 'en' o 'es' están en browserLang y usar browserLang, de lo contrario usar 'en'
     const lang = localStorage.getItem('language') || (browserLang.match(/en|es/) ? browserLang : 'en');
     this.translate.use(lang);
   }
