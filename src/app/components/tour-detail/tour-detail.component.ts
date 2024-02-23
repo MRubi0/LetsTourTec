@@ -6,6 +6,7 @@ import { RoutingService } from 'src/app/services/routing.service';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { MapService } from 'src/app/services/map.service';
+import { TranslateService } from '@ngx-translate/core';
 // import { GraphHopperRouting } from 'leaflet-routing-machine/dist/leaflet-routing-machine';
 
 @Component({
@@ -30,6 +31,7 @@ export class TourDetailComponent {
     private sharedService:SharedService,
     private mapService:MapService,
     private router:Router,
+    private translateService: TranslateService,
     ){
       this.$url=this.sharedService.getImage;
       
@@ -49,6 +51,8 @@ export class TourDetailComponent {
     this.tour_id=id;
     this.toursDetailService.getTourDetail(id).subscribe((data: any) => {
       this.detail = data[0].fields;
+      //const res = this.translateService.instant(this.detail.descripcion, 'en');
+      //console.log(res);
       this.toursDetailService.getAdditionalLocations(id).subscribe((locationsData: any) => {
         const additionalLocations = locationsData.locations;
         this.convertedCoordinates = additionalLocations.map((coord:any) => [coord.long, coord.lat]);
