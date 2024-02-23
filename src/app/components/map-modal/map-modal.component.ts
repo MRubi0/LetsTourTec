@@ -89,7 +89,9 @@ export class MapModalComponent implements OnInit, OnDestroy {
       iconUrl: '../../../assets/iconos/marker-icon.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
-    });     
+    }); 
+    L.marker(coordinates[0],{ icon: standard }).addTo(map);
+    L.marker(coordinates[coordinates.length - 1], { icon: standard }).addTo(map);    
     map.fitBounds(routeLine.getBounds());
   }  
   alternative(){
