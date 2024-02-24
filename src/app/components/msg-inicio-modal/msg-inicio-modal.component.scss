@@ -15,10 +15,15 @@
 
 .content {
     overflow: auto;
-    height: 200px;
+    height: 210px;
     scrollbar-width: thin !important;
+    scrollbar-color: #0d6efd !important;
+}
+.content[_ngcontent-cyf-c58] {
     scrollbar-color: #0d6efd;
 }
 .mb-3 {
     margin-bottom: 0rem!important;
 }
+
+
