@@ -17,6 +17,8 @@ import dj_database_url
 import boto3
 from datetime import timedelta
 import logging
+import boto3
+from botocore.config import Config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -247,3 +249,19 @@ boto3.set_stream_logger(name='botocore')
 
 boto3.setup_default_session(aws_access_key_id='AKIAYTBLLQA7BS6GPBHU',
                             aws_secret_access_key='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')
+
+
+
+# Configuración personalizada con un timeout de conexión de 60 segundos
+# y un timeout de lectura de 300 segundos.
+my_config = Config(
+    connect_timeout=60,  # Tiempo de espera para la conexión en segundos
+    read_timeout=300,    # Tiempo de espera para la lectura en segundos
+    retries={'max_attempts': 10}  # Número de reintentos en caso de errores transitorios
+)
+
+# Crear un cliente S3 con la configuración personalizada
+s3_client = boto3.client('s3', config=my_config)
+
+# Ahora puedes usar este cliente para subir archivos, por ejemplo:
+# s3_client.upload_file('mi_archivo_local.txt', 'mi-bucket', 'mi_archivo_en_s3.txt')
