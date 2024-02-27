@@ -255,9 +255,9 @@ boto3.setup_default_session(aws_access_key_id='AKIAYTBLLQA7BS6GPBHU',
 # Configuración personalizada con un timeout de conexión de 60 segundos
 # y un timeout de lectura de 300 segundos.
 my_config = Config(
-    connect_timeout=60,  # Tiempo de espera para la conexión en segundos
-    read_timeout=300,    # Tiempo de espera para la lectura en segundos
-    retries={'max_attempts': 10}  # Número de reintentos en caso de errores transitorios
+    connect_timeout=90,  # Tiempo de espera para la conexión en segundos
+    read_timeout=450,    # Tiempo de espera para la lectura en segundos
+    retries={'max_attempts': 15}  # Número de reintentos en caso de errores transitorios
 )
 
 # Crear un cliente S3 con la configuración personalizada
