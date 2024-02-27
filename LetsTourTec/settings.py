@@ -186,7 +186,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'miguel6ortiz6@gmail.com'  # Tu dirección de correo electrónico
 EMAIL_HOST_PASSWORD = 'miguel1928'  # Tu contraseña de correo electrónico
 
-ALLOWED_HOSTS = ['letstourtec.com', 'www.letstourtec.com', 'letstourtec-c393a22f9c2b.herokuapp.com', 'localhost', '127.0.0.1', 'localhost:4200']
+ALLOWED_HOSTS = ['letstourtec.com', 'www.letstourtec.com', 'letstourtec-c393a22f9c2b.herokuapp.com', 'localhost', '127.0.0.1', 'localhost:4200', "https://letstourtec-testing-2ac790364c4e.herokuapp.com"]
 
 LOGGING = {
     'version': 1,
