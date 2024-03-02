@@ -23,7 +23,7 @@
             <h2>Encuesta</h2>
         </div>
         <div class="card-body">
-            <form (ngSubmit)="submitSurvey()">
+            <form #f="ngForm" (ngSubmit)="submitSurvey(f)">
 
 
                 <!-- Sección de preguntas sobre el usuario -->
@@ -31,26 +31,35 @@
                     <h3 class="card-title">Preguntas sobre el usuario</h3>
                     <div class="mb-3"></div>
                     <div class="form-group">
-                        <label for="pregunta1">1. Edad: </label>
-                        <input type="text" class="form-control" id="pregunta1" name="pregunta1" required ngModel>
+                        <label for="pregunta1">1. Edad:</label>
+                        <input type="text" class="form-control" id="pregunta1" name="pregunta1" required [(ngModel)]="edad" #edadField="ngModel">
+                        <div *ngIf="edadInvalida" class="alert alert-danger">
+                            La edad proporcionada no es válida. Por favor selecciona un número mayor que 0
+                          </div>
                     </div>
                     <div class="form-group">
                         <label for="pregunta2">2. Género:</label>
-                        <select class="form-control" id="pregunta2" name="pregunta2" required ngModel>
+                        <select class="form-control" id="pregunta2" name="pregunta2" required ngModel #genero="ngModel">
                             <option value="" disabled selected>Seleccione su género...</option>
                             <option>Masculino</option>
                             <option>Femenino</option>
                             <option>Otro / Prefiero no decirlo</option>
                         </select>
+                        <div *ngIf="genero.touched && genero.invalid" class="alert alert-danger">
+                            Por favor seleccione una respuesta
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="pregunta3">3. Nacionalidad:</label>
-                        <select class="form-control" id="pregunta3"  name="pregunta3" required ngModel>
-                            <option value="" disabled selected>Seleccione su nacionalidad...</option>
+                        <select class="form-control" id="pregunta3" name="pregunta3" required ngModel #nacionalidad="ngModel">
+                                                        <option value="" disabled selected>Seleccione su nacionalidad...</option>
                             <option>Española</option>
                             <option>Otra</option>
                         </select>
                         <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta3-1" name="subpregunta3-1" placeholder="Si es otra, ¿cuál?">
+                        <div *ngIf="nacionalidad.touched && nacionalidad.invalid" class="alert alert-danger">
+                            Por favor seleccione una respuesta.
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="pregunta4">4. ¿Cuántos viajes haces al año?</label>
@@ -216,10 +225,8 @@
                         <input type="text" class="form-control" id="pregunta22" name="pregunta22" ngModel>
                 </div></div></div>
                 <div class="mb-3"></div>
-                <button type="submit" class="btn btn-primary">Enviar</button>
-
-
-            </form>
+                <button type="submit" class="btn btn-primary" [disabled]="!f.valid">Enviar</button>
+</form>
         </div>
     </div>
 </div>

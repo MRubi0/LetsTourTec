@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/enviroment/enviroment';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-exit',
@@ -10,31 +10,34 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class ExitComponent {
   formData: FormData = new FormData();
-
+  edad: number = 0;
+  edadInvalida: boolean = false;
   constructor(private http: HttpClient) {}
 
-  submitSurvey() {
-    // Obtener el formulario
-    const form = document.querySelector('form');
-
-    // Verificar si el formulario existe
-    if (form) {
-      // Crear FormData solo si se encontró el formulario
-      this.formData = new FormData(form);
-
-      // Enviar los datos del formulario utilizando HttpClient
-      this.http.post<any>(`${environment.apiUrl}encuesta/`, this.formData)
+  submitSurvey(form: NgForm) {
+    if (form.valid && this.edad !== 0) {
+      // El formulario es válido y la edad no es 0, procede con el envío de los datos
+      const formData: any = new FormData();
+      Object.keys(form.value).forEach(key => {
+        // Aquí puedes decidir cómo manejar el valor de edad si es 0
+        formData.append(key, form.value[key]);
+      });
+  
+      this.http.post<any>(`${environment.apiUrl}encuesta/`, formData)
         .subscribe(
           data => {
             console.log('Datos enviados con éxito:', data);
-            // Aquí puedes manejar la respuesta si es necesario
           },
           error => {
             console.error('Error al enviar los datos:', error);
           }
         );
     } else {
-      console.error('No se encontró ningún formulario en la página');
+      if (this.edad <= 0) {
+        this.edadInvalida = true;
+        console.error('La edad proporcionada no es válida');
+        // Aquí puedes mostrar un mensaje de error en la UI
+      }alert('Por favor, completa todos los campos obligatorios.');
     }
   }
 }
