@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login, logout
@@ -10,9 +11,17 @@ import requests
 from django.urls import reverse_lazy
 from django.views import generic
 from django.http import JsonResponse
+from django.http import JsonResponse
+import base64
+import boto3
+from botocore.exceptions import ClientError
+from django.http import JsonResponse
+
 import sqlite3
 import math
 from math import radians, sin, cos, sqrt, atan2
+
+from LetsTourTec import settings
 from .forms import GuideForm, AudioFileForm, ImageFileForm, LocationForm, CustomUserCreationForm
 from .models import Guide, AudioFile, ImageFile, Location, CustomUser, Tour
 #from .models import LTtApp_paso
@@ -307,7 +316,57 @@ def upload_tour(request):
         return Response({'error': 'Invalid request method'}, status=405)
     return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
 
+@api_view(['POST'])
+def upload_tours(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            tipo_de_tour = data['tipo_de_tour']
+            titulo = data['titulo']
+            descripcion = data['descripcion']
+            imagen_base64 = data['imagen']
+            audio_base64 = data['audio']
+            latitude = data['latitude']
+            longitude = data['longitude']
+            duracion = data['duracion']
+            recorrido = data['recorrido']
+            extra_steps = data.get('extraSteps', [])
 
+
+            temp_image_path = f'temp_{titulo}_imagen.png'
+            save_base64_as_file(imagen_base64, temp_image_path)
+
+            upload_file_to_s3(temp_image_path, settings.AWS_STORAGE_BUCKET_NAME, 'tours/', f'{titulo}/imagen_principal.png')
+            
+            os.remove(temp_image_path)  
+            temp_audio_path = f'temp_{titulo}_audio.mp3'
+            save_base64_as_file(audio_base64, temp_audio_path)
+    
+            upload_file_to_s3(temp_audio_path, settings.AWS_STORAGE_BUCKET_NAME, 'tour_audio/', f'{titulo}/audio_principal.mp3')
+            os.remove(temp_audio_path)  
+
+            for step in extra_steps:
+                step_image_base64 = step['image']
+                step_audio_base64 = step['audio']
+                step_latitude = step['latitude']
+                step_longitude = step['longitude']
+                step_description = step['description']
+                step_title = step['tittle']
+
+                temp_step_image_path = f'temp_{titulo}_{step_title}_imagen.png'
+                save_base64_as_file(step_image_base64, temp_step_image_path)
+                upload_file_to_s3(temp_step_image_path, settings.AWS_STORAGE_BUCKET_NAME, 'tours', f'{titulo}/extra_steps/{step_title}/imagen.png')
+                os.remove(temp_step_image_path)  
+                temp_step_audio_path = f'temp_{titulo}_{step_title}_audio.mp3'
+                save_base64_as_file(step_audio_base64, temp_step_audio_path)
+                upload_file_to_s3(temp_step_audio_path, settings.AWS_STORAGE_BUCKET_NAME, 'tours', f'{titulo}/extra_steps/{step_title}/audio.mp3')
+                os.remove(temp_step_audio_path)
+
+            return JsonResponse({'message': 'Datos subidos correctamente a S3'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
 @csrf_exempt
 def register_view(request):
     if request.method == 'POST':
@@ -902,3 +961,23 @@ def get_routes(request):
         return JsonResponse(response.json(), safe=False)
 
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+def save_base64_as_file(base64_data, file_path):
+    try:
+        decoded_data = base64.b64decode(base64_data)
+        with open(file_path, 'wb') as f:
+            f.write(decoded_data)
+        return True
+    except Exception as e:
+        print(f"Error saving base64 data as file: {e}")
+        return False
+
+def upload_file_to_s3(file_path, bucket_name, folder_path, file_name):
+    try:
+        s3 = boto3.client('s3')
+        with open(file_path, 'rb') as f:
+            s3.put_object(Body=f, Bucket=bucket_name, Key=f'{folder_path}/{file_name}')
+        return True
+    except ClientError as e:
+        print(f"Error uploading file to S3: {e}")
+        return False
