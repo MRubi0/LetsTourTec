@@ -2,16 +2,16 @@
 <div class="about-us-section container mt-5">
     <div class="card">
         <div class="card-header">
-            <h2>¡Muchas gracias por hacer TOURismo con nosotros!</h2>
+            <h2>{{ "EXIT.Muchas_gracias_por_hacer_TOURismo_con_nosotros!" | translate }}</h2>
         </div>
         <div class="card-body">
             <div class="about-section">
-                <h3 class="card-title">Esperamos que hayas disfrutado de tu aventura y hayas aprendido muchas cosas...</h3>
-                <p class="card-text">Recuerda que hay más tours a tu disposición para que puedas seguir explorando</p>
+                <h3 class="card-title">{{ "EXIT.Esperamos_que_hayas_disfrutado_de_tu_aventura_y_hayas_aprendido_algo_nuevo..." | translate }}</h3>
+                <p class="card-text">{{ "EXIT.Recuerda_que_hay_más_tours_a_tu_disposición_para_que_puedas_seguir_explorando" | translate }}</p>
             </div>
             <div class="about-section">
-                <h3 class="card-title">Mantente en contacto</h3>
-                <p class="card-text">Agradeceríamos que realizaras una pequeña encuesta para ayudarnos a mejorar</p>
+                <h3 class="card-title">{{ "EXIT.Mantente_en_contacto" | translate }}</h3>
+                <p class="card-text">{{ "EXIT.Agradeceríamos_que_realizaras_una_pequeña_encuesta_para_ayudarnos_a_mejorar" | translate }}</p>
             </div>
         </div>
     </div>
@@ -20,7 +20,7 @@
 <div class="about-us-section container mt-5">
     <div class="card">
         <div class="card-header">
-            <h2>Encuesta</h2>
+            <h2>{{ "EXIT.Encuesta" | translate }}</h2>
         </div>
         <div class="card-body">
             <form #f="ngForm" (ngSubmit)="submitSurvey(f)">
@@ -28,22 +28,22 @@
 
                 <!-- Sección de preguntas sobre el usuario -->
                 <div class="user-questions">
-                    <h3 class="card-title">Preguntas sobre el usuario</h3>
+                    <h3 class="card-title">{{ "EXIT.Preguntas_sobre_el_usuario" | translate }}</h3>
                     <div class="mb-3"></div>
                     <div class="form-group">
-                        <label for="pregunta1">1. Edad:</label>
+                        <label for="pregunta1">1. {{ "EXIT.Edad:" | translate }}</label>
                         <input type="text" class="form-control" id="pregunta1" name="pregunta1" required [(ngModel)]="edad" #edadField="ngModel">
                         <div *ngIf="edadInvalida" class="alert alert-danger">
                             La edad proporcionada no es válida. Por favor selecciona un número mayor que 0
                           </div>
                     </div>
                     <div class="form-group">
-                        <label for="pregunta2">2. Género:</label>
+                        <label for="pregunta2">2. {{ "EXIT.Género:" | translate }}</label>
                         <select class="form-control" id="pregunta2" name="pregunta2" required ngModel #genero="ngModel">
-                            <option value="" disabled selected>Seleccione su género...</option>
-                            <option>Masculino</option>
-                            <option>Femenino</option>
-                            <option>Otro / Prefiero no decirlo</option>
+                            <option value="" disabled selected>{{ "EXIT.Seleccione_su_género..." | translate }}</option>
+                            <option value="Masculino">{{ "EXIT.Masculino" | translate }}</option>
+                            <option value="Femenino">{{ "EXIT.Femenino" | translate }}</option>
+                            <option value="Prefiero no decirlo">{{ "EXIT.Otro/Prefiero_no_decirlo" | translate }}</option>
                         </select>
                         <div *ngIf="genero.touched && genero.invalid" class="alert alert-danger">
                             Por favor seleccione una respuesta
