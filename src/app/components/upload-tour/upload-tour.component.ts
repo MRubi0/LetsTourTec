@@ -63,8 +63,8 @@ export class UploadTourComponent implements OnInit{
     
 
   submitTour() {
-    const formData = this.prepareSave();
-    this.uploadTourService.uploadTour(formData).subscribe(
+    //const formData = this.prepareSave();
+    this.uploadTourService.uploadTour(this.tourForm.value).subscribe(
       (response: any) => {
         
         console.log("Tour uploaded successfully", response);
@@ -121,13 +121,20 @@ export class UploadTourComponent implements OnInit{
     fileInput.nativeElement.click();
   }
   
+  convertirABase64(file: File, field:string) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {       
+      this.tourForm.get(field)?.setValue(reader.result as string);
+    };
+  }
 
-  onFileSelect(event: any, field: string) {
+  onFileSelect(event: any, field: string) { 
     event.preventDefault();
-    const file = event.target.files[0];
-    if (file) {
-      this.tourForm.get(field)?.setValue(file);
-
+    const file = event.target.files[0];    
+   if (file) {
+        this.convertirABase64(file, field);           
+        console.log('this.tourForm.value ', this.tourForm.value);
       let elementId = '';
 
       if (field.startsWith('extraSteps')) {
@@ -152,7 +159,7 @@ export class UploadTourComponent implements OnInit{
       displayElement.textContent = file.name;
     }
   }
-}
+  }
 
 
 }
