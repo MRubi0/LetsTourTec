@@ -49,6 +49,13 @@
   "EXIT.Masculino":"Masculino",
   "EXIT.Femenino": "Femenino",
   "EXIT.Otro/Prefiero_no_decirlo": "Otro / Prefiero no decirlo",
+  "EXIT.Por_favor_seleccione_una_respuesta": "Por favor seleccione una respuesta",
+  "EXIT.La_edad_proporcionada_no_es_válida._Por_favor_selecciona_un_número_mayor_que_0": "La edad proporcionada no es válida. Por favor selecciona un número mayor que 0",
+  "EXIT.Nacionalidad:": "Nacionalidad:",
+  "EXIT.Seleccione_su_nacionalidad...": "Seleccione su nacionalidad...",
+  "EXIT.Española": "Española",
+  "EXIT.Otra": "Otra",
+  "EXIT.Si_es_otra,_¿cuál?": "Si es otra, ¿cuál?",
 
 
 

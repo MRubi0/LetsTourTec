@@ -49,6 +49,13 @@
   "EXIT.Masculino":"Male",
   "EXIT.Femenino": "Female",
   "EXIT.Otro/Prefiero_no_decirlo": "Other / I prefer not to say",
+  "EXIT.Por_favor_seleccione_una_respuesta": "Please select an answer",
+  "EXIT.La_edad_proporcionada_no_es_válida._Por_favor_selecciona_un_número_mayor_que_0": "The age provided is not valid. Please select a number greater than 0",
+  "EXIT.Nacionalidad:": "Nationality:",
+  "EXIT.Seleccione_su_nacionalidad...": "Select your nationality...",
+  "EXIT.Española": "Spanish",
+  "EXIT.Otra": "Other",
+  "EXIT.Si_es_otra,_¿cuál?": "If the answer is 'other', which one?",
 
   "MY-PROFILE.Welcome_back": "Welcome back",
   "MAP-MODAL.Let's_go_to_the_next_point": "Let's go to the next point",

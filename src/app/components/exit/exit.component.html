@@ -46,19 +46,19 @@
                             <option value="Prefiero no decirlo">{{ "EXIT.Otro/Prefiero_no_decirlo" | translate }}</option>
                         </select>
                         <div *ngIf="genero.touched && genero.invalid" class="alert alert-danger">
-                            Por favor seleccione una respuesta
+                            {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="pregunta3">3. Nacionalidad:</label>
+                        <label for="pregunta3">3.  {{ "EXIT.Nacionalidad:" | translate }}</label>
                         <select class="form-control" id="pregunta3" name="pregunta3" required ngModel #nacionalidad="ngModel">
-                                                        <option value="" disabled selected>Seleccione su nacionalidad...</option>
-                            <option>Española</option>
-                            <option>Otra</option>
+                            <option value="" disabled selected> {{ "EXIT.Seleccione_su_nacionalidad..." | translate }}</option>
+                            <option value="Española"> {{ "EXIT.Española" | translate }}</option>
+                            <option value="Otra"> {{ "EXIT.Otra" | translate }}</option>
                         </select>
-                        <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta3-1" name="subpregunta3-1" placeholder="Si es otra, ¿cuál?">
+                        <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta3-1" name="subpregunta3-1" placeholder= '{{ "EXIT.Si_es_otra,_¿cuál?" | translate }}'>
                         <div *ngIf="nacionalidad.touched && nacionalidad.invalid" class="alert alert-danger">
-                            Por favor seleccione una respuesta.
+                            {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
                         </div>
                     </div>
                     <div class="form-group">
