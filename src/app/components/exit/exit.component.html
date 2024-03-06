@@ -2,16 +2,16 @@
 <div class="about-us-section container mt-5">
     <div class="card">
         <div class="card-header">
-            <h2>¡Muchas gracias por hacer TOURismo con nosotros!</h2>
+            <h2>{{ "EXIT.Muchas_gracias_por_hacer_TOURismo_con_nosotros!" | translate }}</h2>
         </div>
         <div class="card-body">
             <div class="about-section">
-                <h3 class="card-title">Esperamos que hayas disfrutado de tu aventura y hayas aprendido muchas cosas...</h3>
-                <p class="card-text">Recuerda que hay más tours a tu disposición para que puedas seguir explorando</p>
+                <h3 class="card-title">{{ "EXIT.Esperamos_que_hayas_disfrutado_de_tu_aventura_y_hayas_aprendido_algo_nuevo..." | translate }}</h3>
+                <p class="card-text">{{ "EXIT.Recuerda_que_hay_más_tours_a_tu_disposición_para_que_puedas_seguir_explorando" | translate }}</p>
             </div>
             <div class="about-section">
-                <h3 class="card-title">Mantente en contacto</h3>
-                <p class="card-text">Agradeceríamos que realizaras una pequeña encuesta para ayudarnos a mejorar</p>
+                <h3 class="card-title">{{ "EXIT.Mantente_en_contacto" | translate }}</h3>
+                <p class="card-text">{{ "EXIT.Agradeceríamos_que_realizaras_una_pequeña_encuesta_para_ayudarnos_a_mejorar" | translate }}</p>
             </div>
         </div>
     </div>
@@ -20,41 +20,50 @@
 <div class="about-us-section container mt-5">
     <div class="card">
         <div class="card-header">
-            <h2>Encuesta</h2>
+            <h2>{{ "EXIT.Encuesta" | translate }}</h2>
         </div>
         <div class="card-body">
-            <form (ngSubmit)="submitSurvey()">
+            <form #f="ngForm" (ngSubmit)="submitSurvey(f)">
 
 
                 <!-- Sección de preguntas sobre el usuario -->
                 <div class="user-questions">
-                    <h3 class="card-title">Preguntas sobre el usuario</h3>
+                    <h3 class="card-title">{{ "EXIT.Preguntas_sobre_el_usuario" | translate }}</h3>
                     <div class="mb-3"></div>
                     <div class="form-group">
-                        <label for="pregunta1">1. Edad: </label>
-                        <input type="text" class="form-control" id="pregunta1" name="pregunta1">
+                        <label for="pregunta1">1. {{ "EXIT.Edad:" | translate }}</label>
+                        <input type="text" class="form-control" id="pregunta1" name="pregunta1" required [(ngModel)]="edad" #edadField="ngModel">
+                        <div *ngIf="edadInvalida" class="alert alert-danger">
+                            La edad proporcionada no es válida. Por favor selecciona un número mayor que 0
+                          </div>
                     </div>
                     <div class="form-group">
-                        <label for="pregunta2">2. Género:</label>
-                        <select class="form-control" id="pregunta2" name="pregunta2">
-                            <option value="" disabled selected>Seleccione su género...</option>
-                            <option>Masculino</option>
-                            <option>Femenino</option>
-                            <option>Prefiero no decirlo</option>
+                        <label for="pregunta2">2. {{ "EXIT.Género:" | translate }}</label>
+                        <select class="form-control" id="pregunta2" name="pregunta2" required ngModel #genero="ngModel">
+                            <option value="" disabled selected>{{ "EXIT.Seleccione_su_género..." | translate }}</option>
+                            <option value="Masculino">{{ "EXIT.Masculino" | translate }}</option>
+                            <option value="Femenino">{{ "EXIT.Femenino" | translate }}</option>
+                            <option value="Prefiero no decirlo">{{ "EXIT.Otro/Prefiero_no_decirlo" | translate }}</option>
                         </select>
+                        <div *ngIf="genero.touched && genero.invalid" class="alert alert-danger">
+                            {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="pregunta3">3. Nacionalidad:</label>
-                        <select class="form-control" id="pregunta3" name="pregunta3">
-                            <option value="" disabled selected>Seleccione su nacionalidad...</option>
-                            <option>Española</option>
-                            <option>Otra</option>
+                        <label for="pregunta3">3.  {{ "EXIT.Nacionalidad:" | translate }}</label>
+                        <select class="form-control" id="pregunta3" name="pregunta3" required ngModel #nacionalidad="ngModel">
+                            <option value="" disabled selected> {{ "EXIT.Seleccione_su_nacionalidad..." | translate }}</option>
+                            <option value="Española"> {{ "EXIT.Española" | translate }}</option>
+                            <option value="Otra"> {{ "EXIT.Otra" | translate }}</option>
                         </select>
-                        <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta3-1" name="subpregunta3-1" placeholder="Si es otra, ¿cuál?">
+                        <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta3-1" name="subpregunta3-1" placeholder= '{{ "EXIT.Si_es_otra,_¿cuál?" | translate }}'>
+                        <div *ngIf="nacionalidad.touched && nacionalidad.invalid" class="alert alert-danger">
+                            {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="pregunta4">4. ¿Cuántos viajes haces al año?</label>
-                        <select class="form-control" id="pregunta4" name="pregunta4">
+                        <select class="form-control" id="pregunta4" name="pregunta4" required ngModel>
                             <option value="" disabled selected>Seleccione la cantidad de viajes...</option>
                             <option>Menos de 3</option>
                             <option>Entre 3 y 5</option>
@@ -63,7 +72,7 @@
                     </div>
                     <div class="form-group">
                         <label for="pregunta5">5. ¿Y cuántos tours haces al año?</label>
-                        <select class="form-control" id="pregunta5" name="pregunta5">
+                        <select class="form-control" id="pregunta5" name="pregunta5" required ngModel>
                             <option value="" disabled selected>Seleccione la cantidad de tours...</option>
                             <option>Menos de 3</option>
                             <option>Entre 3 y 5</option>
@@ -79,7 +88,7 @@
                     <div class="mb-3"></div>
                     <div class="form-group">
                         <label for="pregunta6">6. Valora el tour realizado:</label>
-                        <select class="form-control" id="pregunta6" name="pregunta6">
+                        <select class="form-control" id="pregunta6" name="pregunta6" required ngModel>
                             <option value="" disabled selected>Seleccione su valoración...</option>
                             <option>Muy poco satisfecho</option>
                             <option>Poco satisfecho</option>
@@ -90,7 +99,7 @@
                     </div>
                     <div class="form-group">
                         <label for="pregunta7">7. Valora el contenido del tour realizado:</label>
-                        <select class="form-control" id="pregunta7" name="pregunta7">
+                        <select class="form-control" id="pregunta7" name="pregunta7" required ngModel>
                             <option value="" disabled selected>Seleccione su valoración...</option>
                             <option>Muy poco satisfecho</option>
                             <option>Poco satisfecho</option>
@@ -102,7 +111,7 @@
                     </div>
                     <div class="form-group">
                         <label for="pregunta8">8. Valora el formato en el que se ha presentado el tour:</label>
-                        <select class="form-control" id="pregunta8" name="pregunta8">
+                        <select class="form-control" id="pregunta8" name="pregunta8" required ngModel>
                             <option value="" disabled selected>Seleccione su valoración...</option>
                             <option>Muy poco satisfecho</option>
                             <option>Poco satisfecho</option>
@@ -115,7 +124,7 @@
                     </div>
                     <div class="form-group">
                         <label for="pregunta9">9. Valora la duración del tour:</label>
-                        <select class="form-control" id="pregunta9" name="pregunta9">
+                        <select class="form-control" id="pregunta9" name="pregunta9" required ngModel>
                             <option value="" disabled selected>Seleccione su valoración...</option>
                             <option>Largo</option>
                             <option>Adecuado</option>
@@ -124,31 +133,31 @@
                     </div>
                     <div class="form-group">
                         <label for="pregunta10">10. ¿Cuál crees que sería la duración óptima para este tipo de tours?</label>
-                        <input type="text" class="form-control" id="pregunta10" name="pregunta10">
+                        <input type="text" class="form-control" id="pregunta10" name="pregunta10" required ngModel>
                     </div>
                     <div class="form-group">
-                        <label for="pregunta11">11. ¿El producto te ayuda a lograr tus objetivos?</label>
-                        <select class="form-control" id="pregunta11" name="pregunta11">
+                        <label for="pregunta11">11. ¿La plataforma te ayuda a lograr tus objetivos?</label>
+                        <select class="form-control" id="pregunta11" name="pregunta11" required ngModel>
                             <option value="" disabled selected>Seleccione una opción...</option>
                             <option>Sí</option>
                             <option>No</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="pregunta12">12. ¿Qué características del producto consideras más valiosas?</label>
-                        <input type="text" class="form-control" id="pregunta12" name="pregunta12">
+                        <label for="pregunta12">12. ¿Qué características de la plataforma consideras más valiosas?</label>
+                        <input type="text" class="form-control" id="pregunta12" name="pregunta12" ngModel>
                     </div>
                     <div class="form-group">
                         <label for="pregunta13">13. ¿Y la menos valiosa?</label>
-                        <input type="text" class="form-control" id="pregunta13" name="pregunta13">
+                        <input type="text" class="form-control" id="pregunta13" name="pregunta13" ngModel>
                     </div>
                     <div class="form-group">
-                        <label for="pregunta14">14. ¿Qué puntos de fricción has encontrado al usar el producto? Si pudieras, ¿qué mejorarías?</label>
-                        <input type="text" class="form-control" id="pregunta14" name="pregunta14">
+                        <label for="pregunta14">14. Al usar la plataforma, ¿has encontrado algún problema que no te ha permitido realizar el tour correctamente? Si pudieras, ¿qué mejorarías?</label>
+                        <input type="text" class="form-control" id="pregunta14" name="pregunta14" ngModel>
                     </div>
                     <div class="form-group">
-                        <label for="pregunta15">15. ¿Utilizarías el producto en tus próximas vacaciones?</label>
-                        <select class="form-control" id="pregunta15" name="pregunta15">
+                        <label for="pregunta15">15. ¿Utilizarías la plataforma en tus próximas vacaciones?</label>
+                        <select class="form-control" id="pregunta15" name="pregunta15" required ngModel>
                             <option value="" disabled selected>Seleccione una opción...</option>
                             <option>Sí</option>
                             <option>No</option>
@@ -156,7 +165,7 @@
                     </div>
                     <div class="form-group">
                         <label for="pregunta16">16. ¿Qué tan probable es que recomiendes "Let's Tour Tec" a otras personas?</label>
-                        <select class="form-control" id="pregunta16" name="pregunta16">
+                        <select class="form-control" id="pregunta16" name="pregunta16" required ngModel>
                             <option value="" disabled selected>Seleccione una probabilidad...</option>
                             <option>Muy improbable</option>
                             <option>Improbable</option>
@@ -167,7 +176,7 @@
                     </div>
                     <div class="form-group">
                         <label for="pregunta17">17. ¿Qué probabilidad hay de que vuelvas a realizar un tour con "Let's Tour Tec"?</label>
-                        <select class="form-control" id="pregunta17" name="pregunta17">
+                        <select class="form-control" id="pregunta17" name="pregunta17" required ngModel>
                             <option value="" disabled selected>Seleccione una probabilidad...</option>
                             <option>Muy improbable</option>
                             <option>Improbable</option>
@@ -178,7 +187,7 @@
                     </div>
                     <div class="form-group">
                         <label for="pregunta18">18. ¿Crees que la flexibilidad de horarios e idioma es una ventaja competitiva respecto a los tours convencionales?</label>
-                        <select class="form-control" id="pregunta18" name="pregunta18">
+                        <select class="form-control" id="pregunta18" name="pregunta18" required ngModel>
                             <option value="" disabled selected>Seleccione una opción...</option>
                             <option>Sí</option>
                             <option>No</option>
@@ -186,7 +195,7 @@
                     </div>
                     <div class="form-group">
                         <label for="pregunta19">19. ¿Cuál crees que es la mejor manera de tener acceso a este tipo de tours?</label>
-                        <select class="form-control" id="pregunta19" name="pregunta19">
+                        <select class="form-control" id="pregunta19" name="pregunta19" required ngModel>
                             <option value="" disabled selected>Seleccione una opción...</option>
                             <option>Pagar antes de realizar el tour una cantidad fija</option>
                             <option>Pagar al final del tour la cantidad que consideres</option>
@@ -196,11 +205,11 @@
                     </div>
                     <div class="form-group">
                         <label for="pregunta20">20. ¿Cuánto estarías dispuesto a pagar por uno de estos tours?</label>
-                        <input type="text" class="form-control" id="pregunta20" name="pregunta20">
+                        <input type="text" class="form-control" id="pregunta20" name="pregunta20" ngModel>
                     </div>
                     <div class="form-group">
                         <label for="pregunta21">21. ¿Le gustaría que la aplicación tuviera formato red social para poder compartir o encontrar los viajes y tours que mejor se adaptan a su estilo de vida?</label>
-                        <select class="form-control" id="pregunta21" name="pregunta21">
+                        <select class="form-control" id="pregunta21" name="pregunta21" ngModel>
                             <option value="" disabled selected>Seleccione una opción...</option>
                             <option>Sí</option>
                             <option>No</option>
@@ -213,13 +222,11 @@
                     <div class="mb-3"></div>
                     <div class="form-group">
                         <label for="pregunta22">22. Si quisieras mantenerte al tanto de nuestras actualizaciones nos encantaría disponer de tu correo electrónico: </label>
-                        <input type="text" class="form-control" id="pregunta22" name="pregunta22">
+                        <input type="text" class="form-control" id="pregunta22" name="pregunta22" ngModel>
                 </div></div></div>
                 <div class="mb-3"></div>
-                <button type="submit" class="btn btn-primary">Enviar</button>
-
-
-            </form>
+                <button type="submit" class="btn btn-primary" [disabled]="!f.valid">Enviar</button>
+</form>
         </div>
     </div>
 </div>
