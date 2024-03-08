@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/enviroment/enviroment';
-import { FormGroup, FormControl, Validators, NgForm } from '@angular/forms';
+import { FormGroup, FormControl, Validators, NgForm, FormBuilder } from '@angular/forms';
+import { CountdownEComponent } from '../generics/countdown-e/countdown-e.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-exit',
@@ -12,8 +14,40 @@ export class ExitComponent {
   formData: FormData = new FormData();
   edad: number = 0;
   edadInvalida: boolean = false;
-  constructor(private http: HttpClient) {}
 
+  finishForm!: FormGroup;
+
+  constructor(private http: HttpClient, public ngbModal: NgbModal, private formBuilder: FormBuilder) {}
+
+  ngOnInit(){
+    this.finishForm = this.formBuilder.group({
+      age: ['', [Validators.required, Validators.min(13)]],
+      gender: ['', [Validators.required]],
+      nationality: ['', [Validators.required]],
+      travels:['', [Validators.required]],
+      toursForYear:['', [Validators.required]],
+      value:['', [Validators.required]],
+      format:['', [Validators.required]],
+      duration:['', [Validators.required]],
+      content:['', [Validators.required]],
+      correct_duration:['', [Validators.required]],
+      objectives:['', [Validators.required]],
+      most_value:['', [Validators.required]],
+      less_value:['', [Validators.required]],
+      next_vacations:['', [Validators.required]],
+      problems:['', [Validators.required]],
+      recomendation:['', [Validators.required]],
+      probability:['', [Validators.required]],
+      flexibility:['', [Validators.required]],
+      acces:['', [Validators.required]],
+      payfor:['', [Validators.required]],
+      socialmedia:['', [Validators.required]],
+      actualizations:['', [Validators.required]],
+    });
+    this.finishForm.valueChanges.subscribe(data=>{
+      console.log('data ', data);
+    });
+  }
   submitSurvey(form: NgForm) {
     if (form.valid && this.edad !== 0) {
       // El formulario es válido y la edad no es 0, procede con el envío de los datos
@@ -40,4 +74,8 @@ export class ExitComponent {
       }alert('Por favor, completa todos los campos obligatorios.');
     }
   }
+  onSubmit() { 
+    this.ngbModal.open(CountdownEComponent,{ size: 'sm'});
+  }
+  
 }

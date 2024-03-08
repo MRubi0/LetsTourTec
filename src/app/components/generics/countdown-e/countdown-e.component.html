@@ -1,0 +1,14 @@
+<div class="container d-flex justify-content-center flex-wrap">
+    <div class="title">
+      <h1>Gracias por llenar esta encuesta, volveras a la pantalla de inicio en:</h1>
+    </div>
+    <div>
+        <h2>
+            {{countdown}}
+        </h2> 
+    </div>    
+</div>
+<div class="modal-footer d-flex justify-content-center mt-3">
+    <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="accept()" >Aceptar</button>
+</div>

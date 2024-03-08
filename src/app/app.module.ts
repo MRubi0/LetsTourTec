@@ -52,6 +52,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CountdownComponent } from './components/generics/countdown/countdown.component';
 import { MiModalComponent } from './components/mi-modal/mi-modal.component';
 import { MsgInicioModalComponent } from './components/msg-inicio-modal/msg-inicio-modal.component';
+import { CountdownEComponent } from './components/generics/countdown-e/countdown-e.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -86,7 +87,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     MusicPlayerDetailComponent,
     CountdownComponent,
     MiModalComponent,
-    MsgInicioModalComponent,   
+    MsgInicioModalComponent,
+    CountdownEComponent,   
   ],
   imports: [
     BrowserModule,
