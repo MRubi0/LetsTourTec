@@ -21,7 +21,7 @@ export class ExitComponent {
 
   ngOnInit(){
     this.finishForm = this.formBuilder.group({
-      age: ['', [Validators.required, Validators.min(13)]],
+      age: ['', [Validators.required, Validators.min(0)]],
       gender: ['', [Validators.required]],
       nationality: ['', [Validators.required]],
       travels:['', [Validators.required]],
