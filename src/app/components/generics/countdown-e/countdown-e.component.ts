@@ -36,8 +36,8 @@ export class CountdownEComponent {
     this.validate=true;
   }
 
-  cancel(): void {
-    this.ngbModal.dismissAll("close");
-    this.validate=true;
-  }
+  // cancel(): void {
+  //   this.ngbModal.dismissAll("close");
+  //   this.validate=true;
+  // }
 }
