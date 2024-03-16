@@ -274,12 +274,7 @@
             <option>Menos de 3</option>
             <option>Entre 3 y 5</option>
             <option>Más de 5</option>
-        </select>
-        <div *ngIf="finishForm.get('travels') && finishForm.get('travels')?.invalid && (finishForm.get('travels')?.dirty || finishForm.get('travels')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('travels') && finishForm.get('travels')?.errors && finishForm.get('travels')?.errors?.['required']">
-                Este campo es requerida
-            </div>
-        </div>
+        </select>        
     </div>
 
     <div class="form-group">
@@ -289,12 +284,7 @@
             <option>Menos de 3</option>
             <option>Entre 3 y 5</option>
             <option>Más de 5</option>
-        </select>
-        <div *ngIf="finishForm.get('toursForYear') && finishForm.get('toursForYear')?.invalid && (finishForm.get('toursForYear')?.dirty || finishForm.get('toursForYear')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('toursForYear') && finishForm.get('toursForYear')?.errors && finishForm.get('toursForYear')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
+        </select>      
     </div>
 
     <div class="form-group">
@@ -306,12 +296,7 @@
             <option>Normal</option>
             <option>Satisfecho</option>
             <option>Muy satisfecho</option>
-        </select>
-        <div *ngIf="finishForm.get('value') && finishForm.get('value')?.invalid && (finishForm.get('value')?.dirty || finishForm.get('value')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('value') && finishForm.get('value')?.errors && finishForm.get('value')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
+        </select>        
     </div>
 
     <div class="form-group">
@@ -323,12 +308,7 @@
             <option>Normal</option>
             <option>Satisfecho</option>
             <option>Muy satisfecho</option>
-        </select>
-        <div *ngIf="finishForm.get('content') && finishForm.get('content')?.invalid && (finishForm.get('content')?.dirty || finishForm.get('content')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('content') && finishForm.get('content')?.errors && finishForm.get('content')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
+        </select>       
     </div>
 
    <div class="form-group">
@@ -340,12 +320,7 @@
             <option>Normal</option>
             <option>Satisfecho</option>
             <option>Muy satisfecho</option>
-        </select>
-        <div *ngIf="finishForm.get('format') && finishForm.get('format')?.invalid && (finishForm.get('format')?.dirty || finishForm.get('format')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('format') && finishForm.get('format')?.errors && finishForm.get('format')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
+        </select>        
         <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta8-1" name="subpregunta8-1" placeholder="¿Qué es lo que más te ha gustado?">
         <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta8-2" name="subpregunta8-2" placeholder="¿Y lo que menos?">
     </div>
@@ -356,22 +331,12 @@
             <option>Largo</option>
             <option>Adecuado</option>
             <option>Corto</option>
-        </select>
-        <div *ngIf="finishForm.get('duration') && finishForm.get('duration')?.invalid && (finishForm.get('duration')?.dirty || finishForm.get('duration')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('duration') && finishForm.get('duration')?.errors && finishForm.get('duration')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
+        </select>        
     </div>
     <div class="form-group">
         <label for="pregunta10">10. ¿Cuál crees que sería la duración óptima para este tipo de tours?</label>
         <input type="text" class="form-control" name="pregunta10" formControlName="correct_duration">
-
-        <div *ngIf="finishForm.get('correct_duration') && finishForm.get('correct_duration')?.invalid && (finishForm.get('correct_duration')?.dirty || finishForm.get('correct_duration')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('correct_duration') && finishForm.get('correct_duration')?.errors && finishForm.get('correct_duration')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
+       
     </div>
     <div class="form-group">
         <label for="pregunta11">11. ¿La plataforma te ayuda a lograr tus objetivos?</label>
@@ -379,46 +344,22 @@
             <option value="" disabled selected>Seleccione una opción...</option>
             <option>Sí</option>
             <option>No</option>
-        </select>
-
-        <div *ngIf="finishForm.get('objectives') && finishForm.get('objectives')?.invalid && (finishForm.get('objectives')?.dirty || finishForm.get('objectives')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('objectives') && finishForm.get('objectives')?.errors && finishForm.get('objectives')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
+        </select>       
     </div>
     <div class="form-group">
         <label for="pregunta12">12. ¿Qué características de la plataforma consideras más valiosas?</label>
-        <input type="text" class="form-control"name="pregunta12" formControlName="most_value">
-
-        <div *ngIf="finishForm.get('most_value') && finishForm.get('most_value')?.invalid && (finishForm.get('most_value')?.dirty || finishForm.get('most_value')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('most_value') && finishForm.get('most_value')?.errors && finishForm.get('most_value')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
+        <input type="text" class="form-control"name="pregunta12" formControlName="most_value">       
     </div>
 
     <div class="form-group">
         <label for="pregunta13">13. ¿Y la menos valiosa?</label>
         <input type="text" class="form-control" name="pregunta13" formArrayName="less_value">
-
-        <div *ngIf="finishForm.get('less_value') && finishForm.get('less_value')?.invalid && (finishForm.get('less_value')?.dirty || finishForm.get('less_value')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('less_value') && finishForm.get('less_value')?.errors && finishForm.get('less_value')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
     </div>
 
 
     <div class="form-group">
         <label for="pregunta14">14. Al usar la plataforma, ¿has encontrado algún problema que no te ha permitido realizar el tour correctamente? Si pudieras, ¿qué mejorarías?</label>
         <input type="text" class="form-control" name="pregunta13" formControlName="problems">
-
-        <div *ngIf="finishForm.get('problems') && finishForm.get('problems')?.invalid && (finishForm.get('problems')?.dirty || finishForm.get('problems')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('problems') && finishForm.get('problems')?.errors && finishForm.get('problems')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
     </div>
 
     <div class="form-group">
@@ -428,12 +369,6 @@
             <option>Sí</option>
             <option>No</option>
         </select>
-
-        <div *ngIf="finishForm.get('next_vacations') && finishForm.get('next_vacations')?.invalid && (finishForm.get('next_vacations')?.dirty || finishForm.get('next_vacations')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('next_vacations') && finishForm.get('next_vacations')?.errors && finishForm.get('next_vacations')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
     </div>
 
 
@@ -447,12 +382,6 @@
             <option>Probable</option>
             <option>Muy probable</option>
         </select>
-
-        <div *ngIf="finishForm.get('recomendation') && finishForm.get('recomendation')?.invalid && (finishForm.get('recomendation')?.dirty || finishForm.get('recomendation')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('recomendation') && finishForm.get('recomendation')?.errors && finishForm.get('recomendation')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
     </div>
 
     <div class="form-group">
@@ -461,12 +390,7 @@
             <option value="" disabled selected>Seleccione una opción...</option>
             <option>Sí</option>
             <option>No</option>
-        </select>
-        <div *ngIf="finishForm.get('flexibility') && finishForm.get('flexibility')?.invalid && (finishForm.get('flexibility')?.dirty || finishForm.get('flexibility')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('flexibility') && finishForm.get('flexibility')?.errors && finishForm.get('flexibility')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
+        </select>        
     </div> 
 
 
@@ -479,23 +403,12 @@
             <option>Pagar al final del tour la cantidad que consideres</option>
             <option>Poder tener otras opciones de pagar el tour. Por ejemplo, viendo anuncios</option>
             <option>Pagar una suscripción mensual</option>
-        </select>
-        <div *ngIf="finishForm.get('acces') && finishForm.get('acces')?.invalid && (finishForm.get('acces')?.dirty || finishForm.get('acces')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('acces') && finishForm.get('acces')?.errors && finishForm.get('acces')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
+        </select>        
     </div> 
 
     <div class="form-group">
         <label for="pregunta20">20. ¿Cuánto estarías dispuesto a pagar por uno de estos tours?</label>
         <input type="text" class="form-control" id="pregunta20" name="pregunta20" formControlName="payfor">
-
-        <div *ngIf="finishForm.get('payfor') && finishForm.get('payfor')?.invalid && (finishForm.get('payfor')?.dirty || finishForm.get('payfor')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('payfor') && finishForm.get('payfor')?.errors && finishForm.get('payfor')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
     </div> 
 
 
@@ -507,13 +420,6 @@
             <option>Sí</option>
             <option>No</option>
         </select>
-
-
-        <div *ngIf="finishForm.get('socialmedia') && finishForm.get('socialmedia')?.invalid && (finishForm.get('socialmedia')?.dirty || finishForm.get('socialmedia')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('socialmedia') && finishForm.get('socialmedia')?.errors && finishForm.get('socialmedia')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
     </div> 
 
         <div class="mail-questions">

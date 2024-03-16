@@ -71,9 +71,18 @@ export class TourDetailComponent {
        console.log(data.message); 
        this.alternative();
       }else{
-        this.lat = data.paths[0].points.coordinates[0][1];
-        this.long = data.paths[0].points.coordinates[0][0];
-        this.displayRouteOnMap(data);
+        
+        if(data.length>1){
+          const coordinates = data.reduce((acc: any[], res: any) => {
+            const resCoordinates = res.paths[0].points.coordinates;
+            return acc.concat(resCoordinates);
+          }, []);
+          data.length = 1
+          data[0].paths[0].points.coordinates=coordinates;                 
+        }
+        this.lat = data[0].paths[0].points.coordinates[0][1];
+        this.long = data[0].paths[0].points.coordinates[0][0];
+        this.displayRouteOnMap(data[0]);
       }
       
     });
