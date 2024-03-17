@@ -951,14 +951,20 @@ def get_routes(request):
         request_body = request.body
         try:
             data = json.loads(request_body)
+            if not isinstance(data, list):
+                data = [data]  
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
 
         key = '74f72b76-bb28-4bb8-b862-a756103cb2b1'
         url = f'https://graphhopper.com/api/1/route?key={key}'
-
-        response = requests.post(url, json=data)
-        return JsonResponse(response.json(), safe=False)
+        
+        consolidated_response = []
+        for i in range(0, len(data[0]['points']), 5):
+            chunk = data[0]['points'][i:i+5]             
+            response = requests.post(url, json={'points': chunk, "points_encoded": False, "profile": "foot"})            
+            consolidated_response.append(response.json())        
+        return JsonResponse(consolidated_response, safe=False)
 
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
