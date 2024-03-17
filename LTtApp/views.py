@@ -221,7 +221,7 @@ def login_view(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def upload_tour(request):
+def upload_tours(request):
     print("Solicitud recibida con los siguientes datos: %s", request.FILES)
     error_message = None
     auth_header = request.META.get('HTTP_AUTHORIZATION')
@@ -316,11 +316,21 @@ def upload_tour(request):
         return Response({'error': 'Invalid request method'}, status=405)
     return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
 
+""" 
 @api_view(['POST'])
 def upload_tours(request):
     if request.method == 'POST':
+        print("Intentando decodificar el cuerpo de la petición...")
         try:
-            data = json.loads(request.body)
+            print("Mostrando los primeros 200 bytes del cuerpo de la petición:")
+            print(request.body[:200])
+            data = json.loads(request.body) 
+        except Exception as e:
+            print(f"Error al decodificar el cuerpo de la petición: {e}")
+            return JsonResponse({'error': 'Error al decodificar el cuerpo de la petición'}, status=400)
+
+        try:
+            print("Datos de la petición decodificados correctamente.")
             tipo_de_tour = data['tipo_de_tour']
             titulo = data['titulo']
             descripcion = data['descripcion']
@@ -332,20 +342,30 @@ def upload_tours(request):
             recorrido = data['recorrido']
             extra_steps = data.get('extraSteps', [])
 
+            print(f"Procesando tour: {titulo}")
 
             temp_image_path = f'temp_{titulo}_imagen.png'
+            print(f"Guardando imagen temporal: {temp_image_path}")
             save_base64_as_file(imagen_base64, temp_image_path)
 
-            upload_file_to_s3(temp_image_path, settings.AWS_STORAGE_BUCKET_NAME, 'tours/', f'{titulo}/imagen_principal.png')
-            
-            os.remove(temp_image_path)  
+            print(f"Subiendo imagen a S3: {temp_image_path}")
+            upload_file_to_s3(temp_image_path, AWS_STORAGE_BUCKET_NAME, 'tours/', f'{titulo}/imagen_principal.png')
+
+            print(f"Eliminando imagen temporal: {temp_image_path}")
+            os.remove(temp_image_path)
+
             temp_audio_path = f'temp_{titulo}_audio.mp3'
+            print(f"Guardando audio temporal: {temp_audio_path}")
             save_base64_as_file(audio_base64, temp_audio_path)
-    
-            upload_file_to_s3(temp_audio_path, settings.AWS_STORAGE_BUCKET_NAME, 'tour_audio/', f'{titulo}/audio_principal.mp3')
-            os.remove(temp_audio_path)  
+
+            print(f"Subiendo audio a S3: {temp_audio_path}")
+            upload_file_to_s3(temp_audio_path, AWS_STORAGE_BUCKET_NAME, 'tour_audio/', f'{titulo}/audio_principal.mp3')
+
+            print(f"Eliminando audio temporal: {temp_audio_path}")
+            os.remove(temp_audio_path)
 
             for step in extra_steps:
+                print(f"Procesando paso extra: {step['tittle']}")
                 step_image_base64 = step['image']
                 step_audio_base64 = step['audio']
                 step_latitude = step['latitude']
@@ -356,17 +376,22 @@ def upload_tours(request):
                 temp_step_image_path = f'temp_{titulo}_{step_title}_imagen.png'
                 save_base64_as_file(step_image_base64, temp_step_image_path)
                 upload_file_to_s3(temp_step_image_path, settings.AWS_STORAGE_BUCKET_NAME, 'tours', f'{titulo}/extra_steps/{step_title}/imagen.png')
-                os.remove(temp_step_image_path)  
+                os.remove(temp_step_image_path)
                 temp_step_audio_path = f'temp_{titulo}_{step_title}_audio.mp3'
                 save_base64_as_file(step_audio_base64, temp_step_audio_path)
                 upload_file_to_s3(temp_step_audio_path, settings.AWS_STORAGE_BUCKET_NAME, 'tours', f'{titulo}/extra_steps/{step_title}/audio.mp3')
                 os.remove(temp_step_audio_path)
+                print(f"Paso extra {step['tittle']} procesado y subido con éxito.")
 
             return JsonResponse({'message': 'Datos subidos correctamente a S3'})
         except Exception as e:
+            print(f"Error al procesar la petición: {e}")
             return JsonResponse({'error': str(e)}, status=400)
     else:
-        return JsonResponse({'error': 'Método no permitido'}, status=405)
+        print("Método no permitido")
+        return JsonResponse({'error': 'Método no permitido'}, status=405) 
+"""
+
 @csrf_exempt
 def register_view(request):
     if request.method == 'POST':
