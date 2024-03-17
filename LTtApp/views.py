@@ -969,6 +969,48 @@ def get_user_tour_records(request):
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
+# @csrf_exempt
+# @require_POST
+# def get_routes(request):
+#     if request.method == 'POST':
+#         request_body = request.body
+#         try:
+#             data = json.loads(request_body)
+#             if not isinstance(data, list):
+#                 data = [data]  
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
+
+#         api_keys = [
+#             '69604395-613a-4fc0-b3af-1d841ac5d565',
+            
+#             '74f72b76-bb28-4bb8-b862-a756103cb2b1'
+#         ]
+#         #'d56a81fe-a24e-4ace-ab47-b9aa06ed0874',
+        
+#         key_index = random.randint(0, len(api_keys) - 1)
+        
+#         consolidated_response = []
+#         for i in range(0, len(data[0]['points']), 5):
+#             try:
+#                 key = api_keys[key_index]
+#                 print(key)
+#                 url = f'https://graphhopper.com/api/1/route?key={key}'
+#                 chunk = data[0]['points'][i:i+5]
+#                 print(chunk)
+#                 response = requests.post(url, json={'points': chunk, "points_encoded": False, "profile": "foot"})
+#                 consolidated_response.append(response.json())  
+#             except requests.exceptions.RequestException as e:
+#                 error_message = f"Error al hacer la solicitud con la clave {key}: {str(e)}"
+#                 consolidated_response.append({'error': error_message})
+#             finally:
+                
+#                 key_index = (key_index + 1) % len(api_keys)
+            
+#         return JsonResponse(consolidated_response, safe=False)
+
+#     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
 @csrf_exempt
 @require_POST
 def get_routes(request):
@@ -981,59 +1023,19 @@ def get_routes(request):
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
 
-        api_keys = [
-            '69604395-613a-4fc0-b3af-1d841ac5d565',
-            
-            '74f72b76-bb28-4bb8-b862-a756103cb2b1'
-        ]
-        #'d56a81fe-a24e-4ace-ab47-b9aa06ed0874',
+        #key = '74f72b76-bb28-4bb8-b862-a756103cb2b1'
+        key = '69604395-613a-4fc0-b3af-1d841ac5d565'
         
-        key_index = random.randint(0, len(api_keys) - 1)
+        url = f'https://graphhopper.com/api/1/route?key={key}'
         
         consolidated_response = []
         for i in range(0, len(data[0]['points']), 5):
-            try:
-                key = api_keys[key_index]
-                print(key)
-                url = f'https://graphhopper.com/api/1/route?key={key}'
-                chunk = data[0]['points'][i:i+5]
-                print(chunk)
-                response = requests.post(url, json={'points': chunk, "points_encoded": False, "profile": "foot"})
-                consolidated_response.append(response.json())  
-            except requests.exceptions.RequestException as e:
-                error_message = f"Error al hacer la solicitud con la clave {key}: {str(e)}"
-                consolidated_response.append({'error': error_message})
-            finally:
-                
-                key_index = (key_index + 1) % len(api_keys)
-            
+            chunk = data[0]['points'][i:i+5]             
+            response = requests.post(url, json={'points': chunk, "points_encoded": False, "profile": "foot"})            
+            consolidated_response.append(response.json())        
         return JsonResponse(consolidated_response, safe=False)
 
     return JsonResponse({'error': 'Método no permitido'}, status=405)
-
-
-# def get_routes(request):
-#     if request.method == 'POST':
-#         request_body = request.body
-#         try:
-#             data = json.loads(request_body)
-#             if not isinstance(data, list):
-#                 data = [data]  
-#         except json.JSONDecodeError:
-#             return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
-
-#         key = '74f72b76-bb28-4bb8-b862-a756103cb2b1'
-        
-#         url = f'https://graphhopper.com/api/1/route?key={key}'
-        
-#         consolidated_response = []
-#         for i in range(0, len(data[0]['points']), 5):
-#             chunk = data[0]['points'][i:i+5]             
-#             response = requests.post(url, json={'points': chunk, "points_encoded": False, "profile": "foot"})            
-#             consolidated_response.append(response.json())        
-#         return JsonResponse(consolidated_response, safe=False)
-
-#     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 
 def save_base64_as_file(base64_data, file_path):
