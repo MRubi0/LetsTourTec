@@ -1100,7 +1100,7 @@ def get_routes(request):
         
         consolidated_response = []
         for i in range(0, len(data[0]['points']), 5):
-            chunk = data[0]['points'][i:i+5]             
+            chunk = data[0]['points'][i:i+5]              
             response = requests.post(url, json={'points': chunk, "points_encoded": False, 
                                                 "profile": "foot", "instructions": True,
                                                 "calc_points": True,})            
