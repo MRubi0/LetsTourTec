@@ -21,28 +21,29 @@ export class ExitComponent {
 
   ngOnInit(){
     this.finishForm = this.formBuilder.group({
-      age: ['', [Validators.required, Validators.min(13)]],
+      age: ['', [Validators.required, Validators.min(0)]],
       gender: ['', [Validators.required]],
       nationality: ['', [Validators.required]],
       travels:['', [Validators.required]],
       toursForYear:['', [Validators.required]],
-      value:['', [Validators.required]],
       format:['', [Validators.required]],
       duration:['', [Validators.required]],
-      content:['', [Validators.required]],
-      correct_duration:['', [Validators.required]],
       objectives:['', [Validators.required]],
-      most_value:['', [Validators.required]],
-      less_value:['', [Validators.required]],
       next_vacations:['', [Validators.required]],
-      problems:['', [Validators.required]],
       recomendation:['', [Validators.required]],
-      probability:['', [Validators.required]],
       flexibility:['', [Validators.required]],
       acces:['', [Validators.required]],
-      payfor:['', [Validators.required]],
       socialmedia:['', [Validators.required]],
-      actualizations:['', [Validators.required]],
+      
+      value:[''],   
+      content:[''],
+      correct_duration:[''],      
+      most_value:[''],
+      less_value:[''],      
+      problems:[''],      
+      probability:[''],      
+      payfor:[''],      
+      actualizations:['']      
     });
     this.finishForm.valueChanges.subscribe(data=>{
       console.log('data ', data);

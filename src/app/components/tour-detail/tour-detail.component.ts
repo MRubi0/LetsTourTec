@@ -67,13 +67,22 @@ export class TourDetailComponent {
   loadMap(){
     try {
       this.mapService.createRouteDetail(this.convertedCoordinates).subscribe((data: any) => {
-      if(data.message){
-       console.log(data.message); 
+      if(data[0].message){
+       console.log(data[0].message); 
        this.alternative();
       }else{
-        this.lat = data.paths[0].points.coordinates[0][1];
-        this.long = data.paths[0].points.coordinates[0][0];
-        this.displayRouteOnMap(data);
+        
+        if(data.length>1){
+          const coordinates = data.reduce((acc: any[], res: any) => {
+            const resCoordinates = res.paths[0].points.coordinates;
+            return acc.concat(resCoordinates);
+          }, []);
+          data.length = 1
+          data[0].paths[0].points.coordinates=coordinates;                 
+        }        
+        this.lat = data[0].paths[0].points.coordinates[0][1];
+        this.long = data[0].paths[0].points.coordinates[0][0];
+        this.displayRouteOnMap(data[0]);
       }
       
     });
@@ -151,7 +160,7 @@ export class TourDetailComponent {
     map.fitBounds(routeLine.getBounds());
   }  
   alternative(){
-    const map = L.map('maps').setView([51.505, -0.09], 13);
+    const map = L.map('map').setView([51.505, -0.09], 13);
     navigator.geolocation.getCurrentPosition((position) => {
       const latitud = position.coords.latitude;
       const longitud = position.coords.longitude;
@@ -160,16 +169,31 @@ export class TourDetailComponent {
         maxZoom: 19,
       }).addTo(map);
 
-      this.control = L.Routing.control({
-        waypoints: [
-          L.latLng(latitud, longitud),
-          L.latLng(this.lat, this.long)
-        ],
-        routeWhileDragging: true,
-        collapsible: true, 
-        show: true,  
-        addWaypoints: false       
-      }).addTo(map);
+
+      console.log('latitud, longitud ', latitud, longitud );
+      if(this.lat!=0 && this.long!=0){
+        this.control = L.Routing.control({
+          waypoints: [
+            L.latLng(latitud, longitud),
+            L.latLng(latitud, longitud)
+          ],
+          routeWhileDragging: true,
+          collapsible: true, 
+          show: true,  
+          addWaypoints: false       
+        }).addTo(map);
+      }else{
+        this.control = L.Routing.control({
+          waypoints: [
+            L.latLng(latitud, longitud),
+            L.latLng(this.lat, this.long)
+          ],
+          routeWhileDragging: true,
+          collapsible: true, 
+          show: true,  
+          addWaypoints: false       
+        }).addTo(map);
+      }     
 
       this.control.on('waypointschanged', (e: any) => {
         e.waypoints.forEach((waypoint: any) => {
@@ -198,15 +222,27 @@ export class TourDetailComponent {
       }, 0);
     });
 
+    
+
     this.watchId = navigator.geolocation.watchPosition((position) => {
       const latitud = position.coords.latitude;
-      const longitud = position.coords.longitude;   
-      if (this.control) {
-        this.control.setWaypoints([
+      const longitud = position.coords.longitude; 
+
+      console.log('latitud , long 2', latitud, longitud, this.lat, this.long)
+      if(this.lat!=0 && this.long!=0){
+        if (this.control) {
+          this.control.setWaypoints([
+            L.latLng(latitud, longitud),
+            L.latLng(this.lat, this.long)
+          ]);
+        }
+      }else{
+        this.control?.setWaypoints([
           L.latLng(latitud, longitud),
-          L.latLng(this.lat, this.long)
+          L.latLng(latitud, longitud)
         ]);
       }
+      
     }, (error) => {
       console.error(error);
     }, {

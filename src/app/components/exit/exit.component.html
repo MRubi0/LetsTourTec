@@ -30,6 +30,8 @@
                 <div class="user-questions">
                     <h3 class="card-title">{{ "EXIT.Preguntas_sobre_el_usuario" | translate }}</h3>
                     <div class="mb-3"></div>
+
+                    
                     <div class="form-group">
                         <label for="pregunta1">1. {{ "EXIT.Edad:" | translate }}</label>
                         <input type="number" class="form-control" id="pregunta1" name="pregunta1" required [(ngModel)]="edad" #edadField="ngModel">
@@ -226,16 +228,21 @@
                 <div class="mb-3"></div>
                 <button type="submit" class="btn btn-primary" [disabled]="!f.valid" (click)="send()">Enviar</button>
 </form> -->
+
 <form class="finishForm" role="form" [formGroup]="finishForm" (ngSubmit)="onSubmit()">
+    <div class="user-questions">
+        <h3 class="card-title">{{ "EXIT.Preguntas_sobre_el_usuario" | translate }}</h3>
+        <div class="mb-3"></div>
     <div class="form-group">
+
         <label for="pregunta1">1. {{ "EXIT.Edad:" | translate }}</label>
         <input type="number" class="form-control" name="pregunta1" formControlName="age">
         <div *ngIf="finishForm.get('age') && finishForm.get('age')?.invalid && (finishForm.get('age')?.dirty || finishForm.get('age')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('age') && finishForm.get('age')?.errors && finishForm.get('age')?.errors?.['required']">
-                La edad es requerida.
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
             <div *ngIf="finishForm.get('age') && finishForm.get('age')?.errors && finishForm.get('age')?.errors?.['min']">
-                La edad proporcionada no es válida. Por favor selecciona un número mayor o igual a 18.
+                {{ "EXIT.La_edad_proporcionada_no_es_válida._Por_favor_selecciona_un_número_mayor_que_0." | translate }}
             </div>
         </div>
     </div>
@@ -249,10 +256,13 @@
         </select>
         <div *ngIf="finishForm.get('gender') && finishForm.get('gender')?.invalid && (finishForm.get('gender')?.dirty || finishForm.get('gender')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('gender') && finishForm.get('gender')?.errors && finishForm.get('gender')?.errors?.['required']">
-                El genero es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div>
+
+
+
     <div class="form-group">
         <label for="pregunta3">3.  {{ "EXIT.Nacionalidad:" | translate }}</label>
         <select class="form-control" name="pregunta3" formControlName="nationality">
@@ -260,211 +270,198 @@
             <option value="Española"> {{ "EXIT.Española" | translate }}</option>
             <option value="Otra"> {{ "EXIT.Otra" | translate }}</option>
         </select>
+        <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta3-1" name="subpregunta3-1" placeholder= '{{ "EXIT.Si_es_otra,_¿cuál?" | translate }}'>
         <div *ngIf="finishForm.get('nationality') && finishForm.get('nationality')?.invalid && (finishForm.get('nationality')?.dirty || finishForm.get('nationality')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('nationality') && finishForm.get('nationality')?.errors && finishForm.get('nationality')?.errors?.['required']">
-                La nacionalidad es requerida
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div>
     
     <div class="form-group">
-        <label for="pregunta4">4. ¿Cuántos viajes haces al año?</label>
+        <label for="pregunta4">4. {{ "EXIT.¿Cuántos_viajes_haces_al_año?" | translate }}</label>
         <select class="form-control" name="pregunta4" formControlName="travels">
-            <option value="" disabled selected>Seleccione la cantidad de viajes...</option>
-            <option>Menos de 3</option>
-            <option>Entre 3 y 5</option>
-            <option>Más de 5</option>
+            <option value="" disabled selected>{{ "EXIT.Seleccione_la_cantidad_de_viajes..." | translate }}</option>
+            <option value="Menos de 3">{{ "EXIT.Menos_de_3" | translate }}</option>
+            <option value="Entre 3 y 5">{{ "EXIT.Entre_3_y_5" | translate }}</option>
+            <option value="Más de 5">{{ "EXIT.Más_de_5" | translate }}</option>
         </select>
         <div *ngIf="finishForm.get('travels') && finishForm.get('travels')?.invalid && (finishForm.get('travels')?.dirty || finishForm.get('travels')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('travels') && finishForm.get('travels')?.errors && finishForm.get('travels')?.errors?.['required']">
-                Este campo es requerida
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="pregunta5">5. ¿Y cuántos tours haces al año?</label>
+        <label for="pregunta5">5. {{ "EXIT.¿Y_cuántos_tours_haces_al_año?" | translate }}</label>
         <select class="form-control" name="pregunta5" formControlName="toursForYear">
-            <option value="" disabled selected>Seleccione la cantidad de tours...</option>
-            <option>Menos de 3</option>
-            <option>Entre 3 y 5</option>
-            <option>Más de 5</option>
+            <option value="" disabled selected>{{ "EXIT.Seleccione_la_cantidad_de_tours..." | translate }}</option>
+            <option value="Menos de 3">{{ "EXIT.Menos_de_3" | translate }}</option>
+            <option value="Entre 3 y 5">{{ "EXIT.Entre_3_y_5" | translate }}</option>
+            <option value="Más de 5">{{ "EXIT.Más_de_5" | translate }}</option>
         </select>
         <div *ngIf="finishForm.get('toursForYear') && finishForm.get('toursForYear')?.invalid && (finishForm.get('toursForYear')?.dirty || finishForm.get('toursForYear')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('toursForYear') && finishForm.get('toursForYear')?.errors && finishForm.get('toursForYear')?.errors?.['required']">
-                Este campo es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="pregunta6">6. Valora el tour realizado:</label>
+
+</div>
+<div class="mb-3"></div>
+
+                <div class="product-questions">
+                    <h3 class="card-title">{{ "EXIT.Preguntas_sobre_el_producto" | translate }}</h3>
+                    <div class="mb-3"></div>
+                    <div class="form-group">
+        <label for="pregunta6">6. {{ "EXIT.Valora_el_tour_realizado:" | translate }}</label>
         <select class="form-control" name="pregunta6" formControlName="value">
-            <option value="" disabled selected>Seleccione su valoración...</option>
-            <option>Muy poco satisfecho</option>
-            <option>Poco satisfecho</option>
-            <option>Normal</option>
-            <option>Satisfecho</option>
-            <option>Muy satisfecho</option>
+            <option value="" disabled selected>{{ "EXIT.Seleccione_su_valoración..." | translate }}</option>
+            <option value="Muy poco satisfecho">{{ "EXIT.Muy_poco_satisfecho" | translate }}</option>
+            <option value="Poco satisfecho">{{ "EXIT.Poco_satisfecho" | translate }}</option>
+            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
+            <option value="Satisfecho">{{ "EXIT.Satisfecho" | translate }}</option>
+            <option value="Muy satisfecho">{{ "EXIT.Muy_satisfecho" | translate }}</option>
         </select>
         <div *ngIf="finishForm.get('value') && finishForm.get('value')?.invalid && (finishForm.get('value')?.dirty || finishForm.get('value')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('value') && finishForm.get('value')?.errors && finishForm.get('value')?.errors?.['required']">
-                Este campo es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="pregunta7">7. Valora el contenido del tour realizado:</label>
+        <label for="pregunta7">7. {{ "EXIT.Valora_el_contenido_del_tour_realizado:" | translate }}</label>
         <select class="form-control" name="pregunta7"  formControlName="content">
-            <option value="" disabled selected>Seleccione su valoración...</option>
-            <option>Muy poco satisfecho</option>
-            <option>Poco satisfecho</option>
-            <option>Normal</option>
-            <option>Satisfecho</option>
-            <option>Muy satisfecho</option>
+            <option value="" disabled selected>{{ "EXIT.Seleccione_su_valoración..." | translate }}</option>
+            <option value="Muy poco satisfecho">{{ "EXIT.Muy_poco_satisfecho" | translate }}</option>
+            <option value="Poco satisfecho">{{ "EXIT.Poco_satisfecho" | translate }}</option>
+            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
+            <option value="Satisfecho">{{ "EXIT.Satisfecho" | translate }}</option>
+            <option value="Muy satisfecho">{{ "EXIT.Muy_satisfecho" | translate }}</option>
         </select>
         <div *ngIf="finishForm.get('content') && finishForm.get('content')?.invalid && (finishForm.get('content')?.dirty || finishForm.get('content')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('content') && finishForm.get('content')?.errors && finishForm.get('content')?.errors?.['required']">
-                Este campo es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div>
 
    <div class="form-group">
-        <label for="pregunta8">8. Valora el formato en el que se ha presentado el tour:</label>
+        <label for="pregunta8">8. {{ "EXIT.Valora_el_formato_en_el_que_se_ha_presentado_el_tour:" | translate }}</label>
         <select class="form-control" id="pregunta8" formControlName="format" >
-            <option value="" disabled selected>Seleccione su valoración...</option>
-            <option>Muy poco satisfecho</option>
-            <option>Poco satisfecho</option>
-            <option>Normal</option>
-            <option>Satisfecho</option>
-            <option>Muy satisfecho</option>
+            <option value="" disabled selected>{{ "EXIT.Seleccione_su_valoración..." | translate }}</option>
+            <option value="Muy poco satisfecho">{{ "EXIT.Muy_poco_satisfecho" | translate }}</option>
+            <option value="Poco satisfecho">{{ "EXIT.Poco_satisfecho" | translate }}</option>
+            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
+            <option value="Satisfecho">{{ "EXIT.Satisfecho" | translate }}</option>
+            <option value="Muy satisfecho">{{ "EXIT.Muy_satisfecho" | translate }}</option>
         </select>
         <div *ngIf="finishForm.get('format') && finishForm.get('format')?.invalid && (finishForm.get('format')?.dirty || finishForm.get('format')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('format') && finishForm.get('format')?.errors && finishForm.get('format')?.errors?.['required']">
-                Este campo es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}Este campo es requerido
             </div>
         </div>
-        <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta8-1" name="subpregunta8-1" placeholder="¿Qué es lo que más te ha gustado?">
-        <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta8-2" name="subpregunta8-2" placeholder="¿Y lo que menos?">
+        <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta8-1" name="subpregunta8-1" placeholder='{{ "EXIT.¿Qué_es_lo_que_más_te_ha_gustado?" | translate }}'>
+        <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta8-2" name="subpregunta8-2" placeholder='{{ "EXIT.¿Y_lo_que_menos?" | translate }}'>
     </div>
     <div class="form-group">
-        <label for="pregunta9">9. Valora la duración del tour:</label>
+        <label for="pregunta9">9. {{ "EXIT.Valora_la_duración_del_tour:" | translate }}</label>
         <select class="form-control" name="pregunta9" formControlName="duration">
-            <option value="" selected disabled>Seleccione su valoración...</option>
-            <option>Largo</option>
-            <option>Adecuado</option>
-            <option>Corto</option>
+            <option value="" disabled selected>{{ "EXIT.Seleccione_su_valoración..." | translate }}</option>
+            <option value="Largo">{{ "EXIT.Largo" | translate }}</option>
+            <option value="Adecuado">{{ "EXIT.Adecuado" | translate }}</option>
+            <option value="Corto">{{ "EXIT.Corto" | translate }}</option>
         </select>
         <div *ngIf="finishForm.get('duration') && finishForm.get('duration')?.invalid && (finishForm.get('duration')?.dirty || finishForm.get('duration')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('duration') && finishForm.get('duration')?.errors && finishForm.get('duration')?.errors?.['required']">
-                Este campo es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div>
     <div class="form-group">
-        <label for="pregunta10">10. ¿Cuál crees que sería la duración óptima para este tipo de tours?</label>
+        <label for="pregunta10">10. {{ "EXIT.¿Cuál_crees_que_sería_la_duración_óptima_para_este_tipo_de_tours?" | translate }}</label>
         <input type="text" class="form-control" name="pregunta10" formControlName="correct_duration">
-
-        <div *ngIf="finishForm.get('correct_duration') && finishForm.get('correct_duration')?.invalid && (finishForm.get('correct_duration')?.dirty || finishForm.get('correct_duration')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('correct_duration') && finishForm.get('correct_duration')?.errors && finishForm.get('correct_duration')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
+       
     </div>
     <div class="form-group">
-        <label for="pregunta11">11. ¿La plataforma te ayuda a lograr tus objetivos?</label>
+        <label for="pregunta11">11. {{ "EXIT.¿La_plataforma_te_ayuda_a_lograr_tus_objetivos?" | translate }}</label>
         <select class="form-control" name="pregunta11" formControlName="objectives">
-            <option value="" disabled selected>Seleccione una opción...</option>
-            <option>Sí</option>
-            <option>No</option>
+            <option value="" disabled selected>{{ "EXIT.Seleccione_una_opción..." | translate }}</option>
+            <option value="Sí">{{ "EXIT.Sí" | translate }}</option>
+            <option value="No">{{ "EXIT.No" | translate }}</option>
         </select>
 
         <div *ngIf="finishForm.get('objectives') && finishForm.get('objectives')?.invalid && (finishForm.get('objectives')?.dirty || finishForm.get('objectives')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('objectives') && finishForm.get('objectives')?.errors && finishForm.get('objectives')?.errors?.['required']">
-                Este campo es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div>
     <div class="form-group">
-        <label for="pregunta12">12. ¿Qué características de la plataforma consideras más valiosas?</label>
+        <label for="pregunta12">12. {{ "EXIT.¿Qué_características_de_la_plataforma_consideras_más_valiosas?" | translate }}</label>
         <input type="text" class="form-control"name="pregunta12" formControlName="most_value">
 
-        <div *ngIf="finishForm.get('most_value') && finishForm.get('most_value')?.invalid && (finishForm.get('most_value')?.dirty || finishForm.get('most_value')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('most_value') && finishForm.get('most_value')?.errors && finishForm.get('most_value')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
+
     </div>
 
     <div class="form-group">
-        <label for="pregunta13">13. ¿Y la menos valiosa?</label>
+        <label for="pregunta13">13. {{ "EXIT.¿Y_la_menos_valiosa?" | translate }}</label>
         <input type="text" class="form-control" name="pregunta13" formArrayName="less_value">
-
-        <div *ngIf="finishForm.get('less_value') && finishForm.get('less_value')?.invalid && (finishForm.get('less_value')?.dirty || finishForm.get('less_value')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('less_value') && finishForm.get('less_value')?.errors && finishForm.get('less_value')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
     </div>
 
 
     <div class="form-group">
-        <label for="pregunta14">14. Al usar la plataforma, ¿has encontrado algún problema que no te ha permitido realizar el tour correctamente? Si pudieras, ¿qué mejorarías?</label>
+        <label for="pregunta14">14. {{ "EXIT.Al_usar_la_plataforma,_¿has_encontrado_algún_problema_que_no_te_ha_permitido_realizar_el_tour_correctamente?_Si_pudieras,_¿qué_mejorarías?" | translate }}</label>
         <input type="text" class="form-control" name="pregunta13" formControlName="problems">
-
-        <div *ngIf="finishForm.get('problems') && finishForm.get('problems')?.invalid && (finishForm.get('problems')?.dirty || finishForm.get('problems')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('problems') && finishForm.get('problems')?.errors && finishForm.get('problems')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
     </div>
 
     <div class="form-group">
-        <label for="pregunta15">15. ¿Utilizarías la plataforma en tus próximas vacaciones?</label>
+        <label for="pregunta15">15. {{ "EXIT.¿Utilizarías_la_plataforma_en_tus_próximas_vacaciones?" | translate }}</label>
         <select class="form-control" id="pregunta15" name="pregunta15" formControlName="next_vacations">
-            <option value="" disabled selected>Seleccione una opción...</option>
-            <option>Sí</option>
-            <option>No</option>
+            <option value="" disabled selected>{{ "EXIT.Seleccione_una_opción..." | translate }}</option>
+            <option value="Sí">{{ "EXIT.Sí" | translate }}</option>
+            <option value="No">{{ "EXIT.No" | translate }}</option>
         </select>
 
         <div *ngIf="finishForm.get('next_vacations') && finishForm.get('next_vacations')?.invalid && (finishForm.get('next_vacations')?.dirty || finishForm.get('next_vacations')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('next_vacations') && finishForm.get('next_vacations')?.errors && finishForm.get('next_vacations')?.errors?.['required']">
-                Este campo es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div>
 
 
     <div class="form-group">
-        <label for="pregunta16">16. ¿Qué tan probable es que recomiendes "Let's Tour Tec" a otras personas?</label>
+        <label for="pregunta16">16. {{ "EXIT.¿Qué_tan_probable_es_que_recomiendes_'Let's_Tour_Tec'_a_otras_personas?" | translate }}</label>
         <select class="form-control" id="pregunta16" name="pregunta16" formControlName="recomendation" >
-            <option value="" disabled selected>Seleccione una probabilidad...</option>
-            <option>Muy improbable</option>
-            <option>Improbable</option>
-            <option>Normal</option>
-            <option>Probable</option>
-            <option>Muy probable</option>
+            <option value="" disabled selected>{{ "EXIT.Seleccione_una_probabilidad..." | translate }}</option>
+            <option value="Muy improbable">{{ "EXIT.Muy_improbable" | translate }}</option>
+            <option value="Improbable">{{ "EXIT.Improbable" | translate }}</option>
+            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
+            <option value="Probable">{{ "EXIT.Probable" | translate }}</option>
+            <option value="Muy probable">{{ "EXIT.Muy_probable" | translate }}</option>
         </select>
 
         <div *ngIf="finishForm.get('recomendation') && finishForm.get('recomendation')?.invalid && (finishForm.get('recomendation')?.dirty || finishForm.get('recomendation')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('recomendation') && finishForm.get('recomendation')?.errors && finishForm.get('recomendation')?.errors?.['required']">
-                Este campo es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="pregunta18">18. ¿Crees que la flexibilidad de horarios e idioma es una ventaja competitiva respecto a los tours convencionales?</label>
+        <label for="pregunta18">18. {{ "EXIT.¿Crees_que_la_flexibilidad_de_horarios_e_idioma_es_una_ventaja_competitiva_respecto_a_los_tours_convencionales?" | translate }}</label>
         <select class="form-control" id="pregunta18" name="pregunta18" formControlName="flexibility" >
-            <option value="" disabled selected>Seleccione una opción...</option>
-            <option>Sí</option>
-            <option>No</option>
+            <option value="" disabled selected>{{ "EXIT.Seleccione_una_opción..." | translate }}</option>
+            <option value="Sí">{{ "EXIT.Sí" | translate }}</option>
+            <option value="No">{{ "EXIT.No" | translate }}</option>
         </select>
         <div *ngIf="finishForm.get('flexibility') && finishForm.get('flexibility')?.invalid && (finishForm.get('flexibility')?.dirty || finishForm.get('flexibility')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('flexibility') && finishForm.get('flexibility')?.errors && finishForm.get('flexibility')?.errors?.['required']">
-                Este campo es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div> 
@@ -472,62 +469,60 @@
 
 
     <div class="form-group">
-        <label for="pregunta19">19. ¿Cuál crees que es la mejor manera de tener acceso a este tipo de tours?</label>
+        <label for="pregunta19">19. {{ "EXIT.¿Cuál_crees_que_es_la_mejor_manera_de_tener_acceso_a_este_tipo_de_tours?" | translate }}</label>
         <select class="form-control" id="pregunta19" name="pregunta19" formControlName="acces">
-            <option value="" disabled selected>Seleccione una opción...</option>
-            <option>Pagar antes de realizar el tour una cantidad fija</option>
-            <option>Pagar al final del tour la cantidad que consideres</option>
-            <option>Poder tener otras opciones de pagar el tour. Por ejemplo, viendo anuncios</option>
-            <option>Pagar una suscripción mensual</option>
+            <option value="" disabled selected>{{ "EXIT.Seleccione_una_opción..." | translate }}</option>
+            <option value="Pagar antes de realizar el tour una cantidad fija">{{ "EXIT.Pagar_antes_de_realizar_el_tour_una_cantidad_fija" | translate }}</option>
+            <option value="Pagar al final del tour la cantidad que consideres">{{ "EXIT.Pagar_al_final_del_tour_la_cantidad_que_consideres" | translate }}</option>
+            <option value="Poder tener otras opciones de pagar el tour. Por ejemplo, viendo anuncios">{{ "EXIT.Poder_tener_otras_opciones_de_pagar_el_tour._Por_ejemplo,_viendo_anuncios" | translate }}</option>
+            <option value="Pagar una suscripción mensual">{{ "EXIT.Pagar_una_suscripción_mensual" | translate }}</option>
+            <option value="Otro">{{ "EXIT.Otro" | translate }}</option>
         </select>
+        <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta3-1" name="subpregunta3-1" placeholder= '{{ "EXIT.Si_es_otro,_¿cuál?" | translate }}'>
         <div *ngIf="finishForm.get('acces') && finishForm.get('acces')?.invalid && (finishForm.get('acces')?.dirty || finishForm.get('acces')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('acces') && finishForm.get('acces')?.errors && finishForm.get('acces')?.errors?.['required']">
-                Este campo es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div> 
 
     <div class="form-group">
-        <label for="pregunta20">20. ¿Cuánto estarías dispuesto a pagar por uno de estos tours?</label>
+        <label for="pregunta20">20. {{ "EXIT.¿Cuánto_estarías_dispuesto_a_pagar_por_uno_de_estos_tours?" | translate }}</label>
         <input type="text" class="form-control" id="pregunta20" name="pregunta20" formControlName="payfor">
-
-        <div *ngIf="finishForm.get('payfor') && finishForm.get('payfor')?.invalid && (finishForm.get('payfor')?.dirty || finishForm.get('payfor')?.touched)" class="alert alert-danger">
-            <div *ngIf="finishForm.get('payfor') && finishForm.get('payfor')?.errors && finishForm.get('payfor')?.errors?.['required']">
-                Este campo es requerido
-            </div>
-        </div>
     </div> 
 
 
 
     <div class="form-group">
-        <label for="pregunta21">21. ¿Le gustaría que la aplicación tuviera formato red social para poder compartir o encontrar los viajes y tours que mejor se adaptan a su estilo de vida?</label>
+        <label for="pregunta21">21. {{ "EXIT.¿Le_gustaría_que_la_aplicación_tuviera_formato_red_social_para_poder_compartir_o_encontrar_los_viajes_y_tours_que_mejor_se_adaptan_a_su_estilo_de_vida?" | translate }}</label>
         <select class="form-control" id="pregunta21" name="pregunta21" formControlName="socialmedia">
-            <option value="" disabled selected>Seleccione una opción...</option>
-            <option>Sí</option>
-            <option>No</option>
+            <option value="" disabled selected>{{ "EXIT.Seleccione_una_opción..." | translate }}</option>
+            <option value="Sí">{{ "EXIT.Sí" | translate }}</option>
+            <option value="No">{{ "EXIT.No" | translate }}</option>
         </select>
 
 
         <div *ngIf="finishForm.get('socialmedia') && finishForm.get('socialmedia')?.invalid && (finishForm.get('socialmedia')?.dirty || finishForm.get('socialmedia')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('socialmedia') && finishForm.get('socialmedia')?.errors && finishForm.get('socialmedia')?.errors?.['required']">
-                Este campo es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
     </div> 
 
         <div class="mail-questions">
             <div class="mb-3"></div>
-            <h3 class="card-title">Correo (Opcional)</h3>
+            <h3 class="card-title">{{ "EXIT.Correo_(Opcional)" | translate }}</h3>
             <div class="mb-3"></div>
             <div class="form-group">
-                <label for="pregunta22">22. Si quisieras mantenerte al tanto de nuestras actualizaciones nos encantaría disponer de tu correo electrónico: </label>
+                <label for="pregunta22">22. {{ "EXIT.Si_quisieras_mantenerte_al_tanto_de_nuestras_actualizaciones_nos_encantaría_disponer_de_tu_correo_electrónico:" | translate }} </label>
                 <input type="text" class="form-control" id="pregunta22" name="pregunta22"formControlName="actualizations">
             </div>
         </div>
-        <button type="submit" class="btn btn-primary" [disabled]="!finishForm">Enviar</button>
-</form>
+        <!-- <button type="submit" class="btn btn-primary" [disabled]="!f.valid" (click)="send()">Enviar</button> -->
+        <button type="submit" class="btn btn-primary" [disabled]="!finishForm.valid">{{ "EXIT.Enviar" | translate }}</button>
+
 
         </div>
-    </div>
-</div>
+    
+</form>
+
