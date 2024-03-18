@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login, logout
@@ -10,6 +11,12 @@ import requests
 from django.urls import reverse_lazy
 from django.views import generic
 from django.http import JsonResponse
+from django.http import JsonResponse
+import base64
+import boto3
+from botocore.exceptions import ClientError
+from django.http import JsonResponse
+
 import sqlite3
 import math
 from math import radians, sin, cos, sqrt, atan2
@@ -213,7 +220,7 @@ def login_view(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def upload_tour(request):
+def upload_tours(request):
     print("Solicitud recibida con los siguientes datos: %s", request.FILES)
     error_message = None
     auth_header = request.META.get('HTTP_AUTHORIZATION')
@@ -308,6 +315,81 @@ def upload_tour(request):
         return Response({'error': 'Invalid request method'}, status=405)
     return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
 
+""" 
+@api_view(['POST'])
+def upload_tours(request):
+    if request.method == 'POST':
+        print("Intentando decodificar el cuerpo de la petición...")
+        try:
+            print("Mostrando los primeros 200 bytes del cuerpo de la petición:")
+            print(request.body[:200])
+            data = json.loads(request.body) 
+        except Exception as e:
+            print(f"Error al decodificar el cuerpo de la petición: {e}")
+            return JsonResponse({'error': 'Error al decodificar el cuerpo de la petición'}, status=400)
+
+        try:
+            print("Datos de la petición decodificados correctamente.")
+            tipo_de_tour = data['tipo_de_tour']
+            titulo = data['titulo']
+            descripcion = data['descripcion']
+            imagen_base64 = data['imagen']
+            audio_base64 = data['audio']
+            latitude = data['latitude']
+            longitude = data['longitude']
+            duracion = data['duracion']
+            recorrido = data['recorrido']
+            extra_steps = data.get('extraSteps', [])
+
+            print(f"Procesando tour: {titulo}")
+
+            temp_image_path = f'temp_{titulo}_imagen.png'
+            print(f"Guardando imagen temporal: {temp_image_path}")
+            save_base64_as_file(imagen_base64, temp_image_path)
+
+            print(f"Subiendo imagen a S3: {temp_image_path}")
+            upload_file_to_s3(temp_image_path, AWS_STORAGE_BUCKET_NAME, 'tours/', f'{titulo}/imagen_principal.png')
+
+            print(f"Eliminando imagen temporal: {temp_image_path}")
+            os.remove(temp_image_path)
+
+            temp_audio_path = f'temp_{titulo}_audio.mp3'
+            print(f"Guardando audio temporal: {temp_audio_path}")
+            save_base64_as_file(audio_base64, temp_audio_path)
+
+            print(f"Subiendo audio a S3: {temp_audio_path}")
+            upload_file_to_s3(temp_audio_path, AWS_STORAGE_BUCKET_NAME, 'tour_audio/', f'{titulo}/audio_principal.mp3')
+
+            print(f"Eliminando audio temporal: {temp_audio_path}")
+            os.remove(temp_audio_path)
+
+            for step in extra_steps:
+                print(f"Procesando paso extra: {step['tittle']}")
+                step_image_base64 = step['image']
+                step_audio_base64 = step['audio']
+                step_latitude = step['latitude']
+                step_longitude = step['longitude']
+                step_description = step['description']
+                step_title = step['tittle']
+
+                temp_step_image_path = f'temp_{titulo}_{step_title}_imagen.png'
+                save_base64_as_file(step_image_base64, temp_step_image_path)
+                upload_file_to_s3(temp_step_image_path, settings.AWS_STORAGE_BUCKET_NAME, 'tours', f'{titulo}/extra_steps/{step_title}/imagen.png')
+                os.remove(temp_step_image_path)
+                temp_step_audio_path = f'temp_{titulo}_{step_title}_audio.mp3'
+                save_base64_as_file(step_audio_base64, temp_step_audio_path)
+                upload_file_to_s3(temp_step_audio_path, settings.AWS_STORAGE_BUCKET_NAME, 'tours', f'{titulo}/extra_steps/{step_title}/audio.mp3')
+                os.remove(temp_step_audio_path)
+                print(f"Paso extra {step['tittle']} procesado y subido con éxito.")
+
+            return JsonResponse({'message': 'Datos subidos correctamente a S3'})
+        except Exception as e:
+            print(f"Error al procesar la petición: {e}")
+            return JsonResponse({'error': str(e)}, status=400)
+    else:
+        print("Método no permitido")
+        return JsonResponse({'error': 'Método no permitido'}, status=405) 
+"""
 
 # @api_view(['POST'])
 # def upload_encuesta(request):
@@ -957,6 +1039,48 @@ def get_user_tour_records(request):
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
+# @csrf_exempt
+# @require_POST
+# def get_routes(request):
+#     if request.method == 'POST':
+#         request_body = request.body
+#         try:
+#             data = json.loads(request_body)
+#             if not isinstance(data, list):
+#                 data = [data]  
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
+
+#         api_keys = [
+#             '69604395-613a-4fc0-b3af-1d841ac5d565',
+            
+#             '74f72b76-bb28-4bb8-b862-a756103cb2b1'
+#         ]
+#         #'d56a81fe-a24e-4ace-ab47-b9aa06ed0874',
+        
+#         key_index = random.randint(0, len(api_keys) - 1)
+        
+#         consolidated_response = []
+#         for i in range(0, len(data[0]['points']), 5):
+#             try:
+#                 key = api_keys[key_index]
+#                 print(key)
+#                 url = f'https://graphhopper.com/api/1/route?key={key}'
+#                 chunk = data[0]['points'][i:i+5]
+#                 print(chunk)
+#                 response = requests.post(url, json={'points': chunk, "points_encoded": False, "profile": "foot"})
+#                 consolidated_response.append(response.json())  
+#             except requests.exceptions.RequestException as e:
+#                 error_message = f"Error al hacer la solicitud con la clave {key}: {str(e)}"
+#                 consolidated_response.append({'error': error_message})
+#             finally:
+                
+#                 key_index = (key_index + 1) % len(api_keys)
+            
+#         return JsonResponse(consolidated_response, safe=False)
+
+#     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
 @csrf_exempt
 @require_POST
 def get_routes(request):
@@ -964,13 +1088,44 @@ def get_routes(request):
         request_body = request.body
         try:
             data = json.loads(request_body)
+            if not isinstance(data, list):
+                data = [data]  
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
 
-        key = '74f72b76-bb28-4bb8-b862-a756103cb2b1'
+        #key = '74f72b76-bb28-4bb8-b862-a756103cb2b1'
+        key = '69604395-613a-4fc0-b3af-1d841ac5d565'
+        
         url = f'https://graphhopper.com/api/1/route?key={key}'
-
-        response = requests.post(url, json=data)
-        return JsonResponse(response.json(), safe=False)
+        
+        consolidated_response = []
+        for i in range(0, len(data[0]['points']), 5):
+            chunk = data[0]['points'][i:i+5]             
+            response = requests.post(url, json={'points': chunk, "points_encoded": False, 
+                                                "profile": "foot", "instructions": True,
+                                                "calc_points": True,})            
+            consolidated_response.append(response.json())        
+        return JsonResponse(consolidated_response, safe=False)
 
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+def save_base64_as_file(base64_data, file_path):
+    try:
+        decoded_data = base64.b64decode(base64_data)
+        with open(file_path, 'wb') as f:
+            f.write(decoded_data)
+        return True
+    except Exception as e:
+        print(f"Error saving base64 data as file: {e}")
+        return False
+
+def upload_file_to_s3(file_path, bucket_name, folder_path, file_name):
+    try:
+        s3 = boto3.client('s3')
+        with open(file_path, 'rb') as f:
+            s3.put_object(Body=f, Bucket=bucket_name, Key=f'{folder_path}/{file_name}')
+        return True
+    except ClientError as e:
+        print(f"Error uploading file to S3: {e}")
+        return False

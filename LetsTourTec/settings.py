@@ -242,6 +242,7 @@ SIMPLE_JWT = {
 }
 AWS_S3_REGION_NAME = 'eu-north-1'
 CORS_ALLOW_ALL_ORIGINS = True
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 * 15 # 10MB
 
 #logging.basicConfig(level=logging.DEBUG)
 boto3.set_stream_logger(name='botocore')

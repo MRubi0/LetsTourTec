@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from LTtApp.views import register_view, upload_tour, test_auth
-
+from LTtApp.views import register_view,  test_auth
+from LTtApp.views import upload_tours
+#from LTtApp.views import upload_tour
 from LTtApp import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -28,7 +29,7 @@ urlpatterns = [
     path('profile/get', views.search_user_by_id, name='search_user_by_email'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('profile/upload_tour/', upload_tour, name='upload_tour'),
+    path('profile/upload_tour/', upload_tours, name='upload_tour'),
     path('get_nearest_tours/', views.get_nearest_tours, name='get_nearest_tours'),
     path('tour/<int:tour_id>/', views.tour_detail, name='tour_detail'),
     path('get_latest_tours/', views.get_latest_tours, name='get_latest_tours'),
