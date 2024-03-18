@@ -14,10 +14,18 @@ export class StepService {
   getTourDetail(id: string) {
     return this.http.get(`${environment.apiUrl}api/get_tour_with_steps/${id}`)
       .pipe(map((data: any) => {
-        console.log(data)
-        return data;
-      }));
+        //console.log(data)
+        if (data && data.steps && Array.isArray(data.steps)) {
+          const adjustedSteps = data.steps.map((step: any, index: number) => {
+            return { ...step, stepNumber: index + 1 };
+      });
+      data.steps = adjustedSteps;
   }
+  console.log(data);
+  return data;
+      }));
+    }
+
 
   createTourRecord(tourId: string) {
     const url = `${environment.apiUrl}api/create-tour-record/`;

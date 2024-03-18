@@ -18,8 +18,8 @@
             
             <ng-template matStepLabel>
               <strong *ngIf="i==0">{{tour.titulo | uppercase}}</strong>
-              <strong *ngIf="i>0 && step.tittle">{{ "STEPPER.Step" | translate }} {{i}}: {{step.tittle | uppercase}}</strong>
-              <strong *ngIf="i>0 && !step.tittle">{{ "STEPPER.Step" | translate }} {{i}}</strong>
+              <strong *ngIf="i>0 && step.tittle">{{ "STEPPER.Step" | translate }} {{step.stepNumber}}: {{step.tittle | uppercase}}</strong>
+              <strong *ngIf="i>0 && !step.tittle">{{ "STEPPER.Step" | translate }} {{step.stepNumber}}</strong>
             </ng-template>
           <div>
             <mat-card *ngIf="i==0">
