@@ -3,6 +3,7 @@
     .mat-mdc-button.mat-unthemed {
         color: white !important;
     }
+
 }
 
 .maps{
@@ -89,3 +90,9 @@ mat-card {
     box-shadow: inset 300px 0 0 0 #0d6efd !important;
   }
   
+  ::ng-deep mat-step-header .mat-step-label strong {
+    white-space: normal !important; /* Asegura que el texto pueda fluir en múltiples líneas */
+    line-height: 1.2 !important; /* Ajusta el espaciado entre líneas para mejorar la legibilidad */
+    font-size: 16px !important; /* Ajusta el tamaño de la fuente según necesites */
+    text-align: center !important; /* Centra el texto, opcional */
+  }
