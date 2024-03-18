@@ -361,7 +361,7 @@
         </select>
         <div *ngIf="finishForm.get('format') && finishForm.get('format')?.invalid && (finishForm.get('format')?.dirty || finishForm.get('format')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('format') && finishForm.get('format')?.errors && finishForm.get('format')?.errors?.['required']">
-                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}Este campo es requerido
+                {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
             </div>
         </div>
         <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta8-1" name="subpregunta8-1" placeholder='{{ "EXIT.¿Qué_es_lo_que_más_te_ha_gustado?" | translate }}'>
