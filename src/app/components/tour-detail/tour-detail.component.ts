@@ -167,7 +167,7 @@ export class TourDetailComponent {
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-      }).addTo(map);
+      }).addTo(map); 
 
 
       console.log('latitud, longitud ', latitud, longitud );
