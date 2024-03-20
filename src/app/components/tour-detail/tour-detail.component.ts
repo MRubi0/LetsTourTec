@@ -52,7 +52,7 @@ export class TourDetailComponent {
     this.toursDetailService.getTourDetail(id).subscribe((data: any) => {
       this.detail = data[0].fields;
       //const res = this.translateService.instant(this.detail.descripcion, 'en');
-      //console.log(res);
+      //console.log(res);      
       this.toursDetailService.getAdditionalLocations(id).subscribe((locationsData: any) => {
         const additionalLocations = locationsData.locations;
         this.convertedCoordinates = additionalLocations.map((coord:any) => [coord.long, coord.lat]);
@@ -67,7 +67,8 @@ export class TourDetailComponent {
   loadMap(){
     try {
       this.mapService.createRouteDetail(this.convertedCoordinates).subscribe((data: any) => {
-      if(data[0].message){       
+      if(data[0].message){
+              
        this.alternative();
       }else{
         
@@ -180,9 +181,11 @@ export class TourDetailComponent {
           addWaypoints: false       
         }).addTo(map);
       }else{  
+        console.log('this.detail.longitude,this.detail.latitude ', 
+        this.detail.longitude,this.detail.latitude, this.long, this.lat)
         this.control = L.Routing.control({
-          waypoints: [L.latLng(latitud, longitud),
-            L.latLng(latitud, longitud)],
+          waypoints: [L.latLng(this.detail.latitude,this.detail.longitude),
+            L.latLng(this.detail.latitude, this.detail.longitude)],
           routeWhileDragging: true,
           collapsible: false, 
           show: false,  
