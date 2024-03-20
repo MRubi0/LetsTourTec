@@ -30,12 +30,13 @@ export class MapsComponent {
       const longitud = Number(position.coords.longitude);
       try {
         this.mapService.createRoute(this.lat, this.long,longitud, latitud).subscribe((data: any) => {
-        if(data.message){
+        if(data[0].message){
           this.alternative();
         }else{
-          this.lat = data.paths[0].points.coordinates[0][1];
-          this.long = data.paths[0].points.coordinates[0][0];
-          this.displayRouteOnMap(data);
+          console.log('data ', data);
+          this.lat = data[0].paths[0].points.coordinates[0][1];
+          this.long = data[0].paths[0].points.coordinates[0][0];
+          this.displayRouteOnMap(data[0]);
         }
         
       });

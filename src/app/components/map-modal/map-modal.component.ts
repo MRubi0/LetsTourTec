@@ -34,13 +34,15 @@ export class MapModalComponent implements OnInit, OnDestroy {
       const longitud = Number(position.coords.longitude);
       try {
         this.mapService.createRoute(this.data.latitude, this.data.longitude,longitud, latitud).subscribe((data: any) => {
-        if(data.message){
-         console.log(data.message); 
+        if(data[0].message){
+         console.log('data meesage ', this.data.latitude, this.data.longitude); 
+         this.lat=this.data.latitude;
+         this.long=this.data.longitude;
          this.alternative();
         }else{
-          this.lat = data.paths[0].points.coordinates[0][1];
-          this.long = data.paths[0].points.coordinates[0][0];
-          this.displayRouteOnMap(data);
+          this.lat = data[0].paths[0].points.coordinates[0][1];
+          this.long = data[0].paths[0].points.coordinates[0][0];          
+          this.displayRouteOnMap(data[0]);
         }
         
       });
@@ -151,6 +153,7 @@ export class MapModalComponent implements OnInit, OnDestroy {
         iconAnchor: [12, 41],
       }); 
       if (this.control) {
+        console.log('latitud, longitud ', latitud, longitud, 'this.lat, this.long ', this.lat, this.long)
         L.marker([latitud, longitud],{ icon: standard }).addTo(map);
         L.marker([this.lat, this.long], { icon: standard }).addTo(map); 
       }
