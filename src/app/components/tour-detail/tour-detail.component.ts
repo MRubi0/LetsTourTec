@@ -181,8 +181,6 @@ export class TourDetailComponent {
           addWaypoints: false       
         }).addTo(map);
       }else{  
-        console.log('this.detail.longitude,this.detail.latitude ', 
-        this.detail.longitude,this.detail.latitude, this.long, this.lat)
         this.control = L.Routing.control({
           waypoints: [L.latLng(this.detail.latitude,this.detail.longitude),
             L.latLng(this.detail.latitude, this.detail.longitude)],
