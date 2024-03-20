@@ -67,8 +67,7 @@ export class TourDetailComponent {
   loadMap(){
     try {
       this.mapService.createRouteDetail(this.convertedCoordinates).subscribe((data: any) => {
-      if(data[0].message){
-       console.log(data[0].message); 
+      if(data[0].message){       
        this.alternative();
       }else{
         
@@ -125,7 +124,7 @@ export class TourDetailComponent {
   
     const instructions = data.paths[0].instructions;
     instructions.forEach((instruction: any) => {
-      console.log(instruction.text);
+      
     }); 
      
     const startIcon = L.icon({
@@ -169,12 +168,10 @@ export class TourDetailComponent {
         maxZoom: 19,
       }).addTo(map); 
 
-
-      console.log('latitud, longitud ', latitud, longitud );
       if(this.lat!=0 && this.long!=0){
         this.control = L.Routing.control({
           waypoints: [
-            L.latLng(latitud, longitud),
+            L.latLng(this.lat, this.long),
             L.latLng(latitud, longitud)
           ],
           routeWhileDragging: true,
@@ -182,73 +179,16 @@ export class TourDetailComponent {
           show: true,  
           addWaypoints: false       
         }).addTo(map);
-      }else{
+      }else{  
         this.control = L.Routing.control({
-          waypoints: [
-            L.latLng(latitud, longitud),
-            L.latLng(this.lat, this.long)
-          ],
+          waypoints: [L.latLng(latitud, longitud),
+            L.latLng(latitud, longitud)],
           routeWhileDragging: true,
-          collapsible: true, 
-          show: true,  
+          collapsible: false, 
+          show: false,  
           addWaypoints: false       
         }).addTo(map);
-      }     
-
-      this.control.on('waypointschanged', (e: any) => {
-        e.waypoints.forEach((waypoint: any) => {
-        });
-      });
-
-      this.control.on('routesfound', (e) => {
-        map.eachLayer((layer) => {
-          if (layer instanceof L.Marker) {
-            layer.dragging?.disable();
-            const element = layer.getElement();
-            if (element) {
-              L.DomUtil.removeClass(element, 'leaflet-marker-draggable');
-              L.DomUtil.removeClass(element, 'leaflet-interactive');
-            }
-          }
-        });
-      });
-
-     setTimeout(() => {
-        const routingContainer = document.querySelector('.leaflet-routing-container');
-        const mapContainer = document.getElementById('map');
-        if (routingContainer && mapContainer && mapContainer.parentElement) {
-          mapContainer.parentElement.appendChild(routingContainer);
-        }
-      }, 0);
-    });
-
-    
-
-    this.watchId = navigator.geolocation.watchPosition((position) => {
-      const latitud = position.coords.latitude;
-      const longitud = position.coords.longitude; 
-
-      console.log('latitud , long 2', latitud, longitud, this.lat, this.long)
-      if(this.lat!=0 && this.long!=0){
-        if (this.control) {
-          this.control.setWaypoints([
-            L.latLng(latitud, longitud),
-            L.latLng(this.lat, this.long)
-          ]);
-        }
-      }else{
-        this.control?.setWaypoints([
-          L.latLng(latitud, longitud),
-          L.latLng(latitud, longitud)
-        ]);
-      }
-      
-    }, (error) => {
-      console.error(error);
-    }, {
-      enableHighAccuracy: true,
-      maximumAge: 10000,
-      timeout: 5000
+       }  
     });
   }
 
