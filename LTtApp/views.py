@@ -16,7 +16,7 @@ import base64
 import boto3
 from botocore.exceptions import ClientError
 from django.http import JsonResponse
-
+from datetime import datetime
 import sqlite3
 import math
 from math import radians, sin, cos, sqrt, atan2
@@ -1039,8 +1039,69 @@ def get_user_tour_records(request):
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
-# @csrf_exempt
-# @require_POST
+current_key_index = 0
+
+@csrf_exempt
+@require_POST
+def get_routes(request):
+    global current_key_index
+    
+    if request.method == 'POST':
+        request_body = request.body
+        try:
+            data = json.loads(request_body)
+            if not isinstance(data, list):
+                data = [data]
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
+
+        api_keys = [
+            '69604395-613a-4fc0-b3af-1d841ac5d565',
+            'd56a81fe-a24e-4ace-ab47-b9aa06ed0874',
+            '74f72b76-bb28-4bb8-b862-a756103cb2b1'
+        ]
+        
+        current_minute = datetime.now().minute
+        key_index = current_minute % len(api_keys)
+        
+        consolidated_response = []
+        for i in range(0, len(data[0]['points']), 5):
+            attempts = 0  # Contador de intentos para cada chunk
+            while attempts < len(api_keys):
+                try:
+                    key = api_keys[key_index]
+                    print(f"Intentando con la clave {key}")
+                    url = f'https://graphhopper.com/api/1/route?key={key}'
+                    chunk = data[0]['points'][i:i+5]
+                    print(f"Puntos actuales: {chunk}")
+                    response = requests.post(url, json={'points': chunk, "points_encoded": False, "profile": "foot"})
+                    
+                                     
+                    # Simplificar la verificación de éxito al estado HTTP 200 solamente
+                    if response.status_code == 200:
+                        json_response = response.json()
+                        consolidated_response.append(json_response)
+                        print("Respuesta exitosa.")
+                        break  # Sale del loop de reintento y continúa con el siguiente chunk
+                    else:
+                        # Imprime información adicional para diagnosticar el fallo
+                        print(f"Fallo con clave {key}. Código de estado: {response.status_code}")
+                        print("Parte de la respuesta:", response.text[:150])  # Imprime los primeros 150 caracteres de la respuesta
+                    
+
+                except requests.exceptions.RequestException as e:
+                    print(f"Excepción al hacer la solicitud con clave {key}: {str(e)}")
+                finally:
+                    key_index = (key_index + 1) % len(api_keys)  # Siguiente clave
+                    attempts += 1  # Incrementa el contador de intentos
+            
+            if attempts == len(api_keys):
+                error_message = "Todos los intentos con las claves API han fallado"
+                consolidated_response.append({'error': error_message})
+            
+        return JsonResponse(consolidated_response, safe=False)
+
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
 # def get_routes(request):
 #     if request.method == 'POST':
 #         request_body = request.body
@@ -1053,10 +1114,11 @@ def get_user_tour_records(request):
 
 #         api_keys = [
 #             '69604395-613a-4fc0-b3af-1d841ac5d565',
+#             'd56a81fe-a24e-4ace-ab47-b9aa06ed0874',
             
 #             '74f72b76-bb28-4bb8-b862-a756103cb2b1'
 #         ]
-#         #'d56a81fe-a24e-4ace-ab47-b9aa06ed0874',
+        
         
 #         key_index = random.randint(0, len(api_keys) - 1)
         
@@ -1081,32 +1143,32 @@ def get_user_tour_records(request):
 
 #     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
-@csrf_exempt
-@require_POST
-def get_routes(request):
-    if request.method == 'POST':
-        request_body = request.body
-        try:
-            data = json.loads(request_body)
-            if not isinstance(data, list):
-                data = [data]  
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
+# @csrf_exempt
+# @require_POST
+# def get_routes(request):
+#     if request.method == 'POST':
+#         request_body = request.body
+#         try:
+#             data = json.loads(request_body)
+#             if not isinstance(data, list):
+#                 data = [data]  
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
 
-        #key = '74f72b76-bb28-4bb8-b862-a756103cb2b1'
-        key = '69604395-613a-4fc0-b3af-1d841ac5d565'
+#         #key = '74f72b76-bb28-4bb8-b862-a756103cb2b1'
+#         key = '69604395-613a-4fc0-b3af-1d841ac5d565'
         
-        url = f'https://graphhopper.com/api/1/route?key={key}'
+#         url = f'https://graphhopper.com/api/1/route?key={key}'
         
-        consolidated_response = []
-        for i in range(0, len(data[0]['points']), 5):
-            chunk = data[0]['points'][i:i+5]              
-            response = requests.post(url, json={'points': chunk, "points_encoded": False, 
-                                                "profile": "foot","calc_points": True,})            
-            consolidated_response.append(response.json())        
-        return JsonResponse(consolidated_response, safe=False)
+#         consolidated_response = []
+#         for i in range(0, len(data[0]['points']), 5):
+#             chunk = data[0]['points'][i:i+5]              
+#             response = requests.post(url, json={'points': chunk, "points_encoded": False, 
+#                                                 "profile": "foot","calc_points": True,})            
+#             consolidated_response.append(response.json())        
+#         return JsonResponse(consolidated_response, safe=False)
 
-    return JsonResponse({'error': 'Método no permitido'}, status=405)
+#     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 
 def save_base64_as_file(base64_data, file_path):
