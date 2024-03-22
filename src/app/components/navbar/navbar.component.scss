@@ -46,8 +46,9 @@
   @media (max-width: 767px) {
     .nav-link,
   .navbar-nav button { /* Asegúrate de que los ajustes se apliquen también a los botones */
-    margin-right: 10px; /* Espaciado menor para dispositivos con pantalla pequeña */
-    font-size: 14px; /* Disminuye el tamaño de la fuente si es necesario */
+    margin-right: 18.5px;
+    margin-left: -10px;
+    font-size: 13px;
   }
     .logo {
       width: 180px; 
