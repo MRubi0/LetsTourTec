@@ -20,6 +20,7 @@ import { MsgInicioModalComponent } from '../msg-inicio-modal/msg-inicio-modal.co
 export class StepperComponent {
   @ViewChild(MatStepper) stepper!: MatStepper;
   @ViewChild(MusicPlayerComponent) musicPlayer!: MusicPlayerComponent;
+  @ViewChild('stepperContainer') stepperContainer!: ElementRef;
   next: any;
   firstFormGroup = this._formBuilder.group({
     firstCtrl: ['', Validators.required],
@@ -86,6 +87,11 @@ export class StepperComponent {
     }else{
       this.last_step=true;
     }
+
+
+    const offsetTop = 176+72*(event.selectedIndex);
+    console.log('offsetTop ', offsetTop);
+    window.scrollTo({ top: offsetTop, behavior: 'smooth' });
   }
   event() {
     const map = L.map(this.maps).setView([51.505, -0.09], 13);

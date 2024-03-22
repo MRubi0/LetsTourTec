@@ -45,7 +45,7 @@
 // const end = `end=${coordinates.split('|')[1]}`;
 
 // const url = `/v2/directions/foot-walking/geojson?api_key=${apiKey}&${start}&${end}`;
-//         //const url = `https://api.openrouteservice.org/v2/directions/foot-walking/geojson?api_key=${apiKey}&start=${coordinates}&end=${coordinates}`;
+//         //const url = `https://api.openrouteservice.org/v2/directions/foot-walking/geojson?=${apiKey}&start=${coordinates}&end=${coordinates}`;
 
 //         fetch(url)
 //   .then(response => {

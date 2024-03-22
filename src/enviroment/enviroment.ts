@@ -1,12 +1,12 @@
 
 
-export const environment = {
+/*export const environment = {
     production : false, 
     apiUrl:"https://letstourtec-c393a22f9c2b.herokuapp.com/",
     bucket:"https://letstourtec-bucket-2.s3.eu-north-1.amazonaws.com"
-  }
+  }*/
 
- /*
+ 
 
 export const environment = {
     production : false, 
@@ -14,4 +14,3 @@ export const environment = {
     bucket:"https://letstourtec-bucket-2.s3.eu-north-1.amazonaws.com"
 
   } 
-*/
