@@ -42,12 +42,12 @@
                 </div>-->
               </mat-card-content>
             </mat-card>
-            <mat-card *ngIf="i>0 " id="step{{i}}">
+            <mat-card *ngIf="i>0 " id="step{{i}}" class="text-center">
               <mat-card-header>
 
               </mat-card-header>
               <div *ngIf="step.latitude && step.longitude">
-                <h2>{{ "STEPPER.The_following_step_is_in_another_location,_open_the_map_to_continue_the_tour" | translate }}</h2>                
+                <h2 class="text-center">{{ "STEPPER.The_following_step_is_in_another_location,_open_the_map_to_continue_the_tour" | translate }}</h2>                
               </div>
 
               <mat-card-content>
