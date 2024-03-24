@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, AfterViewInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
@@ -9,14 +9,17 @@ import { MapService } from 'src/app/services/map.service';
   templateUrl: './maps.component.html',
   styleUrls: ['./maps.component.scss']
 })
-export class MapsComponent {
+export class MapsComponent implements OnDestroy, AfterViewInit {
   lat: number = 0;
   long: number = 0;
   private watchId: number | null = null;
   private control: L.Routing.Control | null = null;
   tour_id = 0;
+  private locationUpdateInterval: any;
+  private map!: L.Map;
+  constructor(private activatedRoute: ActivatedRoute, private mapService: MapService) {}
+  private isFirstLoad: boolean = true;
 
-  constructor(private activatedRoute: ActivatedRoute, private mapService:MapService) {}
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: any) => {
@@ -24,26 +27,38 @@ export class MapsComponent {
     });  
   }
 
-  ngAfterViewInit() {
+  updateLocation() {
     navigator.geolocation.getCurrentPosition((position) => {
       const latitud = Number(position.coords.latitude);
       const longitud = Number(position.coords.longitude);
-      try {
-        this.mapService.createRoute(this.lat, this.long,longitud, latitud).subscribe((data: any) => {
-        if(data[0].message){
+      this.mapService.createRoute(this.lat, this.long, longitud, latitud).subscribe((data: any) => {
+        if (data[0].message) {
           this.alternative();
-        }else{
+        } else {
           console.log('data ', data);
           this.lat = data[0].paths[0].points.coordinates[0][1];
           this.long = data[0].paths[0].points.coordinates[0][0];
           this.displayRouteOnMap(data[0]);
         }
-        
+      }, (error) => {
+        console.error('Error al crear la ruta:', error);
       });
-      } catch (routeError) {
-        console.error('Error al crear la ruta:', routeError);
-      }
-    });    
+    }, (error) => {
+      console.error('Error al obtener la ubicación:', error);
+    }, {
+      enableHighAccuracy: true,
+      maximumAge: 10000,
+      timeout: 5000
+    });
+  }
+  
+
+  ngAfterViewInit() {
+    // Inicializa la ubicación y luego actualiza cada 20 segundos
+    this.updateLocation();
+    this.locationUpdateInterval = setInterval(() => {
+      this.updateLocation();
+    }, 20000); // 20 segundos
   }
 
   stopEvent(e: MouseEvent): void {
@@ -62,32 +77,59 @@ export class MapsComponent {
     if (this.watchId !== null) {
       navigator.geolocation.clearWatch(this.watchId);
     }
+    if (this.locationUpdateInterval) {
+      clearInterval(this.locationUpdateInterval);
+    }
   }
 
-  displayRouteOnMap(data: any): void {
-    const map = L.map('maps').setView([this.lat, this.long], 13);
+displayRouteOnMap(data: any): void {
+  // Verifica si el mapa ya ha sido inicializado
+  if (!this.map) {
+    this.map = L.map('maps').setView([this.lat, this.long], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-    }).addTo(map);
-  
-    const coordinates = data.paths[0].points.coordinates.map((coord:any) => [coord[1], coord[0]]);
-    
-    const routeLine = L.polyline(coordinates, { color: 'blue' }).addTo(map);
-    
-    const standard = L.icon({
-      iconUrl: '../../../assets/iconos/marker-icon.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-    });
+      maxZoom: 25,
+    }).addTo(this.map);
+  }
 
-    const instructions = data.paths[0].instructions;
-    instructions.forEach((instruction: any) => {
-      console.log(instruction.text);
-    });
-    L.marker(coordinates[0],{ icon: standard }).addTo(map);
-    L.marker(coordinates[coordinates.length - 1], { icon: standard }).addTo(map);     
-    map.fitBounds(routeLine.getBounds());
-  }  
+  // Limpia rutas/marcadores existentes antes de añadir nuevos
+  this.map.eachLayer((layer) => {
+    if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+      this.map.removeLayer(layer);
+    }
+  });
+
+  const coordinates = data.paths[0].points.coordinates.map((coord: any) => [coord[1], coord[0]]);
+  const routeLine = L.polyline(coordinates, { color: 'blue' }).addTo(this.map);
+
+  
+
+  const standard = L.icon({
+    iconUrl: '../../../assets/iconos/marker-icon.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+  });
+
+  const endIcon = L.icon({
+    iconUrl: '../../../assets/iconos/finish.png', 
+    iconSize: [41, 41],
+    iconAnchor: [20, 41], 
+  });
+
+  L.marker(coordinates[0], { icon: endIcon  }).addTo(this.map);
+  L.marker(coordinates[coordinates.length - 1], { icon: standard }).addTo(this.map);
+
+  if (this.isFirstLoad) {
+    // Ajusta el mapa para que todos los puntos de la ruta sean visibles. Solo la primera vez.
+    this.map.fitBounds(routeLine.getBounds(), { padding: [20, 20], maxZoom: 25 });
+    this.isFirstLoad = false; // Actualiza la bandera para que no entre aquí en futuras actualizaciones
+  } else {
+    // En las actualizaciones subsecuentes, simplemente actualiza el centro manteniendo el zoom actual.
+    let currentZoom = this.map.getZoom();
+    this.map.setView(routeLine.getBounds().getCenter(), currentZoom);
+  }
+}
+  
+
   alternative(){
     const map = L.map('maps').setView([51.505, -0.09], 13);
     navigator.geolocation.getCurrentPosition((position) => {
