@@ -110,7 +110,7 @@ displayRouteOnMap(data: any): void {
   });
 
   const endIcon = L.icon({
-    iconUrl: '../../../assets/iconos/finish.png', 
+    iconUrl: '../../../assets/iconos/finsh.png', 
     iconSize: [41, 41],
     iconAnchor: [20, 41], 
   });
