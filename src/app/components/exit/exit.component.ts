@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/enviroment/enviroment';
 import { FormGroup, FormControl, Validators, NgForm, FormBuilder } from '@angular/forms';
 import { CountdownEComponent } from '../generics/countdown-e/countdown-e.component';
@@ -21,62 +21,66 @@ export class ExitComponent {
 
   ngOnInit(){
     this.finishForm = this.formBuilder.group({
-      age: ['', [Validators.required, Validators.min(1)]],
-      gender: ['', [Validators.required]],
-      nationality: ['', [Validators.required]],
-      travels:['', [Validators.required]],
-      toursForYear:['', [Validators.required]],
-      format:['', [Validators.required]],
-      duration:['', [Validators.required]],
-      objectives:['', [Validators.required]],
-      next_vacations:['', [Validators.required]],
-      recomendation:['', [Validators.required]],
-      flexibility:['', [Validators.required]],
-      acces:['', [Validators.required]],
-      socialmedia:['', [Validators.required]],
-      
-      value:[''],   
-      content:[''],
-      correct_duration:[''],      
-      most_value:[''],
-      less_value:[''],      
-      problems:[''],      
-      probability:[''],      
-      payfor:[''],      
-      actualizations:['']      
+      pregunta1: ['', [Validators.required, Validators.min(1)]],
+      pregunta2: ['', [Validators.required]],
+      pregunta3: ['', [Validators.required]],
+      subpregunta3_1:[''],  
+      pregunta4:['', [Validators.required]],
+      pregunta5:['', [Validators.required]],
+      pregunta6:['', [Validators.required]],
+      pregunta7:['', [Validators.required]],
+      subpregunta7_1:[''],  
+      pregunta8:['', [Validators.required]],
+      subpregunta8_1:[''],  
+      subpregunta8_2:[''],  
+      pregunta9:['', [Validators.required]],
+      pregunta10:[''],
+      pregunta11:['', [Validators.required]],
+      pregunta12:[''],   
+      pregunta13:[''],
+      pregunta14:[''],
+      pregunta15:['', [Validators.required]],
+      pregunta16:['', [Validators.required]],
+      pregunta17:['', [Validators.required]],
+      pregunta18:['', [Validators.required]],
+      pregunta19:['', [Validators.required]],
+      subpregunta19_1:[''],
+      pregunta20:[''],
+      pregunta21:['', [Validators.required]],
+      pregunta22:['']     
     });
     this.finishForm.valueChanges.subscribe(data=>{
       console.log('data ', data);
     });
   }
-  submitSurvey(form: NgForm) {
-    if (form.valid && this.edad !== 0) {
-      // El formulario es válido y la edad no es 0, procede con el envío de los datos
-      const formData: any = new FormData();
-      Object.keys(form.value).forEach(key => {
-        // Aquí puedes decidir cómo manejar el valor de edad si es 0
-        formData.append(key, form.value[key]);
-      });
-  
-      this.http.post<any>(`${environment.apiUrl}encuesta/`, formData)
+  submitSurvey() {
+    if (this.finishForm.valid) {
+      // Configura las cabeceras para indicar que el contenido es JSON
+      const headers = new HttpHeaders().set('Content-Type', 'application/json');
+      
+      // Usa los valores del formulario directamente
+      const formValues = this.finishForm.value;
+
+      // Enviar los datos como JSON
+      this.http.post<any>(`${environment.apiUrl}encuesta/`, JSON.stringify(formValues), { headers: headers })
         .subscribe(
           data => {
             console.log('Datos enviados con éxito:', data);
+            console.log(JSON.stringify(formValues))
           },
           error => {
             console.error('Error al enviar los datos:', error);
+            // Aquí podrías manejar el error
           }
         );
     } else {
-      if (this.edad <= 0) {
-        this.edadInvalida = true;
-        console.error('La edad proporcionada no es válida');
-        // Aquí puedes mostrar un mensaje de error en la UI
-      }alert('Por favor, completa todos los campos obligatorios.');
+      console.error('El formulario no es válido');
+      alert('Por favor, completa todos los campos obligatorios.');
     }
   }
-  onSubmit() { 
-    this.ngbModal.open(CountdownEComponent,{ size: 'sm'});
-  }
   
+  onSubmit() { 
+    console.log("Intentando enviar datos...");
+    this.submitSurvey(); // Ahora se llama sin argumentos
+  }  
 }
