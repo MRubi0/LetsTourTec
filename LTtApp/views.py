@@ -417,19 +417,22 @@ def upload_tours(request):
 #         # Método HTTP no permitido
 #         return Response({'error': 'Invalid request method'}, status=405)
 
+@csrf_exempt
 @api_view(['POST'])
 def upload_encuesta(request):
+    print("im here")
     if request.method == 'POST':
         # Mapeo de los nombres de campos del formulario a los nombres de campos del modelo
         mapeo_campos = {
             'pregunta1': 'edad',
             'pregunta2': 'genero',
             'pregunta3': 'nacionalidad',
+            'subpregunta3_1': 'otro_nacionalidad',
             'pregunta4': 'viajes_al_anio',
             'pregunta5': 'tours_al_anio',
             'pregunta6': 'valoracion_tour',
             'pregunta7': 'valoracion_contenido',
-            'subpregunta7': 'otro_contenido',
+            'subpregunta7_1': 'otro_contenido',
             'pregunta8': 'valoracion_formato',
             'subpregunta8_1': 'gusta_formato',
             'subpregunta8_2': 'menos_gusta_formato',
@@ -444,6 +447,7 @@ def upload_encuesta(request):
             'pregunta17': 'probabilidad_de_volver_a_realizar_tour',
             'pregunta18': 'flexibilidad_de_horarios_idioma',
             'pregunta19': 'acceso_a_tours',
+            'subpregunta19_1': 'otro_acceso',
             'pregunta20': 'precio_dispuesto_a_pagar',
             'pregunta21': 'formato_red_social',
             'pregunta22': 'correo',
@@ -451,6 +455,7 @@ def upload_encuesta(request):
 
         # Crear la instancia del modelo Encuesta sin guardarla aún
         encuesta = Encuesta()
+        print(encuesta)
 
         for clave_form, clave_modelo in mapeo_campos.items():
             valor = request.data.get(clave_form)

@@ -243,7 +243,8 @@ class TourRecord(models.Model):
 class Encuesta(models.Model):
     edad = models.CharField(max_length=100, blank=True)   
     genero = models.CharField(max_length=100, blank=True)   
-    nacionalidad = models.CharField(max_length=100, blank=True)   
+    nacionalidad = models.CharField(max_length=100, blank=True) 
+    otro_nacionalidad = models.CharField(max_length=100, blank=True) 
     viajes_al_anio = models.CharField(max_length=100, blank=True)   
     tours_al_anio = models.CharField(max_length=100, blank=True)   
     valoracion_tour = models.CharField(max_length=100, blank=True)   
@@ -263,6 +264,7 @@ class Encuesta(models.Model):
     probabilidad_de_volver_a_realizar_tour = models.CharField(max_length=100, blank=True)   
     flexibilidad_de_horarios_idioma = models.CharField(max_length=3, blank=True)   
     acceso_a_tours = models.CharField(max_length=100, blank=True)   
+    otro_acceso = models.CharField(max_length=100, blank=True) 
     precio_dispuesto_a_pagar = models.CharField(max_length=100, blank=True)   
     formato_red_social = models.CharField(max_length=3, blank=True)   
     correo = models.EmailField(blank=True, null=True)
