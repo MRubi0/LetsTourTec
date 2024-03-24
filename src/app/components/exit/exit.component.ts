@@ -82,5 +82,6 @@ export class ExitComponent {
   onSubmit() { 
     console.log("Intentando enviar datos...");
     this.submitSurvey(); // Ahora se llama sin argumentos
+    this.ngbModal.open(CountdownEComponent,{ size: 'sm'});
   }  
 }
