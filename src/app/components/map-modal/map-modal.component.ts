@@ -125,7 +125,8 @@ export class MapModalComponent implements OnInit, OnDestroy {
       this.isFirstLoad = false;
     } else {
       let currentZoom = this.map.getZoom();
-      this.map.setView(routeLine.getBounds().getCenter(), currentZoom);
+      let lastCoordinate = coordinates[coordinates.length - 1];
+      this.map.setView(lastCoordinate, currentZoom);
     }
   }
   
