@@ -125,7 +125,8 @@ displayRouteOnMap(data: any): void {
   } else {
     // En las actualizaciones subsecuentes, simplemente actualiza el centro manteniendo el zoom actual.
     let currentZoom = this.map.getZoom();
-    this.map.setView(routeLine.getBounds().getCenter(), currentZoom);
+    let lastCoordinate = coordinates[coordinates.length - 1];
+    this.map.setView(lastCoordinate, currentZoom);
   }
 }
   
