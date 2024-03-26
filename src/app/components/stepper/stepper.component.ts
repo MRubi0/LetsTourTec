@@ -87,7 +87,6 @@ export class StepperComponent {
     }else{
       this.last_step=true;
     }
-    console.log('audioComponents  ', this.audioComponents);
     if(event.previouslySelectedIndex!=undefined){
       this.audioComponents.forEach(audioComponent => {
         audioComponent.audioPlayer.pause();   

@@ -67,13 +67,7 @@ export class MusicPlayerComponent implements OnChanges {
         console.log('changes ', this.next);
         this.audioPlayer.play();
       }
-      }
-      /*if(changes['previous'].currentValue>=0){
-        this.audioPlayerRef.nativeElement.id=this.previous;
-        console.log('this.audioPlayer 2', this.audioPlayerRef.nativeElement.id);
-        this.audioPlayer.pause();
-      }*/
-      
+      }      
     }
   }
 
