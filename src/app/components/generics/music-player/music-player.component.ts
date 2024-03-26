@@ -59,15 +59,14 @@ export class MusicPlayerComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.audioPlayerRef) {     
-      this.audioPlayer = this.audioPlayerRef.nativeElement;   
-      if(changes['next']){
-        if (changes['next'].currentValue > 0 &&
-        this.audioPlayerRef.nativeElement.id == changes['next'].currentValue
-      ) {
-        console.log('changes ', this.next);
+      this.audioPlayer = this.audioPlayerRef.nativeElement;         
+      if (changes['next'].currentValue > 0 &&
+        this.audioPlayerRef.nativeElement.id == 'audio'+changes['next'].currentValue
+      ) {        
         this.audioPlayer.play();
+        this.isPlaying=true
       }
-      }      
+            
     }
   }
 

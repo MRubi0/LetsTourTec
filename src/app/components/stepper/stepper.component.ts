@@ -78,18 +78,21 @@ export class StepperComponent {
       
     } else{
       this.url_icon_home = '../../../assets/iconos/home-white.svg'
-    }
-    if(this.evento=='next_auto'){      
-      this.next=event.selectedIndex;
+    }    
+    if(this.evento=='next_auto'){
+      this.next=event.selectedIndex;      
     }
     if(this.tour.steps.length-1==event.selectedIndex){
       this.last_step=false;
     }else{
       this.last_step=true;
     }
+    const aud = 'audio'+event.previouslySelectedIndex;
     if(event.previouslySelectedIndex!=undefined){
       this.audioComponents.forEach(audioComponent => {
-        audioComponent.audioPlayer.pause();   
+        if(aud==audioComponent.audioPlayer.id){
+          audioComponent.audioPlayer.pause();
+        }           
       });
     }
     const offsetTop = 176+72*(event.selectedIndex);    
