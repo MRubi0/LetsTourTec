@@ -34,7 +34,7 @@
                   <p>{{tour.description}}</p>
                 </div>
                 <div class="audio d-flex justify-content-center">
-                  <app-music-player class="w-100" [audio]="tour.audio" [index]="i" [next]="next"
+                  <app-music-player class="w-100" [audio]="tour.audio" [index]="i" [next]="next" [previous]="previous"
                     (stepChange)="musicAction($event)"></app-music-player>                    
                 </div>
                 <!--<div class="d-flex justify-content-end">

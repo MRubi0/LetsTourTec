@@ -21,7 +21,7 @@ export class StepperComponent {
   @ViewChild(MatStepper) stepper!: MatStepper;
   @ViewChild(MusicPlayerComponent) musicPlayer!: MusicPlayerComponent;
   @ViewChild('stepperContainer') stepperContainer!: ElementRef;
-  next: any;
+  next!: Array<number>[];
   firstFormGroup = this._formBuilder.group({
     firstCtrl: ['', Validators.required],
   });
@@ -44,7 +44,7 @@ export class StepperComponent {
   audioControlsVisible = false;
   evento: any
   last_step=true;
-
+  previous=0;
 
   checkIfMapModalIsRequired(step: any) {
     this.audioControlsVisible = !(step.latitude && step.longitude);
@@ -79,7 +79,7 @@ export class StepperComponent {
     } else{
       this.url_icon_home = '../../../assets/iconos/home-white.svg'
     }
-    if(this.evento=='next_auto'){
+    if(this.evento=='next_auto'){      
       this.next=event.selectedIndex;
     }
     if(this.tour.steps.length-1==event.selectedIndex){
@@ -88,9 +88,8 @@ export class StepperComponent {
       this.last_step=true;
     }
 
-
-    const offsetTop = 176+72*(event.selectedIndex);
-    console.log('offsetTop ', offsetTop);
+    this.previous=event.previouslySelectedIndex;
+    const offsetTop = 176+72*(event.selectedIndex);    
     window.scrollTo({ top: offsetTop, behavior: 'smooth' });
   }
   event() {
@@ -192,11 +191,11 @@ export class StepperComponent {
   }
   musicAction(event: string) {
     if (event === 'next' || event === 'next_auto') {
-      if (this.isLastStep()) {        
-        this.ngbModal.open(CountdownComponent,{ size: 'sm'});
+      if (this.isLastStep()) { 
+        this.finishTour();       
+        this.ngbModal.open(CountdownComponent,{ size: 'sm'});        
         return;
-      }
-      this.finishTour();
+      }      
       this.goToNextStep(event);
     } else {
         this.goToPreviousStep();

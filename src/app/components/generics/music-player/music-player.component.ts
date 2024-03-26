@@ -15,6 +15,7 @@ export class MusicPlayerComponent implements OnChanges {
   @ViewChild('audioPlayer') audioPlayerRef!: ElementRef;  
   @Input('audio') audio!: string;
   @Input('index') index!: number;
+  @Input('previous') previous!: number;
   @Input('next') next!: any;
   @Input('last') last!: any;  
   @Output() stepChange = new EventEmitter<string>();
@@ -57,13 +58,19 @@ export class MusicPlayerComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.audioPlayerRef) {
-      this.audioPlayer = this.audioPlayerRef.nativeElement;
+    if (this.audioPlayerRef) {     
+      this.audioPlayer = this.audioPlayerRef.nativeElement;   
       if (changes['next'].currentValue > 0 &&
         this.audioPlayerRef.nativeElement.id == changes['next'].currentValue
       ) {
+        console.log('changes ', this.next);
         this.audioPlayer.play();
+      }if(changes['previous'].currentValue>=0){
+        this.audioPlayerRef.nativeElement.id=this.previous;
+        console.log('this.audioPlayer 2', this.audioPlayerRef.nativeElement.id);
+        this.audioPlayer.pause();
       }
+      
     }
   }
 
