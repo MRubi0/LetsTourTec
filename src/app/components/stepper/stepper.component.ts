@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnChanges, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnChanges, QueryList, Renderer2, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { StepService } from 'src/app/services/step.service';
 import { environment } from 'src/enviroment/enviroment';
@@ -19,8 +19,8 @@ import { MsgInicioModalComponent } from '../msg-inicio-modal/msg-inicio-modal.co
 })
 export class StepperComponent {
   @ViewChild(MatStepper) stepper!: MatStepper;
-  @ViewChild(MusicPlayerComponent) musicPlayer!: MusicPlayerComponent;
   @ViewChild('stepperContainer') stepperContainer!: ElementRef;
+  @ViewChildren(MusicPlayerComponent) audioComponents!: QueryList<MusicPlayerComponent>;
   next!: Array<number>[];
   firstFormGroup = this._formBuilder.group({
     firstCtrl: ['', Validators.required],
@@ -87,8 +87,12 @@ export class StepperComponent {
     }else{
       this.last_step=true;
     }
-
-    this.previous=event.previouslySelectedIndex;
+    console.log('audioComponents  ', this.audioComponents);
+    if(event.previouslySelectedIndex!=undefined){
+      this.audioComponents.forEach(audioComponent => {
+        audioComponent.audioPlayer.pause();   
+      });
+    }
     const offsetTop = 176+72*(event.selectedIndex);    
     window.scrollTo({ top: offsetTop, behavior: 'smooth' });
   }
