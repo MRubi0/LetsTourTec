@@ -17,10 +17,12 @@ import { MsgInicioModalComponent } from '../msg-inicio-modal/msg-inicio-modal.co
   templateUrl: './stepper.component.html',
   styleUrls: ['./stepper.component.scss']
 })
-export class StepperComponent {
+export class StepperComponent {  
   @ViewChild(MatStepper) stepper!: MatStepper;
   @ViewChild('stepperContainer') stepperContainer!: ElementRef;
   @ViewChildren(MusicPlayerComponent) audioComponents!: QueryList<MusicPlayerComponent>;
+  @ViewChild(MusicPlayerComponent) musicPlayer!: MusicPlayerComponent;
+  velocity_rate:number=1;
   next!: Array<number>[];
   firstFormGroup = this._formBuilder.group({
     firstCtrl: ['', Validators.required],
@@ -44,14 +46,14 @@ export class StepperComponent {
   audioControlsVisible = false;
   evento: any
   last_step=true;
-  previous=0;
-
+  rates=0;
+  
   checkIfMapModalIsRequired(step: any) {
     this.audioControlsVisible = !(step.latitude && step.longitude);
   }
 
   constructor(private dialog: MatDialog, private _formBuilder: FormBuilder,
-    private stepService: StepService, private elRef: ElementRef, private renderer: Renderer2, private activatedRoute: ActivatedRoute,
+    private stepService: StepService, private activatedRoute: ActivatedRoute,
     private ngbModal: NgbModal
     ) { }
 
@@ -92,9 +94,11 @@ export class StepperComponent {
       this.audioComponents.forEach(audioComponent => {
         if(aud==audioComponent.audioPlayer.id){
           audioComponent.audioPlayer.pause();
-        }           
+        }
+        this.rates=this.velocity_rate
+        audioComponent.changePlaybackRate(this.velocity_rate);           
       });
-    }
+    }   
     const offsetTop = 176+72*(event.selectedIndex);    
     window.scrollTo({ top: offsetTop, behavior: 'smooth' });
   }
@@ -166,8 +170,6 @@ export class StepperComponent {
       this.tour = data;
       let stepsWithOffset = [this.tour.steps[0], ...this.tour.steps];
       this.tour.steps = stepsWithOffset;
-      console.log(this.tour.steps)
-      
 
       if (this.tour.steps.length) {
         this.checkIfMapModalIsRequired(this.tour.steps[0]);
@@ -220,9 +222,11 @@ export class StepperComponent {
     return currentIndex === this.tour.steps.length - 1;
   }
   openWelcomeModal(): void {
-    const dialogRef = this.dialog.open(MsgInicioModalComponent, {
+    this.dialog.open(MsgInicioModalComponent, {
       width: '500px'
     });
-}
-
+  }
+  velocity(event:any){
+    this.velocity_rate=event;
+  }
 }

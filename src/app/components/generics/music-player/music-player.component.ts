@@ -1,5 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, ChangeDetectorRef, HostListener, OnChanges, SimpleChanges } from '@angular/core';
 import * as Hammer from 'hammerjs';
+import { SharedService } from 'src/app/services/shared.service';
+
 
 @Component({
   selector: 'app-music-player',
@@ -15,11 +17,12 @@ export class MusicPlayerComponent implements OnChanges {
   @ViewChild('audioPlayer') audioPlayerRef!: ElementRef;  
   @Input('audio') audio!: string;
   @Input('index') index!: number;
-  @Input('previous') previous!: number;
   @Input('next') next!: any;
   @Input('last') last!: any;  
+  @Input('rates') rates!:any;
   @Output() stepChange = new EventEmitter<string>();
-  audioPlayer!: HTMLAudioElement;
+  @Output() emitRates = new EventEmitter<number>();
+   audioPlayer!: HTMLAudioElement;
   isPlaying: boolean = false;
   volume: number = 0.5;
   playbackRate: number = 1.0;
@@ -33,11 +36,11 @@ export class MusicPlayerComponent implements OnChanges {
   screenWidth!: number;
   bar_volume_small: boolean = true;
 
-  constructor(private cdRef: ChangeDetectorRef) { }
+  constructor(private cdRef: ChangeDetectorRef, private sharedService:SharedService) { }
 
   ngOnInit() {
     this.playbackRates = this.generatePlaybackRates();
-    this.getScreenSize();
+    this.getScreenSize();   
   }
   ngAfterViewInit() {
     this.audioPlayer = this.audioPlayerRef.nativeElement;
@@ -55,18 +58,24 @@ export class MusicPlayerComponent implements OnChanges {
     mc.on('doubletap', (ev: any) => {
       this.onDoubleTap(ev);
     });
+
+    if(this.rates>0 && this.rates!=undefined){
+      this.changePlaybackRate(this.rates);
+    } 
+    this.cdRef.detectChanges(); 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.audioPlayerRef) {     
-      this.audioPlayer = this.audioPlayerRef.nativeElement;         
+   if (this.audioPlayerRef) {               
+      if(changes['next']){
+        this.audioPlayer = this.audioPlayerRef.nativeElement;         
       if (changes['next'].currentValue > 0 &&
         this.audioPlayerRef.nativeElement.id == 'audio'+changes['next'].currentValue
       ) {        
         this.audioPlayer.play();
         this.isPlaying=true
       }
-            
+     }           
     }
   }
 
@@ -103,6 +112,7 @@ export class MusicPlayerComponent implements OnChanges {
   changePlaybackRate(value: number) {
     this.audioPlayer.playbackRate = value;
     this.playbackRate = value;
+    this.emitRates.emit(value);    
   }
 
   restart() {

@@ -34,12 +34,9 @@
                   <p>{{tour.description}}</p>
                 </div>
                 <div class="audio d-flex justify-content-center">
-                  <app-music-player class="w-100" [audio]="tour.audio" [index]="i" [next]="next" [previous]="previous"
-                    (stepChange)="musicAction($event)"></app-music-player>                    
+                  <app-music-player class="w-100" [audio]="tour.audio" [index]="i" [next]="next" 
+                    (stepChange)="musicAction($event)" [rates]="rates" (emitRates)="velocity($event)"></app-music-player>                    
                 </div>
-                <!--<div class="d-flex justify-content-end">
-                  <button mat-button routerLink="/music-detail">detail</button>
-                </div>-->
               </mat-card-content>
             </mat-card>
             <mat-card *ngIf="i>0 " id="step{{i}}" class="text-center">
@@ -63,7 +60,7 @@
                 </div>
                 <div class="audio d-flex justify-content-center w-100" *ngIf="audioControlsVisible">
                   <app-music-player class="w-100" [audio]="step.audio" [index]="i" [next]="next" [last]="last"
-                    (stepChange)="musicAction($event)"></app-music-player>
+                    (stepChange)="musicAction($event)" [rates]="rates" (emitRates)="velocity($event)"></app-music-player>
                 </div>     
                 <div  class="d-flex justify-content-end" *ngIf="last">
                   <button mat-raised-button class="exit" data-cy="submit" routerLink="/exit">Exit</button>
