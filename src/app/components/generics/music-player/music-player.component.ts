@@ -22,7 +22,7 @@ export class MusicPlayerComponent implements OnChanges {
   @Input('rates') rates!:any;
   @Output() stepChange = new EventEmitter<string>();
   @Output() emitRates = new EventEmitter<number>();
-   audioPlayer!: HTMLAudioElement;
+  audioPlayer!: HTMLAudioElement;
   isPlaying: boolean = false;
   volume: number = 0.5;
   playbackRate: number = 1.0;
@@ -35,6 +35,7 @@ export class MusicPlayerComponent implements OnChanges {
   screenHeight!: number;
   screenWidth!: number;
   bar_volume_small: boolean = true;
+  
 
   constructor(private cdRef: ChangeDetectorRef, private sharedService:SharedService) { }
 
@@ -68,12 +69,18 @@ export class MusicPlayerComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
    if (this.audioPlayerRef) {               
       if(changes['next']){
+        const minus = changes['next'].currentValue - changes['next'].previousValue;
         this.audioPlayer = this.audioPlayerRef.nativeElement;         
       if (changes['next'].currentValue > 0 &&
         this.audioPlayerRef.nativeElement.id == 'audio'+changes['next'].currentValue
-      ) {        
-        this.audioPlayer.play();
-        this.isPlaying=true
+      ) {       
+        if (minus==1 || changes['next'].previousValue == undefined){
+          this.audioPlayer.play();
+          this.isPlaying=true
+        }  
+        else{
+          this.audioPlayer.pause();
+        }      
       }
      }           
     }
