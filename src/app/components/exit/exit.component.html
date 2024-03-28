@@ -118,11 +118,14 @@
         <label for="pregunta6">6. {{ "EXIT.Valora_el_tour_realizado:" | translate }}</label>
         <select class="form-control" name="pregunta6" formControlName="pregunta6">
             <option value="" disabled selected>{{ "EXIT.Seleccione_su_valoración..." | translate }}</option>
-            <option value="Muy poco satisfecho">{{ "EXIT.Muy_poco_satisfecho" | translate }}</option>
-            <option value="Poco satisfecho">{{ "EXIT.Poco_satisfecho" | translate }}</option>
-            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
-            <option value="Satisfecho">{{ "EXIT.Satisfecho" | translate }}</option>
+
             <option value="Muy satisfecho">{{ "EXIT.Muy_satisfecho" | translate }}</option>
+            <option value="Satisfecho">{{ "EXIT.Satisfecho" | translate }}</option>
+
+            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
+            <option value="Poco satisfecho">{{ "EXIT.Poco_satisfecho" | translate }}</option>
+            <option value="Muy poco satisfecho">{{ "EXIT.Muy_poco_satisfecho" | translate }}</option>
+            
         </select>
         <div *ngIf="finishForm.get('pregunta6') && finishForm.get('pregunta6')?.invalid && (finishForm.get('pregunta6')?.dirty || finishForm.get('pregunta6')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('pregunta6') && finishForm.get('pregunta6')?.errors && finishForm.get('pregunta6')?.errors?.['required']">
@@ -135,11 +138,16 @@
         <label for="pregunta7">7. {{ "EXIT.Valora_el_contenido_del_tour_realizado:" | translate }}</label>
         <select class="form-control" name="pregunta7"  formControlName="pregunta7">
             <option value="" disabled selected>{{ "EXIT.Seleccione_su_valoración..." | translate }}</option>
-            <option value="Muy poco satisfecho">{{ "EXIT.Muy_poco_satisfecho" | translate }}</option>
-            <option value="Poco satisfecho">{{ "EXIT.Poco_satisfecho" | translate }}</option>
-            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
-            <option value="Satisfecho">{{ "EXIT.Satisfecho" | translate }}</option>
+
+
             <option value="Muy satisfecho">{{ "EXIT.Muy_satisfecho" | translate }}</option>
+            <option value="Satisfecho">{{ "EXIT.Satisfecho" | translate }}</option>
+
+            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
+            <option value="Poco satisfecho">{{ "EXIT.Poco_satisfecho" | translate }}</option>
+            <option value="Muy poco satisfecho">{{ "EXIT.Muy_poco_satisfecho" | translate }}</option>
+
+
         </select>
         <div *ngIf="finishForm.get('pregunta7') && finishForm.get('pregunta7')?.invalid && (finishForm.get('pregunta7')?.dirty || finishForm.get('pregunta7')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('pregunta7') && finishForm.get('pregunta7')?.errors && finishForm.get('pregunta7')?.errors?.['required']">
@@ -153,11 +161,12 @@
         <label for="pregunta8">8. {{ "EXIT.Valora_el_formato_en_el_que_se_ha_presentado_el_tour:" | translate }}</label>
         <select class="form-control" id="pregunta8" formControlName="pregunta8" >
             <option value="" disabled selected>{{ "EXIT.Seleccione_su_valoración..." | translate }}</option>
-            <option value="Muy poco satisfecho">{{ "EXIT.Muy_poco_satisfecho" | translate }}</option>
-            <option value="Poco satisfecho">{{ "EXIT.Poco_satisfecho" | translate }}</option>
-            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
-            <option value="Satisfecho">{{ "EXIT.Satisfecho" | translate }}</option>
             <option value="Muy satisfecho">{{ "EXIT.Muy_satisfecho" | translate }}</option>
+            <option value="Satisfecho">{{ "EXIT.Satisfecho" | translate }}</option>
+
+            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
+            <option value="Poco satisfecho">{{ "EXIT.Poco_satisfecho" | translate }}</option>
+            <option value="Muy poco satisfecho">{{ "EXIT.Muy_poco_satisfecho" | translate }}</option>
         </select>
         <div *ngIf="finishForm.get('pregunta8') && finishForm.get('pregunta8')?.invalid && (finishForm.get('pregunta8')?.dirty || finishForm.get('pregunta8')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('pregunta8') && finishForm.get('pregunta8')?.errors && finishForm.get('pregunta8')?.errors?.['required']">
@@ -238,11 +247,15 @@
         <label for="pregunta16">16. {{ "EXIT.¿Qué_tan_probable_es_que_recomiendes_'Let's_Tour_Tec'_a_otras_personas?" | translate }}</label>
         <select class="form-control" id="pregunta16" name="pregunta16" formControlName="pregunta16" >
             <option value="" disabled selected>{{ "EXIT.Seleccione_una_probabilidad..." | translate }}</option>
-            <option value="Muy improbable">{{ "EXIT.Muy_improbable" | translate }}</option>
-            <option value="Improbable">{{ "EXIT.Improbable" | translate }}</option>
-            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
-            <option value="Probable">{{ "EXIT.Probable" | translate }}</option>
             <option value="Muy probable">{{ "EXIT.Muy_probable" | translate }}</option>
+            <option value="Probable">{{ "EXIT.Probable" | translate }}</option>
+
+
+            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
+
+            <option value="Improbable">{{ "EXIT.Improbable" | translate }}</option>
+            <option value="Muy improbable">{{ "EXIT.Muy_improbable" | translate }}</option>
+
         </select>
 
         <div *ngIf="finishForm.get('pregunta16') && finishForm.get('pregunta16')?.invalid && (finishForm.get('pregunta16')?.dirty || finishForm.get('pregunta16')?.touched)" class="alert alert-danger">
@@ -255,11 +268,14 @@
         <label for="pregunta17">17. {{ "EXIT.¿Qué_tan_probable_es_que_vuelvas_a_usar_'Let's_Tour_Tec'?" | translate }}</label>
         <select class="form-control" id="pregunta17" name="pregunta17" formControlName="pregunta17" >
             <option value="" disabled selected>{{ "EXIT.Seleccione_una_probabilidad..." | translate }}</option>
-            <option value="Muy improbable">{{ "EXIT.Muy_improbable" | translate }}</option>
-            <option value="Improbable">{{ "EXIT.Improbable" | translate }}</option>
-            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
-            <option value="Probable">{{ "EXIT.Probable" | translate }}</option>
             <option value="Muy probable">{{ "EXIT.Muy_probable" | translate }}</option>
+            <option value="Probable">{{ "EXIT.Probable" | translate }}</option>
+
+
+            <option value="Normal">{{ "EXIT.Normal" | translate }}</option>
+
+            <option value="Improbable">{{ "EXIT.Improbable" | translate }}</option>
+            <option value="Muy improbable">{{ "EXIT.Muy_improbable" | translate }}</option>
         </select>
 
         <div *ngIf="finishForm.get('pregunta17') && finishForm.get('pregunta17')?.invalid && (finishForm.get('pregunta17')?.dirty || finishForm.get('pregunta17')?.touched)" class="alert alert-danger">

@@ -12,8 +12,8 @@
       <div class="modal-footer d-flex justify-content-center mt-3">
           <button type="button" class="btn btn-primary" (click)="closeModal()">{{ "MAP-MODAL.I_arrived" | translate }}</button>
           <!-- Enlace a Google Maps con latitud y longitud -->
-          <a href="https://www.google.com/maps?q={{lat}},{{long}}" target="_blank">
-            <button type="button" class="btn btn-accent" style="color: #0d6efd;">{{ "MAPS.Prefer_Google_Maps?_Click_Here" | translate }}</button>
+          <a href="https://www.google.com/maps/dir/?api=1&origin=My+Location&destination={{lat}},{{long}}" target="_blank">
+            <button type="button" class="btn btn-accent" style="color: #0d6efd;">{{ "MAP-MODAL.Prefer_Google_Maps?_Click_Here" | translate }}</button>
         </a>
       </div>
   </div>

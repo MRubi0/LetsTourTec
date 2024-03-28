@@ -8,7 +8,7 @@
         <div class="col-12 d-flex justify-content-center flex-column align-items-center">
             <button mat-raised-button color="primary" class="custom-button-color mb-2" [routerLink]="'/stepper/' + tour_id">{{ "MAPS.I_arrived,_Let's_tour" | translate }}</button>
             <!-- Botón actualizado para Google Maps -->
-            <a href="https://www.google.com/maps?q={{lat}},{{long}}" target="_blank">
+            <a href="https://www.google.com/maps/dir/?api=1&origin=My+Location&destination={{lat}},{{long}}" target="_blank">
                 <button type="button" class="btn btn-accent" style="color: #0d6efd;">{{ "MAPS.Prefer_Google_Maps?_Click_Here" | translate }}</button>
             </a>
         </div>
