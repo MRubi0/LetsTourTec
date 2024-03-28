@@ -54,6 +54,7 @@
   "TOUR-DETAIL.Covered_distance": "Distancia recorrida",
   "MAPS.Let's_go_to_the_starting_point": "Vayamos al punto de inicio",
   "MAPS.I_arrived,_Let's_tour": "Llegué, Let's tour",
+  "MAPS.Prefer_Google_Maps?_Click_Here": "¿Prefieres Google Maps? Haz clic aquí",
 
   "MSG-INICIO-MODAL.Querido_usuario":"Querido usuario",
   "MSG-INICIO-MODAL.Nos_complace_ofrecerte_Let´sTourTec_de_forma_gratuita._Creemos_firmemente_en_el_valor_que_aporta_y_queremos_que_esté_al_alcance_de_todos.":"Nos complace ofrecerte Let´sTourTec de forma gratuita. Creemos firmemente en el valor que aporta y queremos que esté al alcance de todos.",
@@ -151,5 +152,6 @@
 
   "MY-PROFILE.Welcome_back": "Bienvenido de nuevo",
   "MAP-MODAL.Let's_go_to_the_next_point": "Vayamos al siguiente punto",
-  "MAP-MODAL.I_arrived":"Llegué"
+  "MAP-MODAL.I_arrived":"Llegué",
+  "MAP-MODAL.Prefer_Google_Maps?_Click_Here": "¿Prefieres Google Maps? Haz clic aquí"
 }

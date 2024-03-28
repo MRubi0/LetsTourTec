@@ -1,12 +1,16 @@
- <div class="container-fluid d-flex pt-5 flex-wrap">
+<div class="container-fluid d-flex pt-5 flex-wrap">
     <div class="row d-flex justify-content-center">
         
         <h2 class="text-center">{{ "MAPS.Let's_go_to_the_starting_point" | translate }}</h2> 
         <div class="maps col-12" id="maps" (click)="stopEvent($event)"></div>
     </div>
     <div class="instructions-container row mt-3">  
-        <div class="col-12 d-flex justify-content-center">
-            <button mat-raised-button color="primary" class="custom-button-color" [routerLink]="'/stepper/' + tour_id">{{ "MAPS.I_arrived,_Let's_tour" | translate }}</button>
+        <div class="col-12 d-flex justify-content-center flex-column align-items-center">
+            <button mat-raised-button color="primary" class="custom-button-color mb-2" [routerLink]="'/stepper/' + tour_id">{{ "MAPS.I_arrived,_Let's_tour" | translate }}</button>
+            <!-- Botón actualizado para Google Maps -->
+            <a href="https://www.google.com/maps?q={{lat}},{{long}}" target="_blank">
+                <button type="button" class="btn btn-accent" style="color: #0d6efd;">{{ "MAPS.Prefer_Google_Maps?_Click_Here" | translate }}</button>
+            </a>
         </div>
     </div>
 </div>
