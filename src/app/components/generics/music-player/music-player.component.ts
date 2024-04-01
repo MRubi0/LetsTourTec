@@ -1,6 +1,10 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, ChangeDetectorRef, HostListener, OnChanges, SimpleChanges } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import * as Hammer from 'hammerjs';
 import { SharedService } from 'src/app/services/shared.service';
+import { ModalVelocityComponent } from '../modal-velocity/modal-velocity.component';
+import {MatMenuTrigger, MatMenuModule} from '@angular/material/menu';
+import {MatButtonModule} from '@angular/material/button';
 
 
 @Component({
@@ -13,6 +17,7 @@ export class MusicPlayerComponent implements OnChanges {
   onResize(event: any) {
     this.getScreenSize();
   }
+  @ViewChild('menuTrigger') menuTrigger!: MatMenuTrigger;
   @ViewChild('element') element!: ElementRef;  
   @ViewChild('audioPlayer') audioPlayerRef!: ElementRef;  
   @Input('audio') audio!: string;
@@ -37,7 +42,7 @@ export class MusicPlayerComponent implements OnChanges {
   bar_volume_small: boolean = true;
   
 
-  constructor(private cdRef: ChangeDetectorRef, private sharedService:SharedService) { }
+  constructor(private cdRef: ChangeDetectorRef, private sharedService:SharedService, public dialog: MatDialog) { }
 
   ngOnInit() {
     this.playbackRates = this.generatePlaybackRates();
@@ -165,6 +170,11 @@ export class MusicPlayerComponent implements OnChanges {
     }
     this.bar_volume = true;
     this.bar_volume_small = false;
+  }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(ModalVelocityComponent, {restoreFocus: false});
+    dialogRef.afterClosed().subscribe(() => this.menuTrigger.focus());
   }
 
   /*nextMusic(){

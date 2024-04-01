@@ -31,7 +31,28 @@
                     </div>
                 </div>
                 <div class="colunm col-xxl-4 col-lg-4 col-md-3  col-sm-3 col-xs-3 d-flex justify-content-end">
-                    <button type="button" class="control" data-bs-toggle="modal"
+                    <button type="button" class="control" [matMenuTriggerFor]="menu">
+                        x{{playbackRate}}
+                      </button>
+                      <mat-menu #menu="matMenu"  yPosition="above" class="customize">
+                        <div *ngFor="let rate of playbackRates">
+                            <div class="me-2" (click)="changePlaybackRate(rate)" data-bs-dismiss="modal">
+                                <div class="row list">
+                                    <div class="col-1 ms-1">
+                                        <span><img
+                                                src="../../../../assets/iconos/check-circle-fill-blue.svg"
+                                                *ngIf="rate==playbackRate">
+                                        </span>
+                                    </div>
+                                    <div class="col-8">
+                                        {{ rate }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                      </mat-menu>
+                    
+                    <!--<button type="button" class="control" data-bs-toggle="modal"
                         [attr.data-bs-target]="'#staticBackdrop' + index" style="
                     text-align: end;">
                         x{{playbackRate}}
@@ -40,8 +61,8 @@
                         data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Velocidad de reproduccion</h1>
+                                <div class="modal-header text-center">
+                                    <h4>Velocidad de reproduccion</h4>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -64,8 +85,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </div> -->
+                </div>                
             </div>
         </div>
     </div>

@@ -53,6 +53,8 @@ import { CountdownComponent } from './components/generics/countdown/countdown.co
 import { MiModalComponent } from './components/mi-modal/mi-modal.component';
 import { MsgInicioModalComponent } from './components/msg-inicio-modal/msg-inicio-modal.component';
 import { CountdownEComponent } from './components/generics/countdown-e/countdown-e.component';
+import { ModalVelocityComponent } from './components/generics/modal-velocity/modal-velocity.component';
+import {MatMenuModule} from '@angular/material/menu';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -88,7 +90,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     CountdownComponent,
     MiModalComponent,
     MsgInicioModalComponent,
-    CountdownEComponent,   
+    CountdownEComponent,
+    ModalVelocityComponent,   
   ],
   imports: [
     BrowserModule,
@@ -109,6 +112,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     NgxPaginationModule,
     MatStepperModule,
     MatSnackBarModule,
+    MatDialogModule,
+    MatMenuModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
