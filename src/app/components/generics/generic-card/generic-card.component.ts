@@ -14,7 +14,7 @@ export class GenericCardComponent {
   @Input('toursdata') toursdata:any=[];
   @Input('all-tours') view!:boolean;
 
-  p!: number;
+  p: number=1;
   pageSize:number=12;
   autoHide=true
   responsive=true

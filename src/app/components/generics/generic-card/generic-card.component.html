@@ -2,7 +2,7 @@
     <div class="container-card  col-xxl-4 col-lg-6 col-md-12 d-flex justify-content-center" *ngFor="let tours of toursdata | paginate: {
         itemsPerPage: pageSize,
         currentPage: p,
-        totalItems: toursdata.lenght }">
+        totalItems: toursdata.length }">
             <mat-card class="tour-card" (click)="sendImage(tours.id)">
 
             <mat-card-header class="p-0">       
@@ -43,7 +43,7 @@
 </div>
 <div class="paginator row w-100 mt-4" *ngIf="view">
     <div class="col-12 d-flex justify-content-center">
-        <pagination-controls (pageChange)="onPageChange()" 
+        <pagination-controls (pageChange)="p = $event; onPageChange()" 
                              (autoHide)="autoHide" 
                              (responsive)="responsive" 
                              previousLabel="Previous" 
