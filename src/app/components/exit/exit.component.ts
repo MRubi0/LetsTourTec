@@ -4,6 +4,7 @@ import { environment } from 'src/enviroment/enviroment';
 import { FormGroup, FormControl, Validators, NgForm, FormBuilder } from '@angular/forms';
 import { CountdownEComponent } from '../generics/countdown-e/countdown-e.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-exit',
@@ -14,10 +15,10 @@ export class ExitComponent {
   formData: FormData = new FormData();
   edad: number = 0;
   edadInvalida: boolean = false;
-
+  id:string='';
   finishForm!: FormGroup;
 
-  constructor(private http: HttpClient, public ngbModal: NgbModal, private formBuilder: FormBuilder) {}
+  constructor(private http: HttpClient, public ngbModal: NgbModal, private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute) {}
 
   ngOnInit(){
     this.finishForm = this.formBuilder.group({
@@ -47,21 +48,24 @@ export class ExitComponent {
       subpregunta19_1:[''],
       pregunta20:[''],
       pregunta21:['', [Validators.required]],
-      pregunta22:['']     
+      pregunta22:[''],
+      id:[''],     
     });
+    this.activatedRoute.params.subscribe((params:any)=>{
+      this.id = params['id'];
+      console.log('param ', this.id, params);
+      this.finishForm.get('id')?.setValue(this.id);
+    });   
+  
     this.finishForm.valueChanges.subscribe(data=>{
       console.log('data ', data);
-    });
+    })
   }
   submitSurvey() {
     if (this.finishForm.valid) {
-      // Configura las cabeceras para indicar que el contenido es JSON
       const headers = new HttpHeaders().set('Content-Type', 'application/json');
-      
-      // Usa los valores del formulario directamente
+      this.finishForm.get('id')?.setValue(this.id);
       const formValues = this.finishForm.value;
-
-      // Enviar los datos como JSON
       this.http.post<any>(`${environment.apiUrl}encuesta/`, JSON.stringify(formValues), { headers: headers })
         .subscribe(
           data => {
@@ -81,7 +85,7 @@ export class ExitComponent {
   
   onSubmit() { 
     console.log("Intentando enviar datos...");
-    this.submitSurvey(); // Ahora se llama sin argumentos
+    this.submitSurvey();
     this.ngbModal.open(CountdownEComponent,{ size: 'sm'});
   }  
 }

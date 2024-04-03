@@ -99,7 +99,7 @@ const routes: Routes = [
     canActivate: [AuthGuard] 
   },
   {
-    path: 'exit', 
+    path: 'exit/:id', 
     component: ExitComponent,
   },
   {

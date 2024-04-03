@@ -201,7 +201,8 @@ export class StepperComponent {
     if (event === 'next' || event === 'next_auto') {
       if (this.isLastStep()) { 
         this.finishTour();       
-        this.ngbModal.open(CountdownComponent,{ size: 'sm'});        
+        const modalRef=this.ngbModal.open(CountdownComponent,{ size: 'sm'});   
+        modalRef.componentInstance.id = this.tour_id;     
         return;
       }      
       this.goToNextStep(event);

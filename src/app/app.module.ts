@@ -55,6 +55,7 @@ import { MsgInicioModalComponent } from './components/msg-inicio-modal/msg-inici
 import { CountdownEComponent } from './components/generics/countdown-e/countdown-e.component';
 import { ModalVelocityComponent } from './components/generics/modal-velocity/modal-velocity.component';
 import {MatMenuModule} from '@angular/material/menu';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -100,6 +101,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     BrowserAnimationsModule,
     MatButtonModule, 
     HttpClientModule,
+    MatPaginatorModule,
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./countdown.component.scss']
 })
 export class CountdownComponent {
+  @Input() id!: string;
   countdown:number=5;
   validate=false;
   constructor(public ngbModal: NgbModal, private router: Router,){
@@ -24,14 +25,14 @@ export class CountdownComponent {
       } else {
         clearInterval(countdownInterval);        
         if(!this.validate){
-          this.router.navigate(['/exit']);
+          this.router.navigate([ `/exit/${this.id}`]);
         }
         this.ngbModal.dismissAll("close")
       }
     }, 1000);
   }
   accept(): void {
-    this.router.navigate(['/exit']);
+    this.router.navigate([`/exit/${this.id}`]);
     this.ngbModal.dismissAll("close");
     this.validate=true;
   }
