@@ -1,6 +1,7 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { PaginationControlsComponent } from 'ngx-pagination';
 import { SharedService } from 'src/app/services/shared.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-generic-card',
@@ -20,7 +21,7 @@ export class GenericCardComponent {
   responsive=true
   showMore=false;
 
-  constructor(private sharedService:SharedService){}
+  constructor(private sharedService: SharedService, private translate: TranslateService) {}
 
   ngOnChanges(){
     this.toursdata.forEach((tour: any) => {
@@ -32,15 +33,22 @@ export class GenericCardComponent {
       const nombreDeImagen = partofUrl[partofUrl.length - 1];
 
       data.imagen.url=nombreDeImagen;
+      
 
       if(data.tipo_de_tour=='ocio'){
         data.tipo_de_tour='Leisure';
+        const translatedKey = `GENERIC-CARD.Leisure`;
+        data.translatedTourType = this.translate.instant(translatedKey);
       }
       if(data.tipo_de_tour=='naturaleza'){
         data.tipo_de_tour='Nature';
+        const translatedKey = `GENERIC-CARD.Nature`;
+        data.translatedTourType = this.translate.instant(translatedKey);
       }
       if(data.tipo_de_tour=='cultural'){
         data.tipo_de_tour='Cultural';
+        const translatedKey = `GENERIC-CARD.Cultural`;
+        data.translatedTourType = this.translate.instant(translatedKey);
       }
       return data;
     });   
@@ -62,4 +70,5 @@ export class GenericCardComponent {
   onPageChange(): void {
     this.scrollToTop();
   }
+  
 }

@@ -38,7 +38,12 @@
   "GENERIC-CARD.Distance_to_starting_point": "Distance to starting point",
   "GENERIC-CARD.Duration": "Duration",
   "GENERIC-CARD.Covered_distance": "Covered distance",
+  "GENERIC-CARD.Type_of_tour": "Type of tour",  
+  "GENERIC-CARD.Leisure": "Leisure",
+  "GENERIC-CARD.Cultural": "Cultural",
+  "GENERIC-CARD.Nature": "Nature",
   "GENERIC-CARD.Let's_do_it!": "Let's do it!",
+
   "SEARCH-BAR.Plan_your_next_trip": "Plan your next trip",
   "SEARCH-BAR.Where_do_you_want_to_travel?": "Where do you want to travel?",
   "SEARCH-BAR.Search": "Search",
