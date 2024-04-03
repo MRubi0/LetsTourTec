@@ -12,10 +12,9 @@
                 <button class='button-fab' mat-fab data-bs-toggle="tooltip" matTooltip={{tours.tipo_de_tour}}
                     aria-label="Button that displays a tooltip when focused or hovered over">
                     <div [ngSwitch]=tours.tipo_de_tour>
-                        <img *ngSwitchCase="'Cultural'" src="../../../assets/iconos/building-white.svg" alt="">
-                        
+                        <img *ngSwitchCase="'Cultural'" src="../../../assets/iconos/building-white.svg" alt="">                        
                         <img *ngSwitchCase="'Nature'" src="../../../assets/iconos/flower.svg" alt="">
-                        <img *ngSwitchCase="'Leisure'" src="../../../assets/iconos/geo-fill-white.svg" alt="">
+                        <img *ngSwitchCase="'leisure'" src="../../../assets/iconos/geo-fill-white.svg" alt="">
                         <p *ngSwitchDefault>Icono no disponible</p>
                     </div>
                 </button>
@@ -33,6 +32,7 @@
                     <li><strong>{{ 'GENERIC-CARD.Distance_to_starting_point' | translate }}: </strong> {{tours.distance | number: '1.0-2'}} km</li>
                     <li><strong>{{ 'GENERIC-CARD.Duration' | translate }}: </strong>{{tours.duracion}} min.</li>
                     <li><strong>{{ 'GENERIC-CARD.Covered_distance' | translate }}: </strong>{{tours.recorrido}} km</li>
+                    <li><strong>Tipo de tour: </strong> {{tours.tipo_de_tour}}</li>
                 </ul>
             </mat-card-content>
             <mat-card-actions class="d-flex justify-content-center">
