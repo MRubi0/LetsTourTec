@@ -268,6 +268,8 @@ class Encuesta(models.Model):
     precio_dispuesto_a_pagar = models.CharField(max_length=100, blank=True)   
     formato_red_social = models.CharField(max_length=3, blank=True)   
     correo = models.EmailField(blank=True, null=True)
+    id_tour = models.TextField(blank=True, null=True)
+
 
     def __str__(self):
         return f"Encuesta {self.id}"

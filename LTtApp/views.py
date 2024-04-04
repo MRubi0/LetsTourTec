@@ -451,6 +451,7 @@ def upload_encuesta(request):
             'pregunta20': 'precio_dispuesto_a_pagar',
             'pregunta21': 'formato_red_social',
             'pregunta22': 'correo',
+            'id': 'id_tour',
         }
 
         # Crear la instancia del modelo Encuesta sin guardarla aún

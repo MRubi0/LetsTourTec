@@ -247,3 +247,4 @@ class EncuestaForm(forms.Form):
         widget=forms.RadioSelect
     )
     pregunta22 = forms.EmailField(label='22. Si quisieras mantenerte al tanto de nuestras actualizaciones, nos encantaría disponer de tu correo electrónico:', required=False)
+    id = forms.CharField( max_length=100,  required=False)
