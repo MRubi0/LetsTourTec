@@ -104,12 +104,15 @@
     padding: 0;
 }
 ::ng-deep .customize {
-    background-color: rgba(255, 255, 255, 0.8) !important;
+    background-color: rgba(13, 110, 253, 0.9) !important;
+    color: #f0f0f0; 
     border-radius: 10px !important;
     overflow-x: hidden !important;
   }
   ::ng-deep .list:hover {
     cursor: pointer !important;
     background-color: rgb(13, 110, 253) !important;
+
     color: white;
   }
+
