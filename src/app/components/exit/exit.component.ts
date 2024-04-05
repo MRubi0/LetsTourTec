@@ -65,6 +65,7 @@ export class ExitComponent {
     if (this.finishForm.valid) {
       const headers = new HttpHeaders().set('Content-Type', 'application/json');
       this.finishForm.get('id')?.setValue(this.id);
+      console.log('el id del tour es el siguiente:', this.id)
       const formValues = this.finishForm.value;
       this.http.post<any>(`${environment.apiUrl}encuesta/`, JSON.stringify(formValues), { headers: headers })
         .subscribe(

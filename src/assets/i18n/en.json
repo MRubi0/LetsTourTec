@@ -157,7 +157,11 @@
   "MY-PROFILE.Welcome_back": "Welcome back",
   "MAP-MODAL.Let's_go_to_the_next_point": "Let's go to the next point",
   "MAP-MODAL.I_arrived":"I arrived",
-  "MAP-MODAL.Prefer_Google_Maps?_Click_Here": "Prefer Google Maps? Click Here"
+  "MAP-MODAL.Prefer_Google_Maps?_Click_Here": "Prefer Google Maps? Click Here",
+
+
+  "COUNTDOWN.Aceptar":"Accept",
+  "COUNTDOWN.Gracias_por_rellenar_esta_encuesta,_volveras_a_la_pantalla_de_inicio_en:":"Thank you for filling out this survey, you'll be back on the home screen in: "
 
 
 
