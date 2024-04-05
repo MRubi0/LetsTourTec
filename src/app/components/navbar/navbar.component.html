@@ -16,15 +16,15 @@
         <button class="btn btn-link nav-link" *ngIf="isLoggedIn" (click)="logout()">{{ 'NAVBAR.Log_out' | translate }}</button>
       </div>
       <!-- Logo Section -->
-      <a class="navbar-brand" href="#">
+      <a class="navbar-brand" [routerLink]="['/home']">
         <img class="logo" src="../../../assets/logo/logo_png.png" alt="">
       </a>
       <!-- Sección de cambio de idioma -->
       <div class="language-switcher ml-auto">
-        <a class="nav-item nav-link" href="#" (click)="switch('en')">
+        <a class="nav-item nav-link" (click)="switch('en')">
           <img src="../../../assets/flags/UK-flag.png" alt="English" style="width: 30px;">
         </a>
-        <a class="nav-item nav-link" href="#" (click)="switch('es')">
+        <a class="nav-item nav-link" (click)="switch('es')">
           <img src="../../../assets/flags/ESP-flag.png" alt="Español" style="width: 30px;">
         </a>
       </div>
