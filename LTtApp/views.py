@@ -753,7 +753,7 @@ def get_nearest_tours_all(request):
     # Ordenar todos los tours por distancia
     
 
-    per_page = 15  # Establece la cantidad de tours por página
+    per_page = len(sorted_tours)
     page = request.GET.get('page', 1)  # Obtiene el número de página de los parámetros GET
     # Paginar los resultados
     paginator = Paginator(sorted_tours, per_page)
