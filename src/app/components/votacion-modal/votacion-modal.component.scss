@@ -1,0 +1,35 @@
+
+
+/* votacion-modal.component.css */
+::ng-deep .votacion-modal {
+    display: flex;
+    flex-direction: column; /* Muestra los elementos en columna */
+    align-items: center; /* Centra los elementos horizontalmente */
+  }
+  
+  ::ng-deep .votacion-modal ngb-rating {
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+  
+  ::ng-deep .votacion-modal ngb-rating > span {
+    cursor: pointer;
+    font-size: calc(80vw / 5); /* Ajusta el tamaño de la fuente para las estrellas */
+    color: gold; /* Cambia el color de las estrellas a dorado */
+  }
+  
+
+  /* votacion-modal.component.css */
+.titulo-modal {
+    text-align: center; /* Centra el título y el subtítulo */
+  }
+  
+  .acciones-modal {
+    display: flex;
+    justify-content: center; /* Centra los botones horizontalmente */
+    padding-top: 20px; /* Añade espacio por encima de los botones si es necesario */
+  }
+  .mensaje-hover {
+    text-align: center; /* Centra el texto del mensaje si es necesario */
+    margin-top: 10px; /* Añade espacio entre las estrellas y el mensaje */
+  }

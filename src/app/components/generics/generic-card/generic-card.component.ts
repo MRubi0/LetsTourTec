@@ -3,6 +3,9 @@ import { PaginationControlsComponent } from 'ngx-pagination';
 import { SharedService } from 'src/app/services/shared.service';
 import { TranslateService } from '@ngx-translate/core';
 
+
+
+
 @Component({
   selector: 'app-generic-card',
   templateUrl: './generic-card.component.html',
@@ -23,10 +26,21 @@ export class GenericCardComponent {
 
   constructor(private sharedService: SharedService, private translate: TranslateService) {}
 
-  ngOnChanges(){
+  ngOnChanges() {
     this.toursdata.forEach((tour: any) => {
       this.showFullDescription[tour.id] = false;
-  });
+  
+      // Obtener la media de valoraciones para cada tour
+      console.log(tour.id)
+      this.sharedService.getMediaValoraciones(tour.id).subscribe({
+        next: (response:any) => {
+          tour.mediaValoracion = response.media_puntuacion;
+        },
+        error: (error:any) => {
+          console.error('Error al obtener la media de valoraciones:', error);
+        }
+      });
+    });
     this.toursdata.map((data:any)=>{
       
       const partofUrl = data.imagen.url.split('/');

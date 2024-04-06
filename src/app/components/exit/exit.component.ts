@@ -1,26 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/enviroment/enviroment';
 import { FormGroup, FormControl, Validators, NgForm, FormBuilder } from '@angular/forms';
 import { CountdownEComponent } from '../generics/countdown-e/countdown-e.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { VotacionModalComponent } from '../votacion-modal/votacion-modal.component';
+
 
 @Component({
   selector: 'app-exit',
   templateUrl: './exit.component.html',
   styleUrls: ['./exit.component.scss']
 })
-export class ExitComponent {
+export class ExitComponent implements AfterViewInit {
   formData: FormData = new FormData();
   edad: number = 0;
   edadInvalida: boolean = false;
   id:string='';
   finishForm!: FormGroup;
 
-  constructor(private http: HttpClient, public ngbModal: NgbModal, private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute) {}
+  constructor(public dialog: MatDialog, private http: HttpClient, public ngbModal: NgbModal, private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute) {}
 
   ngOnInit(){
+     
     this.finishForm = this.formBuilder.group({
       pregunta1: ['', [Validators.required, Validators.min(1)]],
       pregunta2: ['', [Validators.required]],
@@ -60,6 +64,18 @@ export class ExitComponent {
     this.finishForm.valueChanges.subscribe(data=>{
       console.log('data ', data);
     })
+  }
+  ngAfterViewInit() {
+    console.log("ngAfterViewInit ejecutado");
+    setTimeout(() => {
+      this.dialog.open(VotacionModalComponent, {
+        width: '85%',
+        height:'375px',
+        data: { tourId: this.id }
+      }).afterClosed().subscribe(result => {
+        console.log('El modal de votación fue cerrado', result);
+      });
+    }, 0);
   }
   submitSurvey() {
     if (this.finishForm.valid) {
