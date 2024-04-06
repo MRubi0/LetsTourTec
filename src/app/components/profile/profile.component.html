@@ -5,13 +5,19 @@
         </mat-card-header>
         <mat-card-content class="mt-3">
             <div class="user-details">
+                <div class="profile-picture">
+                    <img [src]="profile.avatar || '../../../assets/iconos/Default-Profile-Picture-PNG-Transparent-Image.png'" alt="Profile Picture" class="profile-img">
+                    <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none;">
+                </div>
                 <h3>Welcome back {{ profile.first_name }} {{ profile.last_name }}!!</h3>
-                <p>Here is your personal area</p>
                 <div class="content">
                     <ul>
                         <li><span class="subtitle">Email: </span>{{ profile.email }}</li>
                         <li><span class="subtitle">Biography: </span>{{ profile.bio }}</li>
+                        <li><span class="subtitle">Location: </span>{{ profile.location }}</li>
+                        <li><span class="subtitle">Interests: </span>{{ profile.interests.join(', ') }}</li>
                     </ul>
+                    
                 </div>
             </div>
             <div class="user-actions d-flex justify-content-center mt-5">

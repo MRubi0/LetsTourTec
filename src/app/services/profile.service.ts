@@ -16,4 +16,18 @@ export class ProfileService {
         return data;
       }));
   }
+  uploadFile(file: File): void {
+    const formData = new FormData();
+    formData.append('avatar', file, file.name);
+    
+    this.http.post(`${environment.apiUrl}ruta-para-actualizar-imagen`, formData).subscribe({
+      next: (response: any) => { // Asume que la respuesta es de tipo any
+        console.log('Imagen cargada con éxito', response);
+        // Actualizar la vista de perfil según sea necesario
+      },
+      error: (error: any) => {
+        console.error('Error al cargar la imagen', error);
+      }
+    });
+  }
 }
