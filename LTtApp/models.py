@@ -273,3 +273,14 @@ class Encuesta(models.Model):
 
     def __str__(self):
         return f"Encuesta {self.id}"
+    
+
+class Valoracion(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='valoraciones')
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='valoraciones')
+    puntuacion = models.IntegerField()
+    comentario = models.TextField(blank=True, null=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username if self.user else 'Anónimo'} - {self.tour.titulo} - {self.puntuacion}"

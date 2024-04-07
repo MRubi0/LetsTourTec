@@ -1,60 +1,49 @@
-import os
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from PIL import Image
-from django.db.models import F, Func, Q
-from django.db.models import ExpressionWrapper, FloatField
-import json
-import requests
-from django.urls import reverse_lazy
-from django.views import generic
-from django.http import JsonResponse
-from django.http import JsonResponse
 import base64
-import boto3
-from botocore.exceptions import ClientError
-from django.http import JsonResponse
-from datetime import datetime
-import sqlite3
+import json
 import math
-from math import radians, sin, cos, sqrt, atan2
-from .forms import GuideForm, AudioFileForm, ImageFileForm, LocationForm, CustomUserCreationForm, EncuestaForm
-from .models import Guide, AudioFile, ImageFile, Location, CustomUser, Tour, Encuesta 
-#from .models import LTtApp_paso
-
-from django.contrib import messages
-
-
-from .forms import EditProfileForm
+import os
 import random
+import requests
+import sqlite3
+import time
+from datetime import datetime
+from math import atan2, cos, radians, sin, sqrt
 
-from django import forms
+from botocore.exceptions import ClientError
+import boto3
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, get_user_model
 from django.contrib.auth.decorators import login_required
-
-from .forms import TourForm
-from .models import Tour, Paso
-
-from django.db.models.expressions import RawSQL
-from django.db import connection
-
-from django.core.paginator import Paginator
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core import serializers
-from django.core.exceptions import ObjectDoesNotExist
-import folium
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.crypto import get_random_string
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.paginator import Paginator
+from django.db import OperationalError, connection
+from django.db.models import Avg, ExpressionWrapper, F, FloatField, Func, Q
+from django.db.models.expressions import RawSQL
+from django.http import JsonResponse
 from django.middleware.csrf import get_token
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import get_object_or_404
-
-
-from .models import TourRecord
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.utils.crypto import get_random_string
+from django.views import generic
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
+from PIL import Image
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+
+from .forms import (
+    AudioFileForm, CustomUserCreationForm, EditProfileForm, EncuestaForm,
+    GuideForm, ImageFileForm, LocationForm, TourForm, ValoracionForm)
+from .models import (
+    AudioFile, CustomUser, Encuesta, Guide, ImageFile, Location, Paso,
+    Tour, TourRecord, Valoracion)
+
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -67,16 +56,8 @@ def csrf_token_view(request):
     csrf_token = get_token(request)
     print('csrf_token ->', csrf_token);
     return JsonResponse({'csrf_token': csrf_token})
-'''
-def csrf_token_view(request):
-    """Genera un token CSRF."""
 
-    csrf_token = request.META.get('HTTP_X_CSRFTOKEN')
-    if not csrf_token:
-        #csrf_token = get_random_string(32)
-        csrf_token = "sorry, here is the error"
-    return JsonResponse({'csrf_token': csrf_token})
-'''
+
 def haversine(lat1, lon1, lat2, lon2):
     # Radio de la Tierra en km
     R = 6371.0
@@ -112,47 +93,8 @@ def edit_profile(request):
 def profile(request):
     return render(request, 'user/profile.html', {'user': request.user})
 
-def search_user_by_id(request):
-    if request.method == 'GET':
-        user_id = request.GET.get('id')
 
-        if user_id:
-            User = get_user_model()
-            try:
-                user = User.objects.get(id=user_id)
-            except User.DoesNotExist:
-                return JsonResponse({'error': 'El usuario con el ID proporcionado no existe'}, status=404)
 
-            user_data = {
-                'id': user.id,
-                'email': user.email,
-                'bio': user.bio,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'avatar': user.avatar.url if user.avatar else None,
-            }
-
-            return JsonResponse({'user': user_data})
-        else:
-            return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
-    else:
-        return JsonResponse({'error': 'Método no permitido'}, status=405)
-
-""" 
-def get_user_tours(request):
-    if request.method == 'GET':
-        user_id = request.GET.get('id')
-
-        if user_id:
-            tours = Tour.objects.filter(user_id=user_id)
-            tours_data = [tour.as_dict() for tour in tours]
-            return JsonResponse({'tours': tours_data})
-        else:
-            return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
-    else:
-        return JsonResponse({'error': 'Método no permitido'}, status=405) 
-        
-"""
 
 def get_user_tours(request):
     if request.method == 'GET':
@@ -176,26 +118,6 @@ def get_user_tours(request):
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 
-# @csrf_exempt
-# def login_view(request):
-#     ###print('im here')
-#     if request.method == 'POST':
-#         form = AuthenticationForm(request, data=request.POST)
-#         print(form)
-#         if form.is_valid():
-#             print(form)
-#             user = form.get_user()
-#             print(f"User: {user}")
-#             login(request, user)
-#             return redirect('index')
-#         else:
-#             print("Form is not valid")
-#             print(form.errors)
-#     else:
-        
-#         form = AuthenticationForm()
-#         print(form)
-#     return render(request, 'registration/login.html', {'form': form})
 
 @csrf_exempt
 def login_view(request):
@@ -315,107 +237,6 @@ def upload_tours(request):
         return Response({'error': 'Invalid request method'}, status=405)
     return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
 
-""" 
-@api_view(['POST'])
-def upload_tours(request):
-    if request.method == 'POST':
-        print("Intentando decodificar el cuerpo de la petición...")
-        try:
-            print("Mostrando los primeros 200 bytes del cuerpo de la petición:")
-            print(request.body[:200])
-            data = json.loads(request.body) 
-        except Exception as e:
-            print(f"Error al decodificar el cuerpo de la petición: {e}")
-            return JsonResponse({'error': 'Error al decodificar el cuerpo de la petición'}, status=400)
-
-        try:
-            print("Datos de la petición decodificados correctamente.")
-            tipo_de_tour = data['tipo_de_tour']
-            titulo = data['titulo']
-            descripcion = data['descripcion']
-            imagen_base64 = data['imagen']
-            audio_base64 = data['audio']
-            latitude = data['latitude']
-            longitude = data['longitude']
-            duracion = data['duracion']
-            recorrido = data['recorrido']
-            extra_steps = data.get('extraSteps', [])
-
-            print(f"Procesando tour: {titulo}")
-
-            temp_image_path = f'temp_{titulo}_imagen.png'
-            print(f"Guardando imagen temporal: {temp_image_path}")
-            save_base64_as_file(imagen_base64, temp_image_path)
-
-            print(f"Subiendo imagen a S3: {temp_image_path}")
-            upload_file_to_s3(temp_image_path, AWS_STORAGE_BUCKET_NAME, 'tours/', f'{titulo}/imagen_principal.png')
-
-            print(f"Eliminando imagen temporal: {temp_image_path}")
-            os.remove(temp_image_path)
-
-            temp_audio_path = f'temp_{titulo}_audio.mp3'
-            print(f"Guardando audio temporal: {temp_audio_path}")
-            save_base64_as_file(audio_base64, temp_audio_path)
-
-            print(f"Subiendo audio a S3: {temp_audio_path}")
-            upload_file_to_s3(temp_audio_path, AWS_STORAGE_BUCKET_NAME, 'tour_audio/', f'{titulo}/audio_principal.mp3')
-
-            print(f"Eliminando audio temporal: {temp_audio_path}")
-            os.remove(temp_audio_path)
-
-            for step in extra_steps:
-                print(f"Procesando paso extra: {step['tittle']}")
-                step_image_base64 = step['image']
-                step_audio_base64 = step['audio']
-                step_latitude = step['latitude']
-                step_longitude = step['longitude']
-                step_description = step['description']
-                step_title = step['tittle']
-
-                temp_step_image_path = f'temp_{titulo}_{step_title}_imagen.png'
-                save_base64_as_file(step_image_base64, temp_step_image_path)
-                upload_file_to_s3(temp_step_image_path, settings.AWS_STORAGE_BUCKET_NAME, 'tours', f'{titulo}/extra_steps/{step_title}/imagen.png')
-                os.remove(temp_step_image_path)
-                temp_step_audio_path = f'temp_{titulo}_{step_title}_audio.mp3'
-                save_base64_as_file(step_audio_base64, temp_step_audio_path)
-                upload_file_to_s3(temp_step_audio_path, settings.AWS_STORAGE_BUCKET_NAME, 'tours', f'{titulo}/extra_steps/{step_title}/audio.mp3')
-                os.remove(temp_step_audio_path)
-                print(f"Paso extra {step['tittle']} procesado y subido con éxito.")
-
-            return JsonResponse({'message': 'Datos subidos correctamente a S3'})
-        except Exception as e:
-            print(f"Error al procesar la petición: {e}")
-            return JsonResponse({'error': str(e)}, status=400)
-    else:
-        print("Método no permitido")
-        return JsonResponse({'error': 'Método no permitido'}, status=405) 
-"""
-
-# @api_view(['POST'])
-# def upload_encuesta(request):
-#     if request.method == 'POST':
-#         form = EncuestaForm(request.POST)
-#         if form.is_valid():
-#             # Crea una instancia de tu modelo a partir de los datos del formulario
-#             # Esto requiere que manualmente asignes los datos del formulario a los campos del modelo.
-#             encuesta_data = form.cleaned_data
-#             encuesta = Encuesta()  # Crea una nueva instancia de tu modelo Encuesta
-            
-#             # Asigna los campos del formulario a los atributos del modelo
-#             for field, value in encuesta_data.items():
-#                 setattr(encuesta, field, value)
-            
-#             # Guarda la instancia del modelo en la base de datos
-#             encuesta.save()
-            
-#             # Puedes redireccionar o responder con un mensaje de éxito
-#             return Response({'success': 'Encuesta guardada correctamente'}, status=200)
-#         else:
-#             # Manejo de errores de validación del formulario
-#             return Response({'errors': form.errors}, status=400)
-#     else:
-#         # Método HTTP no permitido
-#         return Response({'error': 'Invalid request method'}, status=405)
 
 @csrf_exempt
 @api_view(['POST'])
@@ -517,34 +338,6 @@ def index(request):
 
     context = {'tours': latest_tours}
     return render(request, 'index.html', context)
-
-
-
-
-def create_guide(request):
-    # Lógica para crear una guía
-    # ...
-    return render(request, 'under_construction.html')
-
-def edit_guide(request, guide_id):
-    # Lógica para editar una guía
-    # ...
-    return render(request, 'under_construction.html')
-
-def upload_audio(request, guide_id):
-    # Lógica para subir archivos de audio
-    # ...
-    return render(request, 'under_construction.html')
-
-def upload_image(request, guide_id):
-    # Lógica para subir imágenes
-    # ...
-    return render(request, 'under_construction.html')
-
-def add_location(request, guide_id):
-    # Lógica para agregar ubicaciones
-    # ...
-    return render(request, 'under_construction.html')
 
 
 
@@ -807,16 +600,12 @@ def directions(request, tour_id):
             step_id = first_step.id
         else:
             step_id = None
-            # Aquí podrías manejar el caso en el que un tour no tenga pasos
     except Paso.DoesNotExist:
         step_id = None
-        # Aquí podrías manejar el caso en el que un tour no tenga pasos
 
-    # Pasa el tour y el step_id al contexto de la plantilla
     return render(request, 'directions.html', {'tour': tour, 'step_id': step_id})
 
 @api_view(['GET'])
-##@permission_classes([IsAuthenticated])
 def get_tour_with_steps(request, tour_id):
     try:
         tour = get_object_or_404(Tour, pk=tour_id)
@@ -853,7 +642,7 @@ def get_tour_with_steps(request, tour_id):
 
 def get_tour_data(tour_id):
     print('init')
-    tour_objects = Tour.objects.get(id=tour_id)  # Esto obtiene todos los objetos de Tour en la base de datos
+    tour_objects = Tour.objects.get(id=tour_id)  
     tour_data = []
     for tour in tour_objects:
         tour_data.append({
@@ -901,9 +690,7 @@ def next_step(request, tour_id, step_id=None):
         current_step = Paso.objects.get(pk=step_id)
         print(f"Found current step: {current_step}")
 
-        # Intenta encontrar el siguiente paso
         try:
-            #next_step = Paso.objects.filter(tour_id=tour_id, id__gt=current_step.id).order_by('id').first()
             next_step = Paso.objects.filter(tour_id=tour_id, id__gte=current_step.id).order_by('id').first()
 
             print(f"Found next step: {next_step}")
@@ -918,14 +705,13 @@ def next_step(request, tour_id, step_id=None):
                 response = {
                     'latitude': next_step.latitude,
                     'longitude': next_step.longitude
-                    # Incluye cualquier otra información que necesites para el siguiente paso
+
                 }
-                print(f"Returning response: {response}")  # Imprime la respuesta antes de devolverla
+                print(f"Returning response: {response}")  
                 return JsonResponse(response)
             else:
                 return JsonResponse({'message': 'End of tour'}, status=200)
 
-        # Si no es una solicitud AJAX, renderiza una plantilla
         else:
             return render(request, 'step.html', {'tour': tour, 'step': next_step})
 
@@ -938,24 +724,18 @@ def next_step(request, tour_id, step_id=None):
 
 def step_detail(request, tour_id, step_id):
     try:
-        # Encuentra el tour por su ID
         tour = Tour.objects.get(pk=tour_id)
 
-        # Encuentra el paso por su ID
         step = Paso.objects.get(pk=step_id)
 
-        # Verifica que el paso pertenezca al tour
         if step.tour != tour:
             raise Paso.DoesNotExist()
-        
-        # Intenta encontrar el siguiente paso
+
         try:
             next_step = Paso.objects.filter(tour_id=tour_id, id__gt=step_id).order_by('id').first()
         except Paso.DoesNotExist:
             next_step = None
 
-
-        # Pasa el tour y el paso al contexto de la plantilla
         return render(request, 'step.html', {'tour': tour, 'step': step, 'next_step': next_step})
 
     except Tour.DoesNotExist:
@@ -1009,20 +789,6 @@ def create_tour_record(request):
         print("Error al registrar el tour:", str(e))
         return JsonResponse({'error': 'Error al registrar el tour'}, status=500)
 
-""" def get_user_tour_records(request):
-    if request.method == 'GET':
-        user_id = request.GET.get('id')
-
-        if user_id:
-            tour_records = TourRecord.objects.filter(user_id=user_id)
-            tours_data = [record.tour.as_dict() for record in tour_records]
-            print(tours_data)  # Imprimir para depuración
-            return JsonResponse({'tours': tours_data})
-        else:
-            return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
-    else:
-        return JsonResponse({'error': 'Método no permitido'}, status=405)
- """
 
 def get_user_tour_records(request):
     if request.method == 'GET':
@@ -1033,7 +799,6 @@ def get_user_tour_records(request):
             tours_data = []
             for record in tour_records:
                 tour_data = record.tour.as_dict()
-                # Modificar imagen y audio para incluir una clave intermedia 'url'
                 if tour_data.get('imagen'):
                     tour_data['imagen'] = {'url': tour_data['imagen']}
                 if tour_data.get('audio'):
@@ -1114,34 +879,6 @@ def get_routes(request):
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 
-# @csrf_exempt
-# @require_POST
-# def get_routes(request):
-#     if request.method == 'POST':
-#         request_body = request.body
-#         try:
-#             data = json.loads(request_body)
-#             if not isinstance(data, list):
-#                 data = [data]  
-#         except json.JSONDecodeError:
-#             return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
-
-#         #key = '74f72b76-bb28-4bb8-b862-a756103cb2b1'
-#         key = '69604395-613a-4fc0-b3af-1d841ac5d565'
-        
-#         url = f'https://graphhopper.com/api/1/route?key={key}'
-        
-#         consolidated_response = []
-#         for i in range(0, len(data[0]['points']), 5):
-#             chunk = data[0]['points'][i:i+5]              
-#             response = requests.post(url, json={'points': chunk, "points_encoded": False, 
-#                                                 "profile": "foot","calc_points": True,})            
-#             consolidated_response.append(response.json())        
-#         return JsonResponse(consolidated_response, safe=False)
-
-#     return JsonResponse({'error': 'Método no permitido'}, status=405)
-
-
 def save_base64_as_file(base64_data, file_path):
     try:
         decoded_data = base64.b64decode(base64_data)
@@ -1161,3 +898,147 @@ def upload_file_to_s3(file_path, bucket_name, folder_path, file_name):
     except ClientError as e:
         print(f"Error uploading file to S3: {e}")
         return False
+    
+
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([AllowAny])  # Cambia según tus requerimientos de autenticación
+def crear_valoracion(request):
+    data = request.data
+
+    # Asegúrate de que el 'tour_id' y la 'puntuacion' están presentes
+    if 'tour_id' not in data or 'puntuacion' not in data:
+        return JsonResponse({'error': 'Faltan datos necesarios'}, status=400)
+
+    # Intenta obtener el tour
+    tour = get_object_or_404(Tour, pk=data['tour_id'])
+
+    # Crea una instancia de ValoracionForm para validar los datos
+    valoracion_data = {
+        'puntuacion': data['puntuacion'],
+        'comentario': data.get('comentario', '')  # El comentario es opcional
+    }
+    form = ValoracionForm(valoracion_data)
+
+    if form.is_valid():
+        valoracion = form.save(commit=False)
+        valoracion.tour = tour
+
+        # Asocia el usuario solo si está autenticado
+        if request.user.is_authenticated:
+            valoracion.user = request.user
+
+        try:
+            valoracion.save()
+            return JsonResponse({'mensaje': 'Valoración creada correctamente'}, status=201)
+        except ValidationError as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    else:
+        return JsonResponse({'error': 'Datos inválidos', 'detalles': form.errors}, status=400)
+    
+
+
+def media_valoracion_tour(request, tour_id):
+    # La clave en la caché para este valor específico
+    cache_key = f"media_valoracion_{tour_id}"
+    # Intenta obtener el valor de la caché
+    media_puntuacion = cache.get(cache_key)
+
+    if media_puntuacion is None:
+        # Si no está en la caché, calcula la media de las valoraciones
+        tour = get_object_or_404(Tour, pk=tour_id)
+        resultado = Valoracion.objects.filter(tour=tour).aggregate(media_puntuacion=Avg('puntuacion'))
+        media_puntuacion = resultado.get('media_puntuacion', 5.0)
+        if media_puntuacion is None:
+            media_puntuacion = 5.0
+        # Guarda el valor calculado en la caché para futuras solicitudes
+        cache.set(cache_key, media_puntuacion, timeout=3600*25)  # Lo guarda en caché por 25 hora
+
+    # Devuelve la media como respuesta JSON
+    return JsonResponse({'media_puntuacion': media_puntuacion})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_profile(request):
+    print(f"Usuario autenticado: {request.user.is_authenticated}")
+    if request.method == 'POST':
+        user = request.user  # Asume que ya has manejado la autenticación
+
+        # Actualizar campos basados en la presencia en el request.POST o request.FILES
+        first_name = request.POST.get('firstName')
+        if first_name is not None:
+            user.first_name = first_name
+
+        last_name = request.POST.get('lastName')
+        if last_name is not None:
+            user.last_name = last_name
+
+        email = request.POST.get('email')
+        if email is not None:
+            user.email = email
+
+        bio = request.POST.get('bio')
+        if bio is not None:
+            user.bio = bio
+
+        avatar = request.FILES.get('profileImage')
+        if avatar is not None:
+            user.avatar.save(avatar.name, avatar)
+
+        user.save()
+
+        return JsonResponse({'message': 'Perfil actualizado correctamente'})
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+
+@csrf_exempt
+def upload_profile_image(request):
+    if request.method == 'POST':
+        user = request.user  # Asegúrate de obtener el usuario correctamente, esto es solo un ejemplo
+        file = request.FILES.get('avatar')
+        if file:
+            # Aquí deberías guardar el archivo en el lugar deseado y actualizar la referencia en el usuario
+            user.avatar.save(file.name, file)
+            user.save()
+            return JsonResponse({'message': 'Imagen cargada con éxito.'})
+        else:
+            return JsonResponse({'error': 'No se proporcionó archivo.'}, status=400)
+    else:
+        return JsonResponse({'error': 'Método no permitido.'}, status=405)
+
+
+def search_user_by_id(request):
+    if request.method == 'GET':
+        user_id = request.GET.get('id')
+        try:
+            if user_id:
+                User = get_user_model()
+                try:
+                    user = User.objects.get(id=user_id)
+                except User.DoesNotExist:
+                    return JsonResponse({'error': 'El usuario con el ID proporcionado no existe'}, status=404)
+
+                user_data = {
+                    'id': user.id,
+                    'email': user.email,
+                    'bio': user.bio,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'avatar': user.avatar.url if user.avatar else None,
+                }
+        
+                return JsonResponse({'user': user_data})
+            else:
+                return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
+        
+        except CustomUser.DoesNotExist:
+            return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
+        except Exception as e:
+            # Log general para cualquier otro tipo de error
+            print(e)
+
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)

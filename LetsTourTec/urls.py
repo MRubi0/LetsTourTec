@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from LTtApp.views import register_view,  test_auth
-from LTtApp.views import upload_tours
+from LTtApp.views import upload_tours, crear_valoracion
 #from LTtApp.views import upload_tour
 from LTtApp import views
 from django.conf import settings
@@ -18,15 +18,12 @@ urlpatterns = [
     #path('signup/', vista_registro.as_view(), name='signup'),
     path('register/', register_view, name='register'),
     path('', include('LTtApp.urls')),
-    path('create_guide/', views.create_guide, name='create_guide'),
-    path('edit_guide/<int:guide_id>/', views.edit_guide, name='edit_guide'),
-    path('upload_audio/<int:guide_id>/', views.upload_audio, name='upload_audio'),
-    path('upload_image/<int:guide_id>/', views.upload_image, name='upload_image'),
-    path('add_location/<int:guide_id>/', views.add_location, name='add_location'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('registration_success/', views.registration_success, name='registration_success'),
     path('profile/', views.profile, name='profile'),
     path('profile/get', views.search_user_by_id, name='search_user_by_email'),
+    path('ruta-para-actualizar-perfil', views.update_profile, name='update_profile'),
+    path('ruta-para-actualizar-imagen', views.upload_profile_image, name='upload_profile_image'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('profile/upload_tour/', upload_tours, name='upload_tour'),
@@ -54,6 +51,8 @@ urlpatterns = [
     path('api/create-tour-record/', views.create_tour_record, name='create_tour_record'),
     path('api/get_user_tour_records', views.get_user_tour_records, name='get_user_tour_records'),
     path('api/get_routes', views.get_routes, name='get_routes'),
+    path('crear_valoracion', crear_valoracion, name='crear_valoracion'),
+    path('tour/<int:tour_id>/media-valoracion/', views.media_valoracion_tour, name='media-valoracion-tour'),
     path('api/get_tour_with_steps/<int:tour_id>/', views.get_tour_with_steps, name='get_tour_with_steps')
 
 
