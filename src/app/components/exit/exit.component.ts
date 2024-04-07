@@ -75,7 +75,7 @@ export class ExitComponent implements AfterViewInit {
       }).afterClosed().subscribe(result => {
         console.log('El modal de votación fue cerrado', result);
       });
-    }, 0);
+    }, 500);
   }
   submitSurvey() {
     if (this.finishForm.valid) {

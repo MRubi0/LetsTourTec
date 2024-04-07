@@ -15,7 +15,8 @@
                         <li><span class="subtitle">Email: </span>{{ profile.email }}</li>
                         <li><span class="subtitle">Biography: </span>{{ profile.bio }}</li>
                         <li><span class="subtitle">Location: </span>{{ profile.location }}</li>
-                        <li><span class="subtitle">Interests: </span>{{ profile.interests.join(', ') }}</li>
+                        <li><span class="subtitle">Interests: </span>{{ profile.interests?.join(', ') ?? 'None' }}</li>
+
                     </ul>
                     
                 </div>

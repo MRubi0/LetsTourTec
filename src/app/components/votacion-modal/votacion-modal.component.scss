@@ -33,3 +33,6 @@
     text-align: center; /* Centra el texto del mensaje si es necesario */
     margin-top: 10px; /* Añade espacio entre las estrellas y el mensaje */
   }
+  .mat-mdc-raised-button.mat-primary {
+    background-color: #0d6efd !important;
+  }

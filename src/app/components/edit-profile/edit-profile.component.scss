@@ -34,3 +34,9 @@
 .form-field {
     margin-bottom: 20px;
 }
+.profile-image-preview {
+  max-width: 150px; /* Ajusta el tamaño según tus necesidades */
+  height: auto;
+  display: block; /* Para que la imagen no esté inline */
+  margin-top: 10px; /* Espacio arriba de la imagen */
+}
