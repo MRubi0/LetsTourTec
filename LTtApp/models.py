@@ -151,6 +151,7 @@ class Tour(models.Model):
             
     def as_dict(self):
         return {
+            "id": self.id,  # Incluye el id del tour
             "user": self.user.username if self.user else None,
             "titulo": self.titulo,
             "descripcion": self.descripcion,

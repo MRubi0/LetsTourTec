@@ -26,6 +26,7 @@ from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
@@ -790,25 +791,47 @@ def create_tour_record(request):
         return JsonResponse({'error': 'Error al registrar el tour'}, status=500)
 
 
+
 def get_user_tour_records(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
 
         if user_id:
-            tour_records = TourRecord.objects.filter(user_id=user_id)
+            # Asegúrate de incluir la relación inversa correcta 'valoraciones' en prefetch_related
+            tour_records = TourRecord.objects.filter(user_id=user_id).prefetch_related('tour__valoraciones')
             tours_data = []
             for record in tour_records:
                 tour_data = record.tour.as_dict()
+
+                # Serializa manualmente cada valoración a un diccionario
+                valoraciones_data = []
+                for valoracion in record.tour.valoraciones.all():
+                    valoracion_data = {
+                        "puntuacion": valoracion.puntuacion,
+                        "comentario": valoracion.comentario,
+                        "fecha": valoracion.fecha.strftime("%Y-%m-%d %H:%M:%S"),  # Formatea la fecha como string
+                    }
+                    valoraciones_data.append(valoracion_data)
+
+                # Agrega las valoraciones serializadas al diccionario del tour
+                tour_data['valoraciones'] = valoraciones_data
+
                 if tour_data.get('imagen'):
                     tour_data['imagen'] = {'url': tour_data['imagen']}
                 if tour_data.get('audio'):
                     tour_data['audio'] = {'url': tour_data['audio']}
+
+                print(tour_data)
+                print("  ")
+                
                 tours_data.append(tour_data)
+
             return JsonResponse({'tours': tours_data})
         else:
             return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
+
 
 current_key_index = 0
 
@@ -919,6 +942,19 @@ def crear_valoracion(request):
         'puntuacion': data['puntuacion'],
         'comentario': data.get('comentario', '')  # El comentario es opcional
     }
+    if request.user.is_authenticated:
+        valoracion_existente = Valoracion.objects.filter(tour=tour, user=request.user).first()
+
+        if valoracion_existente:
+            # Actualiza la valoración existente
+            for key, value in valoracion_data.items():
+                setattr(valoracion_existente, key, value)
+            valoracion_existente.fecha = timezone.now()  # Actualiza la fecha
+            valoracion_existente.save()
+            return JsonResponse({'mensaje': 'Valoración actualizada correctamente'}, status=200)
+
+
+
     form = ValoracionForm(valoracion_data)
 
     if form.is_valid():
