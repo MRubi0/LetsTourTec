@@ -63,7 +63,8 @@
                     (stepChange)="musicAction($event)" [rates]="rates" (emitRates)="velocity($event)"></app-music-player>
                 </div>     
                 <div  class="d-flex justify-content-end" *ngIf="last">
-                  <button mat-raised-button class="exit" data-cy="submit" [routerLink]="'/exit/' + tour_id">Exit</button>
+                  <!-- <button mat-raised-button class="exit" data-cy="submit" [routerLink]="'/exit/' + tour_id">Exit</button> -->
+                  <button mat-raised-button class="exit" data-cy="submit" (click)="finishTour()">Exit</button>
                 </div>      
               </mat-card-content>
             </mat-card>
