@@ -24,7 +24,12 @@ export interface Tour {
 
 
 export class HistoryToursComponent implements OnInit {
-  tourRecords: any[] = [];
+  tourRecords: any[] = []; // Tus registros de tours con valoraciones incluidas
+  p: number = 1; // La página actual para la paginación
+  pageSize: number = 12; // La cantidad de elementos por página
+
+  // ... otros métodos y propiedades
+
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

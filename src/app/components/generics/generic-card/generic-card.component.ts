@@ -16,7 +16,7 @@ export class GenericCardComponent {
 
   @ViewChild(PaginationControlsComponent) paginationControls!: PaginationControlsComponent;
   @Input('toursdata') toursdata:any=[];
-  @Input('all-tours') view!:boolean;
+  @Input('all-tours') view!:boolean; 
 
   p: number=1;
   pageSize:number=12;
