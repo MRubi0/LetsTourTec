@@ -6,7 +6,6 @@
     bucket:"https://letstourtec-bucket-2.s3.eu-north-1.amazonaws.com"
   }*/
 
- 
 
 export const environment = {
     production : false, 

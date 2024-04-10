@@ -150,12 +150,17 @@
   "EXIT.Seleccione_una_probabilidad...": "Seleccione una probabilidad...",
 
 
-
+  "ALLTOURS.All_tours": "Todos los tours",
+  "ALLTOURS.Sort_by_distance": "Ordenar por distancia",
 
 
 
   "MY-PROFILE.Welcome_back": "Bienvenido de nuevo",
   "MAP-MODAL.Let's_go_to_the_next_point": "Vayamos al siguiente punto",
   "MAP-MODAL.I_arrived":"Llegué",
-  "MAP-MODAL.Prefer_Google_Maps?_Click_Here": "¿Prefieres Google Maps? Haz clic aquí"
+  "MAP-MODAL.Prefer_Google_Maps?_Click_Here": "¿Prefieres Google Maps? Haz clic aquí",
+
+
+  "COUNTDOWN.Aceptar":"Aceptar",
+  "COUNTDOWN.Gracias_por_rellenar_esta_encuesta,_volveras_a_la_pantalla_de_inicio_en:":"Gracias por rellenar esta encuesta, volveras a la pantalla de inicio en:"
 }
