@@ -32,7 +32,7 @@ export class MapsComponent implements OnDestroy, AfterViewInit {
       const latitud = Number(position.coords.latitude);
       const longitud = Number(position.coords.longitude);
       this.mapService.createRoute(this.lat, this.long, longitud, latitud).subscribe((data: any) => {
-        if (data[0].message) {
+        if (data[0].message || data[0].error) {
           this.alternative();
         } else {
           console.log('data ', data);
@@ -119,11 +119,9 @@ displayRouteOnMap(data: any): void {
   L.marker(coordinates[coordinates.length - 1], { icon: standard }).addTo(this.map);
 
   if (this.isFirstLoad) {
-    // Ajusta el mapa para que todos los puntos de la ruta sean visibles. Solo la primera vez.
     this.map.fitBounds(routeLine.getBounds(), { padding: [20, 20], maxZoom: 25 });
-    this.isFirstLoad = false; // Actualiza la bandera para que no entre aquí en futuras actualizaciones
+    this.isFirstLoad = false; 
   } else {
-    // En las actualizaciones subsecuentes, simplemente actualiza el centro manteniendo el zoom actual.
     let currentZoom = this.map.getZoom();
     let lastCoordinate = coordinates[coordinates.length - 1];
     this.map.setView(lastCoordinate, currentZoom);

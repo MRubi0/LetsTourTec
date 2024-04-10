@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, Input } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { MapService } from 'src/app/services/map.service';
+
 
 @Component({
   selector: 'app-map-modal',
@@ -11,6 +12,7 @@ import { MapService } from 'src/app/services/map.service';
   styleUrls: ['./map-modal.component.scss']
 })
 export class MapModalComponent implements OnInit, OnDestroy {
+  @Input('cordinates') cordinates!: any;
   lat: number = 0;
   long: number = 0;
   private watchId: number | null = null;
@@ -28,21 +30,19 @@ export class MapModalComponent implements OnInit, OnDestroy {
     ) {}
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe((params: any) => {
-      this.load(params);
-    });  
+      this.load(this.cordinates);      
   }
 
   updateLocation() {
     navigator.geolocation.getCurrentPosition((position) => {
       const latitud = Number(position.coords.latitude);
       const longitud = Number(position.coords.longitude);
-      this.mapService.createRoute(this.data.latitude, this.data.longitude,longitud, latitud).subscribe((data: any) => {
-        if (data[0].message) {
+      this.mapService.createRoute(this.long, this.lat,longitud, latitud).subscribe((data: any) => {
+
+        if (data[0].message || data[0].error) {          
           this.alternative();
         } else {
-          console.log('data ', data);
-          this.lat = data[0].paths[0].points.coordinates[0][1];
+           this.lat = data[0].paths[0].points.coordinates[0][1];
           this.long = data[0].paths[0].points.coordinates[0][0];
           this.displayRouteOnMap(data[0]);
         }
@@ -186,8 +186,7 @@ export class MapModalComponent implements OnInit, OnDestroy {
         iconSize: [25, 41],
         iconAnchor: [12, 41],
       }); 
-      if (this.control) {
-        console.log('latitud, longitud ', latitud, longitud, 'this.lat, this.long ', this.lat, this.long)
+      if (this.control) {   
         L.marker([latitud, longitud],{ icon: standard }).addTo(map);
         L.marker([this.lat, this.long], { icon: standard }).addTo(map); 
       }

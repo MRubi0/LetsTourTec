@@ -173,7 +173,7 @@ export class MusicPlayerComponent implements OnChanges {
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(ModalVelocityComponent, {restoreFocus: false});
+    const dialogRef = this.dialog.open(ModalVelocityComponent, {restoreFocus: false});    
     dialogRef.afterClosed().subscribe(() => this.menuTrigger.focus());
   }
 

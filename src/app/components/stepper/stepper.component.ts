@@ -183,9 +183,9 @@ export class StepperComponent {
     const dialogRef = this.dialog.open(MapModalComponent, {
       width: `${Math.min(this.screenWidth * 0.9, 800)}px`,
       maxWidth: 'none',
-      data: { latitude: lat, longitude: lng }
-    });
 
+    });
+    dialogRef.componentInstance.cordinates={ lat: lat, long: lng }
     dialogRef.afterClosed().subscribe(result => {
       this.audioControlsVisible = true;
     });
