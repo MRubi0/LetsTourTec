@@ -124,15 +124,21 @@
 
 
 </div>
-<div class="mb-3"></div>
-<div class="required d-flex justify-content-end">
-    <span>*</span>
-</div>
 
-                <div class="product-questions">
+
+
+<div class="product-questions">
+
+    <div class="mb-3"></div>
+    
+
                     <h3 class="card-title">{{ "EXIT.Preguntas_sobre_el_producto" | translate }}</h3>
                     <div class="mb-3"></div>
                     <div class="form-group">
+
+            <div class="required d-flex justify-content-end">
+        <span>*</span>
+    </div>            
         <label for="pregunta6">6. {{ "EXIT.Valora_el_tour_realizado:" | translate }}</label>
         <select class="form-control" name="pregunta6" formControlName="pregunta6">
             <option value="" disabled selected>{{ "EXIT.Seleccione_su_valoración..." | translate }}</option>
