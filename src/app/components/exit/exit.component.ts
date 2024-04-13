@@ -53,13 +53,10 @@ export class ExitComponent {
     });
     this.activatedRoute.params.subscribe((params:any)=>{
       this.id = params['id'];
-      console.log('param ', this.id, params);
       this.finishForm.get('id')?.setValue(this.id);
     });   
-  
-    this.finishForm.valueChanges.subscribe(data=>{
-      console.log('data ', data);
-    })
+    this.finishForm.get('subpregunta3_1')?.disable();
+    this.finishForm.get('subpregunta19_1')?.disable();
   }
   submitSurvey() {
     if (this.finishForm.valid) {
@@ -83,7 +80,22 @@ export class ExitComponent {
       alert('Por favor, completa todos los campos obligatorios.');
     }
   }
-  
+  change(question:number){
+    const data = this.finishForm.value;
+    if(question==3){
+      if(data.pregunta3=='Otra'){
+        this.finishForm.get('subpregunta3_1')?.enable();
+      }else{
+        this.finishForm.get('subpregunta3_1')?.disable();
+      } 
+    }else{
+      if(data.pregunta19=='Otro'){
+        this.finishForm.get('subpregunta19_1')?.enable();
+      }else{
+        this.finishForm.get('subpregunta19_1')?.disable();
+      } 
+    }    
+  }
   onSubmit() { 
     console.log("Intentando enviar datos...");
     this.submitSurvey();

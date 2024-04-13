@@ -133,3 +133,8 @@ select.form-control {
 .form-group:last-child {
     margin-bottom: 10px; /* Reduce el margen inferior del último elemento de cada sección */
 }
+.required{
+    color: red;
+    font-weight: 600;
+    font-size: 16px;
+}

@@ -31,7 +31,9 @@
         <h3 class="card-title">{{ "EXIT.Preguntas_sobre_el_usuario" | translate }}</h3>
         <div class="mb-3"></div>
     <div class="form-group">
-
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta1">1. {{ "EXIT.Edad:" | translate }}</label>
         <input type="number" class="form-control" name="pregunta1" formControlName="pregunta1">
         <div *ngIf="finishForm.get('pregunta1') && finishForm.get('pregunta1')?.invalid && (finishForm.get('pregunta1')?.dirty || finishForm.get('pregunta1')?.touched)" class="alert alert-danger">
@@ -44,6 +46,9 @@
         </div>
     </div>
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta2">2. {{ "EXIT.Género:" | translate }}</label>
         <select class="form-control" name="pregunta2" formControlName="pregunta2">
             <option value="" disabled selected>{{ "EXIT.Seleccione_su_género..." | translate }}</option>
@@ -61,15 +66,19 @@
 
 
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta3">3.  {{ "EXIT.Nacionalidad:" | translate }}</label>
-        <select class="form-control" name="pregunta3" formControlName="pregunta3">
+        <select class="form-control" name="pregunta3" formControlName="pregunta3" (change)="change(3)">
             <option value="" disabled selected> {{ "EXIT.Seleccione_su_nacionalidad..." | translate }}</option>
             <option value="Española"> {{ "EXIT.Española" | translate }}</option>
             <option value="Otra"> {{ "EXIT.Otra" | translate }}</option>
         </select>
-
-        <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta3_1" name="subpregunta3_1" formControlName="subpregunta3_1" placeholder='{{ "EXIT.Si_es_otra,_¿cuál?" | translate }}'>
-
+    
+        <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta3_1" name="subpregunta3_1" formControlName="subpregunta3_1" 
+        placeholder='{{ "EXIT.Si_es_otra,_¿cuál?" | translate }}'>
+        
         <div *ngIf="finishForm.get('pregunta3') && finishForm.get('pregunta3')?.invalid && (finishForm.get('pregunta3')?.dirty || finishForm.get('pregunta3')?.touched)" class="alert alert-danger">
             <div *ngIf="finishForm.get('pregunta3') && finishForm.get('pregunta3')?.errors && finishForm.get('pregunta3')?.errors?.['required']">
                 {{ "EXIT.Por_favor_seleccione_una_respuesta" | translate }}
@@ -78,6 +87,9 @@
     </div>
     
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta4">4. {{ "EXIT.¿Cuántos_viajes_haces_al_año?" | translate }}</label>
         <select class="form-control" name="pregunta4" formControlName="pregunta4">
             <option value="" disabled selected>{{ "EXIT.Seleccione_la_cantidad_de_viajes..." | translate }}</option>
@@ -93,6 +105,9 @@
     </div>
 
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta5">5. {{ "EXIT.¿Y_cuántos_tours_haces_al_año?" | translate }}</label>
         <select class="form-control" name="pregunta5" formControlName="pregunta5">
             <option value="" disabled selected>{{ "EXIT.Seleccione_la_cantidad_de_tours..." | translate }}</option>
@@ -110,6 +125,9 @@
 
 </div>
 <div class="mb-3"></div>
+<div class="required d-flex justify-content-end">
+    <span>*</span>
+</div>
 
                 <div class="product-questions">
                     <h3 class="card-title">{{ "EXIT.Preguntas_sobre_el_producto" | translate }}</h3>
@@ -135,6 +153,9 @@
     </div>
 
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta7">7. {{ "EXIT.Valora_el_contenido_del_tour_realizado:" | translate }}</label>
         <select class="form-control" name="pregunta7"  formControlName="pregunta7">
             <option value="" disabled selected>{{ "EXIT.Seleccione_su_valoración..." | translate }}</option>
@@ -158,6 +179,9 @@
     </div>
 
    <div class="form-group">
+    <div class="required d-flex justify-content-end">
+        <span>*</span>
+    </div>
         <label for="pregunta8">8. {{ "EXIT.Valora_el_formato_en_el_que_se_ha_presentado_el_tour:" | translate }}</label>
         <select class="form-control" id="pregunta8" formControlName="pregunta8" >
             <option value="" disabled selected>{{ "EXIT.Seleccione_su_valoración..." | translate }}</option>
@@ -177,6 +201,9 @@
         <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta8_2" name="subpregunta8_2" formControlName="subpregunta8_2" placeholder='{{ "EXIT.¿Y_lo_que_menos?" | translate }}'>
     </div>
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta9">9. {{ "EXIT.Valora_la_duración_del_tour:" | translate }}</label>
         <select class="form-control" name="pregunta9" formControlName="pregunta9">
             <option value="" disabled selected>{{ "EXIT.Seleccione_su_valoración..." | translate }}</option>
@@ -196,6 +223,9 @@
        
     </div>
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta11">11. {{ "EXIT.¿La_plataforma_te_ayuda_a_lograr_tus_objetivos?" | translate }}</label>
         <select class="form-control" name="pregunta11" formControlName="pregunta11">
             <option value="" disabled selected>{{ "EXIT.Seleccione_una_opción..." | translate }}</option>
@@ -228,6 +258,9 @@
     </div>
 
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta15">15. {{ "EXIT.¿Utilizarías_la_plataforma_en_tus_próximas_vacaciones?" | translate }}</label>
         <select class="form-control" id="pregunta15" name="pregunta15" formControlName="pregunta15">
             <option value="" disabled selected>{{ "EXIT.Seleccione_una_opción..." | translate }}</option>
@@ -244,6 +277,9 @@
 
 
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta16">16. {{ "EXIT.¿Qué_tan_probable_es_que_recomiendes_'Let's_Tour_Tec'_a_otras_personas?" | translate }}</label>
         <select class="form-control" id="pregunta16" name="pregunta16" formControlName="pregunta16" >
             <option value="" disabled selected>{{ "EXIT.Seleccione_una_probabilidad..." | translate }}</option>
@@ -265,6 +301,9 @@
         </div>
     </div>
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta17">17. {{ "EXIT.¿Qué_tan_probable_es_que_vuelvas_a_usar_'Let's_Tour_Tec'?" | translate }}</label>
         <select class="form-control" id="pregunta17" name="pregunta17" formControlName="pregunta17" >
             <option value="" disabled selected>{{ "EXIT.Seleccione_una_probabilidad..." | translate }}</option>
@@ -285,6 +324,9 @@
         </div>
     </div>
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta18">18. {{ "EXIT.¿Crees_que_la_flexibilidad_de_horarios_e_idioma_es_una_ventaja_competitiva_respecto_a_los_tours_convencionales?" | translate }}</label>
         <select class="form-control" id="pregunta18" name="pregunta18" formControlName="pregunta18" >
             <option value="" disabled selected>{{ "EXIT.Seleccione_una_opción..." | translate }}</option>
@@ -301,8 +343,11 @@
 
 
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta19">19. {{ "EXIT.¿Cuál_crees_que_es_la_mejor_manera_de_tener_acceso_a_este_tipo_de_tours?" | translate }}</label>
-        <select class="form-control" id="pregunta19" name="pregunta19" formControlName="pregunta19">
+        <select class="form-control" id="pregunta19" name="pregunta19" formControlName="pregunta19" (change)="change(19)">
             <option value="" disabled selected>{{ "EXIT.Seleccione_una_opción..." | translate }}</option>
             <option value="Pagar antes de realizar el tour una cantidad fija">{{ "EXIT.Pagar_antes_de_realizar_el_tour_una_cantidad_fija" | translate }}</option>
             <option value="Pagar al final del tour la cantidad que consideres">{{ "EXIT.Pagar_al_final_del_tour_la_cantidad_que_consideres" | translate }}</option>
@@ -320,12 +365,15 @@
 
     <div class="form-group">
         <label for="pregunta20">20. {{ "EXIT.¿Cuánto_estarías_dispuesto_a_pagar_por_uno_de_estos_tours?" | translate }}</label>
-        <input type="text" class="form-control" id="pregunta20" name="pregunta20" formControlName="pregunta20">
+        <input type="number" class="form-control" id="pregunta20" name="pregunta20" formControlName="pregunta20">
     </div> 
 
 
 
     <div class="form-group">
+        <div class="required d-flex justify-content-end">
+            <span>*</span>
+        </div>
         <label for="pregunta21">21. {{ "EXIT.¿Le_gustaría_que_la_aplicación_tuviera_formato_red_social_para_poder_compartir_o_encontrar_los_viajes_y_tours_que_mejor_se_adaptan_a_su_estilo_de_vida?" | translate }}</label>
         <select class="form-control" id="pregunta21" name="pregunta21" formControlName="pregunta21">
             <option value="" disabled selected>{{ "EXIT.Seleccione_una_opción..." | translate }}</option>
