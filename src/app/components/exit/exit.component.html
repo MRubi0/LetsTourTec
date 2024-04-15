@@ -31,7 +31,7 @@
         <h3 class="card-title">{{ "EXIT.Preguntas_sobre_el_usuario" | translate }}</h3>
         <div class="mb-3"></div>
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta1') && finishForm.get('pregunta1')?.invalid && finishForm.get('pregunta1')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta1">1. {{ "EXIT.Edad:" | translate }}</label>
@@ -46,7 +46,7 @@
         </div>
     </div>
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta2') && finishForm.get('pregunta2')?.invalid && finishForm.get('pregunta2')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta2">2. {{ "EXIT.Género:" | translate }}</label>
@@ -66,7 +66,7 @@
 
 
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta3') && finishForm.get('pregunta3')?.invalid && finishForm.get('pregunta3')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta3">3.  {{ "EXIT.Nacionalidad:" | translate }}</label>
@@ -87,7 +87,7 @@
     </div>
     
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta4') && finishForm.get('pregunta4')?.invalid && finishForm.get('pregunta4')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta4">4. {{ "EXIT.¿Cuántos_viajes_haces_al_año?" | translate }}</label>
@@ -105,7 +105,7 @@
     </div>
 
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta5') && finishForm.get('pregunta5')?.invalid && finishForm.get('pregunta5')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta5">5. {{ "EXIT.¿Y_cuántos_tours_haces_al_año?" | translate }}</label>
@@ -136,7 +136,7 @@
                     <div class="mb-3"></div>
                     <div class="form-group">
 
-            <div class="required d-flex justify-content-end">
+    <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta6') && finishForm.get('pregunta6')?.invalid && finishForm.get('pregunta6')?.errors">
         <span>*</span>
     </div>            
         <label for="pregunta6">6. {{ "EXIT.Valora_el_tour_realizado:" | translate }}</label>
@@ -159,7 +159,7 @@
     </div>
 
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta7') && finishForm.get('pregunta7')?.invalid && finishForm.get('pregunta7')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta7">7. {{ "EXIT.Valora_el_contenido_del_tour_realizado:" | translate }}</label>
@@ -185,7 +185,7 @@
     </div>
 
    <div class="form-group">
-    <div class="required d-flex justify-content-end">
+    <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta8') && finishForm.get('pregunta8')?.invalid && finishForm.get('pregunta8')?.errors">
         <span>*</span>
     </div>
         <label for="pregunta8">8. {{ "EXIT.Valora_el_formato_en_el_que_se_ha_presentado_el_tour:" | translate }}</label>
@@ -207,7 +207,7 @@
         <input type="text" class="form-control mt-2 subpregunta-input" id="subpregunta8_2" name="subpregunta8_2" formControlName="subpregunta8_2" placeholder='{{ "EXIT.¿Y_lo_que_menos?" | translate }}'>
     </div>
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta9') && finishForm.get('pregunta9')?.invalid && finishForm.get('pregunta9')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta9">9. {{ "EXIT.Valora_la_duración_del_tour:" | translate }}</label>
@@ -229,7 +229,7 @@
        
     </div>
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta11') && finishForm.get('pregunta11')?.invalid && finishForm.get('pregunta11')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta11">11. {{ "EXIT.¿La_plataforma_te_ayuda_a_lograr_tus_objetivos?" | translate }}</label>
@@ -264,7 +264,7 @@
     </div>
 
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta15') && finishForm.get('pregunta15')?.invalid && finishForm.get('pregunta15')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta15">15. {{ "EXIT.¿Utilizarías_la_plataforma_en_tus_próximas_vacaciones?" | translate }}</label>
@@ -283,7 +283,7 @@
 
 
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta16') && finishForm.get('pregunta16')?.invalid && finishForm.get('pregunta16')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta16">16. {{ "EXIT.¿Qué_tan_probable_es_que_recomiendes_'Let's_Tour_Tec'_a_otras_personas?" | translate }}</label>
@@ -307,7 +307,7 @@
         </div>
     </div>
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta17') && finishForm.get('pregunta17')?.invalid && finishForm.get('pregunta17')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta17">17. {{ "EXIT.¿Qué_tan_probable_es_que_vuelvas_a_usar_'Let's_Tour_Tec'?" | translate }}</label>
@@ -330,7 +330,7 @@
         </div>
     </div>
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta18') && finishForm.get('pregunta18')?.invalid && finishForm.get('pregunta18')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta18">18. {{ "EXIT.¿Crees_que_la_flexibilidad_de_horarios_e_idioma_es_una_ventaja_competitiva_respecto_a_los_tours_convencionales?" | translate }}</label>
@@ -349,7 +349,7 @@
 
 
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta19') && finishForm.get('pregunta19')?.invalid && finishForm.get('pregunta19')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta19">19. {{ "EXIT.¿Cuál_crees_que_es_la_mejor_manera_de_tener_acceso_a_este_tipo_de_tours?" | translate }}</label>
@@ -377,7 +377,7 @@
 
 
     <div class="form-group">
-        <div class="required d-flex justify-content-end">
+        <div class="required d-flex justify-content-end" *ngIf="finishForm.get('pregunta21') && finishForm.get('pregunta21')?.invalid && finishForm.get('pregunta21')?.errors">
             <span>*</span>
         </div>
         <label for="pregunta21">21. {{ "EXIT.¿Le_gustaría_que_la_aplicación_tuviera_formato_red_social_para_poder_compartir_o_encontrar_los_viajes_y_tours_que_mejor_se_adaptan_a_su_estilo_de_vida?" | translate }}</label>
