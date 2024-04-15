@@ -25,8 +25,10 @@ export class MusicPlayerComponent implements OnChanges {
   @Input('next') next!: any;
   @Input('last') last!: any;  
   @Input('rates') rates!:any;
+  @Input('volum') volum!:any;
   @Output() stepChange = new EventEmitter<string>();
   @Output() emitRates = new EventEmitter<number>();
+  @Output() emitVolumen = new EventEmitter<number>();
   audioPlayer!: HTMLAudioElement;
   isPlaying: boolean = false;
   volume: number = 0.5;
@@ -67,6 +69,9 @@ export class MusicPlayerComponent implements OnChanges {
 
     if(this.rates>0 && this.rates!=undefined){
       this.changePlaybackRate(this.rates);
+    }
+    if(this.volum>0 && this.volum!=undefined){
+      this.setVolume(this.volum);
     } 
     this.cdRef.detectChanges(); 
   }
@@ -119,6 +124,7 @@ export class MusicPlayerComponent implements OnChanges {
   setVolume(value: number) {
     this.audioPlayer.volume = value;
     this.volume = value;
+    this.emitVolumen.emit(value); 
   }
 
   changePlaybackRate(value: number) {

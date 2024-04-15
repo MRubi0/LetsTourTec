@@ -23,6 +23,7 @@ export class StepperComponent {
   @ViewChildren(MusicPlayerComponent) audioComponents!: QueryList<MusicPlayerComponent>;
   @ViewChild(MusicPlayerComponent) musicPlayer!: MusicPlayerComponent;
   velocity_rate:number=1;
+  volumen_rate:number=0.5;
   next!: Array<number>[];
   firstFormGroup = this._formBuilder.group({
     firstCtrl: ['', Validators.required],
@@ -95,7 +96,8 @@ export class StepperComponent {
         if(aud==audioComponent.audioPlayer.id){
           audioComponent.audioPlayer.pause();
         }
-        this.rates=this.velocity_rate
+        this.rates=this.velocity_rate; 
+        audioComponent.setVolume(this.volumen_rate);       
         audioComponent.changePlaybackRate(this.velocity_rate);           
       });
     }   
@@ -229,5 +231,8 @@ export class StepperComponent {
   }
   velocity(event:any){
     this.velocity_rate=event;
+  }
+  volumen(event:any){
+    this.volumen_rate=event;
   }
 }
