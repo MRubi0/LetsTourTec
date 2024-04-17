@@ -389,6 +389,12 @@ def get_nearest_tours(request):
                 'distance': filtered_tours[0]['distance'],
                 'duracion': tour.duracion,
                 'recorrido': tour.recorrido,
+                'user': {
+                    'id': tour.user.id,
+                    'email': tour.user.email,
+                    'first_name': tour.user.first_name, 
+                    'last_name': tour.user.last_name                   
+                }
             }
         result.append(tour_object)
 
@@ -563,6 +569,12 @@ def get_nearest_tours_all(request):
         'distance': tour['distance'],
         'recorrido': tour['tour'].recorrido,
         'duracion': tour['tour'].duracion,
+        'user': {
+                    'id': tour['tour'].user.id,
+                    'email': tour['tour'].user.email,
+                    'first_name': tour.user.first_name, 
+                    'last_name': tour.user.last_name                  
+                }
     } for tour in current_page_tours]
 
     response_data = {
