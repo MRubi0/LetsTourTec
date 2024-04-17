@@ -1,18 +1,47 @@
-.history-tours-container {
-    /* Estilos para el contenedor principal */
-}
-
-.container-card {
-    /* Estilos para la tarjeta */
-}
-
-.tour-item {
-    margin-bottom: 20px;
-}
-
-.tour-card {
-    /* Estilos para cada tarjeta de tour */
-}
+.valoraciones-container {
+    margin-top: 1rem;
+  }
+  
+  .valoracion-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 1rem;
+    margin: 1rem auto; /* Centra la tarjeta con márgenes automáticos */
+    max-width: 80%; /* Ajusta al porcentaje deseado */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Opcional: añade una sombra para resaltar la tarjeta */
+  }
+  
+  .valoracion-header h3 {
+    margin-bottom: 1rem;
+  }
+  
+  .valoracion-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el contenido de la valoración */
+  }
+  
+  .valoracion-stars {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra las estrellas horizontalmente */
+  }
+  
+  .valoracion-estrella {
+    width: 20px; /* Ajusta el tamaño de la estrella según sea necesario */
+    margin: 0 2px; /* Ajusta el espacio entre las estrellas */
+  }
+  
+  .valoracion-text {
+    margin-top: 1rem;
+  }
+  
+  .valoracion-fecha {
+    color: #757575;
+    font-style: italic;
+    margin-bottom: 1rem; /* Añade espacio entre la fecha y las estrellas */
+  }
+  
 
 .tour-card img {
     width: 100%;
@@ -20,4 +49,52 @@
     /* Estilos para la imagen del tour */
 }
 
-/* Otros estilos según sea necesario */
+.valoraciones-container {
+    margin-top: 1rem;
+  }
+  
+  .valoracion-card {
+    border: 1px solid #e0e0e0; /* Cambiar según el diseño deseado */
+    border-radius: 5px; /* Redondear las esquinas */
+    padding: 1rem;
+
+
+  }
+  
+  .valoracion-header {
+    margin-bottom: 1rem;
+  }
+  .valoracion-titulo {
+    display: block; /* Asegúrate de que h3 se comporte como un bloque para aplicar alineación */
+    margin-top: 1rem; /* Añade espacio entre los títulos si es necesario */
+    text-align: center;
+  }
+  .valoracion-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .valoracion-stars {
+    display: flex;
+    align-items: center;
+  }
+  
+  .valoracion-fecha {
+    color: #757575;
+    font-style: italic;
+    margin-bottom: 1rem; /* Añade espacio entre la fecha y las estrellas */
+  }
+  
+  .valoracion-text {
+    margin-top: 1rem;
+  }
+  
+  .valoracion-fecha {
+    color: #757575; /* o el color que prefieras */
+    font-style: italic;
+  }
+  mat-card {
+    border-radius: 20px;
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+  

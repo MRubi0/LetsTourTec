@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from 'src/enviroment/enviroment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,7 @@ export class SharedService {
   private image!:BehaviorSubject<any>;
   private lat_long!:BehaviorSubject<any>;
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.image= new BehaviorSubject({});
     this.lat_long= new BehaviorSubject({});
    }
@@ -27,4 +29,10 @@ export class SharedService {
   get getCoordinates(){
     return this.lat_long.asObservable();    
   }
+
+  getMediaValoraciones(tourId: number): Observable<any> {
+    const url = `${environment.apiUrl}tour/${tourId}/media-valoracion/`;
+    return this.http.get(url);
+  }
+
 }

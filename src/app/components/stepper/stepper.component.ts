@@ -53,7 +53,7 @@ export class StepperComponent {
     this.audioControlsVisible = !(step.latitude && step.longitude);
   }
 
-  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder,
+  constructor(private router: Router, private dialog: MatDialog, private _formBuilder: FormBuilder,
     private stepService: StepService, private activatedRoute: ActivatedRoute,
     private ngbModal: NgbModal
     ) { }
@@ -214,6 +214,7 @@ export class StepperComponent {
   }
   finishTour() {
     const tourId = this.tour_id;
+    this.router.navigate(['/exit', tourId]);
     this.stepService.createTourRecord(tourId).subscribe(
       response => console.log('Tour finalizado:', response),
       error => console.error('Error al finalizar el tour:', error)

@@ -105,3 +105,19 @@ mat-card {
         padding: 0;
     }
 }
+.valoracion-media {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo ligeramente transparente */
+    padding: 5px;
+    border-radius: 5px;
+  }
+  
+  .valoracion-estrella {
+    width: 20px; /* O el tamaño que prefieras */
+    height: auto; /* Esto mantendrá la proporción de la imagen */
+  }
+  

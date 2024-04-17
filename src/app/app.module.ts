@@ -56,6 +56,8 @@ import { CountdownEComponent } from './components/generics/countdown-e/countdown
 import { ModalVelocityComponent } from './components/generics/modal-velocity/modal-velocity.component';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import { VotacionModalComponent } from './components/votacion-modal/votacion-modal.component';
+import { NgbRatingModule } from '@ng-bootstrap/ng-bootstrap';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -92,7 +94,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     MiModalComponent,
     MsgInicioModalComponent,
     CountdownEComponent,
-    ModalVelocityComponent,   
+    ModalVelocityComponent,
+    VotacionModalComponent,   
   ],
   imports: [
     BrowserModule,
@@ -116,6 +119,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatSnackBarModule,
     MatDialogModule,
     MatMenuModule,
+    NgbRatingModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

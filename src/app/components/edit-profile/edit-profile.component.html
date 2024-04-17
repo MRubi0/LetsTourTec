@@ -5,13 +5,15 @@
         </mat-card-header>
         <mat-card-content>
             <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
-
-                <!-- Campo para el Nombre -->
                 <div class="form-field">
                     <p>Nombre</p>
-                    <mat-form-field appearance="fill">
-                        <input matInput formControlName="firstName">
-                    </mat-form-field>
+                <mat-form-field appearance="fill">
+                    
+                    <input matInput formControlName="firstName">
+                    <mat-error *ngIf="profileForm.controls['firstName'].errors?.['required']">
+                      Este campo es obligatorio.
+                    </mat-error>
+                  </mat-form-field>
                 </div>
 
                 <!-- Campo para el Apellido -->
@@ -23,10 +25,12 @@
                 </div>
                 <div class="form-field">
                     <p>Imagen de Perfil</p>
-                    <input #profileImageInput type="file" (change)="onFileSelect($event, 'profileImage')" accept="image/*" hidden>
+                    <input #profileImageInput type="file" (change)="onFileSelect($event)" accept="image/*" hidden>
                     <button mat-button (click)="profileImageInput.click()" type="button">Seleccionar Archivo</button>
-                    <span id="nombreImagenPerfil"></span> 
-                </div>
+                    <img *ngIf="imageSrc" [src]="imageSrc" class="profile-image-preview" />
+                    <!-- Muestra el nombre del archivo aquí -->
+                    <span *ngIf="fileName">{{ fileName }}</span>
+                  </div>
                 <!-- Campo para el Email -->
                 <div class="form-field">
                     <p>Email</p>
@@ -48,7 +52,8 @@
 
                 <!-- Botones de Acción -->
                 <div class="profile-actions">
-                    <button mat-raised-button color="primary" type="submit">Actualizar Perfil</button>
+                    <button mat-raised-button color="primary" type="submit" [disabled]="!profileForm.valid">Actualizar Perfil</button>
+
                 </div>
             </form>
         </mat-card-content>

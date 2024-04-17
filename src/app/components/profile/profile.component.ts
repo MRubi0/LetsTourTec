@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router'; 
 import { ProfileService } from 'src/app/services/profile.service';
 import { jwtDecode } from 'jwt-decode';
@@ -14,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent {
+  @ViewChild('fileInput') fileInput!: ElementRef;
   profile:any;
   constructor(private router: Router, private profileservice:ProfileService, 
     private snackbarService:SnackService) {}
@@ -49,4 +50,19 @@ export class ProfileComponent {
     console.log("falta esto")
     this.router.navigate(['/my-tours']);
   } 
+
+  onFileSelected(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const file: File = (target.files as FileList)[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.profile.avatar = e.target.result; // Actualiza la vista previa de la imagen
+      };
+      reader.readAsDataURL(file);
+  
+      // Llamada correcta al servicio
+      this.profileservice.uploadFile(file);
+    }
+  }
 }

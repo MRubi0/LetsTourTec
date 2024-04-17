@@ -1,42 +1,31 @@
-<!-- <div class="history-tours-container">
-    <mat-card class="container-card">
-        <mat-card-header>
-            <mat-card-title>Historial de Tours</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
 
-            <div *ngFor="let tour of tours" class="tour-item">
-                <mat-card class="tour-card">
-                    <mat-card-header>
-                        <mat-card-title>{{ tour.title }}</mat-card-title>
-                        <mat-card-subtitle>{{ tour.date | date }}</mat-card-subtitle>
-                    </mat-card-header>
-                    <img mat-card-image src="{{ tour.imageUrl }}" alt="{{ tour.title }}">
-                    <mat-card-content>
-                        <p>{{ tour.description }}</p>
-                    </mat-card-content>
-                    <mat-card-actions>
-                        <button mat-button (click)="viewTour(tour.id)">Ver Detalles</button>
-                        <button mat-button (click)="editTour(tour.id)">Editar</button>
-                        <button mat-button color="warn" (click)="deleteTour(tour.id)">Eliminar</button>
-                    </mat-card-actions>
-                </mat-card>
-            </div>
-
-
-            <p *ngIf="tours.length === 0">No hay tours en tu historial.</p>
-        </mat-card-content>
-    </mat-card>
-</div>
- -->
-
-<mat-card class="container-card">
     <mat-card-header class="mb-3">
         <mat-card-title>My Tour Records</mat-card-title>
     </mat-card-header>      
 
-    <mat-card-content>        
-        <!-- Asumiendo que tienes un componente para listar tours -->
-        <app-generic-card [toursdata]="tourRecords" [all-tours]="true"></app-generic-card>
-    </mat-card-content>    
-</mat-card>
+    <div *ngFor="let tour of tourRecords" class="tour-record">
+        <app-generic-card [toursdata]="[tour]"></app-generic-card>
+        
+        <div *ngIf="tour.valoraciones && tour.valoraciones.length" class="valoraciones-container">
+          <mat-card class="valoracion-card">
+            <div class="valoracion-header">
+                <h3>Valoración:</h3>
+                <h3 class="valoracion-titulo">{{tour.titulo}}</h3>
+              </div>
+              
+            <div *ngFor="let valoracion of tour.valoraciones" class="valoracion-content">
+                <p class="valoracion-fecha">Fecha: {{ valoracion.fecha | date }}</p>
+              <div class="valoracion-stars">
+                <img *ngFor="let _ of [].constructor(valoracion.puntuacion); let i = index" 
+                     src="../../../assets/iconos/star-mark-svgrepo-com.svg" 
+                     alt="Estrella de valoración"
+                     class="valoracion-estrella" />
+              </div>
+              <div *ngIf="valoracion.comentario " class="valoracion-text">
+                <p>Comentario: {{ valoracion.comentario }}</p>
+                
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>

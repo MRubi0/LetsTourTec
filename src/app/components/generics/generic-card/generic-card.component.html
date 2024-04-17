@@ -5,7 +5,12 @@
         totalItems: toursdata.length }">
             <mat-card class="tour-card" (click)="sendImage(tours.id)">
 
-            <mat-card-header class="p-0">       
+            <mat-card-header class="p-0">   
+                
+                    <!-- <div class="valoracion-media">
+                      <img src="../../../assets/iconos/star-mark-svgrepo-com.svg" alt="Valoración media">
+                      <span>{{tours.mediaValoracion | number:'1.1-1'}}</span>
+                    </div>    --> 
                 <img class="image" mat-card-image 
                 src='https://letstourtec-bucket-2.s3.eu-north-1.amazonaws.com/tours/{{tours.imagen.url}}' 
                 alt="Image" [routerLink]="['/tour/', tours.id]">
@@ -33,6 +38,8 @@
                     </p>      
                 <ul>
                     <li><strong>{{ 'GENERIC-CARD.Type_of_tour' | translate }}: </strong> {{tours.translatedTourType}}</li>
+                    <li><strong>{{ 'GENERIC-CARD.Average_rating' | translate }}: </strong> <span>{{tours.mediaValoracion | number:'1.1-1'}}</span> <img src="../../../assets/iconos/star-mark-svgrepo-com.svg" alt="Valoración media" class="valoracion-estrella"></li>
+
                     <li><strong>{{ 'GENERIC-CARD.Distance_to_starting_point' | translate }}: </strong> {{tours.distance | number: '1.0-2'}} km</li>
                     <li><strong>{{ 'GENERIC-CARD.Duration' | translate }}: </strong>{{tours.duracion}} min.</li>
                     <li><strong>{{ 'GENERIC-CARD.Covered_distance' | translate }}: </strong>{{tours.recorrido}} km</li>
