@@ -19,6 +19,7 @@ import { EditProfileComponent } from './components/edit-profile/edit-profile.com
 import { HistoryToursComponent } from './components/history-tours/history-tours.component';
 import { ExitComponent } from './components/exit/exit.component'
 import { MusicPlayerDetailComponent } from './components/generics/music-player-detail/music-player-detail.component';
+import { ProfilecardsComponent } from './components/profilecards/profilecards.component';
 
 
 const routes: Routes = [
@@ -105,6 +106,10 @@ const routes: Routes = [
   {
     path:'music-detail',
     component: MusicPlayerDetailComponent,
+  },
+  {
+    path:'profile-card',
+    component: ProfilecardsComponent,
   }
 ];
 

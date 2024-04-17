@@ -2,6 +2,7 @@ import { Component, Input, ViewChild } from '@angular/core';
 import { PaginationControlsComponent } from 'ngx-pagination';
 import { SharedService } from 'src/app/services/shared.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 
 
@@ -24,7 +25,7 @@ export class GenericCardComponent {
   responsive=true
   showMore=false;
 
-  constructor(private sharedService: SharedService, private translate: TranslateService) {}
+  constructor(private sharedService: SharedService, private translate: TranslateService, private router: Router) {}
 
   ngOnChanges() {
     this.toursdata.forEach((tour: any) => {
@@ -65,7 +66,7 @@ export class GenericCardComponent {
         data.translatedTourType = this.translate.instant(translatedKey);
       }
       return data;
-    });   
+    });      
   }
   sendImage(image:string){
     //this.sharedService.setImage=image;
@@ -84,5 +85,8 @@ export class GenericCardComponent {
   onPageChange(): void {
     this.scrollToTop();
   }
-  
+  loadUser(user:any){
+    this.sharedService.setProfile=user; 
+    this.router.navigate([ '/profile-card']);
+  }  
 }

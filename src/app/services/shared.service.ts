@@ -10,10 +10,12 @@ export class SharedService {
 
   private image!:BehaviorSubject<any>;
   private lat_long!:BehaviorSubject<any>;
+  private profile!:BehaviorSubject<any>;
 
   constructor(private http: HttpClient) {
     this.image= new BehaviorSubject({});
     this.lat_long= new BehaviorSubject({});
+    this.profile= new BehaviorSubject({});
    }
    
   set setImage(data:any){
@@ -28,6 +30,13 @@ export class SharedService {
   }
   get getCoordinates(){
     return this.lat_long.asObservable();    
+  }
+
+  set setProfile(data:any){
+    this.profile.next(data);
+  }
+  get getProfile(){
+    return this.profile.asObservable();    
   }
 
   getMediaValoraciones(tourId: number): Observable<any> {

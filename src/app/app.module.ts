@@ -58,6 +58,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { VotacionModalComponent } from './components/votacion-modal/votacion-modal.component';
 import { NgbRatingModule } from '@ng-bootstrap/ng-bootstrap';
+import { ProfilecardsComponent } from './components/profilecards/profilecards.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -95,7 +96,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     MsgInicioModalComponent,
     CountdownEComponent,
     ModalVelocityComponent,
-    VotacionModalComponent,   
+    VotacionModalComponent,
+    ProfilecardsComponent,   
   ],
   imports: [
     BrowserModule,
