@@ -393,7 +393,9 @@ def get_nearest_tours(request):
                     'id': tour.user.id,
                     'email': tour.user.email,
                     'first_name': tour.user.first_name, 
-                    'last_name': tour.user.last_name                   
+                    'last_name': tour.user.last_name,
+                    'avatar': tour.user.avatar.url,
+                    'bio': tour.user.bio,                   
                 }
             }
         result.append(tour_object)
@@ -572,8 +574,10 @@ def get_nearest_tours_all(request):
         'user': {
                     'id': tour['tour'].user.id,
                     'email': tour['tour'].user.email,
-                    'first_name': tour.user.first_name, 
-                    'last_name': tour.user.last_name                  
+                    'first_name': tour['tour'].user.first_name, 
+                    'last_name': tour['tour'].user.last_name,
+                    'avatar': tour['tour'].user.avatar.url,
+                    'bio': tour['tour'].user.bio,
                 }
     } for tour in current_page_tours]
 
