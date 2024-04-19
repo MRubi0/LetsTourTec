@@ -140,7 +140,7 @@ def login_view(request):
     # This part depends on your application's logic
     return JsonResponse({'error': 'GET request not supported'}, status=405)
 
-
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_tours(request):

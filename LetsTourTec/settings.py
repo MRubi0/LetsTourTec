@@ -247,7 +247,7 @@ SIMPLE_JWT = {
 }
 AWS_S3_REGION_NAME = 'eu-north-1'
 CORS_ALLOW_ALL_ORIGINS = True
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 * 15 # 10MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 * 200 # 10MB
 
 #logging.basicConfig(level=logging.DEBUG)
 boto3.set_stream_logger(name='botocore')
@@ -265,7 +265,7 @@ my_config = Config(
     read_timeout=450,    # Tiempo de espera para la lectura en segundos
     retries={'max_attempts': 15}  # Número de reintentos en caso de errores transitorios
 )
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 * 40 # 150MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 * 200 # 150MB
 # Crear un cliente S3 con la configuración personalizada
 s3_client = boto3.client('s3', config=my_config)
 
