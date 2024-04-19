@@ -261,11 +261,11 @@ boto3.setup_default_session(aws_access_key_id='AKIAYTBLLQA7BS6GPBHU',
 # Configuración personalizada con un timeout de conexión de 60 segundos
 # y un timeout de lectura de 300 segundos.
 my_config = Config(
-    connect_timeout=90,  # Tiempo de espera para la conexión en segundos
+    connect_timeout=200,  # Tiempo de espera para la conexión en segundos
     read_timeout=450,    # Tiempo de espera para la lectura en segundos
     retries={'max_attempts': 15}  # Número de reintentos en caso de errores transitorios
 )
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 * 15 # 150MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 * 40 # 150MB
 # Crear un cliente S3 con la configuración personalizada
 s3_client = boto3.client('s3', config=my_config)
 
