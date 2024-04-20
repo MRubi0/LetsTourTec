@@ -464,7 +464,6 @@ def get_random_tours(request):
     # Elige un tour aleatorio de cada categoría
     random_tours = {
         "cultural": random.choice(cultural_tours) if cultural_tours else None,
-
         "naturaleza": random.choice(naturaleza_tours) if naturaleza_tours else None,
         "ocio": random.choice(ocio_tours) if ocio_tours else None,        
     }
@@ -476,17 +475,20 @@ def get_random_tours(request):
     for key, tour in random_tours.items():
 
         if tour:
-
             random_tours_json= tour.as_dict()
-            random_tours_json['id'] = tour.id
-            
+            random_tours_json['id'] = tour.id            
             random_tours_json['imagen']={
-                'url': random_tours_json['imagen']
-            }                       
-            result.append(random_tours_json)
-                
-            
-    print(result)
+                'url': random_tours_json['imagen']                
+            }
+            random_tours_json['user']={
+                    'id': tour.user.id,
+                    'email': tour.user.email,
+                    'first_name': tour.user.first_name, 
+                    'last_name': tour.user.last_name,
+                    'avatar': tour.user.avatar.url,
+                    'bio': tour.user.bio,                   
+                }                       
+            result.append(random_tours_json)      
     return JsonResponse(result,safe=False)
 
 
