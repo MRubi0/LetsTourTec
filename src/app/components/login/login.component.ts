@@ -37,8 +37,7 @@ export class LoginComponent {
     const password = this.loginForm.get('password')?.value || '';
 
     this.authService.login(email, password).subscribe(
-      (response) => {
-        
+      (response) => {       
         this.authService.setToken(response.access); 
         this.router.navigate(['/profile']);
       },

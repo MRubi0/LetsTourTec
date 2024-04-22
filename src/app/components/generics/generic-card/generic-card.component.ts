@@ -3,6 +3,7 @@ import { PaginationControlsComponent } from 'ngx-pagination';
 import { SharedService } from 'src/app/services/shared.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 
 
@@ -86,7 +87,16 @@ export class GenericCardComponent {
     this.scrollToTop();
   }
   loadUser(user:any){
-    this.sharedService.setProfile=user; 
-    this.router.navigate([ '/profile-card']);
+    const token = localStorage.getItem('access_token');
+    if(token){
+      const decodedToken:any = jwtDecode(token);
+      console.log('decoded ', decodedToken.user_id);
+      if(decodedToken.user_id==user.id){
+        this.router.navigate([ '/profile']);
+      }else{
+        this.sharedService.setProfile=user; 
+        this.router.navigate([ '/profile-card']);
+      }      
+    }        
   }  
 }
