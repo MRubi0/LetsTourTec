@@ -111,14 +111,23 @@ def get_user_tours(request):
                     tour_data['imagen'] = {'url': tour_data['imagen']}
                 if tour_data.get('audio'):
                     tour_data['audio'] = {'url': tour_data['audio']}
+                    
+                # Agregar la información del usuario que creó el tour
+                tour_data['user'] = {
+                    'id': tour.user.id,
+                    'email': tour.user.email,
+                    'first_name': tour.user.first_name, 
+                    'last_name': tour.user.last_name,
+                    'avatar': tour.user.avatar.url,
+                    'bio': tour.user.bio,                   
+                }
+
                 tours_data.append(tour_data)
             return JsonResponse({'tours': tours_data})
         else:
             return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
-
-
 
 @csrf_exempt
 def login_view(request):
@@ -445,6 +454,14 @@ def get_latest_tours(request):
                 },
                 'recorrido': latest_tour.recorrido,
                 'duracion': latest_tour.duracion,
+                'user': {
+                    'id': latest_tour.user.id,
+                    'email': latest_tour.user.email,
+                    'first_name': latest_tour.user.first_name, 
+                    'last_name': latest_tour.user.last_name,
+                    'avatar': latest_tour.user.avatar.url,
+                    'bio': latest_tour.user.bio               
+                }
             }
             result.append(tour_data)
         except Tour.DoesNotExist:
@@ -813,15 +830,11 @@ def create_tour_record(request):
 def get_user_tour_records(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
-
         if user_id:
-            # Asegúrate de incluir la relación inversa correcta 'valoraciones' en prefetch_related
             tour_records = TourRecord.objects.filter(user_id=user_id).prefetch_related('tour__valoraciones')
             tours_data = []
             for record in tour_records:
                 tour_data = record.tour.as_dict()
-
-                # Serializa manualmente cada valoración a un diccionario
                 valoraciones_data = []
                 for valoracion in record.tour.valoraciones.all():
                     valoracion_data = {
@@ -838,10 +851,17 @@ def get_user_tour_records(request):
                     tour_data['imagen'] = {'url': tour_data['imagen']}
                 if tour_data.get('audio'):
                     tour_data['audio'] = {'url': tour_data['audio']}
+                    
+                # Agrega la información del usuario que creó el tour
+                tour_data['user'] = {
+                    'id': record.tour.user.id,
+                    'email': record.tour.user.email,
+                    'first_name': record.tour.user.first_name, 
+                    'last_name': record.tour.user.last_name,
+                    'avatar': record.tour.user.avatar.url,
+                    'bio': record.tour.user.bio,                   
+                }
 
-                print(tour_data)
-                print("  ")
-                
                 tours_data.append(tour_data)
 
             return JsonResponse({'tours': tours_data})
