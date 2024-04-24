@@ -10,9 +10,8 @@
     font-size: 1.25rem;  
     padding-left: 0;              
     font-weight: auto;
-    margin-bottom: 40px; 
-    font-weight: 550;
-    
+    font-weight: 550;    
+    margin: 20px 10px 40px 30px;
 }
 
 .search-card {
@@ -34,7 +33,9 @@
     padding: 10px 15px; 
     font-size: 16px; 
     margin-right: auto;    
-    border-radius: 4px;
+    border-radius: 10px;
+    border: 1px #0d6efd solid;
+
 }
 .search-form {
     display: flex;
@@ -87,14 +88,34 @@
     position: absolute;
     z-index: 2;
     background-color: white;
+    border: 1px #0d6efd solid;
+    border-radius: 20px;
   
     div {
       padding: 10px;
       cursor: pointer;
   
       &:hover {
-        background-color: lightgray;
+        background-color: #0d6efd;
+        color: white;
       }
     }
+  }
+  .container-card {
+    margin: 10px 0px 10px 0px;
+    width: 100%;
+}
+@media screen and (max-width: 600px) {
+    .container-card {
+        padding: 0;
+    }
+}
+@media screen and (max-width: 400px) {
+    .search-card {
+        max-width: 90%;
+    }
+}
+.move-down {
+    margin-top: 200px; 
   }
   

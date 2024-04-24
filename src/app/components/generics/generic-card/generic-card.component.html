@@ -6,11 +6,6 @@
             <mat-card class="tour-card" (click)="sendImage(tours.id)">
 
             <mat-card-header class="p-0">   
-                
-                    <!-- <div class="valoracion-media">
-                      <img src="../../../assets/iconos/star-mark-svgrepo-com.svg" alt="Valoración media">
-                      <span>{{tours.mediaValoracion | number:'1.1-1'}}</span>
-                    </div>    --> 
                 <img class="image" mat-card-image 
                 src='https://letstourtec-bucket-2.s3.eu-north-1.amazonaws.com/tours/{{tours.imagen.url}}' 
                 alt="Image" [routerLink]="['/tour/', tours.id]">
