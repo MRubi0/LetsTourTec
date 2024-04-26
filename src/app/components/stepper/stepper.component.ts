@@ -101,8 +101,10 @@ export class StepperComponent {
         audioComponent.changePlaybackRate(this.velocity_rate);           
       });
     }   
-    const offsetTop = 176+72*(event.selectedIndex);    
-    window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+    const offsetTop = 176 + 72 * (event.selectedIndex);
+    setTimeout(() => {
+        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+    }, 300);
   }
   event() {
     const map = L.map(this.maps).setView([51.505, -0.09], 13);
