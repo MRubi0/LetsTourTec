@@ -13,7 +13,7 @@ export class MapService {
 
   createRoute(lat_dest: number, long_dest: number, lat_org: number, long_org: number) {
     const url = `${environment.apiUrl}api/get_routes`;
-    console.log('lat_org ', lat_org, long_org);
+    console.log('lat_org ', lat_org, long_org, 'long_dest ',lat_dest, long_dest);
     return this.http.post(url,
       {
         "points": [
