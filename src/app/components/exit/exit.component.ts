@@ -6,6 +6,7 @@ import { CountdownEComponent } from '../generics/countdown-e/countdown-e.compone
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { VotacionModalComponent } from '../votacion-modal/votacion-modal.component';
 
 
 @Component({
@@ -62,7 +63,16 @@ export class ExitComponent implements AfterViewInit {
     this.finishForm.get('subpregunta19_1')?.disable();
   }
   ngAfterViewInit() {
-    
+    console.log("ngAfterViewInit ejecutado");
+    setTimeout(() => {
+      this.dialog.open(VotacionModalComponent, {
+        width: '85%',
+        height:'375px',
+        data: { tourId: this.id }
+      }).afterClosed().subscribe(result => {
+        console.log('El modal de votación fue cerrado', result);
+      });
+    }, 500);
   }
   submitSurvey() {
     if (this.finishForm.valid) {

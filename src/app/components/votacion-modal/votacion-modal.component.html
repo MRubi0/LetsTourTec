@@ -1,0 +1,16 @@
+<div class="titulo-modal">
+    <h2 mat-dialog-title>{{ 'VOTAR.¿Qué_te_pareció_este_tour?' | translate }}</h2>
+    <p>{{ 'VOTAR.Tu_opinión_nos_importa' | translate }}</p>
+  </div>
+  <mat-dialog-content class="mat-typography">
+    <div class="votacion-modal">
+        <ngb-rating [(rate)]="calificacion" [max]="5" (rateChange)="onRate($event)" (hover)="onHover($event)"></ngb-rating>
+
+        <div class="mensaje-hover">{{ mensajeHover }}</div>
+      </div>
+  </mat-dialog-content>
+  <mat-dialog-actions class="acciones-modal">
+    <button mat-raised-button color="secondary" mat-dialog-close>{{ 'VOTAR.Cancelar' | translate }}</button>
+    <button mat-raised-button color="primary" (click)="enviarVotacion()" cdkFocusInitial>{{ 'VOTAR.Votar' | translate }}</button>
+  </mat-dialog-actions>
+  

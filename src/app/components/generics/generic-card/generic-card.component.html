@@ -33,10 +33,12 @@
                     </p>      
                 <ul>
                     <li><strong>{{ 'GENERIC-CARD.Type_of_tour' | translate }}: </strong> {{tours.translatedTourType}}</li>
+                    <li><strong>{{ 'GENERIC-CARD.Average_rating' | translate }}: </strong> <span>{{tours.mediaValoracion | number:'1.1-1'}}</span> <img src="../../../assets/iconos/star-mark-svgrepo-com.svg" alt="Valoración media" class="valoracion-estrella"></li>
+
                     <li><strong>{{ 'GENERIC-CARD.Distance_to_starting_point' | translate }}: </strong> {{tours.distance | number: '1.0-2'}} km</li>
                     <li><strong>{{ 'GENERIC-CARD.Duration' | translate }}: </strong>{{tours.duracion}} min.</li>
                     <li><strong>{{ 'GENERIC-CARD.Covered_distance' | translate }}: </strong>{{tours.recorrido}} km</li>
-                    <!--<li (click)="loadUser(tours.user)"><strong>Created by: </strong><span class="user">{{tours.user.first_name}} {{tours.user.last_name}}</span></li>-->
+                    <li (click)="loadUser(tours.user)"><strong>Created by: </strong><span class="user">{{tours.user.first_name}} {{tours.user.last_name}}</span></li>
                 </ul>
             </mat-card-content>
             <mat-card-actions class="d-flex justify-content-center">

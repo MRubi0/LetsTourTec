@@ -30,7 +30,18 @@ export class GenericCardComponent {
 
   ngOnChanges() {
     this.toursdata.forEach((tour: any) => {
-      this.showFullDescription[tour.id] = false;     
+      this.showFullDescription[tour.id] = false;
+  
+      // Obtener la media de valoraciones para cada tour
+      console.log(tour.id)
+      this.sharedService.getMediaValoraciones(tour.id).subscribe({
+        next: (response:any) => {
+          tour.mediaValoracion = response.media_puntuacion;
+        },
+        error: (error:any) => {
+          console.error('Error al obtener la media de valoraciones:', error);
+        }
+      });
     });
     this.toursdata.map((data:any)=>{
       

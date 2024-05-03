@@ -5,4 +5,27 @@
 
     <div *ngFor="let tour of tourRecords" class="tour-record">
         <app-generic-card [toursdata]="[tour]"></app-generic-card>
-    </div>
+        
+        <div *ngIf="tour.valoraciones && tour.valoraciones.length" class="valoraciones-container">
+          <mat-card class="valoracion-card">
+            <div class="valoracion-header">
+                <h3>Valoración:</h3>
+                <h3 class="valoracion-titulo">{{tour.titulo}}</h3>
+              </div>
+              
+            <div *ngFor="let valoracion of tour.valoraciones" class="valoracion-content">
+                <p class="valoracion-fecha">Fecha: {{ valoracion.fecha | date }}</p>
+              <div class="valoracion-stars">
+                <img *ngFor="let _ of [].constructor(valoracion.puntuacion); let i = index" 
+                     src="../../../assets/iconos/star-mark-svgrepo-com.svg" 
+                     alt="Estrella de valoración"
+                     class="valoracion-estrella" />
+              </div>
+              <div *ngIf="valoracion.comentario " class="valoracion-text">
+                <p>Comentario: {{ valoracion.comentario }}</p>
+                
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>

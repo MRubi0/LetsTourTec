@@ -56,6 +56,7 @@ import { CountdownEComponent } from './components/generics/countdown-e/countdown
 import { ModalVelocityComponent } from './components/generics/modal-velocity/modal-velocity.component';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import { VotacionModalComponent } from './components/votacion-modal/votacion-modal.component';
 import { NgbRatingModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProfilecardsComponent } from './components/profilecards/profilecards.component';
 
@@ -95,6 +96,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MsgInicioModalComponent,
     CountdownEComponent,
     ModalVelocityComponent,
+    VotacionModalComponent,
     ProfilecardsComponent,   
   ],
   imports: [
