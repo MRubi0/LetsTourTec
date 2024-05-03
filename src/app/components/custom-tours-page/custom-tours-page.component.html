@@ -15,7 +15,7 @@
   <mat-card-header class="mb-3">
       <mat-card-title>Closest tours to the location given</mat-card-title>
   </mat-card-header>
-  <mat-card-content>
+  <mat-card-content class="d-flex justify-content-center">
       <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px" class="card-container" *ngIf="tours && tours.length > 0">       
           <app-generic-card class="d-flex flex-wrap" [toursdata]="tours" [all-tours]="true"></app-generic-card>
       </div>
