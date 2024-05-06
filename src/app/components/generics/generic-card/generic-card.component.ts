@@ -32,8 +32,6 @@ export class GenericCardComponent {
     this.toursdata.forEach((tour: any) => {
       this.showFullDescription[tour.id] = false;
   
-      // Obtener la media de valoraciones para cada tour
-      console.log(tour.id)
       this.sharedService.getMediaValoraciones(tour.id).subscribe({
         next: (response:any) => {
           tour.mediaValoracion = response.media_puntuacion;
@@ -90,8 +88,8 @@ export class GenericCardComponent {
     const token = localStorage.getItem('access_token');
     if(token){
       const decodedToken:any = jwtDecode(token);
-      console.log('decoded ', decodedToken.user_id);
       if(decodedToken.user_id==user.id){
+        this.sharedService.setProfile=user; 
         this.router.navigate([ '/profile']);
       }else{
         this.sharedService.setProfile=user; 
