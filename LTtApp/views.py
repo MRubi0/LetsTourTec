@@ -100,7 +100,6 @@ def profile(request):
 def get_user_tours(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
-
         if user_id:
             tours = Tour.objects.filter(user_id=user_id)
             tours_data = []
@@ -121,7 +120,7 @@ def get_user_tours(request):
                     'avatar': tour.user.avatar.url,
                     'bio': tour.user.bio,                   
                 }
-
+                
                 tours_data.append(tour_data)
             return JsonResponse({'tours': tours_data})
         else:
@@ -831,46 +830,52 @@ def get_user_tour_records(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
         if user_id:
-            tour_records = TourRecord.objects.filter(user_id=user_id).prefetch_related('tour__valoraciones')
+
+            tours = Tour.objects.filter(user_id=user_id)
+            # Inicializar la lista de datos de los tours
             tours_data = []
-            for record in tour_records:
-                tour_data = record.tour.as_dict()
+            # Recorrer cada tour
+            for tour in tours:
+                # Obtener todas las valoraciones del tour actual
+                valoraciones = Valoracion.objects.filter(tour_id=tour.id)
+                # Inicializar la lista de datos de las valoraciones del tour
                 valoraciones_data = []
-                for valoracion in record.tour.valoraciones.all():
+
+                for valoracion in valoraciones:
                     valoracion_data = {
                         "puntuacion": valoracion.puntuacion,
                         "comentario": valoracion.comentario,
-                        "fecha": valoracion.fecha.strftime("%Y-%m-%d %H:%M:%S"),  # Formatea la fecha como string
+                        "fecha": valoracion.fecha.strftime("%Y-%m-%d %H:%M:%S"),
                     }
                     valoraciones_data.append(valoracion_data)
-
-                # Agrega las valoraciones serializadas al diccionario del tour
-                tour_data['valoraciones'] = valoraciones_data
-
-                if tour_data.get('imagen'):
-                    tour_data['imagen'] = {'url': tour_data['imagen']}
-                if tour_data.get('audio'):
-                    tour_data['audio'] = {'url': tour_data['audio']}
-                    
-                # Agrega la información del usuario que creó el tour
-                tour_data['user'] = {
-                    'id': record.tour.user.id,
-                    'email': record.tour.user.email,
-                    'first_name': record.tour.user.first_name, 
-                    'last_name': record.tour.user.last_name,
-                    'avatar': record.tour.user.avatar.url,
-                    'bio': record.tour.user.bio,                   
+       
+                tour_data = {
+                    "id": tour.id,
+                    "titulo": tour.titulo,
+                    "descripcion": tour.descripcion,
+                    "imagen": {'url': tour.imagen.url} if tour.imagen else None,
+                    "audio": {'url': tour.audio.url} if tour.audio else None,
+                    "latitude": tour.latitude,
+                    "longitude": tour.longitude,
+                    "tipo_de_tour": tour.tipo_de_tour,
+                    "recorrido": tour.recorrido,
+                    "duracion": tour.duracion,
+                    "user": {
+                        'id': tour.user.id,
+                        'email': tour.user.email,
+                        'first_name': tour.user.first_name, 
+                        'last_name': tour.user.last_name,
+                        'avatar': tour.user.avatar.url,
+                        'bio': tour.user.bio,
+                    },
+                    "valoraciones": valoraciones_data
                 }
-
                 tours_data.append(tour_data)
-
             return JsonResponse({'tours': tours_data})
         else:
             return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
-
-
 current_key_index = 0
 
 @csrf_exempt
