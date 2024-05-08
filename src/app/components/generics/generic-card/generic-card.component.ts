@@ -95,6 +95,9 @@ export class GenericCardComponent {
         this.sharedService.setProfile=user; 
         this.router.navigate([ '/profile-card']);
       }      
+    }else{
+        this.sharedService.setProfile=user; 
+        this.router.navigate([ '/profile-card']);
     }        
   }  
 }

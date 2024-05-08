@@ -25,20 +25,20 @@ export interface Tour {
 
 
 export class HistoryToursComponent implements OnInit {
-  tourRecords: any[] = []; // Tus registros de tours con valoraciones incluidas
-  p: number = 1; // La página actual para la paginación
-  pageSize: number = 12; // La cantidad de elementos por página
+  tourRecords: any[] = [];
+  p: number = 1;
+  pageSize: number = 12;
   $prof!:any;
   profile:any;
   userId:number=0;
+  id:number=0;
   constructor(private http: HttpClient, private authService: AuthService, private sharedService:SharedService) {
     this.$prof=this.sharedService.getProfile;
   }
 
   ngOnInit() {
     this.$prof.subscribe((data: any) => {
-      this.profile = data;  
-      console.log('this.profile history', this.profile);  
+      this.profile = data; 
     });
       this.loadTourRecords(); 
   }
@@ -47,19 +47,18 @@ export class HistoryToursComponent implements OnInit {
     const accessToken = this.authService.getToken();
     if (accessToken) {     
         const decodedToken: any = jwtDecode(accessToken);
-        const userId = decodedToken.user_id;
-        
-        if(userId==this.profile.id){
-          this.userId=userId;
-        }
-        else{
-          this.userId=this.profile.id;
-        }     
-        this.http.get(`${environment.apiUrl}api/get_user_tour_records?id=${this.userId}`).subscribe(data => {
-            this.tourRecords = (data as any)['tours'];
-          }, (error: any) => {
-            console.error('Error al cargar los registros de tours:', error);
-        });
+        this.id = decodedToken.user_id;      
     }
+    if(this.id==this.profile.id){
+      this.userId=this.id;
+    }
+    else{
+      this.userId=this.profile.id;
+    }     
+    this.http.get(`${environment.apiUrl}api/get_user_tour_records?id=${this.userId}`).subscribe(data => {
+        this.tourRecords = (data as any)['tours'];
+      }, (error: any) => {
+        console.error('Error al cargar los registros de tours:', error);
+    });
   }
 }
