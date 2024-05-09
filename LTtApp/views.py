@@ -230,11 +230,8 @@ def upload_tours(request):
                        extra_image_file = request.FILES[f'extra_step_image_{i}']
                        timestamp = int(time.time() * 1000)
                        extra_image_name = f"extra_image_{timestamp}.jpg"
-                       paso.image.save(extra_image_name, extra_image_file, save=False) 
-                       print('extra_image_file 1', extra_image_file, 'extra_image_name ', extra_image_name)
-                       file_path = "pasos/extra_image_1715271092667.jpg"
-                       file_path_without_pasos = file_path.replace("pasos/", "")
-                       paso.image=file_path_without_pasos                    
+                       paso.image.save(extra_image_name, extra_image_file, save=False)                       
+                       paso.image=extra_image_name                    
                     paso.save()                    
                 else:
                     break
