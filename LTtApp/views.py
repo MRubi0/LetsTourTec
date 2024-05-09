@@ -152,42 +152,45 @@ def login_view(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_tours(request):
-    print("Solicitud recibida con los siguientes datos: %s", request.FILES)
     error_message = None
     auth_header = request.META.get('HTTP_AUTHORIZATION')
     if auth_header:
         token = auth_header.split(' ')[1]
-        print(f"Token recibido: {token}")
     else:
         print("No se encontró el header de autorización")
     
     if request.method == 'POST':
         if not request.user.is_authenticated:
-            return Response({'error': 'Usuario no autenticado'}, status=401)
-        print(request.POST)  
-        print(request.FILES)  
-        
+            return Response({'error': 'Usuario no autenticado'}, status=401)     
         form = TourForm(request.POST, request.FILES)       
         if form.is_valid():
             tour = form.save(commit=False)
             tour.user = request.user
-            tour.image = request.FILES['imagen'] if 'imagen' in request.FILES else None
+            if 'imagen' in request.FILES:
+                image_file = request.FILES['imagen']
+                timestamp = int(time.time() * 1000)
+                image_name = f"{timestamp}.jpg"
+                tour.imagen.save(image_name, image_file)
 
-            if tour.tipo_de_tour=='leisure':
-                tour.tipo_de_tour='ocio'
-            elif tour.tipo_de_tour=='nature':
-                tour.tipo_de_tour='naturaleza'
+            if 'audio' in request.FILES:
+                audio_file = request.FILES['audio']
+                timestamp = int(time.time() * 1000)
+                audio_name = f"aud_{timestamp}.mp3"
+                tour.audio.save(audio_name, audio_file)    
+
+            if tour.tipo_de_tour == 'leisure':
+                tour.tipo_de_tour = 'ocio'
+            elif tour.tipo_de_tour == 'nature':
+                tour.tipo_de_tour = 'naturaleza'
 
             tour.save()
-            print(tour)
-            # Procesar pasos adicionales
+
             for i in range(100):
                 extra_audio_key = f'extra_step_audio_{i}'
                 
                 if extra_audio_key in request.FILES:
-                    extra_audio = request.FILES[extra_audio_key]
-                    
-                    extra_description= None
+                    extra_audio = request.FILES[extra_audio_key]                    
+                    extra_description = None
                     extra_image = None
                     extra_latitude = None
                     extra_longitude = None
@@ -201,12 +204,13 @@ def upload_tours(request):
                     if extra_tittle_key in request.POST:
                         extra_tittle = request.POST.get(extra_tittle_key, '')
 
-                    paso = Paso(tour=tour, audio=extra_audio, description=extra_description, tittle = extra_tittle)
-
-                    extra_image_key = f'extra_step_image_{i}'
-                    if extra_image_key in request.FILES:
-                        extra_image = request.FILES[extra_image_key]
-                        paso.image = extra_image
+                    paso = Paso(tour=tour, description=extra_description, tittle=extra_tittle)
+                    
+                    if request.FILES[f'extra_step_audio_{i}']:          
+                        extra_audio_file = request.FILES[f'extra_step_audio_{i}']
+                        timestamp = int(time.time() * 1000)
+                        extra_audio_name = f"extra_audio_{timestamp}.mp3"
+                        paso.audio.save(extra_audio_name, extra_audio_file)
 
                     extra_latitude_key = f'extra_step_latitude_{i}'
                     if extra_latitude_key in request.POST and request.POST[extra_latitude_key]:
@@ -216,29 +220,27 @@ def upload_tours(request):
                     if extra_longitude_key in request.POST and request.POST[extra_longitude_key]:
                         extra_longitude = float(request.POST[extra_longitude_key])
 
-                    
-                    print(paso)
-                    #if extra_image:
-                        #.image = extra_image
                     if extra_latitude:
                         paso.latitude = extra_latitude
                     if extra_longitude:
                         paso.longitude = extra_longitude
 
-                    paso.save()
+                    extra_image_key = f'extra_step_image_{i}'
+                    if extra_image_key in request.FILES:
+                       extra_image_file = request.FILES[f'extra_step_image_{i}']
+                       timestamp = int(time.time() * 1000)
+                       extra_image_name = f"extra_image_{timestamp}.jpg"
+                       paso.image.save(extra_image_name, extra_image_file, save=False) 
+                       print('extra_image_file 1', extra_image_file, 'extra_image_name ', extra_image_name)
+                       file_path = "pasos/extra_image_1715271092667.jpg"
+                       file_path_without_pasos = file_path.replace("pasos/", "")
+                       paso.image=file_path_without_pasos                    
+                    paso.save()                    
                 else:
-                    print
-                    print(i)
-                    print(request.POST)  
-                    print(request.FILES)  
-                    print("aviso a navegantes")
                     break
                     
-
             return redirect('index')
         else:
-            
-
             error_message = 'Hubo un error al subir el tour. Asegúrate de haber seleccionado una imagen y un archivo de audio válidos.'
             print(form.errors)
             return Response({'errors': form.errors}, status=400)
@@ -246,6 +248,9 @@ def upload_tours(request):
         return Response({'error': 'Invalid request method'}, status=405)
     return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
 
+def upload_to_func(instance, filename):
+    timestamp = int(time.time() * 1000)
+    return f'{timestamp}_{filename}'
 
 @csrf_exempt
 @api_view(['POST'])
