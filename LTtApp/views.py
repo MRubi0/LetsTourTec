@@ -8,7 +8,7 @@ import sqlite3
 import time
 from datetime import datetime
 from math import atan2, cos, radians, sin, sqrt
-
+from django.db import transaction
 from botocore.exceptions import ClientError
 import boto3
 from django.contrib import messages
@@ -163,80 +163,41 @@ def upload_tours(request):
         if not request.user.is_authenticated:
             return Response({'error': 'Usuario no autenticado'}, status=401)     
         form = TourForm(request.POST, request.FILES)       
-        if form.is_valid():
-            tour = form.save(commit=False)
-            tour.user = request.user
+        if form.is_valid():        
+            tour_es = form.save(commit=False)
+            tour_es.user = request.user
             if 'imagen' in request.FILES:
                 image_file = request.FILES['imagen']
                 timestamp = int(time.time() * 1000)
                 image_name = f"{timestamp}.jpg"
-                tour.imagen.save(image_name, image_file)
+                tour_es.imagen.save(image_name, image_file)
 
             if 'audio' in request.FILES:
                 audio_file = request.FILES['audio']
                 timestamp = int(time.time() * 1000)
                 audio_name = f"aud_{timestamp}.mp3"
-                tour.audio.save(audio_name, audio_file)    
+                tour_es.audio.save(audio_name, audio_file)    
 
-            if tour.tipo_de_tour == 'leisure':
-                tour.tipo_de_tour = 'ocio'
-            elif tour.tipo_de_tour == 'nature':
-                tour.tipo_de_tour = 'naturaleza'
+            if tour_es.tipo_de_tour == 'leisure':
+                tour_es.tipo_de_tour = 'ocio'
+            elif tour_es.tipo_de_tour == 'nature':
+                tour_es.tipo_de_tour = 'naturaleza'
+            tour_es.idioma = 'es'
+            tour_es.validado = False
+            tour_es.save()
 
-            tour.save()
+            tour_en = Tour()
+            tour_en.user = request.user
+            tour_en.imagen = tour_es.imagen
+            tour_en.audio = tour_es.audio
+            tour_en.tipo_de_tour = tour_es.tipo_de_tour
+            tour_en.idioma = 'en'
+            tour_en.validado = False
+            tour_en.descripcion = translate_text(tour_es.descripcion)
+            tour_en.titulo = translate_text(tour_es.titulo)
+            tour_en.save()
 
-            for i in range(100):
-                extra_audio_key = f'extra_step_audio_{i}'
-                
-                if extra_audio_key in request.FILES:
-                    extra_audio = request.FILES[extra_audio_key]                    
-                    extra_description = None
-                    extra_image = None
-                    extra_latitude = None
-                    extra_longitude = None
-                    extra_tittle = None
-                    
-                    extra_description_key = f'description_{i}'
-                    if extra_description_key in request.POST:
-                        extra_description = request.POST.get(extra_description_key, '')
-
-                    extra_tittle_key = f'tittle_{i}'  
-                    if extra_tittle_key in request.POST:
-                        extra_tittle = request.POST.get(extra_tittle_key, '')
-
-                    paso = Paso(tour=tour, description=extra_description, tittle=extra_tittle)
-                    
-                    if request.FILES[f'extra_step_audio_{i}']:          
-                        extra_audio_file = request.FILES[f'extra_step_audio_{i}']
-                        timestamp = int(time.time() * 1000)
-                        extra_audio_name = f"extra_audio_{timestamp}.mp3"
-                        paso.audio.save(extra_audio_name, extra_audio_file)
-
-                    extra_latitude_key = f'extra_step_latitude_{i}'
-                    if extra_latitude_key in request.POST and request.POST[extra_latitude_key]:
-                        extra_latitude = float(request.POST[extra_latitude_key])
-
-                    extra_longitude_key = f'extra_step_longitude_{i}'
-                    if extra_longitude_key in request.POST and request.POST[extra_longitude_key]:
-                        extra_longitude = float(request.POST[extra_longitude_key])
-
-                    if extra_latitude:
-                        paso.latitude = extra_latitude
-                    if extra_longitude:
-                        paso.longitude = extra_longitude
-
-                    extra_image_key = f'extra_step_image_{i}'
-                    if extra_image_key in request.FILES:
-                       extra_image_file = request.FILES[f'extra_step_image_{i}']
-                       timestamp = int(time.time() * 1000)
-                       extra_image_name = f"extra_image_{timestamp}.jpg"
-                       paso.image.save(extra_image_name, extra_image_file, save=False)                       
-                       paso.image=extra_image_name                    
-                    paso.save()                    
-                else:
-                    break
-                    
-            return redirect('index')
+            return Response({'message': 'Tour subido exitosamente'}, status=status.HTTP_200_OK)
         else:
             error_message = 'Hubo un error al subir el tour. Asegúrate de haber seleccionado una imagen y un archivo de audio válidos.'
             print(form.errors)
@@ -244,10 +205,10 @@ def upload_tours(request):
     else:
         return Response({'error': 'Invalid request method'}, status=405)
     return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
-
 def upload_to_func(instance, filename):
     timestamp = int(time.time() * 1000)
     return f'{timestamp}_{filename}'
+
 
 @csrf_exempt
 @api_view(['POST'])
@@ -1123,3 +1084,34 @@ def search_user_by_id(request):
 
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+
+
+def translate_text(text):
+    url = "https://deep-translate1.p.rapidapi.com/language/translate/v2"
+    headers = {
+        'X-RapidAPI-Key': "75c294e6a8msh19ef7b3ebb91873p16517ejsn5f6bff2b1abd",
+        'X-RapidAPI-Host': "deep-translate1.p.rapidapi.com"
+    }
+    payload = {
+        "q": text,
+        "source": "es",
+        "target": "en"
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(payload))
+    translated_text = response.json().get('data', {}).get('translations', {}).get('translatedText', '')
+    return translated_text
+    url = "https://deep-translate1.p.rapidapi.com/language/translate/v2"
+    headers = {
+        'X-RapidAPI-Key': "75c294e6a8msh19ef7b3ebb91873p16517ejsn5f6bff2b1abd",
+        'X-RapidAPI-Host': "deep-translate1.p.rapidapi.com"
+    }
+    payload = {
+        "q": text,
+        "source": "es",
+        "target": "en"
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(payload))
+    translated_text = response.json().get('data', {}).get('translations', [])[0].get('translatedText', '')
+    return translated_text
