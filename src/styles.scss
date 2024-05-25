@@ -76,4 +76,10 @@ card::-webkit-scrollbar-track {
   background: transparent; 
   border-radius: 8px;
 }
-
+.ok-snackbar {
+  background: #fafafa !important;
+  color: black !important;
+}
+.ok-snackbar .mat-simple-snackbar-action  {
+  color: #2addfc !important;
+}

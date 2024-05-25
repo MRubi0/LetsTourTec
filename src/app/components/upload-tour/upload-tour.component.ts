@@ -1,5 +1,7 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { Router } from '@angular/router';
+import { SnackService } from 'src/app/services/snack.service';
 import { UploadTourService } from 'src/app/services/upload-tour.service'
 
 
@@ -10,6 +12,7 @@ import { UploadTourService } from 'src/app/services/upload-tour.service'
 })
 export class UploadTourComponent implements OnInit{
   tourForm: FormGroup;
+  loading=false;
   MAX_EXTRA_STEPS = 100;
   @ViewChild('imagenInput') imagenInputElement!: ElementRef;
   @ViewChild('audioInput') audioInputElement!: ElementRef;
@@ -20,7 +23,8 @@ export class UploadTourComponent implements OnInit{
     { value: 'nature', viewValue: 'Nature Tour' },
   ];
 
-  constructor(private fb: FormBuilder, private uploadTourService: UploadTourService) {
+  constructor(private fb: FormBuilder, private uploadTourService: UploadTourService, 
+    private snackbarService:SnackService, private router: Router) {
     this.tourForm = this.fb.group({
       tipo_de_tour: '',
       titulo: '',
@@ -30,7 +34,7 @@ export class UploadTourComponent implements OnInit{
       latitude: '',
       longitude: '',
       duracion: '',
-      recorrido: '',
+      recorrido: '',     
       extraSteps: this.fb.array([])
     });
   }
@@ -64,13 +68,15 @@ export class UploadTourComponent implements OnInit{
 
   submitTour() {
     const formData = this.prepareSave();
+    this.loading=true
     this.uploadTourService.uploadTour(formData).subscribe(
       (response: any) => {
-        
-        console.log("Tour uploaded successfully", response);
+        this.snackbarService.openSnackBar(response.message,'OK');  
+        this.loading=false; 
+        this.router.navigate([ '/home']);
       },
       (error: any) => {
-        
+        this.loading=false;
         console.log("Error uploading tour", error);
       }
     );
