@@ -60,6 +60,7 @@ import { VotacionModalComponent } from './components/votacion-modal/votacion-mod
 import { NgbRatingModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProfilecardsComponent } from './components/profilecards/profilecards.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { CustomSnackBarComponent } from './components/generics/custom-snack-bar/custom-snack-bar.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -98,7 +99,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     CountdownEComponent,
     ModalVelocityComponent,
     VotacionModalComponent,
-    ProfilecardsComponent,   
+    ProfilecardsComponent,
+    CustomSnackBarComponent,   
   ],
   imports: [
     BrowserModule,
