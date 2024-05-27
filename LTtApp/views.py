@@ -196,8 +196,7 @@ def upload_tours(request):
             tour_en.descripcion = translate_text(tour_es.descripcion)
             tour_en.titulo = translate_text(tour_es.titulo)
             tour_en.save()
-
-            return Response({'message': 'Tour subido exitosamente'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro equipo antes de aparecer en la web'}, status=status.HTTP_200_OK)
         else:
             error_message = 'Hubo un error al subir el tour. Asegúrate de haber seleccionado una imagen y un archivo de audio válidos.'
             print(form.errors)
