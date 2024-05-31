@@ -102,7 +102,7 @@ class Tour(models.Model):
     longitude = models.FloatField(default=0.0)
     duracion = models.PositiveIntegerField("Duración en minutos", null=True, blank=True)
     recorrido = models.FloatField(null=True, blank=True)   # Recorrido en kilómetros
-    idioma =  models.CharField(max_length=255)
+    idioma = models.CharField(max_length=2, default='es')
     validado = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
@@ -164,6 +164,13 @@ class Tour(models.Model):
             "latitude": self.latitude,
             "longitude": self.longitude,
         }
+
+class TourRelation(models.Model):
+    tour_es = models.OneToOneField('Tour', on_delete=models.CASCADE, related_name='tour_es')
+    tour_en = models.OneToOneField('Tour', on_delete=models.CASCADE, related_name='tour_en')
+
+    def __str__(self):
+        return f"Relation between {self.tour_es.id} and {self.tour_en.id}"
 
 class Paso(models.Model):
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)

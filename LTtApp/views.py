@@ -42,7 +42,7 @@ from .forms import (
     GuideForm, ImageFileForm, LocationForm, TourForm, ValoracionForm)
 from .models import (
     AudioFile, CustomUser, Encuesta, Guide, ImageFile, Location, Paso,
-    Tour, TourRecord, Valoracion)
+    Tour, TourRecord, TourRelation, Valoracion)
 
 
 
@@ -196,14 +196,19 @@ def upload_tours(request):
             tour_en.descripcion = translate_text(tour_es.descripcion)
             tour_en.titulo = translate_text(tour_es.titulo)
             tour_en.save()
-            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro equipo antes de aparecer en la web'}, status=status.HTTP_200_OK)
+
+            # Crear la relación entre los tours
+            tour_relation = TourRelation(tour_es=tour_es, tour_en=tour_en)
+            tour_relation.save()
+
+            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro equipo antes de aparecer en la web'}, status=200)
         else:
             error_message = 'Hubo un error al subir el tour. Asegúrate de haber seleccionado una imagen y un archivo de audio válidos.'
             print(form.errors)
             return Response({'errors': form.errors}, status=400)
     else:
         return Response({'error': 'Invalid request method'}, status=405)
-    return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
+
 def upload_to_func(instance, filename):
     timestamp = int(time.time() * 1000)
     return f'{timestamp}_{filename}'
@@ -325,12 +330,16 @@ def sqlite_haversine(lat1, lon1, lat2, lon2):
 def get_nearest_tours(request):
     latitud_usuario = float(request.GET.get('latitude', None))
     longitud_usuario = float(request.GET.get('longitude', None))
+    idioma = request.GET.get('language', None)
 
     if latitud_usuario is None or longitud_usuario is None:
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
+    
+    if idioma is None:
+        return JsonResponse({"error": "Falta el parámetro: language"}, status=400)
 
     # Aquí iría la lógica para buscar los tours más cercanos
-    tours = Tour.objects.all()
+    tours = Tour.objects.filter(idioma=idioma)
     tours_with_distances = []
     for tour in tours:
         distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
@@ -347,7 +356,7 @@ def get_nearest_tours(request):
             filter(lambda x: x['tour'].tipo_de_tour == category, tours_with_distances),
             key=lambda x: x['distance']
         )
-    # Tomar el primer tour de la lista, que es el más cercano
+        # Tomar el primer tour de la lista, que es el más cercano
         if filtered_tours:
             tour = filtered_tours[0]['tour']
             tour_object = {
@@ -368,7 +377,7 @@ def get_nearest_tours(request):
                     'bio': tour.user.bio,                   
                 }
             }
-        result.append(tour_object)
+            result.append(tour_object)
 
     return JsonResponse(result, safe=False)
 
@@ -504,9 +513,13 @@ def get_tour_distance(request):
 def get_nearest_tours_all(request):
     latitud_usuario = request.GET.get('latitude', None)
     longitud_usuario = request.GET.get('longitude', None)
+    idioma = request.GET.get('language', None)
 
     if latitud_usuario is None or longitud_usuario is None:
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
+    
+    if idioma is None:
+        return JsonResponse({"error": "Falta el parámetro: language"}, status=400)
 
     if latitud_usuario != 'None':
         latitud_usuario = float(latitud_usuario)
@@ -518,11 +531,10 @@ def get_nearest_tours_all(request):
     else:
         longitud_usuario = None
 
-
-    # Obtener todos los tours
-    tours = Tour.objects.all()
+    # Obtener todos los tours filtrados por idioma
+    tours = Tour.objects.filter(idioma=idioma)
     tours_with_distances = []
-    if latitud_usuario != None or longitud_usuario != None:
+    if latitud_usuario is not None and longitud_usuario is not None:
         for tour in tours:
             distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
             tours_with_distances.append({'tour': tour, 'distance': distance})
@@ -531,9 +543,6 @@ def get_nearest_tours_all(request):
         for tour in tours:
             tours_with_distances.append({'tour': tour, 'id': tour.id, 'distance': None})
         sorted_tours = sorted(tours_with_distances, key=lambda x: x['id'])
-
-    # Ordenar todos los tours por distancia
-    
 
     per_page = len(sorted_tours)
     page = request.GET.get('page', 1)  # Obtiene el número de página de los parámetros GET
@@ -552,13 +561,13 @@ def get_nearest_tours_all(request):
         'recorrido': tour['tour'].recorrido,
         'duracion': tour['tour'].duracion,
         'user': {
-                    'id': tour['tour'].user.id,
-                    'email': tour['tour'].user.email,
-                    'first_name': tour['tour'].user.first_name, 
-                    'last_name': tour['tour'].user.last_name,
-                    'avatar': tour['tour'].user.avatar.url,
-                    'bio': tour['tour'].user.bio,
-                }
+            'id': tour['tour'].user.id,
+            'email': tour['tour'].user.email,
+            'first_name': tour['tour'].user.first_name, 
+            'last_name': tour['tour'].user.last_name,
+            'avatar': tour['tour'].user.avatar.url,
+            'bio': tour['tour'].user.bio,
+        }
     } for tour in current_page_tours]
 
     response_data = {
