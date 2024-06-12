@@ -481,28 +481,22 @@ def get_random_tours(request):
 
 def get_tour_distance(request):
     tour_id = request.GET.get('tourId')
-    languaje= request.GET.get('languaje')
+    languaje = request.GET.get('languaje')
     latitud_usuario = request.GET.get('latitude', None)
     longitud_usuario = request.GET.get('longitude', None)
-    relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
-    print('relation ', relation)
-    if relation:
-        if languaje=="en":
-            related_tour_id = relation.tour_en_id
-        else:
-             related_tour_id = tour_id
+    
+    if not tour_id or not languaje:
+        return JsonResponse({"error": "Faltan parámetros: tourId y/o languaje"}, status=400)
+    related_tour_id = tour_id  
+    
+    if languaje == "en":
+        relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
+        if relation:
+            related_tour_id = relation.tour_en.id
     else:
         relation = TourRelation.objects.filter(tour_en_id=tour_id).first()
         if relation:
-            if languaje=="es":
-                related_tour_id = relation.tour_en_id-1
-            else:
-                related_tour_id = relation.tour_en_id
-        else:
-            related_tour_id=tour_id;
-            ##return JsonResponse({"error": "No se encontró una relación para el tourId proporcionado"}, status=404)
-    
-    tour_id=related_tour_id
+            related_tour_id = relation.tour_es.id
     if latitud_usuario is None or longitud_usuario is None:
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
 
@@ -516,17 +510,14 @@ def get_tour_distance(request):
     else:
         longitud_usuario = None
 
-    tour = Tour.objects.get(id=tour_id)
-    
+    tour = get_object_or_404(Tour, id=related_tour_id)
 
     distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
-    
-    tour_data = serializers.serialize('python', [tour])
 
-    tour_data[0]['fields']['distance']=distance
-    return JsonResponse(
-         tour_data, safe=False
-    )
+    tour_data = serializers.serialize('python', [tour])
+    tour_data[0]['fields']['distance'] = distance
+    
+    return JsonResponse(tour_data, safe=False)
 
 def get_nearest_tours_all(request):
     latitud_usuario = request.GET.get('latitude', None)
@@ -630,9 +621,25 @@ def directions(request, tour_id):
     return render(request, 'directions.html', {'tour': tour, 'step_id': step_id})
 
 @api_view(['GET'])
-def get_tour_with_steps(request, tour_id):
-    try:
-        tour = get_object_or_404(Tour, pk=tour_id)
+def get_tour_with_steps(request, tour_id, languaje):
+    try:        
+        relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
+        if relation:
+            if languaje == "en":
+                related_tour_id = relation.tour_en_id
+            else:
+                related_tour_id = tour_id
+        else:
+            relation = TourRelation.objects.filter(tour_en_id=tour_id).first()
+            if relation:
+                if languaje == "es":
+                    related_tour_id = relation.tour_en_id - 1
+                else:
+                    related_tour_id = relation.tour_en_id
+            else:
+                related_tour_id = tour_id
+
+        tour = get_object_or_404(Tour, pk=related_tour_id)
         steps = Paso.objects.filter(tour=tour)
 
         tour_data = {
@@ -649,10 +656,10 @@ def get_tour_with_steps(request, tour_id):
         for step in steps:
             tour_data["steps"].append({
                 "id": step.id,
-                "image":step.image.url if step.image else None,                
+                "image": step.image.url if step.image else None,                
                 "audio": step.audio.url if step.audio else None,
-                "latitude":step.latitude,
-                "longitude":step.longitude,
+                "latitude": step.latitude,
+                "longitude": step.longitude,
                 "description": step.description,
                 "tittle": step.tittle
             })
@@ -660,10 +667,7 @@ def get_tour_with_steps(request, tour_id):
         return Response(tour_data)
     except Tour.DoesNotExist:
         return Response({"error": "Tour no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-
-
-
-
+    
 def get_tour_data(tour_id):
     print('init')
     tour_objects = Tour.objects.get(id=tour_id)  
@@ -1141,3 +1145,96 @@ def translate_text(text):
     response = requests.post(url, headers=headers, data=json.dumps(payload))
     translated_text = response.json().get('data', {}).get('translations', [])[0].get('translatedText', '')
     return translated_text
+
+@csrf_exempt
+@api_view(['POST'])
+def translate_and_save_tour(request, tour_id):
+    try:
+        # Obtener el tour en español
+        tour_es = get_object_or_404(Tour, pk=tour_id, idioma='es')
+
+        # Verificar si ya existe una traducción al inglés
+        tour_relation = TourRelation.objects.filter(tour_es=tour_es).first()
+        if tour_relation and tour_relation.tour_en:
+            return Response({
+                'message': 'El tour ya existe en inglés', 
+                'tour': {
+                    'id': tour_relation.tour_en.id,
+                    'latitude': tour_relation.tour_en.latitude,
+                    'longitude': tour_relation.tour_en.longitude,
+                    'titulo': tour_relation.tour_en.titulo,
+                    'image': tour_relation.tour_en.imagen.url,
+                    'audio': tour_relation.tour_en.audio.url,
+                    'description': tour_relation.tour_en.descripcion,
+                    'steps': [
+                        {
+                            'id': paso.id,
+                            'image': paso.image.url if paso.image else None,
+                            'audio': paso.audio.url if paso.audio else None,
+                            'latitude': paso.latitude,
+                            'longitude': paso.longitude,
+                            'description': paso.description,
+                            'tittle': paso.tittle
+                        } for paso in Paso.objects.filter(tour=tour_relation.tour_en)
+                    ]
+                }
+            }, status=200)
+
+        # Crear y guardar el tour en inglés
+        tour_en = Tour()
+        tour_en.user = tour_es.user
+        tour_en.imagen = tour_es.imagen
+        tour_en.audio = tour_es.audio
+        tour_en.tipo_de_tour = tour_es.tipo_de_tour
+        tour_en.idioma = 'en'
+        tour_en.validado = False
+        tour_en.descripcion = translate_text(tour_es.descripcion)
+        tour_en.titulo = translate_text(tour_es.titulo)
+        tour_en.latitude = tour_es.latitude
+        tour_en.longitude = tour_es.longitude
+        tour_en.save()
+
+        # Crear y guardar la relación entre los tours
+        tour_relation = TourRelation(tour_es=tour_es, tour_en=tour_en)
+        tour_relation.save()
+
+        # Traducir y guardar los pasos
+        pasos_es = Paso.objects.filter(tour=tour_es)
+        for paso_es in pasos_es:
+            paso_en = Paso()
+            paso_en.tour = tour_en
+            paso_en.image = paso_es.image
+            paso_en.audio = paso_es.audio
+            paso_en.latitude = paso_es.latitude
+            paso_en.longitude = paso_es.longitude
+            paso_en.description = translate_text(paso_es.description)
+            paso_en.tittle = translate_text(paso_es.tittle)
+            paso_en.save()
+
+        # Preparar la respuesta con el tour en inglés y sus pasos
+        tour_data = {
+            'id': tour_en.id,
+            'latitude': tour_en.latitude,
+            'longitude': tour_en.longitude,
+            'titulo': tour_en.titulo,
+            'image': tour_en.imagen.url,
+            'audio': tour_en.audio.url,
+            'description': tour_en.descripcion,
+            'steps': [
+                {
+                    'id': paso.id,
+                    'image': paso.image.url if paso.image else None,
+                    'audio': paso.audio.url if paso.audio else None,
+                    'latitude': paso.latitude,
+                    'longitude': paso.longitude,
+                    'description': paso.description,
+                    'tittle': paso.tittle
+                } for paso in Paso.objects.filter(tour=tour_en)
+            ]
+        }
+
+        return Response({'message': 'Tour traducido y guardado exitosamente', 'tour': tour_data}, status=200)
+    except Tour.DoesNotExist:
+        return Response({'error': 'Tour no encontrado'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
