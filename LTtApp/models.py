@@ -105,7 +105,7 @@ class Tour(models.Model):
     idioma = models.CharField(max_length=2, default='es')
     validado = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)    
     TIPO_DE_TOUR_CHOICES = [
         ('nature', 'Naturaleza'),
         ('cultural', 'Cultural'),

@@ -481,9 +481,28 @@ def get_random_tours(request):
 
 def get_tour_distance(request):
     tour_id = request.GET.get('tourId')
+    languaje= request.GET.get('languaje')
     latitud_usuario = request.GET.get('latitude', None)
     longitud_usuario = request.GET.get('longitude', None)
-
+    relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
+    print('relation ', relation)
+    if relation:
+        if languaje=="en":
+            related_tour_id = relation.tour_en_id
+        else:
+             related_tour_id = tour_id
+    else:
+        relation = TourRelation.objects.filter(tour_en_id=tour_id).first()
+        if relation:
+            if languaje=="es":
+                related_tour_id = relation.tour_en_id-1
+            else:
+                related_tour_id = relation.tour_en_id
+        else:
+            related_tour_id=tour_id;
+            ##return JsonResponse({"error": "No se encontró una relación para el tourId proporcionado"}, status=404)
+    
+    tour_id=related_tour_id
     if latitud_usuario is None or longitud_usuario is None:
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
 
@@ -498,7 +517,6 @@ def get_tour_distance(request):
         longitud_usuario = None
 
     tour = Tour.objects.get(id=tour_id)
-
     
 
     distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
