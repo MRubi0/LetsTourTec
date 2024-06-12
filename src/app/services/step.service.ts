@@ -12,16 +12,15 @@ export class StepService {
     
   }
   getTourDetail(id: string) {
-    return this.http.get(`${environment.apiUrl}api/get_tour_with_steps/${id}`)
+    const lang = localStorage.getItem('language');
+    return this.http.get(`${environment.apiUrl}api/get_tour_with_steps/${id}/${lang}`)
       .pipe(map((data: any) => {
-        //console.log(data)
         if (data && data.steps && Array.isArray(data.steps)) {
           const adjustedSteps = data.steps.map((step: any, index: number) => {
             return { ...step, stepNumber: index + 1 };
       });
       data.steps = adjustedSteps;
   }
-  console.log(data);
   return data;
       }));
     }
