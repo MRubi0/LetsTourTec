@@ -1150,10 +1150,7 @@ def translate_text(text):
 @api_view(['POST'])
 def translate_and_save_tour(request, tour_id):
     try:
-        # Obtener el tour en español
         tour_es = get_object_or_404(Tour, pk=tour_id, idioma='es')
-
-        # Verificar si ya existe una traducción al inglés
         tour_relation = TourRelation.objects.filter(tour_es=tour_es).first()
         if tour_relation and tour_relation.tour_en:
             return Response({
@@ -1179,8 +1176,6 @@ def translate_and_save_tour(request, tour_id):
                     ]
                 }
             }, status=200)
-
-        # Crear y guardar el tour en inglés
         tour_en = Tour()
         tour_en.user = tour_es.user
         tour_en.imagen = tour_es.imagen
@@ -1210,8 +1205,6 @@ def translate_and_save_tour(request, tour_id):
             paso_en.description = translate_text(paso_es.description)
             paso_en.tittle = translate_text(paso_es.tittle)
             paso_en.save()
-
-        # Preparar la respuesta con el tour en inglés y sus pasos
         tour_data = {
             'id': tour_en.id,
             'latitude': tour_en.latitude,
