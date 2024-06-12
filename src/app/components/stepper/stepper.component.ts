@@ -19,7 +19,6 @@ import { MsgInicioModalComponent } from '../msg-inicio-modal/msg-inicio-modal.co
 })
 export class StepperComponent {  
   @ViewChild(MatStepper) stepper!: MatStepper;
-  @ViewChild('stepperContainer') stepperContainer!: ElementRef;
   @ViewChildren(MusicPlayerComponent) audioComponents!: QueryList<MusicPlayerComponent>;
   @ViewChild(MusicPlayerComponent) musicPlayer!: MusicPlayerComponent;
   velocity_rate:number=1;
@@ -48,7 +47,7 @@ export class StepperComponent {
   evento: any
   last_step=true;
   rates=0;
-  
+
   checkIfMapModalIsRequired(step: any) {
     this.audioControlsVisible = !(step.latitude && step.longitude);
   }
@@ -66,13 +65,21 @@ export class StepperComponent {
       this.tour_id = params.id
     });
     this.openWelcomeModal();
+    this.data();  
   }
-  ngAfterViewInit() {
-    this.data();
-  }
+  ngAfterViewInit() {}
   onStepChange(event: any) {
     const currentStep = this.tour.steps[event.selectedIndex];   
-    this.checkIfMapModalIsRequired(currentStep);
+    this.checkIfMapModalIsRequired(currentStep); 
+      const tourSteps = {
+      index: event.selectedIndex,
+      tour: this.tour
+    };
+    const tourStepsJSON = JSON.stringify(tourSteps);
+    console.log('currentStep ', event.selectedIndex);
+    if(event.selectedIndex!=0){
+      localStorage.setItem('tour_steps', tourStepsJSON);
+    }    
     if (event.previouslySelectedIndex == 0) {
       this.url_icon_home = '../../../assets/iconos/home-white.svg'
     }    
@@ -163,15 +170,9 @@ export class StepperComponent {
     e.stopPropagation();
   }
 
-  load(lat: number, long: number, i: number): void {
-    this.maps = 'maps' + i;
-    this.lat = lat;
-    this.long = long;
-    this.event();
-  }
   data() {
-    this.stepService.getTourDetail(this.tour_id).subscribe((data => {
-      this.tour = data;
+    this.stepService.getTourDetail(this.tour_id).subscribe((data => {      
+      this.tour = data;         
       let stepsWithOffset = [this.tour.steps[0], ...this.tour.steps];
       this.tour.steps = stepsWithOffset;
 
@@ -179,7 +180,19 @@ export class StepperComponent {
         this.checkIfMapModalIsRequired(this.tour.steps[0]);
       } else {
         this.tour.steps.push('tour');
-      }
+      } 
+      setTimeout(() => {    
+        console.log('step ', this.stepper);
+        const storedTourStepsJSON = localStorage.getItem('tour_steps');
+        if(storedTourStepsJSON){
+          const storedTourSteps = JSON.parse(storedTourStepsJSON);    
+            
+          if(storedTourSteps.tour.id==this.tour.id && this.stepper){
+            console.log('entro al if ', this.stepper);
+            this.stepper.selectedIndex = storedTourSteps.index;
+          }
+        }    
+      }, 2000);      
     }));
   }
   openMapModal(lat: number, lng: number): void {
