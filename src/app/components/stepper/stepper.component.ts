@@ -73,10 +73,9 @@ export class StepperComponent {
     this.checkIfMapModalIsRequired(currentStep); 
       const tourSteps = {
       index: event.selectedIndex,
-      tour: this.tour
+      tour:  this.tour.relation
     };
-    const tourStepsJSON = JSON.stringify(tourSteps);
-    console.log('currentStep ', event.selectedIndex);
+    const tourStepsJSON = JSON.stringify(tourSteps);    
     if(event.selectedIndex!=0){
       localStorage.setItem('tour_steps', tourStepsJSON);
     }    
@@ -181,14 +180,12 @@ export class StepperComponent {
       } else {
         this.tour.steps.push('tour');
       } 
-      setTimeout(() => {    
-        console.log('step ', this.stepper);
+      setTimeout(() => {            
         const storedTourStepsJSON = localStorage.getItem('tour_steps');
         if(storedTourStepsJSON){
           const storedTourSteps = JSON.parse(storedTourStepsJSON);    
             
-          if(storedTourSteps.tour.id==this.tour.id && this.stepper){
-            console.log('entro al if ', this.stepper);
+          if(storedTourSteps.tour.includes(this.tour.id) && this.stepper){            
             this.stepper.selectedIndex = storedTourSteps.index;
           }
         }    
@@ -229,7 +226,6 @@ export class StepperComponent {
   }
   finishTour() {
     const tourId = this.tour_id;
-    this.router.navigate(['/exit', tourId]);
     this.stepService.createTourRecord(tourId).subscribe(
       response => console.log('Tour finalizado:', response),
       error => console.error('Error al finalizar el tour:', error)
