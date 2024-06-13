@@ -24,7 +24,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.isLoggedIn = isAuthenticated;
       }
     );
-    localStorage.setItem('language', 'es');
+    const lang = localStorage.getItem('language');
+    if(!lang){
+      localStorage.setItem('language', 'es');
+    }
   }
 
   ngOnDestroy() {
