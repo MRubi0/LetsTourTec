@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 export class NavbarComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false; 
-  languaje:string='es';
+  languaje:string='';
   private authSubscription!: Subscription;
 
 
@@ -24,6 +24,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.isLoggedIn = isAuthenticated;
       }
     );
+    localStorage.setItem('language', 'es');
   }
 
   ngOnDestroy() {
