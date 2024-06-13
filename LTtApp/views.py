@@ -650,7 +650,8 @@ def get_tour_with_steps(request, tour_id, languaje):
             "image": tour.imagen.url,
             "audio": tour.audio.url,
             "description": tour.descripcion,
-            "steps": []
+            "steps": [],
+            "relation":[related_tour_id,tour_id]
         }
 
         for step in steps:
