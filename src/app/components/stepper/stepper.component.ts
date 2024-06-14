@@ -181,11 +181,11 @@ export class StepperComponent {
         this.tour.steps.push('tour');
       } 
       setTimeout(() => {            
-        const storedTourStepsJSON = localStorage.getItem('tour_steps');
+        const storedTourStepsJSON = localStorage.getItem('tour_steps');        
         if(storedTourStepsJSON){
           const storedTourSteps = JSON.parse(storedTourStepsJSON);    
-            
-          if(storedTourSteps.tour.includes(this.tour.id) && this.stepper){            
+          const tourIds:Array<Number>=storedTourSteps.tour;          
+          if(tourIds.includes(Number(this.tour_id)) && this.stepper){          
             this.stepper.selectedIndex = storedTourSteps.index;
           }
         }    
