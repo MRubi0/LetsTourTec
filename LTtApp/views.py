@@ -331,7 +331,6 @@ def get_nearest_tours(request):
     latitud_usuario = float(request.GET.get('latitude', None))
     longitud_usuario = float(request.GET.get('longitude', None))
     idioma = request.GET.get('language', None)
-
     if latitud_usuario is None or longitud_usuario is None:
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
     
@@ -442,10 +441,14 @@ def get_latest_tours(request):
 
 
 def get_random_tours(request):
+    idioma = request.GET.get('language', None)
     # Obtén todos los tours de las categorías
-    ocio_tours = Tour.objects.filter(tipo_de_tour="ocio")
-    naturaleza_tours = Tour.objects.filter(tipo_de_tour="naturaleza")
-    cultural_tours = Tour.objects.filter(tipo_de_tour="cultural")
+    if not idioma:
+        return JsonResponse({"error": "Falta el parámetro: language"}, status=400)
+    
+    ocio_tours = Tour.objects.filter(tipo_de_tour="ocio", idioma=idioma)
+    naturaleza_tours = Tour.objects.filter(tipo_de_tour="naturaleza",idioma=idioma)
+    cultural_tours = Tour.objects.filter(tipo_de_tour="cultural", idioma=idioma)
         
        
     # Elige un tour aleatorio de cada categoría
