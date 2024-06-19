@@ -26,8 +26,9 @@ export class LatestToursService {
         return data;
       }));
   }
-  getRadomTours() {    
-    return this.http.get(`${environment.apiUrl}get_random_tours/`)
+  getRadomTours() {
+    const lang = localStorage.getItem('language');
+    return this.http.get(`${environment.apiUrl}get_random_tours/?language=${lang}`)
       .pipe(map((data: any) => {        
         return data;
       }));

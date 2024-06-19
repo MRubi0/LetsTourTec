@@ -27,8 +27,9 @@ export class CustomToursPageComponent implements OnInit {
   }
 
   async fetchTours() {
+    const lang = localStorage.getItem('language');
       const baseUrl = environment.apiUrl; 
-      const url = `${baseUrl}get_nearest_tours_all/?page=1&latitude=${this.latitude}&longitude=${this.longitude}`;
+      const url = `${baseUrl}get_nearest_tours_all/?page=1&latitude=${this.latitude}&longitude=${this.longitude}&language=${lang}`;
       
       try {
         const response = await fetch(url);
