@@ -8,10 +8,9 @@
                 <div class="profile-picture">
                     <img [src]="profile.avatar || '../../../assets/iconos/Default-Profile-Picture-PNG-Transparent-Image.png'" alt="Profile Picture" class="profile-img">                    
                 </div>
-                <h3>Welcome back {{ profile.first_name }} {{ profile.last_name }}!!</h3>
+                <h3>Profile of {{ profile.first_name }} {{ profile.last_name }}!!</h3>
                 <div class="content">
                     <ul>
-                        <li><span class="subtitle">Email: </span>{{ profile.email }}</li>
                         <li><span class="subtitle">Biography: </span>{{ profile.bio }}</li>
                         <li><span class="subtitle">Location: </span>{{ profile.location }}</li>
                         <li><span class="subtitle">Interests: </span>{{ profile.interests?.join(', ') ?? 'None' }}</li>
