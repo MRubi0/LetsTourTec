@@ -442,15 +442,13 @@ def get_latest_tours(request):
 
 def get_random_tours(request):
     idioma = request.GET.get('language', None)
-    # Obtén todos los tours de las categorías
     if not idioma:
         return JsonResponse({"error": "Falta el parámetro: language"}, status=400)
     
     ocio_tours = Tour.objects.filter(tipo_de_tour="ocio", idioma=idioma)
     naturaleza_tours = Tour.objects.filter(tipo_de_tour="naturaleza",idioma=idioma)
     cultural_tours = Tour.objects.filter(tipo_de_tour="cultural", idioma=idioma)
-        
-       
+               
     # Elige un tour aleatorio de cada categoría
     random_tours = {
         "cultural": random.choice(cultural_tours) if cultural_tours else None,
@@ -628,15 +626,15 @@ def get_tour_with_steps(request, tour_id, languaje):
     try:        
         relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
         if relation:
-            if languaje == "en":
+            if languaje == "en":                
                 related_tour_id = relation.tour_en_id
             else:
                 related_tour_id = tour_id
         else:
             relation = TourRelation.objects.filter(tour_en_id=tour_id).first()
             if relation:
-                if languaje == "es":
-                    related_tour_id = relation.tour_en_id - 1
+                if languaje == "es":             
+                    related_tour_id = relation.tour_es_id
                 else:
                     related_tour_id = relation.tour_en_id
             else:
@@ -822,20 +820,27 @@ def create_tour_record(request):
         return JsonResponse({'error': 'Error al registrar el tour'}, status=500)
 
 
-
 def get_user_tour_records(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
         if user_id:
-
             tours = Tour.objects.filter(user_id=user_id)
-            # Inicializar la lista de datos de los tours
             tours_data = []
-            # Recorrer cada tour
+
             for tour in tours:
+                # Buscar la relación del tour en otros idiomas
+                relation = TourRelation.objects.filter(tour_es=tour).first() or TourRelation.objects.filter(tour_en=tour).first()
+                
                 # Obtener todas las valoraciones del tour actual
                 valoraciones = Valoracion.objects.filter(tour_id=tour.id)
-                # Inicializar la lista de datos de las valoraciones del tour
+                
+                # Si hay una relación, agregar las valoraciones del tour relacionado
+                if relation:
+                    if relation.tour_es == tour and relation.tour_en:
+                        valoraciones = valoraciones | Valoracion.objects.filter(tour_id=relation.tour_en.id)
+                    elif relation.tour_en == tour and relation.tour_es:
+                        valoraciones = valoraciones | Valoracion.objects.filter(tour_id=relation.tour_es.id)
+                print('valoraciones ', valoraciones)
                 valoraciones_data = []
 
                 for valoracion in valoraciones:
@@ -845,7 +850,7 @@ def get_user_tour_records(request):
                         "fecha": valoracion.fecha.strftime("%Y-%m-%d %H:%M:%S"),
                     }
                     valoraciones_data.append(valoracion_data)
-       
+
                 tour_data = {
                     "id": tour.id,
                     "titulo": tour.titulo,
@@ -862,7 +867,7 @@ def get_user_tour_records(request):
                         'email': tour.user.email,
                         'first_name': tour.user.first_name, 
                         'last_name': tour.user.last_name,
-                        'avatar': tour.user.avatar.url,
+                        'avatar': tour.user.avatar.url if tour.user.avatar else None,
                         'bio': tour.user.bio,
                     },
                     "valoraciones": valoraciones_data
@@ -1016,24 +1021,24 @@ def crear_valoracion(request):
 
 
 def media_valoracion_tour(request, tour_id):
-    # La clave en la caché para este valor específico
     cache_key = f"media_valoracion_{tour_id}"
-    # Intenta obtener el valor de la caché
     media_puntuacion = cache.get(cache_key)
-
     if media_puntuacion is None:
-        # Si no está en la caché, calcula la media de las valoraciones
         tour = get_object_or_404(Tour, pk=tour_id)
-        resultado = Valoracion.objects.filter(tour=tour).aggregate(media_puntuacion=Avg('puntuacion'))
+        relation = TourRelation.objects.filter(tour_es=tour).first() or TourRelation.objects.filter(tour_en=tour).first()
+        valoraciones = Valoracion.objects.filter(tour=tour)
+        if relation:
+            if relation.tour_es == tour and relation.tour_en:
+                valoraciones = valoraciones | Valoracion.objects.filter(tour=relation.tour_en)
+            elif relation.tour_en == tour and relation.tour_es:
+                valoraciones = valoraciones | Valoracion.objects.filter(tour=relation.tour_es)
+
+        resultado = valoraciones.aggregate(media_puntuacion=Avg('puntuacion'))
         media_puntuacion = resultado.get('media_puntuacion', 5.0)
         if media_puntuacion is None:
             media_puntuacion = 5.0
-        # Guarda el valor calculado en la caché para futuras solicitudes
-        cache.set(cache_key, media_puntuacion, timeout=3600*25)  # Lo guarda en caché por 25 hora
-
-    # Devuelve la media como respuesta JSON
+        cache.set(cache_key, media_puntuacion, timeout=3600*25)  # Lo guarda en caché por 25 horas
     return JsonResponse({'media_puntuacion': media_puntuacion})
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
