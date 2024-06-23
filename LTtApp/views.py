@@ -1245,6 +1245,8 @@ def translate_and_save_tour(request, tour_id):
 ##############@JUAN
 ##############
 '''
+NO HE QUERIDO TOCAR MUCHO POR EL TEMA DEL NUEVO BUCKET QUE NO SE COMO VA A AFECTAR AL RESTO 
+
 1: transcription function:
 ##
 bucket = event['Records'][0]['s3']['bucket']['name']
