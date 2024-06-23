@@ -1035,7 +1035,7 @@ def media_valoracion_tour(request, tour_id):
 
         resultado = valoraciones.aggregate(media_puntuacion=Avg('puntuacion'))
         media_puntuacion = resultado.get('media_puntuacion', 5.0)
-        if media_puntuacion is None:
+        if media_puntuacion is None or media_puntuacion == 0.0:
             media_puntuacion = 5.0
         cache.set(cache_key, media_puntuacion, timeout=3600*25)  # Lo guarda en caché por 25 horas
     return JsonResponse({'media_puntuacion': media_puntuacion})
