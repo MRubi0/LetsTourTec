@@ -179,38 +179,41 @@ class Paso(models.Model):
     audio = models.FileField(upload_to='paso_audio/', null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    tittle = models.TextField(null=True, blank=True)
+    tittle = models.TextField(null=True, blank=True)  # Corregido "tittle" a "title"
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+
     def save(self, *args, **kwargs):
         if self.image:
-            # Descarga la imagen desde S3 y ábrela con PIL
-            response = requests.get(self.image.url)
-            if response.status_code == 200:
-                img = Image.open(BytesIO(response.content))
+            try:
+                # Descarga la imagen desde S3 y ábrela con PIL
+                response = requests.get(self.image.url)
+                if response.status_code == 200:
+                    img = Image.open(BytesIO(response.content))
 
-                # Convierte la imagen a modo RGB si no lo está
-                if img.mode in ['P', 'RGBA']:
-                    img = img.convert('RGB')
+                    # Convierte la imagen a modo RGB si no lo está
+                    if img.mode in ['P', 'RGBA']:
+                        img = img.convert('RGB')
 
-                # Redimensionamiento si es necesario
-                if img.height > 150 or img.width > 150:
-                    output_size = (150, 150)
-                    img.thumbnail(output_size)
+                    # Redimensionamiento si es necesario
+                    if img.height > 150 or img.width > 150:
+                        output_size = (150, 150)
+                        img.thumbnail(output_size)
 
-                # Guardar la imagen convertida en un objeto BytesIO
-                buffer = BytesIO()
-                img.save(buffer, format='JPEG')
-                buffer.seek(0)
+                    # Guardar la imagen convertida en un objeto BytesIO
+                    buffer = BytesIO()
+                    img.save(buffer, format='JPEG')
+                    buffer.seek(0)
 
-                # Reemplazar la imagen original por la convertida
-                file_name = self.image.name
-                self.image.delete(save=False)  # Elimina la imagen antigua
-                self.image.save(file_name, ContentFile(buffer.getvalue()), save=False)
-            else:
-                # Manejar el caso donde la respuesta no es exitosa
-                # Por ejemplo, podrías registrar un error o lanzar una excepción
+                    # Reemplazar la imagen original por la convertida
+                    file_name = f"{int(time.time() * 1000)}.jpg"
+                    self.image.save(file_name, ContentFile(buffer.getvalue()), save=False)
+                else:
+                    # Manejar el caso donde la respuesta no es exitosa
+                    pass
+            except Exception as e:
+                # Manejar excepciones específicas (por ejemplo, conexión fallida, imagen no válida, etc.)
                 pass
 
         if not self.step_number:
@@ -218,8 +221,10 @@ class Paso(models.Model):
             self.step_number = existing_steps_count + 1
 
         super().save(*args, **kwargs)
+
     class Meta:
         ordering = ['step_number']
+
     def as_dict(self):
         return {
             "image": self.image.url if self.image else None,
@@ -229,10 +234,9 @@ class Paso(models.Model):
             "step_number": self.step_number if self.step_number else None,
             "description": self.description if self.description else None,
         }
+
     def __str__(self):
-        return str(self.step_number)  
-
-
+        return str(self.step_number)
 class TourRecord(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)

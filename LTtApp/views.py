@@ -175,16 +175,18 @@ def upload_tours(request):
             if 'audio' in request.FILES:
                 audio_file = request.FILES['audio']
                 timestamp = int(time.time() * 1000)
-                audio_name = f"aud_{timestamp}.mp3"
+                audio_name = f"Juan_pruebas_aud_{timestamp}.mp3"
                 tour_es.audio.save(audio_name, audio_file)    
 
             if tour_es.tipo_de_tour == 'leisure':
                 tour_es.tipo_de_tour = 'ocio'
             elif tour_es.tipo_de_tour == 'nature':
                 tour_es.tipo_de_tour = 'naturaleza'
+
             tour_es.idioma = 'es'
             tour_es.validado = False
             tour_es.save()
+
 
             tour_en = Tour()
             tour_en.user = request.user
@@ -192,16 +194,80 @@ def upload_tours(request):
             tour_en.audio = tour_es.audio
             tour_en.tipo_de_tour = tour_es.tipo_de_tour
             tour_en.idioma = 'en'
+            tour_en.recorrido=tour_es.recorrido
+            tour_en.duracion=tour_es.duracion
             tour_en.validado = False
             tour_en.descripcion = translate_text(tour_es.descripcion)
-            tour_en.titulo = translate_text(tour_es.titulo)
+            tour_en.titulo = translate_text(tour_es.titulo)            
             tour_en.save()
+            
+            for i in range(10):
+                extra_audio_key = f'extra_step_audio_{i}'
+
+                if extra_audio_key in request.FILES:
+                    extra_audio = request.FILES[extra_audio_key]                    
+                    extra_description = None
+                    extra_image = None
+                    extra_latitude = None
+                    extra_longitude = None
+                    extra_tittle = None
+
+                    extra_description_key = f'description_{i}'
+                    if extra_description_key in request.POST:
+                        extra_description = request.POST.get(extra_description_key, '')
+
+                    extra_tittle_key = f'tittle_{i}'  
+                    if extra_tittle_key in request.POST:
+                        extra_tittle = request.POST.get(extra_tittle_key, '')
+
+                    paso_es = Paso(tour=tour_es, description=extra_description, tittle=extra_tittle)
+                    paso_en = Paso(tour=tour_en, description=extra_description, tittle=extra_tittle)
+
+                    if request.FILES[f'extra_step_audio_{i}']:          
+                        extra_audio_file = request.FILES[f'extra_step_audio_{i}']
+                        timestamp = int(time.time() * 1000)
+                        extra_audio_name = f"extra_audio_{timestamp}.mp3"
+                        paso_en.audio.save(extra_audio_name, extra_audio_file)
+                        paso_es.audio.save(extra_audio_name, extra_audio_file)
+
+                    extra_latitude_key = f'extra_step_latitude_{i}'
+                    if extra_latitude_key in request.POST and request.POST[extra_latitude_key]:
+                        extra_latitude = float(request.POST[extra_latitude_key])
+
+                    extra_longitude_key = f'extra_step_longitude_{i}'
+                    if extra_longitude_key in request.POST and request.POST[extra_longitude_key]:
+                        extra_longitude = float(request.POST[extra_longitude_key])
+
+                    if extra_latitude:
+                        paso_es.latitude = extra_latitude
+                        paso_en.latitude = extra_latitude
+                    if extra_longitude:
+                        paso_es.longitude = extra_longitude
+                        paso_en.longitude = extra_longitude                             
+
+                    extra_image_key = f'extra_step_image_{i}'
+                    if extra_image_key in request.FILES:
+                       extra_image_file = request.FILES[f'extra_step_image_{i}']
+                       timestamp = int(time.time() * 1000)
+                       extra_image_name = f"extra_image_{timestamp}.jpg"
+                       paso_es.image.save(extra_image_name, extra_image_file, save=False)  
+                       paso_en.image=paso_es.image                 
+
+                    paso_es.save()
+                    paso_en.save()
+                 
+                else:
+                    break
 
             # Crear la relación entre los tours
             tour_relation = TourRelation(tour_es=tour_es, tour_en=tour_en)
             tour_relation.save()
 
-            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro equipo antes de aparecer en la web'}, status=200)
+
+
+
+            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro equipo antes de aparecer en la web'                              
+                             }, status=200)
         else:
             error_message = 'Hubo un error al subir el tour. Asegúrate de haber seleccionado una imagen y un archivo de audio válidos.'
             print(form.errors)
@@ -1034,9 +1100,13 @@ def media_valoracion_tour(request, tour_id):
                 valoraciones = valoraciones | Valoracion.objects.filter(tour=relation.tour_es)
 
         resultado = valoraciones.aggregate(media_puntuacion=Avg('puntuacion'))
-        media_puntuacion = resultado.get('media_puntuacion', 5.0)
+        media_puntuacion = resultado.get('media_puntuacion', 5.0)        
         if media_puntuacion is None:
             media_puntuacion = 5.0
+        cache.set(cache_key, media_puntuacion, timeout=3600*25)  # Lo guarda en caché por 25 horas
+    else:
+        print('media_puntuacion --> 2', media_puntuacion, tour_id)
+        media_puntuacion = 5.0
         cache.set(cache_key, media_puntuacion, timeout=3600*25)  # Lo guarda en caché por 25 horas
     return JsonResponse({'media_puntuacion': media_puntuacion})
 
