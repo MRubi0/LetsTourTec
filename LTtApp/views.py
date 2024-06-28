@@ -1100,13 +1100,9 @@ def media_valoracion_tour(request, tour_id):
                 valoraciones = valoraciones | Valoracion.objects.filter(tour=relation.tour_es)
 
         resultado = valoraciones.aggregate(media_puntuacion=Avg('puntuacion'))
-        media_puntuacion = resultado.get('media_puntuacion', 5.0)        
+        media_puntuacion = resultado.get('media_puntuacion', 5.0)
         if media_puntuacion is None:
             media_puntuacion = 5.0
-        cache.set(cache_key, media_puntuacion, timeout=3600*25)  # Lo guarda en caché por 25 horas
-    else:
-        print('media_puntuacion --> 2', media_puntuacion, tour_id)
-        media_puntuacion = 5.0
         cache.set(cache_key, media_puntuacion, timeout=3600*25)  # Lo guarda en caché por 25 horas
     return JsonResponse({'media_puntuacion': media_puntuacion})
 
@@ -1310,3 +1306,53 @@ def translate_and_save_tour(request, tour_id):
         return Response({'error': 'Tour no encontrado'}, status=404)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+    
+##############
+##############@JUAN
+##############
+'''
+NO HE QUERIDO TOCAR MUCHO POR EL TEMA DEL NUEVO BUCKET QUE NO SE COMO VA A AFECTAR AL RESTO 
+
+1: transcription function:
+##
+bucket = event['Records'][0]['s3']['bucket']['name']
+key = event['Records'][0]['s3']['object']['key']
+
+# Inicia la transcripción con Amazon Transcribe
+transcribe = boto3.client('transcribe')
+job_name = key.split('/')[-1].split('.')[0]
+job_uri = f's3://{bucket}/{key}'
+
+transcribe.start_transcription_job(
+    TranscriptionJobName=job_name,
+    Media={'MediaFileUri': job_uri},
+    MediaFormat=key.split('.')[-1],
+    LanguageCode='es-ES',
+    OutputBucketName=bucket,
+    OutputKey=f'transcriptions/{job_name}.json'
+)
+
+return {
+    'statusCode': 200,
+    'body': json.dumps('Transcription job started')
+}
+
+
+2: aqui guardar la transcription en la base de datos 
+
+3: usar la api que tenemos de traduccion de texto a ingles y guardar el resultado tambien en la database
+
+4: narrar el texto traducido con IA y guardarlo en un bucket
+
+polly = boto3.client('polly')
+response = polly.synthesize_speech(
+    Text=text,
+    OutputFormat='mp3',
+    VoiceId='Kendra'
+)
+s3 = boto3.client('s3')
+s3.put_object(Bucket=output_bucket, Key=output_key, Body=response['AudioStream'].read())
+
+5: relacionar el audio en ingles con el tour correspondiente en la database
+
+'''
