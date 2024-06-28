@@ -165,7 +165,12 @@ def upload_tours(request):
         form = TourForm(request.POST, request.FILES)       
         if form.is_valid():        
             tour_es = form.save(commit=False)
+            
             tour_es.user = request.user
+            tour_es.idioma=request.POST['idioma']
+            ##tour_es.idioma=request.idioma
+            print('tour_es ---> ', tour_es.idioma)
+
             if 'imagen' in request.FILES:
                 image_file = request.FILES['imagen']
                 timestamp = int(time.time() * 1000)
@@ -182,7 +187,7 @@ def upload_tours(request):
                 tour_es.tipo_de_tour = 'ocio'
             elif tour_es.tipo_de_tour == 'nature':
                 tour_es.tipo_de_tour = 'naturaleza'
-
+            print('tour_es.idioma --> ', tour_es.idioma)
             tour_es.idioma = 'es'
             tour_es.validado = False
             tour_es.save()
@@ -283,7 +288,6 @@ def upload_to_func(instance, filename):
 @csrf_exempt
 @api_view(['POST'])
 def upload_encuesta(request):
-    print("im here")
     if request.method == 'POST':
         # Mapeo de los nombres de campos del formulario a los nombres de campos del modelo
         mapeo_campos = {
