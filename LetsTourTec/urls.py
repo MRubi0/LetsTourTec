@@ -54,7 +54,8 @@ urlpatterns = [
     path('crear_valoracion', crear_valoracion, name='crear_valoracion'),
     path('tour/<int:tour_id>/media-valoracion/', views.media_valoracion_tour, name='media-valoracion-tour'),
     path('api/get_tour_with_steps/<int:tour_id>/<str:languaje>/', views.get_tour_with_steps, name='get_tour_with_steps'),
-    path('api/translate_and_save_tour/<int:tour_id>/', views.translate_and_save_tour, name='translate_and_save_tour')
+    path('api/translate_and_save_tour/<int:tour_id>/', views.translate_and_save_tour, name='translate_and_save_tour'),
+    path('start_transcription_job/<int:tour_id>/', views.start_transcription_job, name='start_transcription_job')
 
 
 

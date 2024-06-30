@@ -6,6 +6,7 @@ import random
 import requests
 import sqlite3
 import time
+import chardet
 from datetime import datetime
 from math import atan2, cos, radians, sin, sqrt
 from django.db import transaction
@@ -36,6 +37,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+import re
+import unicodedata
+import io
 
 from .forms import (
     AudioFileForm, CustomUserCreationForm, EditProfileForm, EncuestaForm,
@@ -1297,7 +1301,7 @@ def translate_and_save_tour(request, tour_id):
                     'id': paso.id,
                     'image': paso.image.url if paso.image else None,
                     'audio': paso.audio.url if paso.audio else None,
-                    'latitude': paso.latitude,
+                    'latitude': paso.latitude, 
                     'longitude': paso.longitude,
                     'description': paso.description,
                     'tittle': paso.tittle
@@ -1311,6 +1315,140 @@ def translate_and_save_tour(request, tour_id):
     except Exception as e:
         return Response({'error': str(e)}, status=500)
     
+def get_transcription_text(bucket_name, key):
+    s3 = boto3.client('s3')
+    try:
+        response = s3.get_object(Bucket=bucket_name, Key=key)
+        raw_data = response['Body'].read()
+        
+        # Detectar la codificación
+        result = chardet.detect(raw_data)
+        encoding = result['encoding']
+        
+        # Decodificar el texto usando la codificación detectada
+        transcription_data = json.loads(raw_data.decode(encoding))
+        transcription_text = transcription_data['results']['transcripts'][0]['transcript']
+        return transcription_text
+    except Exception as e:
+        return f"Error retrieving transcription: {e}"
+
+
+
+def normalize_filename(filename):
+        # Normalize unicode characters
+        nfkd_form = unicodedata.normalize('NFKD', filename)
+        # Encode to ASCII bytes, ignore errors, then decode back to string
+        only_ascii = nfkd_form.encode('ASCII', 'ignore').decode('ASCII')
+        # Replace any remaining invalid characters with '_'
+        return re.sub(r'[^0-9a-zA-Z._-]', '_', only_ascii)
+
+def wait_for_transcription_completion(transcribe_client, job_name):
+    while True:
+        time.sleep(30)        
+        status = transcribe_client.get_transcription_job(TranscriptionJobName=job_name)
+        job_status = status['TranscriptionJob']['TranscriptionJobStatus']
+        if job_status in ['COMPLETED', 'FAILED']:
+            return status
+
+
+def start_transcription_job(request, tour_id = 117):
+
+
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2' 
+
+
+    tour_og = get_object_or_404(Tour, pk=tour_id)
+    print(f"Tour Object: {tour_og}")
+    print(f"User: {tour_og.user}")
+    print(f"Idioma: {tour_og.idioma}")
+    print(f"Audio: {tour_og.audio}")
+
+    key = str(tour_og.audio)
+
+
+    transcribe = boto3.client('transcribe', region_name=region_name)
+    job_name_base = normalize_filename(f"{key.split('/')[-1].split('.')[0]}_{tour_og.user.id}_{tour_id}")
+    job_name = f"{job_name_base}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+    
+    job_uri = f's3://{bucket_name}/{key}'
+    output_key = f'transcriptions/{str(tour_id).zfill(3)}/{job_name}.json'
+    langCode = 'es-ES' if tour_og.idioma == 'es' else tour_og.idioma
+
+    try:
+        response = transcribe.start_transcription_job(
+            TranscriptionJobName=job_name,
+            Media={'MediaFileUri': job_uri},
+            MediaFormat=key.split('.')[-1],
+            LanguageCode=langCode,
+            OutputBucketName=bucket_name,
+            OutputKey=output_key
+        )
+    except ClientError as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    wait_for_transcription_completion(transcribe, job_name)
+    transcription_file = io.StringIO()
+    
+    # Transcribir el audio del tour principal
+    transcription_text = get_transcription_text(bucket_name, output_key)
+    transcription_file.write(transcription_text)
+    transcription_file.write('\n########################################################################\n')
+    transcription_file.write('\n########################################################################\n')
+        #return JsonResponse(response)
+    
+    
+    pasos_og = Paso.objects.filter(tour=tour_og)
+
+    for paso in pasos_og:
+
+            key = str( paso.audio)
+
+            #transcribe = boto3.client('transcribe', region_name=region_name)
+            job_name_base = normalize_filename(f"{key.split('/')[-1].split('.')[0]}_{tour_og.user.id}_{tour_id}")
+            job_name = f"{job_name_base}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+            
+            job_uri = f's3://{bucket_name}/{key}'
+            output_key = f'transcriptions/{str(tour_id).zfill(3)}/{str(paso.step_number).zfill(3)}/{job_name}.json'
+            #langCode = 'es-ES' if tour_og.idioma == 'es' else tour_og.idioma
+            try:
+                response = transcribe.start_transcription_job(
+                    TranscriptionJobName=job_name,
+                    Media={'MediaFileUri': job_uri},
+                    MediaFormat=key.split('.')[-1],
+                    LanguageCode=langCode,
+                    OutputBucketName=bucket_name,
+                    OutputKey=output_key
+                )
+            except ClientError as e:
+                return JsonResponse({'error': str(e)}, status=500)
+            
+            wait_for_transcription_completion(transcribe, job_name)
+        # Obtener la transcripción del paso
+            transcription_text = get_transcription_text(bucket_name, output_key)
+            transcription_file.write(transcription_text)
+            transcription_file.write('\n########################################################################\n')
+
+    transcription_file.write('\nEnd Of File\n')
+
+    s3 = boto3.client('s3', region_name=region_name)
+    transcription_file.seek(0)  # Volver al inicio del archivo
+    s3.put_object(
+        Bucket=bucket_name,
+        Key=f'transcriptions/{str(tour_id).zfill(3)}/complete_transcription.txt',
+        Body=transcription_file.read(),
+        ContentType='text/plain'
+    )
+
+    return JsonResponse({'message': 'Transcription jobs started successfully'})
+
+
+#usar la nueva funcion de traducir texto
+
+
+
 ##############
 ##############@JUAN
 ##############
@@ -1321,7 +1459,7 @@ NO HE QUERIDO TOCAR MUCHO POR EL TEMA DEL NUEVO BUCKET QUE NO SE COMO VA A AFECT
 ##
 bucket = event['Records'][0]['s3']['bucket']['name']
 key = event['Records'][0]['s3']['object']['key']
-
+ 
 # Inicia la transcripción con Amazon Transcribe
 transcribe = boto3.client('transcribe')
 job_name = key.split('/')[-1].split('.')[0]
