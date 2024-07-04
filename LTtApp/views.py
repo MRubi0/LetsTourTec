@@ -165,11 +165,11 @@ def upload_tours(request):
         form = TourForm(request.POST, request.FILES)       
         if form.is_valid():        
             tour_es = form.save(commit=False)
-            
+            tour_destino=request.POST['idioma_destino']
             tour_es.user = request.user
             tour_es.idioma=request.POST['idioma']
-            ##tour_es.idioma=request.idioma
-            print('tour_es ---> ', tour_es.idioma)
+            
+        
 
             if 'imagen' in request.FILES:
                 image_file = request.FILES['imagen']
@@ -180,15 +180,15 @@ def upload_tours(request):
             if 'audio' in request.FILES:
                 audio_file = request.FILES['audio']
                 timestamp = int(time.time() * 1000)
-                audio_name = f"Juan_pruebas_aud_{timestamp}.mp3"
+                audio_name = f"aud_{timestamp}.mp3"
                 tour_es.audio.save(audio_name, audio_file)    
 
             if tour_es.tipo_de_tour == 'leisure':
                 tour_es.tipo_de_tour = 'ocio'
             elif tour_es.tipo_de_tour == 'nature':
                 tour_es.tipo_de_tour = 'naturaleza'
-            print('tour_es.idioma --> ', tour_es.idioma)
-            tour_es.idioma = 'es'
+           
+            
             tour_es.validado = False
             tour_es.save()
 
@@ -198,12 +198,11 @@ def upload_tours(request):
             tour_en.imagen = tour_es.imagen
             tour_en.audio = tour_es.audio
             tour_en.tipo_de_tour = tour_es.tipo_de_tour
-            tour_en.idioma = 'en'
             tour_en.recorrido=tour_es.recorrido
             tour_en.duracion=tour_es.duracion
             tour_en.validado = False
-            tour_en.descripcion = translate_text(tour_es.descripcion)
-            tour_en.titulo = translate_text(tour_es.titulo)            
+            tour_en.descripcion = translate_text(tour_es.descripcion, tour_es.idioma, tour_destino)
+            tour_en.titulo = translate_text(tour_es.titulo, tour_es.idioma, tour_destino)            
             tour_en.save()
             
             for i in range(10):
@@ -1197,7 +1196,7 @@ def search_user_by_id(request):
 
 
 
-def translate_text(text):
+def translate_text(text, idioma_origen, tour_destino):
     url = "https://deep-translate1.p.rapidapi.com/language/translate/v2"
     headers = {
         'X-RapidAPI-Key': "75c294e6a8msh19ef7b3ebb91873p16517ejsn5f6bff2b1abd",
@@ -1205,9 +1204,10 @@ def translate_text(text):
     }
     payload = {
         "q": text,
-        "source": "es",
-        "target": "en"
-    }
+        "source": idioma_origen,
+        "target": tour_destino
+    } 
+    
     response = requests.post(url, headers=headers, data=json.dumps(payload))
     translated_text = response.json().get('data', {}).get('translations', {}).get('translatedText', '')
     return translated_text
@@ -1262,8 +1262,8 @@ def translate_and_save_tour(request, tour_id):
         tour_en.tipo_de_tour = tour_es.tipo_de_tour
         tour_en.idioma = 'en'
         tour_en.validado = False
-        tour_en.descripcion = translate_text(tour_es.descripcion)
-        tour_en.titulo = translate_text(tour_es.titulo)
+        tour_en.descripcion = translate_text(tour_es.descripcion, tour_es.idioma)
+        tour_en.titulo = translate_text(tour_es.titulo, tour_es.idioma)
         tour_en.latitude = tour_es.latitude
         tour_en.longitude = tour_es.longitude
         tour_en.save()
@@ -1281,8 +1281,8 @@ def translate_and_save_tour(request, tour_id):
             paso_en.audio = paso_es.audio
             paso_en.latitude = paso_es.latitude
             paso_en.longitude = paso_es.longitude
-            paso_en.description = translate_text(paso_es.description)
-            paso_en.tittle = translate_text(paso_es.tittle)
+            paso_en.description = translate_text(paso_es.description, tour_es.idioma)
+            paso_en.tittle = translate_text(paso_es.tittle, tour_es.idioma)
             paso_en.save()
         tour_data = {
             'id': tour_en.id,
