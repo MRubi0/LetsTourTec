@@ -39,7 +39,8 @@ export class UploadTourComponent implements OnInit{
       latitude: '',
       longitude: '',
       duracion: '',
-      recorrido: '',     
+      recorrido: '',  
+      idioma_destino: '',   
       extraSteps: this.fb.array([])
     });
   }
@@ -103,6 +104,8 @@ export class UploadTourComponent implements OnInit{
     formData.append('duracion', formModel.duracion);
     formData.append('recorrido', formModel.recorrido);
     formData.append('idioma', lang);
+    formData.append('idioma_destino', formModel.idioma_destino);
+    
 
     formModel.extraSteps.forEach((extraStep: any, index: number) => {
       if (extraStep.tittle) {
