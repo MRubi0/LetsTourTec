@@ -73,7 +73,7 @@ export class UploadTourComponent implements OnInit{
       (response: any) => {
         this.snackbarService.openSnackBar(response.message,'OK');  
         this.loading=false; 
-        this.router.navigate([ '/home']);
+        //this.router.navigate([ '/home']);
       },
       (error: any) => {
         this.loading=false;
@@ -86,6 +86,7 @@ export class UploadTourComponent implements OnInit{
     const formModel = this.tourForm.value;
     const formData = new FormData();
 
+    const lang: string = localStorage.getItem('language') ?? 'es';
     // Append each form field to the FormData object
     formData.append('tipo_de_tour', formModel.tipo_de_tour);
     formData.append('titulo', formModel.titulo);
@@ -96,6 +97,7 @@ export class UploadTourComponent implements OnInit{
     formData.append('longitude', formModel.longitude);
     formData.append('duracion', formModel.duracion);
     formData.append('recorrido', formModel.recorrido);
+    formData.append('idioma', lang);
 
     formModel.extraSteps.forEach((extraStep: any, index: number) => {
       if (extraStep.tittle) {
