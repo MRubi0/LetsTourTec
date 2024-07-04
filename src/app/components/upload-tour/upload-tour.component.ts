@@ -23,6 +23,11 @@ export class UploadTourComponent implements OnInit{
     { value: 'nature', viewValue: 'Nature Tour' },
   ];
 
+  opciones_idioma = [
+    { value: 'es', viewValue: 'Español' },
+    { value: 'en', viewValue: 'Inglés' },
+  ];
+
   constructor(private fb: FormBuilder, private uploadTourService: UploadTourService, 
     private snackbarService:SnackService, private router: Router) {
     this.tourForm = this.fb.group({
