@@ -42,13 +42,6 @@ export class GenericCardComponent {
       });
     });
     this.toursdata.map((data:any)=>{
-      
-      const partofUrl = data.imagen.url.split('/');
-      const nombreDeImagen = partofUrl[partofUrl.length - 1];
-
-      data.imagen.url=nombreDeImagen;
-      
-
       if(data.tipo_de_tour=='ocio'){
         data.tipo_de_tour='Leisure';
         const translatedKey = `GENERIC-CARD.Leisure`;

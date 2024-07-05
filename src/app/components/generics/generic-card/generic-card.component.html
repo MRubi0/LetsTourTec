@@ -4,10 +4,9 @@
         currentPage: p,
         totalItems: toursdata.length }">
             <mat-card class="tour-card" (click)="sendImage(tours.id)">
-
-            <mat-card-header class="p-0">   
+            <mat-card-header class="p-0">                 
                 <img class="image" mat-card-image 
-                src='https://letstourtec-bucket-2.s3.eu-north-1.amazonaws.com/tours/{{tours.imagen.url}}' 
+                src={{tours.imagen.url}} 
                 alt="Image" [routerLink]="['/tour/', tours.id]">
                 <button class='button-fab' mat-fab data-bs-toggle="tooltip" matTooltip={{tours.tipo_de_tour}}
                     aria-label="Button that displays a tooltip when focused or hovered over">
