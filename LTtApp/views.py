@@ -1395,7 +1395,7 @@ def start_transcription_job(request, tour_id = 117):
     transcription_text = get_transcription_text(bucket_name, output_key)
     transcription_file.write(transcription_text)
     transcription_file.write('\n########################################################################\n')
-    transcription_file.write('\n########################################################################\n')
+    transcription_file.write('\n\n')
         #return JsonResponse(response)
     
     
@@ -1431,7 +1431,6 @@ def start_transcription_job(request, tour_id = 117):
             transcription_file.write(transcription_text)
             transcription_file.write('\n########################################################################\n')
 
-    transcription_file.write('\nEnd Of File\n')
 
     s3 = boto3.client('s3', region_name=region_name)
     transcription_file.seek(0)  # Volver al inicio del archivo
@@ -1442,14 +1441,183 @@ def start_transcription_job(request, tour_id = 117):
         ContentType='text/plain'
     )
 
-    return JsonResponse({'message': 'Transcription jobs started successfully'})
+    return JsonResponse({'message': 'Transcription jobs were successfully'})
 
 
-#usar la nueva funcion de traducir texto
+def get_complete_transcription(bucket_name, region_name, key):
+    s3 = boto3.client('s3', region_name=region_name)
+    try:
+        response = s3.get_object(Bucket=bucket_name, Key=key)
+        raw_data = response['Body'].read()
+        # Asumimos que la codificación es UTF-8
+        transcription_text = raw_data.decode('utf-8')
+        return transcription_text
+    except ClientError as e:
+        return f"Error retrieving complete transcription: {e}"
+
+
+def translate_text_aws(region_name, text, source_language_code, target_language_code):
+    translate = boto3.client('translate', region_name=region_name)
+    try:
+        response = translate.translate_text(
+            Text=text,
+            SourceLanguageCode=source_language_code,
+            TargetLanguageCode=target_language_code
+        )
+        return response['TranslatedText']
+    except ClientError as e:
+        return f"Error translating text: {e}"
 
 
 
-##############
+def translate_transcription(request, tour_id=117):
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2' 
+    key = f'transcriptions/{str(tour_id).zfill(3)}/complete_transcription.txt'
+
+    relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
+    source_language_code = 'es'
+    target_language_code = 'en'
+    
+    if not relation:
+        relation = TourRelation.objects.filter(tour_en_id=tour_id).first()
+        source_language_code = 'en'
+        target_language_code = 'es'
+
+    if not relation:
+        return JsonResponse({'error': 'No relation found for the provided tour_id'}, status=404)
+    
+    if source_language_code == 'es':
+        related_tour_id = relation.tour_en.id
+    else:
+        related_tour_id = relation.tour_es.id
+
+    transcription_text = get_complete_transcription(bucket_name, region_name, key)
+
+    if "Error" in transcription_text:
+        return JsonResponse({'error': transcription_text}, status=500)
+
+    sections = transcription_text.split('########################################################################')
+    translated_sections = []
+
+    for section in sections:
+        if section.strip():
+            translated_text = translate_text_aws(region_name, section.strip(), source_language_code, target_language_code)
+            if "Error" in translated_text:
+                return JsonResponse({'error': translated_text}, status=500)
+            translated_sections.append(translated_text)
+        else:
+            translated_sections.append('')
+
+    translated_text_with_hashes = '\n########################################################################\n'.join(translated_sections)
+
+    output_key = f'transcriptions/{str(related_tour_id).zfill(3)}/complete_transcription.txt'
+    s3 = boto3.client('s3', region_name=region_name)
+    try:
+        s3.put_object(
+            Bucket=bucket_name,
+            Key=output_key,
+            Body=translated_text_with_hashes,
+            ContentType='text/plain'
+        )
+    except ClientError as e:
+        return JsonResponse({'error': f"Error uploading translated text: {e}"}, status=500)
+
+    # Verificar que el archivo se haya subido correctamente
+    try:
+        response = s3.head_object(Bucket=bucket_name, Key=output_key)
+        if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+            return JsonResponse({'message': 'Translation of transcription job was successful', 'translated_text': translated_text_with_hashes})
+        else:
+            return JsonResponse({'error': 'Error verifying upload of translated text'}, status=500)
+    except ClientError as e:
+        return JsonResponse({'error': f"Error verifying upload of translated text: {e}"}, status=500)
+
+
+def synthesize_speech(region_name, text, output_format='mp3', voice_id='Joanna'):
+    polly = boto3.client('polly', region_name=region_name)
+    try:
+        response = polly.synthesize_speech(
+            Text=text,
+            OutputFormat=output_format,
+            VoiceId=voice_id
+        )
+        return response['AudioStream'].read()
+    except ClientError as e:
+        return f"Error synthesizing speech: {e}".encode('utf-8')
+    
+
+def convert_text_to_audio(request, tour_id=298):
+
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2' 
+    key = f'transcriptions/{str(tour_id).zfill(3)}/complete_transcription.txt'
+    s3 = boto3.client('s3', region_name=region_name)
+
+    transcription_text = get_complete_transcription(bucket_name, region_name, key)
+
+    if "Error" in transcription_text:
+        return JsonResponse({'error': transcription_text}, status=500) 
+
+    sections = transcription_text.split('########################################################################')
+    
+    step = 0
+    for section in sections:
+        if section.strip():
+            if "End Of File" in section:
+                pass
+            audio_stream = synthesize_speech(region_name, section)
+            if isinstance(audio_stream, bytes) and audio_stream.startswith(b"Error"):
+                return JsonResponse({'error': audio_stream.decode('utf-8')}, status=500)
+
+
+            if step !=0:
+                output_key_audio = f'Tour_audio/{str(tour_id).zfill(3)}/{str(step).zfill(3)}/audio_traducido_{str(step).zfill(3)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
+                
+                try:
+                    paso = Paso.objects.get(tour=tour_id, step_number=step)
+                    paso.audio = output_key_audio
+                    paso.save()
+                except Paso.DoesNotExist:
+                    return JsonResponse({'error': 'Paso not found'}, status=404)
+            else:
+                output_key_audio = f'Tour_audio/{str(tour_id).zfill(3)}/audio_traducido_{str(step).zfill(3)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
+                try:
+                    tour = Tour.objects.get(id=tour_id)
+                    tour.audio = output_key_audio
+                    tour.save()
+                except Tour.DoesNotExist:
+                    return JsonResponse({'error': 'Tour not found'}, status=404)
+            try:
+                s3.put_object(
+                    Bucket=bucket_name,
+                    Key=output_key_audio,
+                    Body=audio_stream,
+                    ContentType='audio/mpeg'
+                )
+            except ClientError as e:
+                return JsonResponse({'error': f"Error uploading audio file: {e}"}, status=500)
+            
+            try:
+                response = s3.head_object(Bucket=bucket_name, Key=output_key_audio)
+                if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+                    return JsonResponse({'error': 'Error verifying upload of audio file'}, status=500)
+                
+
+            except ClientError as e:
+                return JsonResponse({'error': f"Error verifying upload of audio file: {e}"}, status=500)
+            
+            
+
+            step+=1
+
+
+    return JsonResponse({'message': 'Speech synthesis of transcription job were successful'})
+
+
+
+
+############## 
 ##############@JUAN
 ##############
 '''
