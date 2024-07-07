@@ -4,6 +4,7 @@ import math
 import os
 import random
 import requests
+import shutil
 import sqlite3
 import time
 import chardet
@@ -1373,7 +1374,7 @@ def start_transcription_job(request, tour_id = 117):
 
     
     job_uri = f's3://{bucket_name}/{key}'
-    output_key = f'transcriptions/{str(tour_id).zfill(3)}/{job_name}.json'
+    output_key = f'transcriptions/{str(tour_id).zfill(5)}/{job_name}.json'
     langCode = 'es-ES' if tour_og.idioma == 'es' else tour_og.idioma
 
     try:
@@ -1411,7 +1412,7 @@ def start_transcription_job(request, tour_id = 117):
 
             
             job_uri = f's3://{bucket_name}/{key}'
-            output_key = f'transcriptions/{str(tour_id).zfill(3)}/{str(paso.step_number).zfill(3)}/{job_name}.json'
+            output_key = f'transcriptions/{str(tour_id).zfill(5)}/{str(paso.step_number).zfill(5)}/{job_name}.json'
             #langCode = 'es-ES' if tour_og.idioma == 'es' else tour_og.idioma
             try:
                 response = transcribe.start_transcription_job(
@@ -1436,7 +1437,7 @@ def start_transcription_job(request, tour_id = 117):
     transcription_file.seek(0)  # Volver al inicio del archivo
     s3.put_object(
         Bucket=bucket_name,
-        Key=f'transcriptions/{str(tour_id).zfill(3)}/complete_transcription.txt',
+        Key=f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription.txt',
         Body=transcription_file.read(),
         ContentType='text/plain'
     )
@@ -1473,7 +1474,7 @@ def translate_text_aws(region_name, text, source_language_code, target_language_
 def translate_transcription(request, tour_id=117):
     bucket_name = 'bucket-test-west2'
     region_name = 'eu-west-2' 
-    key = f'transcriptions/{str(tour_id).zfill(3)}/complete_transcription.txt'
+    key = f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription.txt'
 
     relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
     source_language_code = 'es'
@@ -1511,7 +1512,7 @@ def translate_transcription(request, tour_id=117):
 
     translated_text_with_hashes = '\n########################################################################\n'.join(translated_sections)
 
-    output_key = f'transcriptions/{str(related_tour_id).zfill(3)}/complete_transcription.txt'
+    output_key = f'transcriptions/{str(related_tour_id).zfill(5)}/complete_transcription.txt'
     s3 = boto3.client('s3', region_name=region_name)
     try:
         s3.put_object(
@@ -1551,7 +1552,7 @@ def convert_text_to_audio(request, tour_id=298):
 
     bucket_name = 'bucket-test-west2'
     region_name = 'eu-west-2' 
-    key = f'transcriptions/{str(tour_id).zfill(3)}/complete_transcription.txt'
+    key = f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription.txt'
     s3 = boto3.client('s3', region_name=region_name)
 
     transcription_text = get_complete_transcription(bucket_name, region_name, key)
@@ -1572,7 +1573,7 @@ def convert_text_to_audio(request, tour_id=298):
 
 
             if step !=0:
-                output_key_audio = f'Tour_audio/{str(tour_id).zfill(3)}/{str(step).zfill(3)}/audio_traducido_{str(step).zfill(3)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
+                output_key_audio = f'Tour_audio/{str(tour_id).zfill(5)}/{str(step).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
                 
                 try:
                     paso = Paso.objects.get(tour=tour_id, step_number=step)
@@ -1581,7 +1582,7 @@ def convert_text_to_audio(request, tour_id=298):
                 except Paso.DoesNotExist:
                     return JsonResponse({'error': 'Paso not found'}, status=404)
             else:
-                output_key_audio = f'Tour_audio/{str(tour_id).zfill(3)}/audio_traducido_{str(step).zfill(3)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
+                output_key_audio = f'Tour_audio/{str(tour_id).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
                 try:
                     tour = Tour.objects.get(id=tour_id)
                     tour.audio = output_key_audio
@@ -1616,6 +1617,202 @@ def convert_text_to_audio(request, tour_id=298):
 
 
 
+
+def copy_tour_images_to_s3():
+    # Configuración de AWS S3
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2'
+    source_bucket = 'bucket-test-west2'
+    destination_bucket = 'bucket-test-west2'
+    s3 = boto3.client('s3', region_name=region_name)
+    base_path = 'Tour_imagen'
+
+    # Obtener todos los tours
+    tours = Tour.objects.all()
+
+    with transaction.atomic():
+        for tour in tours:
+
+            # Crear la ruta del directorio del tour
+            tour_dir = f"{base_path}/{str(tour.id).zfill(5)}"
+            print(f"Procesando tour ID: {tour.id} - Directorio: {tour_dir}")
+
+
+            # Copiar la imagen del tour, si existe
+            if tour.imagen:
+                source_key = str(tour.imagen)
+                image_name = os.path.basename(source_key)
+                destination_key = f"{tour_dir}/{image_name}"
+
+                if tour.imagen.name != destination_key:
+                    copy_source = {'Bucket': source_bucket, 'Key': source_key}
+                    print(f"Copiando imagen del tour: {source_key} a {destination_key}")
+
+                    # Comprobar si el objeto existe antes de copiarlo
+                    try:
+                        s3.head_object(Bucket=source_bucket, Key=source_key)
+                        s3.copy_object(
+                            CopySource=copy_source,
+                            Bucket=destination_bucket,
+                            Key=destination_key,
+                            MetadataDirective='REPLACE',
+                            Metadata={'x-amz-meta-copied': 'true'}  # Cambiar metadatos para permitir la copia
+                        )
+
+                        # Actualizar el path en la base de datos
+                        tour.imagen.name = destination_key
+                        tour.save()
+                        print(f"Path actualizado en la DB para tour ID: {tour.id} - Nuevo path: {tour.imagen.name}")
+                    except s3.exceptions.NoSuchKey:
+                        print(f"El archivo {source_key} no existe en el bucket {source_bucket}.")
+                    except Exception as e:
+                        print(f"Error al copiar {source_key} a {destination_key}: {e}")
+            
+            # Obtener todos los pasos asociados al tour
+            pasos = Paso.objects.filter(tour=tour)
+
+            for paso in pasos:
+                # Crear la ruta del directorio del paso
+                paso_dir = f"{tour_dir}/{str(paso.step_number).zfill(5)}"
+                print(f"Procesando paso ID: {paso.id} - Directorio: {paso_dir}")
+
+                # Copiar la imagen del paso, si existe
+                if paso.image:
+                    source_key = str(paso.image)
+                    image_name = os.path.basename(source_key)
+                    destination_key = f"{paso_dir}/{image_name}"
+
+                    if paso.image.name != destination_key:
+                        copy_source = {'Bucket': source_bucket, 'Key': source_key}
+                        print(f"Copiando imagen del paso: {source_key} a {destination_key}")
+
+                        # Comprobar si el objeto existe antes de copiarlo
+                        try:
+                            s3.head_object(Bucket=source_bucket, Key=source_key)
+                            s3.copy_object(
+                                CopySource=copy_source,
+                                Bucket=destination_bucket,
+                                Key=destination_key,
+                                MetadataDirective='REPLACE',
+                                Metadata={'x-amz-meta-copied': 'true'}  # Cambiar metadatos para permitir la copia
+                            )
+
+                            # Actualizar el path en la base de datos
+                            paso.image.name = destination_key
+                            paso.save()
+                            print(f"Path actualizado en la DB para paso ID: {paso.id} - Nuevo path: {paso.image.name}")
+                        except s3.exceptions.NoSuchKey:
+                            print(f"El archivo {source_key} no existe en el bucket {source_bucket}.")
+                        except Exception as e:
+                            print(f"Error al copiar {source_key} a {destination_key}: {e}")
+                else:
+                    print("ya esta modificado")
+    print("llegamos")
+
+    return "Imágenes copiadas y paths actualizados correctamente"
+
+
+
+def copy_images_view(request):
+    result = copy_tour_images_to_s3()
+    return JsonResponse({'message': result})
+
+
+def copy_tour_audio_to_s3():
+    # Configuración de AWS S3
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2'
+    source_bucket = 'bucket-test-west2'
+    destination_bucket = 'bucket-test-west2'
+    s3 = boto3.client('s3', region_name=region_name)
+    base_path = 'Tour_audio'
+
+    # Obtener todos los tours
+    tours = Tour.objects.all()
+
+    with transaction.atomic():
+        for tour in tours:
+
+            # Crear la ruta del directorio del tour
+            tour_dir = f"{base_path}/{str(tour.id).zfill(5)}"
+            print(f"Procesando tour ID: {tour.id} - Directorio: {tour_dir}")
+
+            # Copiar el audio del tour, si existe
+            if tour.audio:
+                source_key = str(tour.audio)
+                audio_name = os.path.basename(source_key)
+                destination_key = f"{tour_dir}/{audio_name}"
+
+                if tour.audio.name != destination_key:
+                    copy_source = {'Bucket': source_bucket, 'Key': source_key}
+                    print(f"Copiando audio del tour: {source_key} a {destination_key}")
+
+                    # Comprobar si el objeto existe antes de copiarlo
+                    try:
+                        s3.head_object(Bucket=source_bucket, Key=source_key)
+                        s3.copy_object(
+                            CopySource=copy_source,
+                            Bucket=destination_bucket,
+                            Key=destination_key,
+                            MetadataDirective='REPLACE',
+                            Metadata={'x-amz-meta-copied': 'true'}  # Cambiar metadatos para permitir la copia
+                        )
+
+                        # Actualizar el path en la base de datos
+                        tour.audio.name = destination_key
+                        tour.save()
+                        print(f"Path actualizado en la DB para tour ID: {tour.id} - Nuevo path: {tour.audio.name}")
+                    except s3.exceptions.NoSuchKey:
+                        print(f"El archivo {source_key} no existe en el bucket {source_bucket}.")
+                    except Exception as e:
+                        print(f"Error al copiar {source_key} a {destination_key}: {e}")
+
+            # Obtener todos los pasos asociados al tour
+            pasos = Paso.objects.filter(tour=tour)
+
+            for paso in pasos:
+                # Crear la ruta del directorio del paso
+                paso_dir = f"{tour_dir}/{str(paso.step_number).zfill(5)}"
+                print(f"Procesando paso ID: {paso.id} - Directorio: {paso_dir}")
+
+                # Copiar el audio del paso, si existe
+                if paso.audio:
+                    source_key = str(paso.audio)
+                    audio_name = os.path.basename(source_key)
+                    destination_key = f"{paso_dir}/{audio_name}"
+
+                    if paso.audio.name != destination_key:
+                        copy_source = {'Bucket': source_bucket, 'Key': source_key}
+                        print(f"Copiando audio del paso: {source_key} a {destination_key}")
+
+                        # Comprobar si el objeto existe antes de copiarlo
+                        try:
+                            s3.head_object(Bucket=source_bucket, Key=source_key)
+                            s3.copy_object(
+                                CopySource=copy_source,
+                                Bucket=destination_bucket,
+                                Key=destination_key,
+                                MetadataDirective='REPLACE',
+                                Metadata={'x-amz-meta-copied': 'true'}  # Cambiar metadatos para permitir la copia
+                            )
+
+                            # Actualizar el path en la base de datos
+                            paso.audio.name = destination_key
+                            paso.save()
+                            print(f"Path actualizado en la DB para paso ID: {paso.id} - Nuevo path: {paso.audio.name}")
+                        except s3.exceptions.NoSuchKey:
+                            print(f"El archivo {source_key} no existe en el bucket {source_bucket}.")
+                        except Exception as e:
+                            print(f"Error al copiar {source_key} a {destination_key}: {e}")
+                else:
+                    print("ya esta modificado")
+    print("llegamos")
+
+    return "Audios copiados y paths actualizados correctamente"
+
+def copy_audios_view(request):
+    result = copy_tour_audio_to_s3()
+    return JsonResponse({'message': result})
 
 ############## 
 ##############@JUAN

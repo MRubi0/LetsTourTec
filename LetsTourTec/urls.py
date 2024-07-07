@@ -57,7 +57,9 @@ urlpatterns = [
     path('api/translate_and_save_tour/<int:tour_id>/', views.translate_and_save_tour, name='translate_and_save_tour'),
     path('start_transcription_job/<int:tour_id>/', views.start_transcription_job, name='start_transcription_job'),
     path('translate_transcription/<int:tour_id>/', views.translate_transcription, name='translate_transcription'), 
-    path('convert_text_to_audio/<int:tour_id>/', views.convert_text_to_audio, name='convert_text_to_audio')
+    path('convert_text_to_audio/<int:tour_id>/', views.convert_text_to_audio, name='convert_text_to_audio'),
+    path('copy-audios/', views.copy_audios_view, name='copy-audios'),
+    path('copy-images/', views.copy_images_view, name='copy-images')
 
 
 
