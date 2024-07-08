@@ -13,6 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class VotacionModalComponent {
   calificacion = 0;
   mensajeHover: string = '';
+  comentario: string = '';  // Nueva propiedad para la reseña
 
   constructor(
     public dialogRef: MatDialogRef<VotacionModalComponent>,
@@ -21,14 +22,16 @@ export class VotacionModalComponent {
     private translate: TranslateService 
   ) {}
 
-  onRate(calificacion: number) {
+  onRate(calificacion: number,) {
     this.calificacion = calificacion;
   }
+
+
   
 
   enviarVotacion() {
-    console.log(this.data.tourId, this.calificacion);
-    this.StepService.enviarValoracion(this.data.tourId, this.calificacion).subscribe(
+    console.log(this.data.tourId, this.calificacion, this.comentario);
+    this.StepService.enviarValoracion(this.data.tourId, this.calificacion, this.comentario).subscribe(
       response => {
         console.log(response);
         this.dialogRef.close();
