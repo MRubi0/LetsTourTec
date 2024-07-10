@@ -32,10 +32,7 @@ export class VotacionModalComponent {
     });
   }
 
-  get calificacion() {
-    return this.finishForm.get('calificacion')?.value || 0;
-  }
-
+ 
 
   onRate(calificacion: number,) {
     this.finishForm.get('calificacion')?.setValue(calificacion);
