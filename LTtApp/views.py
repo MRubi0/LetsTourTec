@@ -4,8 +4,10 @@ import math
 import os
 import random
 import requests
+import shutil
 import sqlite3
 import time
+import chardet
 from datetime import datetime
 from math import atan2, cos, radians, sin, sqrt
 from django.db import transaction
@@ -36,6 +38,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+import re
+import unicodedata
+import io
 
 from .forms import (
     AudioFileForm, CustomUserCreationForm, EditProfileForm, EncuestaForm,
@@ -1034,10 +1039,12 @@ def upload_file_to_s3(file_path, bucket_name, folder_path, file_name):
 @api_view(['POST'])
 @permission_classes([AllowAny])  # Cambia según tus requerimientos de autenticación
 def crear_valoracion(request):
+    
     data = request.data
-
-    # Asegúrate de que el 'tour_id' y la 'puntuacion' están presentes
+    
+    # Asegúrate de que el 'tour_id' y la 'puntuacion' están presentes, la resena no porque es opcional
     if 'tour_id' not in data or 'puntuacion' not in data:
+        
         return JsonResponse({'error': 'Faltan datos necesarios'}, status=400)
 
     # Intenta obtener el tour
@@ -1048,6 +1055,7 @@ def crear_valoracion(request):
         'puntuacion': data['puntuacion'],
         'comentario': data.get('comentario', '')  # El comentario es opcional
     }
+    
     if request.user.is_authenticated:
         valoracion_existente = Valoracion.objects.filter(tour=tour, user=request.user).first()
 
@@ -1057,12 +1065,13 @@ def crear_valoracion(request):
                 setattr(valoracion_existente, key, value)
             valoracion_existente.fecha = timezone.now()  # Actualiza la fecha
             valoracion_existente.save()
+            
             return JsonResponse({'mensaje': 'Valoración actualizada correctamente'}, status=200)
 
 
 
     form = ValoracionForm(valoracion_data)
-
+    
     if form.is_valid():
         valoracion = form.save(commit=False)
         valoracion.tour = tour
@@ -1070,13 +1079,16 @@ def crear_valoracion(request):
         # Asocia el usuario solo si está autenticado
         if request.user.is_authenticated:
             valoracion.user = request.user
-
+           
         try:
             valoracion.save()
+           
             return JsonResponse({'mensaje': 'Valoración creada correctamente'}, status=201)
         except ValidationError as e:
+         
             return JsonResponse({'error': str(e)}, status=400)
     else:
+        
         return JsonResponse({'error': 'Datos inválidos', 'detalles': form.errors}, status=400)
     
 
@@ -1332,7 +1344,7 @@ def translate_and_save_tour(request, tour_id):
                     'id': paso.id,
                     'image': paso.image.url if paso.image else None,
                     'audio': paso.audio.url if paso.audio else None,
-                    'latitude': paso.latitude,
+                    'latitude': paso.latitude, 
                     'longitude': paso.longitude,
                     'description': paso.description,
                     'tittle': paso.tittle
@@ -1347,6 +1359,506 @@ def translate_and_save_tour(request, tour_id):
         return Response({'error': str(e)}, status=500)
     
 
+def get_transcription_text(bucket_name, key):
+    s3 = boto3.client('s3')
+    try:
+        response = s3.get_object(Bucket=bucket_name, Key=key)
+        raw_data = response['Body'].read()
+        
+        # Detectar la codificación
+        result = chardet.detect(raw_data)
+        encoding = result['encoding']
+        
+        # Decodificar el texto usando la codificación detectada
+        transcription_data = json.loads(raw_data.decode(encoding))
+        transcription_text = transcription_data['results']['transcripts'][0]['transcript']
+        return transcription_text
+    except Exception as e:
+        return f"Error retrieving transcription: {e}"
+
+
+
+def normalize_filename(filename):
+        # Normalize unicode characters
+        nfkd_form = unicodedata.normalize('NFKD', filename)
+        # Encode to ASCII bytes, ignore errors, then decode back to string
+        only_ascii = nfkd_form.encode('ASCII', 'ignore').decode('ASCII')
+        # Replace any remaining invalid characters with '_'
+        return re.sub(r'[^0-9a-zA-Z._-]', '_', only_ascii)
+
+def wait_for_transcription_completion(transcribe_client, job_name):
+    while True:
+        time.sleep(30)        
+        status = transcribe_client.get_transcription_job(TranscriptionJobName=job_name)
+        job_status = status['TranscriptionJob']['TranscriptionJobStatus']
+        if job_status in ['COMPLETED', 'FAILED']:
+            return status
+
+
+def start_transcription_job(request, tour_id = 117):
+
+
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2' 
+
+
+    tour_og = get_object_or_404(Tour, pk=tour_id)
+    print(f"Tour Object: {tour_og}")
+    print(f"User: {tour_og.user}")
+    print(f"Idioma: {tour_og.idioma}")
+    print(f"Audio: {tour_og.audio}")
+
+    key = str(tour_og.audio)
+
+
+    transcribe = boto3.client('transcribe', region_name=region_name)
+    job_name_base = normalize_filename(f"{key.split('/')[-1].split('.')[0]}_{tour_og.user.id}_{tour_id}")
+    job_name = f"{job_name_base}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+    
+    job_uri = f's3://{bucket_name}/{key}'
+    output_key = f'transcriptions/{str(tour_id).zfill(5)}/{job_name}.json'
+    langCode = 'es-ES' if tour_og.idioma == 'es' else tour_og.idioma
+
+    try:
+        response = transcribe.start_transcription_job(
+            TranscriptionJobName=job_name,
+            Media={'MediaFileUri': job_uri},
+            MediaFormat=key.split('.')[-1],
+            LanguageCode=langCode,
+            OutputBucketName=bucket_name,
+            OutputKey=output_key
+        )
+    except ClientError as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    wait_for_transcription_completion(transcribe, job_name)
+    transcription_file = io.StringIO()
+    
+    # Transcribir el audio del tour principal
+    transcription_text = get_transcription_text(bucket_name, output_key)
+    transcription_file.write(transcription_text)
+    transcription_file.write('\n########################################################################\n')
+    transcription_file.write('\n\n')
+        #return JsonResponse(response)
+    
+    
+    pasos_og = Paso.objects.filter(tour=tour_og)
+
+    for paso in pasos_og:
+
+            key = str( paso.audio)
+
+            #transcribe = boto3.client('transcribe', region_name=region_name)
+            job_name_base = normalize_filename(f"{key.split('/')[-1].split('.')[0]}_{tour_og.user.id}_{tour_id}")
+            job_name = f"{job_name_base}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+            
+            job_uri = f's3://{bucket_name}/{key}'
+            output_key = f'transcriptions/{str(tour_id).zfill(5)}/{str(paso.step_number).zfill(5)}/{job_name}.json'
+            #langCode = 'es-ES' if tour_og.idioma == 'es' else tour_og.idioma
+            try:
+                response = transcribe.start_transcription_job(
+                    TranscriptionJobName=job_name,
+                    Media={'MediaFileUri': job_uri},
+                    MediaFormat=key.split('.')[-1],
+                    LanguageCode=langCode,
+                    OutputBucketName=bucket_name,
+                    OutputKey=output_key
+                )
+            except ClientError as e:
+                return JsonResponse({'error': str(e)}, status=500)
+            
+            wait_for_transcription_completion(transcribe, job_name)
+        # Obtener la transcripción del paso
+            transcription_text = get_transcription_text(bucket_name, output_key)
+            transcription_file.write(transcription_text)
+            transcription_file.write('\n########################################################################\n')
+
+
+    s3 = boto3.client('s3', region_name=region_name)
+    transcription_file.seek(0)  # Volver al inicio del archivo
+    s3.put_object(
+        Bucket=bucket_name,
+        Key=f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription.txt',
+        Body=transcription_file.read(),
+        ContentType='text/plain'
+    )
+
+    return JsonResponse({'message': 'Transcription jobs were successfully'})
+
+
+def get_complete_transcription(bucket_name, region_name, key):
+    s3 = boto3.client('s3', region_name=region_name)
+    try:
+        response = s3.get_object(Bucket=bucket_name, Key=key)
+        raw_data = response['Body'].read()
+        # Asumimos que la codificación es UTF-8
+        transcription_text = raw_data.decode('utf-8')
+        return transcription_text
+    except ClientError as e:
+        return f"Error retrieving complete transcription: {e}"
+
+
+def translate_text_aws(region_name, text, source_language_code, target_language_code):
+    translate = boto3.client('translate', region_name=region_name)
+    try:
+        response = translate.translate_text(
+            Text=text,
+            SourceLanguageCode=source_language_code,
+            TargetLanguageCode=target_language_code
+        )
+        return response['TranslatedText']
+    except ClientError as e:
+        return f"Error translating text: {e}"
+
+
+
+def translate_transcription(request, tour_id=117):
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2' 
+    key = f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription.txt'
+
+    relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
+    source_language_code = 'es'
+    target_language_code = 'en'
+    
+    if not relation:
+        relation = TourRelation.objects.filter(tour_en_id=tour_id).first()
+        source_language_code = 'en'
+        target_language_code = 'es'
+
+    if not relation:
+        return JsonResponse({'error': 'No relation found for the provided tour_id'}, status=404)
+    
+    if source_language_code == 'es':
+        related_tour_id = relation.tour_en.id
+    else:
+        related_tour_id = relation.tour_es.id
+
+    transcription_text = get_complete_transcription(bucket_name, region_name, key)
+
+    if "Error" in transcription_text:
+        return JsonResponse({'error': transcription_text}, status=500)
+
+    sections = transcription_text.split('########################################################################')
+    translated_sections = []
+
+    for section in sections:
+        if section.strip():
+            translated_text = translate_text_aws(region_name, section.strip(), source_language_code, target_language_code)
+            if "Error" in translated_text:
+                return JsonResponse({'error': translated_text}, status=500)
+            translated_sections.append(translated_text)
+        else:
+            translated_sections.append('')
+
+    translated_text_with_hashes = '\n########################################################################\n'.join(translated_sections)
+
+    output_key = f'transcriptions/{str(related_tour_id).zfill(5)}/complete_transcription.txt'
+    s3 = boto3.client('s3', region_name=region_name)
+    try:
+        s3.put_object(
+            Bucket=bucket_name,
+            Key=output_key,
+            Body=translated_text_with_hashes,
+            ContentType='text/plain'
+        )
+    except ClientError as e:
+        return JsonResponse({'error': f"Error uploading translated text: {e}"}, status=500)
+
+    # Verificar que el archivo se haya subido correctamente
+    try:
+        response = s3.head_object(Bucket=bucket_name, Key=output_key)
+        if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+            return JsonResponse({'message': 'Translation of transcription job was successful', 'translated_text': translated_text_with_hashes})
+        else:
+            return JsonResponse({'error': 'Error verifying upload of translated text'}, status=500)
+    except ClientError as e:
+        return JsonResponse({'error': f"Error verifying upload of translated text: {e}"}, status=500)
+
+
+def synthesize_speech(region_name, text, output_format='mp3', voice_id='Joanna'):
+    polly = boto3.client('polly', region_name=region_name)
+    try:
+        response = polly.synthesize_speech(
+            Text=text,
+            OutputFormat=output_format,
+            VoiceId=voice_id
+        )
+        return response['AudioStream'].read()
+    except ClientError as e:
+        return f"Error synthesizing speech: {e}".encode('utf-8')
+    
+
+def convert_text_to_audio(request, tour_id=298):
+
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2' 
+    key = f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription.txt'
+    s3 = boto3.client('s3', region_name=region_name)
+
+    transcription_text = get_complete_transcription(bucket_name, region_name, key)
+
+    if "Error" in transcription_text:
+        return JsonResponse({'error': transcription_text}, status=500) 
+
+    sections = transcription_text.split('########################################################################')
+    
+    step = 0
+    for section in sections:
+        if section.strip():
+            if "End Of File" in section:
+                pass
+            audio_stream = synthesize_speech(region_name, section)
+            if isinstance(audio_stream, bytes) and audio_stream.startswith(b"Error"):
+                return JsonResponse({'error': audio_stream.decode('utf-8')}, status=500)
+
+
+            if step !=0:
+                output_key_audio = f'Tour_audio/{str(tour_id).zfill(5)}/{str(step).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
+                
+                try:
+                    paso = Paso.objects.get(tour=tour_id, step_number=step)
+                    paso.audio = output_key_audio
+                    paso.save()
+                except Paso.DoesNotExist:
+                    return JsonResponse({'error': 'Paso not found'}, status=404)
+            else:
+                output_key_audio = f'Tour_audio/{str(tour_id).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
+                try:
+                    tour = Tour.objects.get(id=tour_id)
+                    tour.audio = output_key_audio
+                    tour.save()
+                except Tour.DoesNotExist:
+                    return JsonResponse({'error': 'Tour not found'}, status=404)
+            try:
+                s3.put_object(
+                    Bucket=bucket_name,
+                    Key=output_key_audio,
+                    Body=audio_stream,
+                    ContentType='audio/mpeg'
+                )
+            except ClientError as e:
+                return JsonResponse({'error': f"Error uploading audio file: {e}"}, status=500)
+            
+            try:
+                response = s3.head_object(Bucket=bucket_name, Key=output_key_audio)
+                if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+                    return JsonResponse({'error': 'Error verifying upload of audio file'}, status=500)
+                
+
+            except ClientError as e:
+                return JsonResponse({'error': f"Error verifying upload of audio file: {e}"}, status=500)
+            
+            
+
+            step+=1
+
+
+    return JsonResponse({'message': 'Speech synthesis of transcription job were successful'})
+
+
+
+
+def copy_tour_images_to_s3():
+    # Configuración de AWS S3
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2'
+    source_bucket = 'bucket-test-west2'
+    destination_bucket = 'bucket-test-west2'
+    s3 = boto3.client('s3', region_name=region_name)
+    base_path = 'Tour_imagen'
+
+    # Obtener todos los tours
+    tours = Tour.objects.all()
+
+    with transaction.atomic():
+        for tour in tours:
+
+            # Crear la ruta del directorio del tour
+            tour_dir = f"{base_path}/{str(tour.id).zfill(5)}"
+            print(f"Procesando tour ID: {tour.id} - Directorio: {tour_dir}")
+
+
+            # Copiar la imagen del tour, si existe
+            if tour.imagen:
+                source_key = str(tour.imagen)
+                image_name = os.path.basename(source_key)
+                destination_key = f"{tour_dir}/{image_name}"
+
+                if tour.imagen.name != destination_key:
+                    copy_source = {'Bucket': source_bucket, 'Key': source_key}
+                    print(f"Copiando imagen del tour: {source_key} a {destination_key}")
+
+                    # Comprobar si el objeto existe antes de copiarlo
+                    try:
+                        s3.head_object(Bucket=source_bucket, Key=source_key)
+                        s3.copy_object(
+                            CopySource=copy_source,
+                            Bucket=destination_bucket,
+                            Key=destination_key,
+                            MetadataDirective='REPLACE',
+                            Metadata={'x-amz-meta-copied': 'true'}  # Cambiar metadatos para permitir la copia
+                        )
+
+                        # Actualizar el path en la base de datos
+                        tour.imagen.name = destination_key
+                        tour.save()
+                        print(f"Path actualizado en la DB para tour ID: {tour.id} - Nuevo path: {tour.imagen.name}")
+                    except s3.exceptions.NoSuchKey:
+                        print(f"El archivo {source_key} no existe en el bucket {source_bucket}.")
+                    except Exception as e:
+                        print(f"Error al copiar {source_key} a {destination_key}: {e}")
+            
+            # Obtener todos los pasos asociados al tour
+            pasos = Paso.objects.filter(tour=tour)
+
+            for paso in pasos:
+                # Crear la ruta del directorio del paso
+                paso_dir = f"{tour_dir}/{str(paso.step_number).zfill(5)}"
+                print(f"Procesando paso ID: {paso.id} - Directorio: {paso_dir}")
+
+                # Copiar la imagen del paso, si existe
+                if paso.image:
+                    source_key = str(paso.image)
+                    image_name = os.path.basename(source_key)
+                    destination_key = f"{paso_dir}/{image_name}"
+
+                    if paso.image.name != destination_key:
+                        copy_source = {'Bucket': source_bucket, 'Key': source_key}
+                        print(f"Copiando imagen del paso: {source_key} a {destination_key}")
+
+                        # Comprobar si el objeto existe antes de copiarlo
+                        try:
+                            s3.head_object(Bucket=source_bucket, Key=source_key)
+                            s3.copy_object(
+                                CopySource=copy_source,
+                                Bucket=destination_bucket,
+                                Key=destination_key,
+                                MetadataDirective='REPLACE',
+                                Metadata={'x-amz-meta-copied': 'true'}  # Cambiar metadatos para permitir la copia
+                            )
+
+                            # Actualizar el path en la base de datos
+                            paso.image.name = destination_key
+                            paso.save()
+                            print(f"Path actualizado en la DB para paso ID: {paso.id} - Nuevo path: {paso.image.name}")
+                        except s3.exceptions.NoSuchKey:
+                            print(f"El archivo {source_key} no existe en el bucket {source_bucket}.")
+                        except Exception as e:
+                            print(f"Error al copiar {source_key} a {destination_key}: {e}")
+                else:
+                    print("ya esta modificado")
+    print("llegamos")
+
+    return "Imágenes copiadas y paths actualizados correctamente"
+
+
+
+def copy_images_view(request):
+    result = copy_tour_images_to_s3()
+    return JsonResponse({'message': result})
+
+
+def copy_tour_audio_to_s3():
+    # Configuración de AWS S3
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2'
+    source_bucket = 'bucket-test-west2'
+    destination_bucket = 'bucket-test-west2'
+    s3 = boto3.client('s3', region_name=region_name)
+    base_path = 'Tour_audio'
+
+    # Obtener todos los tours
+    tours = Tour.objects.all()
+
+    with transaction.atomic():
+        for tour in tours:
+
+            # Crear la ruta del directorio del tour
+            tour_dir = f"{base_path}/{str(tour.id).zfill(5)}"
+            print(f"Procesando tour ID: {tour.id} - Directorio: {tour_dir}")
+
+            # Copiar el audio del tour, si existe
+            if tour.audio:
+                source_key = str(tour.audio)
+                audio_name = os.path.basename(source_key)
+                destination_key = f"{tour_dir}/{audio_name}"
+
+                if tour.audio.name != destination_key:
+                    copy_source = {'Bucket': source_bucket, 'Key': source_key}
+                    print(f"Copiando audio del tour: {source_key} a {destination_key}")
+
+                    # Comprobar si el objeto existe antes de copiarlo
+                    try:
+                        s3.head_object(Bucket=source_bucket, Key=source_key)
+                        s3.copy_object(
+                            CopySource=copy_source,
+                            Bucket=destination_bucket,
+                            Key=destination_key,
+                            MetadataDirective='REPLACE',
+                            Metadata={'x-amz-meta-copied': 'true'}  # Cambiar metadatos para permitir la copia
+                        )
+
+                        # Actualizar el path en la base de datos
+                        tour.audio.name = destination_key
+                        tour.save()
+                        print(f"Path actualizado en la DB para tour ID: {tour.id} - Nuevo path: {tour.audio.name}")
+                    except s3.exceptions.NoSuchKey:
+                        print(f"El archivo {source_key} no existe en el bucket {source_bucket}.")
+                    except Exception as e:
+                        print(f"Error al copiar {source_key} a {destination_key}: {e}")
+
+            # Obtener todos los pasos asociados al tour
+            pasos = Paso.objects.filter(tour=tour)
+
+            for paso in pasos:
+                # Crear la ruta del directorio del paso
+                paso_dir = f"{tour_dir}/{str(paso.step_number).zfill(5)}"
+                print(f"Procesando paso ID: {paso.id} - Directorio: {paso_dir}")
+
+                # Copiar el audio del paso, si existe
+                if paso.audio:
+                    source_key = str(paso.audio)
+                    audio_name = os.path.basename(source_key)
+                    destination_key = f"{paso_dir}/{audio_name}"
+
+                    if paso.audio.name != destination_key:
+                        copy_source = {'Bucket': source_bucket, 'Key': source_key}
+                        print(f"Copiando audio del paso: {source_key} a {destination_key}")
+
+                        # Comprobar si el objeto existe antes de copiarlo
+                        try:
+                            s3.head_object(Bucket=source_bucket, Key=source_key)
+                            s3.copy_object(
+                                CopySource=copy_source,
+                                Bucket=destination_bucket,
+                                Key=destination_key,
+                                MetadataDirective='REPLACE',
+                                Metadata={'x-amz-meta-copied': 'true'}  # Cambiar metadatos para permitir la copia
+                            )
+
+                            # Actualizar el path en la base de datos
+                            paso.audio.name = destination_key
+                            paso.save()
+                            print(f"Path actualizado en la DB para paso ID: {paso.id} - Nuevo path: {paso.audio.name}")
+                        except s3.exceptions.NoSuchKey:
+                            print(f"El archivo {source_key} no existe en el bucket {source_bucket}.")
+                        except Exception as e:
+                            print(f"Error al copiar {source_key} a {destination_key}: {e}")
+                else:
+                    print("ya esta modificado")
+    print("llegamos")
+
+    return "Audios copiados y paths actualizados correctamente"
+
+def copy_audios_view(request):
+    result = copy_tour_audio_to_s3()
+    return JsonResponse({'message': result})
+
+
+
 def get_next_id():
     with connection.cursor() as cursor:
         cursor.execute("""
@@ -1357,52 +1869,3 @@ def get_next_id():
         row = cursor.fetchone()
     return row[0] if row else None
 
-##############
-##############@JUAN
-##############
-'''
-NO HE QUERIDO TOCAR MUCHO POR EL TEMA DEL NUEVO BUCKET QUE NO SE COMO VA A AFECTAR AL RESTO 
-
-1: transcription function:
-##
-bucket = event['Records'][0]['s3']['bucket']['name']
-key = event['Records'][0]['s3']['object']['key']
-
-# Inicia la transcripción con Amazon Transcribe
-transcribe = boto3.client('transcribe')
-job_name = key.split('/')[-1].split('.')[0]
-job_uri = f's3://{bucket}/{key}'
-
-transcribe.start_transcription_job(
-    TranscriptionJobName=job_name,
-    Media={'MediaFileUri': job_uri},
-    MediaFormat=key.split('.')[-1],
-    LanguageCode='es-ES',
-    OutputBucketName=bucket,
-    OutputKey=f'transcriptions/{job_name}.json'
-)
-
-return {
-    'statusCode': 200,
-    'body': json.dumps('Transcription job started')
-}
-
-
-2: aqui guardar la transcription en la base de datos 
-
-3: usar la api que tenemos de traduccion de texto a ingles y guardar el resultado tambien en la database
-
-4: narrar el texto traducido con IA y guardarlo en un bucket
-
-polly = boto3.client('polly')
-response = polly.synthesize_speech(
-    Text=text,
-    OutputFormat='mp3',
-    VoiceId='Kendra'
-)
-s3 = boto3.client('s3')
-s3.put_object(Bucket=output_bucket, Key=output_key, Body=response['AudioStream'].read())
-
-5: relacionar el audio en ingles con el tour correspondiente en la database
-
-'''
