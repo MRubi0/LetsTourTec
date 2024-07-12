@@ -170,48 +170,50 @@ def upload_tours(request):
         form = TourForm(request.POST, request.FILES)       
         if form.is_valid():        
             tour_es = form.save(commit=False)
-            
+            tour_destino=request.POST['idioma_destino']
             tour_es.user = request.user
-            tour_es.idioma=request.POST['idioma']
-            ##tour_es.idioma=request.idioma
-            print('tour_es ---> ', tour_es.idioma)
+            tour_es.idioma = request.POST['idioma']
+            
+            next_id_es = get_next_id()
 
+            print('next_id ----> ', next_id_es)
+            
             if 'imagen' in request.FILES:
                 image_file = request.FILES['imagen']
                 timestamp = int(time.time() * 1000)
-                image_name = f"{timestamp}.jpg"
+                image_name = f"{next_id_es}/{timestamp}.jpg"
                 tour_es.imagen.save(image_name, image_file)
 
             if 'audio' in request.FILES:
                 audio_file = request.FILES['audio']
                 timestamp = int(time.time() * 1000)
-                audio_name = f"Juan_pruebas_aud_{timestamp}.mp3"
+                audio_name = f"{next_id_es}/aud_{timestamp}.mp3"
                 tour_es.audio.save(audio_name, audio_file)    
 
             if tour_es.tipo_de_tour == 'leisure':
                 tour_es.tipo_de_tour = 'ocio'
             elif tour_es.tipo_de_tour == 'nature':
                 tour_es.tipo_de_tour = 'naturaleza'
-            print('tour_es.idioma --> ', tour_es.idioma)
-            tour_es.idioma = 'es'
+           
+            
             tour_es.validado = False
             tour_es.save()
 
+            next_id_en = get_next_id()
 
             tour_en = Tour()
             tour_en.user = request.user
             tour_en.imagen = tour_es.imagen
             tour_en.audio = tour_es.audio
             tour_en.tipo_de_tour = tour_es.tipo_de_tour
-            tour_en.idioma = 'en'
             tour_en.recorrido=tour_es.recorrido
             tour_en.duracion=tour_es.duracion
             tour_en.validado = False
-            tour_en.descripcion = translate_text(tour_es.descripcion)
-            tour_en.titulo = translate_text(tour_es.titulo)            
+            tour_en.descripcion = translate_text(tour_es.descripcion, tour_es.idioma, tour_destino)
+            tour_en.titulo = translate_text(tour_es.titulo, tour_es.idioma, tour_destino)            
             tour_en.save()
             
-            for i in range(10):
+            for i in range(100):
                 extra_audio_key = f'extra_step_audio_{i}'
 
                 if extra_audio_key in request.FILES:
@@ -221,7 +223,7 @@ def upload_tours(request):
                     extra_latitude = None
                     extra_longitude = None
                     extra_tittle = None
-
+           
                     extra_description_key = f'description_{i}'
                     if extra_description_key in request.POST:
                         extra_description = request.POST.get(extra_description_key, '')
@@ -234,9 +236,9 @@ def upload_tours(request):
                     paso_en = Paso(tour=tour_en, description=extra_description, tittle=extra_tittle)
 
                     if request.FILES[f'extra_step_audio_{i}']:          
-                        extra_audio_file = request.FILES[f'extra_step_audio_{i}']
+                        extra_audio_file = request.FILES[f'extra_step_audio_{i}']                        
                         timestamp = int(time.time() * 1000)
-                        extra_audio_name = f"extra_audio_{timestamp}.mp3"
+                        extra_audio_name = f"extra_audio_{next_id_es}/{timestamp}.mp3"
                         paso_en.audio.save(extra_audio_name, extra_audio_file)
                         paso_es.audio.save(extra_audio_name, extra_audio_file)
 
@@ -256,14 +258,14 @@ def upload_tours(request):
                         paso_en.longitude = extra_longitude                             
 
                     extra_image_key = f'extra_step_image_{i}'
+                    print('here 1', extra_image_key)
                     if extra_image_key in request.FILES:
                        extra_image_file = request.FILES[f'extra_step_image_{i}']
                        timestamp = int(time.time() * 1000)
-                       extra_image_name = f"extra_image_{timestamp}.jpg"
+                       extra_image_name = f"extra_image_{next_id_es}/{timestamp}.jpg"
                        paso_es.image.save(extra_image_name, extra_image_file, save=False)  
-                       paso_en.image=paso_es.image                 
-
-                    paso_es.save()
+                       paso_en.image = paso_es.image                 
+                       paso_es.save()
                     paso_en.save()
                  
                 else:
@@ -273,17 +275,8 @@ def upload_tours(request):
             tour_relation = TourRelation(tour_es=tour_es, tour_en=tour_en)
             tour_relation.save()
 
+            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro'})
 
-
-
-            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro equipo antes de aparecer en la web'                              
-                             }, status=200)
-        else:
-            error_message = 'Hubo un error al subir el tour. Asegúrate de haber seleccionado una imagen y un archivo de audio válidos.'
-            print(form.errors)
-            return Response({'errors': form.errors}, status=400)
-    else:
-        return Response({'error': 'Invalid request method'}, status=405)
 
 def upload_to_func(instance, filename):
     timestamp = int(time.time() * 1000)
@@ -1202,7 +1195,7 @@ def search_user_by_id(request):
 
 
 
-def translate_text(text):
+def translate_text(text, idioma_origen, tour_destino):
     url = "https://deep-translate1.p.rapidapi.com/language/translate/v2"
     headers = {
         'X-RapidAPI-Key': "75c294e6a8msh19ef7b3ebb91873p16517ejsn5f6bff2b1abd",
@@ -1210,9 +1203,10 @@ def translate_text(text):
     }
     payload = {
         "q": text,
-        "source": "es",
-        "target": "en"
-    }
+        "source": idioma_origen,
+        "target": tour_destino
+    } 
+    
     response = requests.post(url, headers=headers, data=json.dumps(payload))
     translated_text = response.json().get('data', {}).get('translations', {}).get('translatedText', '')
     return translated_text
@@ -1267,8 +1261,8 @@ def translate_and_save_tour(request, tour_id):
         tour_en.tipo_de_tour = tour_es.tipo_de_tour
         tour_en.idioma = 'en'
         tour_en.validado = False
-        tour_en.descripcion = translate_text(tour_es.descripcion)
-        tour_en.titulo = translate_text(tour_es.titulo)
+        tour_en.descripcion = translate_text(tour_es.descripcion, tour_es.idioma)
+        tour_en.titulo = translate_text(tour_es.titulo, tour_es.idioma)
         tour_en.latitude = tour_es.latitude
         tour_en.longitude = tour_es.longitude
         tour_en.save()
@@ -1286,8 +1280,8 @@ def translate_and_save_tour(request, tour_id):
             paso_en.audio = paso_es.audio
             paso_en.latitude = paso_es.latitude
             paso_en.longitude = paso_es.longitude
-            paso_en.description = translate_text(paso_es.description)
-            paso_en.tittle = translate_text(paso_es.tittle)
+            paso_en.description = translate_text(paso_es.description, tour_es.idioma)
+            paso_en.tittle = translate_text(paso_es.tittle, tour_es.idioma)
             paso_en.save()
         tour_data = {
             'id': tour_en.id,
@@ -1316,6 +1310,7 @@ def translate_and_save_tour(request, tour_id):
     except Exception as e:
         return Response({'error': str(e)}, status=500)
     
+
 def get_transcription_text(bucket_name, key):
     s3 = boto3.client('s3')
     try:
@@ -1814,52 +1809,15 @@ def copy_audios_view(request):
     result = copy_tour_audio_to_s3()
     return JsonResponse({'message': result})
 
-############## 
-##############@JUAN
-##############
-'''
-NO HE QUERIDO TOCAR MUCHO POR EL TEMA DEL NUEVO BUCKET QUE NO SE COMO VA A AFECTAR AL RESTO 
-
-1: transcription function:
-##
-bucket = event['Records'][0]['s3']['bucket']['name']
-key = event['Records'][0]['s3']['object']['key']
- 
-# Inicia la transcripción con Amazon Transcribe
-transcribe = boto3.client('transcribe')
-job_name = key.split('/')[-1].split('.')[0]
-job_uri = f's3://{bucket}/{key}'
-
-transcribe.start_transcription_job(
-    TranscriptionJobName=job_name,
-    Media={'MediaFileUri': job_uri},
-    MediaFormat=key.split('.')[-1],
-    LanguageCode='es-ES',
-    OutputBucketName=bucket,
-    OutputKey=f'transcriptions/{job_name}.json'
-)
-
-return {
-    'statusCode': 200,
-    'body': json.dumps('Transcription job started')
-}
 
 
-2: aqui guardar la transcription en la base de datos 
+def get_next_id():
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT last_value + increment_by AS next_id
+            FROM pg_sequences
+            WHERE schemaname = 'public' AND sequencename = 'LTtApp_tour_id_seq';
+        """)
+        row = cursor.fetchone()
+    return row[0] if row else None
 
-3: usar la api que tenemos de traduccion de texto a ingles y guardar el resultado tambien en la database
-
-4: narrar el texto traducido con IA y guardarlo en un bucket
-
-polly = boto3.client('polly')
-response = polly.synthesize_speech(
-    Text=text,
-    OutputFormat='mp3',
-    VoiceId='Kendra'
-)
-s3 = boto3.client('s3')
-s3.put_object(Bucket=output_bucket, Key=output_key, Body=response['AudioStream'].read())
-
-5: relacionar el audio en ingles con el tour correspondiente en la database
-
-'''

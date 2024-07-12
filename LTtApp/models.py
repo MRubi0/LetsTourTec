@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.utils import timezone
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 from io import BytesIO
 import requests
 import boto3
@@ -101,54 +101,52 @@ class Tour(models.Model):
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     duracion = models.PositiveIntegerField("Duración en minutos", null=True, blank=True)
-    recorrido = models.FloatField(null=True, blank=True)   # Recorrido en kilómetros
+    recorrido = models.FloatField(null=True, blank=True)  # Recorrido en kilómetros
     idioma = models.CharField(max_length=2, default='es')
     validado = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)    
+    updated_at = models.DateTimeField(auto_now=True)
     TIPO_DE_TOUR_CHOICES = [
         ('nature', 'Naturaleza'),
         ('cultural', 'Cultural'),
         ('leisure', 'Ocio'),
     ]
     tipo_de_tour = models.CharField(max_length=10, choices=TIPO_DE_TOUR_CHOICES, default=None, blank=True, null=True)
-    
+
     def __str__(self):
         return self.titulo
 
     def save(self, *args, **kwargs):
-        # Guarda el objeto Tour como de costumbre
         super().save(*args, **kwargs)
 
         if self.imagen:
-            # Obtén la URL de la imagen almacenada en S3
-            image_url = self.imagen.url
+            try:
+                # Obtén la URL de la imagen almacenada en S3
+                image_url = self.imagen.url
+                # Descarga la imagen usando requests y ábrela con PIL
+                response = requests.get(image_url)
+                response.raise_for_status()
+                img = Image.open(BytesIO(response.content))
+                # Convierte la imagen a modo RGB si no lo está
+                if img.mode in ['P', 'RGBA']:
+                    img = img.convert('RGB')
+            except UnidentifiedImageError:
+                print("No se puede identificar el archivo de imagen")
+            except requests.exceptions.RequestException as e:
+                print(f"Error al descargar la imagen: {e}")
+            except Exception as e:
+                print(f"Error inesperado: {e}")
 
-            # Descarga la imagen usando requests y ábrela con PIL
-            response = requests.get(image_url)
-            img = Image.open(BytesIO(response.content))
+            # Construye el path de la imagen en S3
+            key = f'tours/{self.id}/images/{self.imagen.name}'
+            # Aquí necesitas configurar boto3 con tus credenciales de AWS y especificar el bucket y key adecuados
+            s3 = boto3.client(
+                's3',
+                aws_access_key_id='AKIAYTBLLQA7BS6GPBHU',
+                aws_secret_access_key='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',
+                region_name='eu-north-1'
+            )
 
-            # Convierte la imagen a modo RGB si no lo está
-            if img.mode in ['P', 'RGBA']:
-                img = img.convert('RGB')
-        # Construye el path de la imagen en S3
-        key = f'tours/{self.id}/images/{self.imagen.name}'
-        # Aquí necesitas configurar boto3 con tus credenciales de AWS y especificar el bucket y key adecuados
-        s3 = boto3.client(
-                            's3',
-                            aws_access_key_id='AKIAYTBLLQA7BS6GPBHU',
-                            aws_secret_access_key='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',
-                            region_name='eu-north-1'  # Asegúrate de que la región coincida con la del bucket
-                        )
-
-
-
-
-
-        #if self.imagen:
-            #img = Image.open(self.imagen.path)
-
-            
     def as_dict(self):
         return {
             "id": self.id,  # Incluye el id del tour
@@ -163,7 +161,6 @@ class Tour(models.Model):
             "latitude": self.latitude,
             "longitude": self.longitude,
         }
-
 class TourRelation(models.Model):
     tour_es = models.OneToOneField('Tour', on_delete=models.CASCADE, related_name='tour_es')
     tour_en = models.OneToOneField('Tour', on_delete=models.CASCADE, related_name='tour_en')
@@ -182,6 +179,7 @@ class Paso(models.Model):
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+
 
     def save(self, *args, **kwargs):
         if self.image:
@@ -206,7 +204,7 @@ class Paso(models.Model):
                     buffer.seek(0)
 
                     # Reemplazar la imagen original por la convertida
-                    file_name = f"{int(time.time() * 1000)}.jpg"
+                    file_name = f"juan_extra_image_{int(time.time() * 1000)}.jpg"
                     self.image.save(file_name, ContentFile(buffer.getvalue()), save=False)
                 else:
                     # Manejar el caso donde la respuesta no es exitosa
