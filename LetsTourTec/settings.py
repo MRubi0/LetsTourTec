@@ -244,7 +244,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=365), # Tiempo de vida del token de acceso
     'REFRESH_TOKEN_LIFETIME': timedelta(days=365 * 3),       # Tiempo de vida del token de actualización
 }
-AWS_S3_REGION_NAME = 'eu-north-1'
+AWS_S3_REGION_NAME = 'eu-west-2'
 CORS_ALLOW_ALL_ORIGINS = True
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 * 40 # 10MB
 

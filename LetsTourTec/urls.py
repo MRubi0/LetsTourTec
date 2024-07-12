@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from LTtApp.views import register_view,  test_auth
+from LTtApp.views import edit_tour, register_view,  test_auth
 from LTtApp.views import upload_tours, crear_valoracion
 #from LTtApp.views import upload_tour
 from LTtApp import views
@@ -54,13 +54,8 @@ urlpatterns = [
     path('crear_valoracion', crear_valoracion, name='crear_valoracion'),
     path('tour/<int:tour_id>/media-valoracion/', views.media_valoracion_tour, name='media-valoracion-tour'),
     path('api/get_tour_with_steps/<int:tour_id>/<str:languaje>/', views.get_tour_with_steps, name='get_tour_with_steps'),
-    path('api/translate_and_save_tour/<int:tour_id>/', views.translate_and_save_tour, name='translate_and_save_tour')
-
-
-
-
-
-    
+    path('api/translate_and_save_tour/<int:tour_id>/', views.translate_and_save_tour, name='translate_and_save_tour'),
+    path('api/edit_tour/<int:tour_id>/', views.edit_tour, name='edit_tour') 
     ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
