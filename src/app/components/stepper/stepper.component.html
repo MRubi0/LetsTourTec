@@ -3,7 +3,7 @@
     <div class="step-icon-home d-flex justify-content-center">
       <img [src]="url_icon_home" alt="">
     </div>
-    <mat-vertical-stepper (selectionChange)="onStepChange($event)">              
+    <mat-vertical-stepper (selectionChange)="onStepChange($event)" class="mt-4" #stepper>              
       <mat-step [stepControl]="firstFormGroup" *ngFor="let step of tour.steps;let i = index; let last = last" id="step{{i}}">
         <div class="step-icon d-flex justify-content-center" *ngIf="i==0">
           <img [src]="url_icon_home" alt="">
@@ -14,14 +14,13 @@
         <div class="step-icon d-flex justify-content-center" *ngIf="last && tour.steps.length> 1">
           <img [src]="url_icon_flag" alt="">
         </div>
-          <form [formGroup]="firstFormGroup">
-            
+          <form [formGroup]="firstFormGroup">            
             <ng-template matStepLabel>
               <strong *ngIf="i==0">{{tour.titulo | uppercase}}</strong>
               <strong *ngIf="i>0 && step.tittle">{{ "STEPPER.Step" | translate }} {{step.stepNumber}}: {{step.tittle | uppercase}}</strong>
               <strong *ngIf="i>0 && !step.tittle">{{ "STEPPER.Step" | translate }} {{step.stepNumber}}</strong>
             </ng-template>
-          <div>
+          <div class="card-container">
             <mat-card *ngIf="i==0" id="step{{i}}">
               <mat-card-header>
               </mat-card-header>

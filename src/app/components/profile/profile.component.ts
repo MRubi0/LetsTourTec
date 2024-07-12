@@ -1,11 +1,8 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router'; 
 import { ProfileService } from 'src/app/services/profile.service';
 import { jwtDecode } from 'jwt-decode';
 import { SnackService } from 'src/app/services/snack.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-
-
 
 
 @Component({
@@ -45,6 +42,7 @@ export class ProfileComponent {
     console.log("falta esto");
     this.snackbarService.openSnackBar('Cargado correctamente',
     'OK');
+
   }
   toursUploaded() {
     console.log("falta esto")

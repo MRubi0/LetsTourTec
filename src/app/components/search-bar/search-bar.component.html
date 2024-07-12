@@ -11,21 +11,14 @@
                     </div>
                     <div class="button_search" >
                         <button mat-raised-button class="custom-button-color" type="submit">{{ 'SEARCH-BAR.Search' | translate }}</button>
-                    </div>
-                    <!--<div class="img_container mb-2">
-                        <img src="../../../assets/iconos/search.svg" alt="" (click)="searchLocation()">
-                    </div>-->                   
-                </div>                                     
+                    </div>           
+                </div>          
                 <div class="search-results" *ngIf="searchResults.length">
                     <div *ngFor="let result of searchResults" (click)="selectLocation(result)">
                         {{ result.display_name }}
                     </div>
-                </div>
-                <!--<button mat-raised-button class="custom-button-color" type="submit"  [class.move-down]="searchResults.length > 0" >{{ 'SEARCH-BAR.Search' | translate }}</button>-->
+                </div>               
             </form>            
         </mat-card-content>
-    </mat-card>
-    <div class="cont">
-
-    </div>
+    </mat-card>    
 </div>  

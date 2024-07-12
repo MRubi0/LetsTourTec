@@ -86,13 +86,11 @@ const routes: Routes = [
   },
   {
     path: 'my-tours', 
-    component: MyToursComponent,
-    canActivate: [AuthGuard] 
+    component: MyToursComponent
   },
   {
     path: 'history-tours', 
-    component: HistoryToursComponent,
-    canActivate: [AuthGuard] 
+    component: HistoryToursComponent
   },
   {
     path: 'edit-profile', 

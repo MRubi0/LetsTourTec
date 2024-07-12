@@ -146,7 +146,7 @@ export class MapModalComponent implements OnInit, OnDestroy {
         ],
         routeWhileDragging: true,
         collapsible: true, 
-        show: true,  
+        show: false,  
         addWaypoints: false       
       }).addTo(map);
 

@@ -1,5 +1,5 @@
 <div class="upload-tour-container">
-    <mat-card class="container-card">
+    <mat-card class="container-card" [style.opacity]="loading ? 0.5 : 1">
         <mat-card-header>
             <mat-card-title>Subir Tour</mat-card-title>
         </mat-card-header>
@@ -10,6 +10,15 @@
                     <mat-form-field appearance="fill">
                         <mat-select formControlName="tipo_de_tour">
                             <mat-option *ngFor="let option of opciones" [value]="option.value">{{ option.viewValue }}</mat-option>
+                          </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field">
+                    <p>Idiomas a los que traducir</p>
+                    <mat-form-field appearance="fill">
+                        <mat-select formControlName="idioma_destino">
+                            <mat-option *ngFor="let option of opciones_idioma" [value]="option.value">{{ option.viewValue }}</mat-option>
                           </mat-select>
                     </mat-form-field>
                 </div>
@@ -136,4 +145,7 @@
             </form>
         </mat-card-content>
     </mat-card>
+    <div class="text-center m-4 spinner" *ngIf="loading">
+        <mat-spinner></mat-spinner>
+    </div>
 </div>

@@ -12,9 +12,10 @@
                 <button class='button-fab' mat-fab data-bs-toggle="tooltip" matTooltip={{tours.tipo_de_tour}}
                     aria-label="Button that displays a tooltip when focused or hovered over">
                     <div [ngSwitch]=tours.tipo_de_tour class="icon_type_tour">
-                        <img *ngSwitchCase="'Cultural'" src="../../../assets/iconos/TdesignMuseum1.svg" alt="">                            
+                        <img *ngSwitchCase="'Cultural'" class="icon_type_spe" src="../../../assets/iconos/TdesignMuseum1.svg" alt="">                            
                         <img *ngSwitchCase="'Nature'" src="../../../assets/iconos/HealthiconsForestPersons.svg" alt="">
-                        <img *ngSwitchCase="'Leisure'" src="../../../assets/iconos/MapAmusementPark.svg" alt="">
+                        <img *ngSwitchCase="'Leisure'" class="icon_type_spe"  src="../../../assets/iconos/MapAmusementPark.svg" alt="">
+
                         <p *ngSwitchDefault>Icono no disponible</p>
                     </div>
                 </button>

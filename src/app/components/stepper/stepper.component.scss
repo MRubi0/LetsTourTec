@@ -91,12 +91,18 @@ mat-card {
   }
   
   ::ng-deep mat-step-header .mat-step-label strong {
-    white-space: normal !important; /* Asegura que el texto pueda fluir en múltiples líneas */
-    line-height: 1.2 !important; /* Ajusta el espaciado entre líneas para mejorar la legibilidad */
-    font-size: 16px !important; /* Ajusta el tamaño de la fuente según necesites */
-    text-align: center !important; /* Centra el texto, opcional */
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    font-size: 16px !important;
+    text-align: center !important;
   }
   .text-center {
     text-align: center;
   }
-  
+  ::ng-deep .mat-step-header {
+    margin-top: 10px !important;
+    overflow:visible !important;
+  }
+  .card-container{
+    padding-top: 12px;
+  }

@@ -31,6 +31,15 @@ export class GenericCardComponent {
   ngOnChanges() {
     this.toursdata.forEach((tour: any) => {
       this.showFullDescription[tour.id] = false;
+  
+      this.sharedService.getMediaValoraciones(tour.id).subscribe({
+        next: (response:any) => {
+          tour.mediaValoracion = response.media_puntuacion;
+        },
+        error: (error:any) => {
+          console.error('Error al obtener la media de valoraciones:', error);
+        }
+      });
     });
     this.toursdata.map((data:any)=>{
       
@@ -75,4 +84,20 @@ export class GenericCardComponent {
   onPageChange(): void {
     this.scrollToTop();
   }
+  loadUser(user:any){
+    const token = localStorage.getItem('access_token');
+    if(token){
+      const decodedToken:any = jwtDecode(token);
+      if(decodedToken.user_id==user.id){
+        this.sharedService.setProfile=user; 
+        this.router.navigate([ '/profile']);
+      }else{
+        this.sharedService.setProfile=user; 
+        this.router.navigate([ '/profile-card']);
+      }      
+    }else{
+        this.sharedService.setProfile=user; 
+        this.router.navigate([ '/profile-card']);
+    }        
+  }  
 }

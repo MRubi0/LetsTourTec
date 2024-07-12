@@ -54,7 +54,6 @@ export class CardsComponent {
       navigator.geolocation.getCurrentPosition((position) => {
         const latitud = String(position.coords.latitude);
         const longitud = String(position.coords.longitude);
-
         this.latestToursService.getClosestTours(latitud, longitud)
           .subscribe((data: any) => {
             this.lastTours = data;

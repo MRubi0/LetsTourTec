@@ -89,7 +89,7 @@
     z-index: 2;
     background-color: white;
     border: 1px #0d6efd solid;
-    border-radius: 10px;
+    border-radius: 5px;
     margin-top: 250px;
   
     div {
@@ -119,6 +119,9 @@
     .search-results {
         width: 80%;
     }
+    .search-bar-row {
+        margin-left: -12px;
+    }
 }
 @media screen and (max-width: 400px) {
     .search-card {
@@ -127,12 +130,18 @@
     .container_search{
         width: 90%;
     }
-   
+    .search-bar-row {
+        margin-left: -12px;
+    }
 }
 .move-down {
     margin-top: 200px; 
   }
-  .img_container{
+
+  .container_search{
+    width: 100%;
+}
+.img_container{
     width: 20px;
     height: 20px;
     z-index: 10;

@@ -1,0 +1,75 @@
+::ng-deep .votacion-modal {
+  display: flex;
+  flex-direction: column; /* Muestra los elementos en columna */
+  align-items: center; /* Centra los elementos horizontalmente */
+  padding: 10px; /* Añade un relleno interno */
+}
+
+::ng-deep .votacion-modal ngb-rating {
+  margin-top: 0px; /* Reducir el margen superior */
+  margin-bottom: 15px; /* Reducir el margen inferior */
+}
+
+::ng-deep .votacion-modal ngb-rating > span {
+  cursor: pointer;
+  font-size: calc(60vw / 5); /* Ajustar el tamaño de la fuente para las estrellas */
+  margin-top: 0px;
+  color: gold; /* Cambiar el color de las estrellas a dorado */
+}
+
+.titulo-modal {
+  text-align: center; /* Centrar el título y el subtítulo */
+  margin-bottom: 15px; /* Reducir el margen inferior */
+}
+
+.acciones-modal {
+  display: flex;
+  justify-content: center; /* Centrar los botones horizontalmente */
+  padding-top: 10px; /* Reducir el espacio por encima de los botones */
+  margin-bottom: 10px; /* Añadir un margen inferior */
+}
+
+.mensaje-hover {
+  text-align: center; /* Centrar el texto del mensaje si es necesario */
+  margin-top: 5px; /* Reducir el espacio entre las estrellas y el mensaje */
+}
+
+.mat-mdc-raised-button.mat-primary {
+  background-color: #0d6efd !important;
+}
+
+/* Ajustes específicos para el form-container y mat-form-field */
+.form-container {
+  display: flex;
+  justify-content: center; /* Centrar el form-field horizontalmente */
+  width: 100%;
+}
+
+.form-field {
+  width: 100%; /* Ajustar el ancho del form-field */
+  margin-top: 5px; /* Reducir el margen superior */
+  justify-content: center;
+  margin-bottom: 2px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 60px; /* Reducir la altura mínima */
+  justify-content: center;
+  resize: none; /* Desactivar el redimensionamiento */
+  font-size: 10px; /* Reducir el tamaño de la fuente */
+  line-height: 1.4; /* Ajustar la altura de línea para mejorar el espaciado del texto */
+}
+
+.mat-form-field-label {
+  color: #0d6efd !important;
+  font-size: 20px; /* Reducir el tamaño de la fuente del label */
+  white-space: normal; /* Permitir que el texto del label se divida en varias líneas */
+  display: block;
+  
+  line-height: 1.2; /* Ajustar la altura de la línea */
+}
+
+.mat-form-field-label span {
+  display: block; /* Asegurar que cada línea de texto se muestre como bloque */
+}

@@ -35,7 +35,6 @@ export class MapsComponent implements OnDestroy, AfterViewInit {
         if (data[0].message || data[0].error) {
           this.alternative();
         } else {
-          console.log('data ', data);
           this.lat = data[0].paths[0].points.coordinates[0][1];
           this.long = data[0].paths[0].points.coordinates[0][0];
           this.displayRouteOnMap(data[0]);

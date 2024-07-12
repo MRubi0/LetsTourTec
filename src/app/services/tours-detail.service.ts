@@ -11,7 +11,8 @@ export class ToursDetailService {
   constructor(private http: HttpClient) { } 
 
   getTourDetail(id: string) {
-    return this.http.get(`${environment.apiUrl}get_tour_distance/?tourId=${id}&latitude=4.6408516&longitude=-74.1445487`)
+    const lang = localStorage.getItem('language');
+    return this.http.get(`${environment.apiUrl}get_tour_distance/?tourId=${id}&latitude=4.6408516&longitude=-74.1445487&languaje=${lang}`)
       .pipe(map((data: any) => {
         return data;
       }));

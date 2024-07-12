@@ -58,6 +58,9 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { NgbRatingModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProfilecardsComponent } from './components/profilecards/profilecards.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { CustomSnackBarComponent } from './components/generics/custom-snack-bar/custom-snack-bar.component';
+import { VotacionModalComponent } from './components/votacion-modal/votacion-modal.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -95,7 +98,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     MsgInicioModalComponent,
     CountdownEComponent,
     ModalVelocityComponent,
-    ProfilecardsComponent,   
+    VotacionModalComponent,
+    ProfilecardsComponent,
+    CustomSnackBarComponent,   
   ],
   imports: [
     BrowserModule,
@@ -120,6 +125,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatDialogModule,
     MatMenuModule,
     NgbRatingModule,
+    MatProgressSpinnerModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

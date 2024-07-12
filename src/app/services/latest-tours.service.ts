@@ -19,20 +19,23 @@ export class LatestToursService {
       }));
   }
 
-  getClosestTours(lat:string, long:string) {    
-   return this.http.get(`${environment.apiUrl}get_nearest_tours/?latitude=${lat}&longitude=${long}`)
+  getClosestTours(lat:string, long:string) {  
+  const lang = localStorage.getItem('language');
+  return this.http.get(`${environment.apiUrl}get_nearest_tours/?latitude=${lat}&longitude=${long}&language=${lang}`)
       .pipe(map((data: any) => {        
         return data;
       }));
   }
-  getRadomTours() {    
-    return this.http.get(`${environment.apiUrl}get_random_tours/`)
+  getRadomTours() {
+    const lang = localStorage.getItem('language');
+    return this.http.get(`${environment.apiUrl}get_random_tours/?language=${lang}`)
       .pipe(map((data: any) => {        
         return data;
       }));
   }
   getAllTours() {    
-    return this.http.get(`${environment.apiUrl}get_nearest_tours_all/?page=1&latitude=None&longitude=None`)
+    const lang = localStorage.getItem('language');
+    return this.http.get(`${environment.apiUrl}get_nearest_tours_all/?page=1&latitude=None&longitude=None&language=${lang}`)
       .pipe(map((data: any) => {        
         return data;
       }));

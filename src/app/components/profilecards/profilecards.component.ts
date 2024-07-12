@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
@@ -10,14 +11,18 @@ export class ProfilecardsComponent {
   $prof!:any;
   profile:any;
 
-  constructor(private sharedService:SharedService){
+  constructor(private sharedService:SharedService, private router: Router){
     this.$prof=this.sharedService.getProfile;
   }
   ngOnInit(){
     this.$prof.subscribe((data: any) => {
-      this.profile = data; 
-      console.log('this.profile ', this.profile);     
+      this.profile = data;  
     });    
   }
-
+  History() {
+    console.log("falta esto");
+  }
+  toursUploaded() {
+    this.router.navigate(['/my-tours']);
+  }
  }

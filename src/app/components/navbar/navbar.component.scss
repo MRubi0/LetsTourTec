@@ -73,5 +73,7 @@
     margin-top: 1rem; /* Ajusta el margen superior para alinear con el inicio del contenedor */
     margin-left: auto; /* Alinea a la derecha en modo móvil */ 
   }
-
+}
+#flag:hover{
+  cursor: pointer;
 }
