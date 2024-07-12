@@ -31,10 +31,10 @@ export class StepService {
     return this.http.post(url, { tour_id: tourId });
   }
   
-  enviarValoracion(tourId: string, calificacion: number) {
-    console.log(tourId, calificacion)
+  enviarValoracion(tourId: string, calificacion: number, comentario: string) {
+    console.log(tourId, calificacion, comentario)
     const url = `${environment.apiUrl}crear_valoracion`;
-    return this.http.post(url, { tour_id: tourId, puntuacion: calificacion });
+    return this.http.post(url, { tour_id: tourId, puntuacion: calificacion, comentario: comentario });
   }
 
 }

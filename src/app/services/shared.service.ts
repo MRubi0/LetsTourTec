@@ -38,10 +38,9 @@ export class SharedService {
   get getProfile(){
     return this.profile.asObservable();    
   }
-
+  
   getMediaValoraciones(tourId: number): Observable<any> {
     const url = `${environment.apiUrl}tour/${tourId}/media-valoracion/`;
     return this.http.get(url);
   }
-
 }

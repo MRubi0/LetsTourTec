@@ -66,8 +66,8 @@ export class ExitComponent implements AfterViewInit {
     console.log("ngAfterViewInit ejecutado");
     setTimeout(() => {
       this.dialog.open(VotacionModalComponent, {
-        width: '85%',
-        height:'375px',
+        width: '90%',
+        height:'400px',
         data: { tourId: this.id }
       }).afterClosed().subscribe(result => {
         console.log('El modal de votación fue cerrado', result);
