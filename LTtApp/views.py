@@ -1041,10 +1041,12 @@ def upload_file_to_s3(file_path, bucket_name, folder_path, file_name):
 @api_view(['POST'])
 @permission_classes([AllowAny])  # Cambia según tus requerimientos de autenticación
 def crear_valoracion(request):
+    
     data = request.data
-
-    # Asegúrate de que el 'tour_id' y la 'puntuacion' están presentes
+    
+    # Asegúrate de que el 'tour_id' y la 'puntuacion' están presentes, la resena no porque es opcional
     if 'tour_id' not in data or 'puntuacion' not in data:
+        
         return JsonResponse({'error': 'Faltan datos necesarios'}, status=400)
 
     # Intenta obtener el tour
@@ -1055,6 +1057,7 @@ def crear_valoracion(request):
         'puntuacion': data['puntuacion'],
         'comentario': data.get('comentario', '')  # El comentario es opcional
     }
+    
     if request.user.is_authenticated:
         valoracion_existente = Valoracion.objects.filter(tour=tour, user=request.user).first()
 
@@ -1064,12 +1067,13 @@ def crear_valoracion(request):
                 setattr(valoracion_existente, key, value)
             valoracion_existente.fecha = timezone.now()  # Actualiza la fecha
             valoracion_existente.save()
+            
             return JsonResponse({'mensaje': 'Valoración actualizada correctamente'}, status=200)
 
 
 
     form = ValoracionForm(valoracion_data)
-
+    
     if form.is_valid():
         valoracion = form.save(commit=False)
         valoracion.tour = tour
@@ -1077,13 +1081,16 @@ def crear_valoracion(request):
         # Asocia el usuario solo si está autenticado
         if request.user.is_authenticated:
             valoracion.user = request.user
-
+           
         try:
             valoracion.save()
+           
             return JsonResponse({'mensaje': 'Valoración creada correctamente'}, status=201)
         except ValidationError as e:
+         
             return JsonResponse({'error': str(e)}, status=400)
     else:
+        
         return JsonResponse({'error': 'Datos inválidos', 'detalles': form.errors}, status=400)
     
 
