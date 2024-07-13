@@ -41,11 +41,20 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+<<<<<<< HEAD
 from .forms import (AudioFileForm, CustomUserCreationForm, EditProfileForm,
                     EncuestaForm, GuideForm, ImageFileForm, LocationForm,
                     TourForm, ValoracionForm)
 from .models import (AudioFile, CustomUser, Encuesta, Guide, ImageFile,
                      Location, Paso, Tour, TourRecord, TourRelation, Valoracion)
+=======
+from .forms import (
+    AudioFileForm, CustomUserCreationForm, EditProfileForm, EncuestaForm,
+    GuideForm, ImageFileForm, LocationForm, TourForm, ValoracionForm)
+from .models import (
+    AudioFile, CustomUser, Encuesta, Guide, ImageFile, Location, Paso, PasoSerializer,
+    Tour, TourRecord, TourRelation, TourSerializer, Valoracion)
+>>>>>>> 1e4df47066bd8eae0f42ab67a54da721fe5ccd4f
 
 
 
@@ -885,9 +894,7 @@ def get_tour_locations(request, tour_id):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def create_tour_record(request):
-    
+def create_tour_record(request):    
     tour_id = request.data.get('tour_id')
     if not tour_id:
         print("Error: Falta el ID del tour")
@@ -1254,6 +1261,49 @@ def translate_text(text, idioma_origen, tour_destino):
     translated_text = response.json().get('data', {}).get('translations', [])[0].get('translatedText', '')
     return translated_text
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_tour(request, tour_id):
+    if not request.user.is_authenticated:
+        return Response({'error': 'Usuario no autenticado'}, status=401)
+
+    try:
+        tour = Tour.objects.get(id=tour_id, user=request.user)
+    except Tour.DoesNotExist:
+        return Response({'error': 'Tour no encontrado o no tiene permisos para editarlo'}, status=404)
+
+    if request.method == 'PUT':
+        serializer = TourSerializer(tour, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+
+            pasos_data = request.data.get('steps', [])
+            print('pasos_data ---->', pasos_data)
+            for paso_data in pasos_data:
+                paso_id = paso_data.get('id')
+                print('paso_id -->', paso_id)
+                if paso_id:
+                    try:
+                        paso = Paso.objects.get(id=paso_id, tour=tour)
+                        print('paso --->', paso, paso_id )
+                        paso_serializer = PasoSerializer(paso, data=paso_data, partial=True)
+                        print('paso_serializer ', paso_serializer)
+                        if paso_serializer.is_valid():
+                            paso_serializer.save()
+                        else:
+                            return Response(paso_serializer.errors, status=400)
+                    except Paso.DoesNotExist:
+                        return Response({'error': f'Paso con id {paso_id} no encontrado o no pertenece al tour con id {tour_id}'}, status=404)
+                else:
+                    paso_data['tour'] = tour.id
+                    paso_serializer = PasoSerializer(data=paso_data)
+                    if paso_serializer.is_valid():
+                        paso_serializer.save()
+                    else:
+                        return Response(paso_serializer.errors, status=400)
+
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
 @csrf_exempt
 @api_view(['POST'])
 def translate_and_save_tour(request, tour_id):

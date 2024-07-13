@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from LTtApp.views import register_view,  test_auth
+from LTtApp.views import edit_tour, register_view,  test_auth
 from LTtApp.views import upload_tours, crear_valoracion
 #from LTtApp.views import upload_tour
 from LTtApp import views
@@ -55,6 +55,7 @@ urlpatterns = [
     path('tour/<int:tour_id>/media-valoracion/', views.media_valoracion_tour, name='media-valoracion-tour'),
     path('api/get_tour_with_steps/<int:tour_id>/<str:languaje>/', views.get_tour_with_steps, name='get_tour_with_steps'),
     path('api/translate_and_save_tour/<int:tour_id>/', views.translate_and_save_tour, name='translate_and_save_tour'),
+    path('api/edit_tour/<int:tour_id>/', views.edit_tour, name='edit_tour'),
     path('start_transcription_job/<int:tour_id>/', views.start_transcription_job, name='start_transcription_job'),
     path('translate_transcription/<int:tour_id>/', views.translate_transcription, name='translate_transcription'), 
     path('convert_text_to_audio/<int:tour_id>/', views.convert_text_to_audio, name='convert_text_to_audio'),

@@ -10,7 +10,7 @@ import boto3
 import os
 import time
 from django.core.files.base import ContentFile
-
+from rest_framework import serializers
 
 #from django.contrib.gis.db.models import PointField
 
@@ -249,6 +249,17 @@ class Paso(models.Model):
 
     def __str__(self):
         return str(self.step_number)
+
+class TourSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tour
+        fields = '__all__'
+
+class PasoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Paso
+        fields = '__all__'
+
 class TourRecord(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
