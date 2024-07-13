@@ -16,8 +16,8 @@ import boto3
 import chardet
 from PIL import Image
 from django.contrib import messages
-from django.contrib.auth import (authenticate, get_user_model, login,
-                                 login_required, logout, update_session_auth_hash)
+from django.contrib.auth import authenticate, get_user_model, login
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core import serializers
@@ -51,19 +51,19 @@ from .models import (AudioFile, CustomUser, Encuesta, Guide, ImageFile,
 
 
 
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-# def test_auth(request):
-#     # Esta vista es solo para propósitos de testeo.
-#     return Response({'message': 'El token es válido y el usuario está autenticado'}, status=status.HTTP_200_OK)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def test_auth(request):
+    # Esta vista es solo para propósitos de testeo.
+    return Response({'message': 'El token es válido y el usuario está autenticado'}, status=status.HTTP_200_OK)
 
 
-# @csrf_exempt
-# def csrf_token_view(request):
-#     """Obtiene el token CSRF de Django."""
-#     csrf_token = get_token(request)
-#     print('csrf_token ->', csrf_token);
-#     return JsonResponse({'csrf_token': csrf_token})
+@csrf_exempt
+def csrf_token_view(request):
+    """Obtiene el token CSRF de Django."""
+    csrf_token = get_token(request)
+    print('csrf_token ->', csrf_token);
+    return JsonResponse({'csrf_token': csrf_token})
 
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -97,9 +97,9 @@ def haversine(lat1, lon1, lat2, lon2):
 #         form = EditProfileForm(instance=request.user)
 #     return render(request, 'user/edit_profile.html', {'form': form})
 
-# @login_required
-# def profile(request):
-#     return render(request, 'user/profile.html', {'user': request.user})
+@login_required
+def profile(request):
+    return render(request, 'user/profile.html', {'user': request.user})
 
 
 @api_view(['POST'])
