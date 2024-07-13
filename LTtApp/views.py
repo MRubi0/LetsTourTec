@@ -27,6 +27,7 @@ from django.core.paginator import Paginator
 from django.db import OperationalError, transaction, connection
 from django.db.models import Avg, ExpressionWrapper, F, FloatField, Func, Q
 from django.db.models.expressions import RawSQL
+from botocore.exceptions import ClientError
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, redirect, render
@@ -1640,7 +1641,9 @@ def convert_text_to_audio(request, tour_id=298):
 
 
             if step !=0:
-                output_key_audio = f'Tour_audio/{str(tour_id).zfill(5)}/{str(step).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
+                #output_key_audio = f'Tour_audio/{str(tour_id).zfill(5)}/{str(step).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
+                output_key_audio = f"Tour_audio/{str(tour_id).zfill(5)}/{str(step).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3"
+
                 
                 try:
                     paso = Paso.objects.get(tour=tour_id, step_number=step)
@@ -1649,7 +1652,7 @@ def convert_text_to_audio(request, tour_id=298):
                 except Paso.DoesNotExist:
                     return JsonResponse({'error': 'Paso not found'}, status=404)
             else:
-                output_key_audio = f'Tour_audio/{str(tour_id).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
+                output_key_audio = f"Tour_audio/{str(tour_id).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3"
                 try:
                     tour = Tour.objects.get(id=tour_id)
                     tour.audio = output_key_audio
