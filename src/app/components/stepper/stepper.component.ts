@@ -233,7 +233,7 @@ export class StepperComponent {
       },
       (error:any)=>{
         this.snackService.openSnackBar(error.error.error, 'error');
-        this.router.navigate(['/home']);
+        this.router.navigate([`/exit/${this.tour_id}`]);
       }
     );
   }
