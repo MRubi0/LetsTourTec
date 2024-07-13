@@ -41,20 +41,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-<<<<<<< HEAD
 from .forms import (AudioFileForm, CustomUserCreationForm, EditProfileForm,
                     EncuestaForm, GuideForm, ImageFileForm, LocationForm,
                     TourForm, ValoracionForm)
 from .models import (AudioFile, CustomUser, Encuesta, Guide, ImageFile,
                      Location, Paso, Tour, TourRecord, TourRelation, Valoracion)
-=======
-from .forms import (
-    AudioFileForm, CustomUserCreationForm, EditProfileForm, EncuestaForm,
-    GuideForm, ImageFileForm, LocationForm, TourForm, ValoracionForm)
-from .models import (
-    AudioFile, CustomUser, Encuesta, Guide, ImageFile, Location, Paso, PasoSerializer,
-    Tour, TourRecord, TourRelation, TourSerializer, Valoracion)
->>>>>>> 1e4df47066bd8eae0f42ab67a54da721fe5ccd4f
+
 
 
 
