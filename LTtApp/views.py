@@ -3,25 +3,28 @@ import json
 import math
 import os
 import random
+import re
 import requests
 import shutil
 import sqlite3
 import time
-import chardet
+import unicodedata
 from datetime import datetime
 from math import atan2, cos, radians, sin, sqrt
-from django.db import transaction
-from botocore.exceptions import ClientError
+
 import boto3
+import chardet
+from PIL import Image
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, get_user_model
+from django.contrib.auth import (authenticate, get_user_model, login,
+                                 login_required, logout, update_session_auth_hash)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core import serializers
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.paginator import Paginator
-from django.db import OperationalError, connection
+from django.db import OperationalError, transaction, connection
 from django.db.models import Avg, ExpressionWrapper, F, FloatField, Func, Q
 from django.db.models.expressions import RawSQL
 from django.http import JsonResponse
@@ -33,35 +36,33 @@ from django.utils.crypto import get_random_string
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
-from PIL import Image
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-import re
-import unicodedata
-import io
 
-from .forms import (
-    AudioFileForm, CustomUserCreationForm, EditProfileForm, EncuestaForm,
-    GuideForm, ImageFileForm, LocationForm, TourForm, ValoracionForm)
-from .models import (
-    AudioFile, CustomUser, Encuesta, Guide, ImageFile, Location, Paso,
-    Tour, TourRecord, TourRelation, Valoracion)
+from .forms import (AudioFileForm, CustomUserCreationForm, EditProfileForm,
+                    EncuestaForm, GuideForm, ImageFileForm, LocationForm,
+                    TourForm, ValoracionForm)
+from .models import (AudioFile, CustomUser, Encuesta, Guide, ImageFile,
+                     Location, Paso, Tour, TourRecord, TourRelation, Valoracion)
 
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def test_auth(request):
-    # Esta vista es solo para propósitos de testeo.
-    return Response({'message': 'El token es válido y el usuario está autenticado'}, status=status.HTTP_200_OK)
-@csrf_exempt
-def csrf_token_view(request):
-    """Obtiene el token CSRF de Django."""
-    csrf_token = get_token(request)
-    print('csrf_token ->', csrf_token);
-    return JsonResponse({'csrf_token': csrf_token})
+
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def test_auth(request):
+#     # Esta vista es solo para propósitos de testeo.
+#     return Response({'message': 'El token es válido y el usuario está autenticado'}, status=status.HTTP_200_OK)
+
+
+# @csrf_exempt
+# def csrf_token_view(request):
+#     """Obtiene el token CSRF de Django."""
+#     csrf_token = get_token(request)
+#     print('csrf_token ->', csrf_token);
+#     return JsonResponse({'csrf_token': csrf_token})
 
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -83,22 +84,44 @@ def haversine(lat1, lon1, lat2, lon2):
 
 
 
+# @permission_classes([IsAuthenticated])
+# def edit_profile(request):
+#     if request.method == 'POST':
+#         form = EditProfileForm(request.POST, request.FILES, instance=request.user)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, 'Tu perfil ha sido actualizado correctamente.')
+#             return redirect('profile')
+#     else:
+#         form = EditProfileForm(instance=request.user)
+#     return render(request, 'user/edit_profile.html', {'form': form})
+
+# @login_required
+# def profile(request):
+#     return render(request, 'user/profile.html', {'user': request.user})
+
+
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def edit_profile(request):
     if request.method == 'POST':
-        form = EditProfileForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Tu perfil ha sido actualizado correctamente.')
-            return redirect('profile')
-    else:
-        form = EditProfileForm(instance=request.user)
-    return render(request, 'user/edit_profile.html', {'form': form})
+        user = request.user
+        data = request.data
 
-@login_required
-def profile(request):
-    return render(request, 'user/profile.html', {'user': request.user})
+        if 'firstName' in data:
+            user.first_name = data['firstName']
+        if 'lastName' in data:
+            user.last_name = data['lastName']
+        if 'email' in data:
+            user.email = data['email']
+        if 'bio' in data:
+            user.bio = data['bio']
+        if 'avatar' in request.FILES:
+            user.avatar.save(request.FILES['avatar'].name, request.FILES['avatar'])
 
+        user.save()
+        return Response({'message': 'Profile updated successfully'})
+    return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 

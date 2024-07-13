@@ -8,6 +8,7 @@ from io import BytesIO
 import requests
 import boto3
 import os
+import time
 from django.core.files.base import ContentFile
 
 
@@ -147,6 +148,14 @@ class Tour(models.Model):
                 region_name='eu-north-1'
             )
 
+
+
+    # def __str__(self):
+    #     return self.titulo
+
+
+
+
     def as_dict(self):
         return {
             "id": self.id,  # Incluye el id del tour
@@ -179,6 +188,12 @@ class Paso(models.Model):
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # class Meta:
+    #     ordering = ['step_number']
+
+    # def __str__(self):
+    #     return str(self.step_number)
 
 
     def save(self, *args, **kwargs):
