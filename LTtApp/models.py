@@ -96,9 +96,9 @@ class Location(models.Model):
 class Tour(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=255)
-    imagen = models.ImageField(upload_to='tours/', max_length=255)  # Aumentado el tamaño
+    imagen = models.ImageField(upload_to='Tour_imagen/', max_length=255)  # Aumentado el tamaño
     descripcion = models.TextField()
-    audio = models.FileField(upload_to='tour_audio/', null=True, blank=True)
+    audio = models.FileField(upload_to='Tour_audio/', null=True, blank=True)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     duracion = models.PositiveIntegerField("Duración en minutos", null=True, blank=True)
@@ -180,8 +180,8 @@ class TourRelation(models.Model):
 class Paso(models.Model):
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
     step_number = models.IntegerField(default=None)
-    image = models.ImageField(upload_to='pasos/', null=True, blank=True, max_length=255)
-    audio = models.FileField(upload_to='paso_audio/', null=True, blank=True)
+    image = models.ImageField(upload_to='Tour_imagen/', null=True, blank=True, max_length=255)
+    audio = models.FileField(upload_to='Tour_audio/', null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     tittle = models.TextField(null=True, blank=True)  # Corregido "tittle" a "title"

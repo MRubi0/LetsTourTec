@@ -86,44 +86,44 @@ def haversine(lat1, lon1, lat2, lon2):
 
 
 
-# @permission_classes([IsAuthenticated])
-# def edit_profile(request):
-#     if request.method == 'POST':
-#         form = EditProfileForm(request.POST, request.FILES, instance=request.user)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'Tu perfil ha sido actualizado correctamente.')
-#             return redirect('profile')
-#     else:
-#         form = EditProfileForm(instance=request.user)
-#     return render(request, 'user/edit_profile.html', {'form': form})
+@permission_classes([IsAuthenticated])
+def edit_profile(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Tu perfil ha sido actualizado correctamente.')
+            return redirect('profile')
+    else:
+        form = EditProfileForm(instance=request.user)
+    return render(request, 'user/edit_profile.html', {'form': form})
 
 @login_required
 def profile(request):
     return render(request, 'user/profile.html', {'user': request.user})
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def edit_profile(request):
-    if request.method == 'POST':
-        user = request.user
-        data = request.data
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def edit_profile(request):
+#     if request.method == 'POST':
+#         user = request.user
+#         data = request.data
 
-        if 'firstName' in data:
-            user.first_name = data['firstName']
-        if 'lastName' in data:
-            user.last_name = data['lastName']
-        if 'email' in data:
-            user.email = data['email']
-        if 'bio' in data:
-            user.bio = data['bio']
-        if 'avatar' in request.FILES:
-            user.avatar.save(request.FILES['avatar'].name, request.FILES['avatar'])
+#         if 'firstName' in data:
+#             user.first_name = data['firstName']
+#         if 'lastName' in data:
+#             user.last_name = data['lastName']
+#         if 'email' in data:
+#             user.email = data['email']
+#         if 'bio' in data:
+#             user.bio = data['bio']
+#         if 'avatar' in request.FILES:
+#             user.avatar.save(request.FILES['avatar'].name, request.FILES['avatar'])
 
-        user.save()
-        return Response({'message': 'Profile updated successfully'})
-    return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+#         user.save()
+#         return Response({'message': 'Profile updated successfully'})
+#     return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 
@@ -206,13 +206,14 @@ def upload_tours(request):
             if 'imagen' in request.FILES:
                 image_file = request.FILES['imagen']
                 timestamp = int(time.time() * 1000)
-                image_name = f"{next_id_es}/{timestamp}.jpg"
+                image_name = f"{str(next_id_es).zfill(5)}/{timestamp}.jpg"
+                
                 tour_es.imagen.save(image_name, image_file)
 
             if 'audio' in request.FILES:
                 audio_file = request.FILES['audio']
                 timestamp = int(time.time() * 1000)
-                audio_name = f"{next_id_es}/aud_{timestamp}.mp3"
+                audio_name = f"{str(next_id_es).zfill(5)}/aud_{timestamp}.mp3"
                 tour_es.audio.save(audio_name, audio_file)    
 
             if tour_es.tipo_de_tour == 'leisure':
@@ -263,7 +264,7 @@ def upload_tours(request):
                     if request.FILES[f'extra_step_audio_{i}']:          
                         extra_audio_file = request.FILES[f'extra_step_audio_{i}']                        
                         timestamp = int(time.time() * 1000)
-                        extra_audio_name = f"extra_audio_{next_id_es}/{timestamp}.mp3"
+                        extra_audio_name = f"Tour_audio/{str(next_id_es).zfill(5)}/{str(i+1).zfill(5)}//{timestamp}.mp3"
                         paso_en.audio.save(extra_audio_name, extra_audio_file)
                         paso_es.audio.save(extra_audio_name, extra_audio_file)
 
@@ -287,7 +288,7 @@ def upload_tours(request):
                     if extra_image_key in request.FILES:
                        extra_image_file = request.FILES[f'extra_step_image_{i}']
                        timestamp = int(time.time() * 1000)
-                       extra_image_name = f"extra_image_{next_id_es}/{timestamp}.jpg"
+                       extra_image_name = f"Tour_imagen/{str(next_id_es).zfill(5)}/{str(i+1).zfill(5)}/extra_image_{next_id_es}/{timestamp}.jpg"
                        paso_es.image.save(extra_image_name, extra_image_file, save=False)  
                        paso_en.image = paso_es.image                 
                        paso_es.save()
@@ -300,7 +301,7 @@ def upload_tours(request):
             tour_relation = TourRelation(tour_es=tour_es, tour_en=tour_en)
             tour_relation.save()
 
-            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro'})
+            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro equipo'})
 
 
 def upload_to_func(instance, filename):
