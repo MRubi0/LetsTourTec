@@ -5,13 +5,14 @@ import os
 import random
 import re
 import requests
+import folium
 import shutil
 import sqlite3
 import time
 import unicodedata
 from datetime import datetime
 from math import atan2, cos, radians, sin, sqrt
-
+import io
 import boto3
 import chardet
 from PIL import Image
@@ -28,7 +29,7 @@ from django.db import OperationalError, transaction, connection
 from django.db.models import Avg, ExpressionWrapper, F, FloatField, Func, Q
 from django.db.models.expressions import RawSQL
 from botocore.exceptions import ClientError
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseNotFound
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -1581,7 +1582,7 @@ def translate_transcription(request, tour_id=117):
 
     translated_text_with_hashes = '\n########################################################################\n'.join(translated_sections)
 
-    output_key = f'transcriptions/{str(related_tour_id).zfill(5)}/complete_transcription.txt'
+    output_key = f'transcriptions/{str(related_tour_id).zfill(5)}/complete_transcription_translated.txt'
     s3 = boto3.client('s3', region_name=region_name)
     try:
         s3.put_object(
@@ -1621,7 +1622,7 @@ def convert_text_to_audio(request, tour_id=298):
 
     bucket_name = 'bucket-test-west2'
     region_name = 'eu-west-2' 
-    key = f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription.txt'
+    key = f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription_translated.txt'
     s3 = boto3.client('s3', region_name=region_name)
 
     transcription_text = get_complete_transcription(bucket_name, region_name, key)
