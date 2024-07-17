@@ -7,7 +7,6 @@ import requests
 import shutil
 import sqlite3
 import time
-import chardet
 from datetime import datetime
 from math import atan2, cos, radians, sin, sqrt
 from django.db import transaction
@@ -1615,9 +1614,9 @@ def convert_text_to_audio(request, tour_id=298):
                 return JsonResponse({'error': audio_stream.decode('utf-8')}, status=500)
 
 
-            if step !=0:
-                output_key_audio = f'Tour_audio/{str(tour_id).zfill(5)}/{str(step).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
-                
+            if step != 0:
+                output_key_audio = f"Tour_audio/{str(tour_id).zfill(5)}/{str(step).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3"
+
                 try:
                     paso = Paso.objects.get(tour=tour_id, step_number=step)
                     paso.audio = output_key_audio
@@ -1625,7 +1624,7 @@ def convert_text_to_audio(request, tour_id=298):
                 except Paso.DoesNotExist:
                     return JsonResponse({'error': 'Paso not found'}, status=404)
             else:
-                output_key_audio = f'Tour_audio/{str(tour_id).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
+                output_key_audio = f"Tour_audio/{str(tour_id).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3"
                 try:
                     tour = Tour.objects.get(id=tour_id)
                     tour.audio = output_key_audio
