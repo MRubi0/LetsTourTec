@@ -14,6 +14,10 @@ from datetime import datetime
 from math import atan2, cos, radians, sin, sqrt
 import io
 import boto3
+<<<<<<< HEAD
+=======
+import chardet
+>>>>>>> a48f9cd7b499c72a302300c0132b6657f3aa119d
 from PIL import Image
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login
