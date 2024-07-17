@@ -3,27 +3,32 @@ import json
 import math
 import os
 import random
+import re
 import requests
+import folium
 import shutil
 import sqlite3
 import time
+import unicodedata
 from datetime import datetime
 from math import atan2, cos, radians, sin, sqrt
-from django.db import transaction
-from botocore.exceptions import ClientError
+import io
 import boto3
+from PIL import Image
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, get_user_model
+from django.contrib.auth import authenticate, get_user_model, login
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core import serializers
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.paginator import Paginator
-from django.db import OperationalError, connection
+from django.db import OperationalError, transaction, connection
 from django.db.models import Avg, ExpressionWrapper, F, FloatField, Func, Q
 from django.db.models.expressions import RawSQL
-from django.http import JsonResponse
+from botocore.exceptions import ClientError
+from django.http import JsonResponse, HttpResponseNotFound
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -32,21 +37,18 @@ from django.utils.crypto import get_random_string
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
-from PIL import Image
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-import re
-import unicodedata
-import io
 
-from .forms import (
-    AudioFileForm, CustomUserCreationForm, EditProfileForm, EncuestaForm,
-    GuideForm, ImageFileForm, LocationForm, TourForm, ValoracionForm)
-from .models import (
-    AudioFile, CustomUser, Encuesta, Guide, ImageFile, Location, Paso, PasoSerializer,
-    Tour, TourRecord, TourRelation, TourSerializer, Valoracion)
+from .forms import (AudioFileForm, CustomUserCreationForm, EditProfileForm,
+                    EncuestaForm, GuideForm, ImageFileForm, LocationForm,
+                    TourForm, ValoracionForm)
+from .models import (AudioFile, CustomUser, Encuesta, Guide, ImageFile,
+                     Location, Paso, Tour, TourRecord, TourRelation, Valoracion, PasoSerializer, TourSerializer)
+
+
 
 
 
@@ -55,6 +57,8 @@ from .models import (
 def test_auth(request):
     # Esta vista es solo para propósitos de testeo.
     return Response({'message': 'El token es válido y el usuario está autenticado'}, status=status.HTTP_200_OK)
+
+
 @csrf_exempt
 def csrf_token_view(request):
     """Obtiene el token CSRF de Django."""
@@ -98,6 +102,28 @@ def edit_profile(request):
 def profile(request):
     return render(request, 'user/profile.html', {'user': request.user})
 
+
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def edit_profile(request):
+#     if request.method == 'POST':
+#         user = request.user
+#         data = request.data
+
+#         if 'firstName' in data:
+#             user.first_name = data['firstName']
+#         if 'lastName' in data:
+#             user.last_name = data['lastName']
+#         if 'email' in data:
+#             user.email = data['email']
+#         if 'bio' in data:
+#             user.bio = data['bio']
+#         if 'avatar' in request.FILES:
+#             user.avatar.save(request.FILES['avatar'].name, request.FILES['avatar'])
+
+#         user.save()
+#         return Response({'message': 'Profile updated successfully'})
+#     return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 
@@ -180,13 +206,14 @@ def upload_tours(request):
             if 'imagen' in request.FILES:
                 image_file = request.FILES['imagen']
                 timestamp = int(time.time() * 1000)
-                image_name = f"{next_id_es}/{timestamp}.jpg"
+                image_name = f"{str(next_id_es).zfill(5)}/{timestamp}.jpg"
+                
                 tour_es.imagen.save(image_name, image_file)
 
             if 'audio' in request.FILES:
                 audio_file = request.FILES['audio']
                 timestamp = int(time.time() * 1000)
-                audio_name = f"{next_id_es}/aud_{timestamp}.mp3"
+                audio_name = f"{str(next_id_es).zfill(5)}/aud_{timestamp}.mp3"
                 tour_es.audio.save(audio_name, audio_file)    
 
             if tour_es.tipo_de_tour == 'leisure':
@@ -237,7 +264,7 @@ def upload_tours(request):
                     if request.FILES[f'extra_step_audio_{i}']:          
                         extra_audio_file = request.FILES[f'extra_step_audio_{i}']                        
                         timestamp = int(time.time() * 1000)
-                        extra_audio_name = f"extra_audio_{next_id_es}/{timestamp}.mp3"
+                        extra_audio_name = f"Tour_audio/{str(next_id_es).zfill(5)}/{str(i+1).zfill(5)}//{timestamp}.mp3"
                         paso_en.audio.save(extra_audio_name, extra_audio_file)
                         paso_es.audio.save(extra_audio_name, extra_audio_file)
 
@@ -261,7 +288,7 @@ def upload_tours(request):
                     if extra_image_key in request.FILES:
                        extra_image_file = request.FILES[f'extra_step_image_{i}']
                        timestamp = int(time.time() * 1000)
-                       extra_image_name = f"extra_image_{next_id_es}/{timestamp}.jpg"
+                       extra_image_name = f"Tour_imagen/{str(next_id_es).zfill(5)}/{str(i+1).zfill(5)}/extra_image_{next_id_es}/{timestamp}.jpg"
                        paso_es.image.save(extra_image_name, extra_image_file, save=False)  
                        paso_en.image = paso_es.image                 
                        paso_es.save()
@@ -274,7 +301,7 @@ def upload_tours(request):
             tour_relation = TourRelation(tour_es=tour_es, tour_en=tour_en)
             tour_relation.save()
 
-            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro'})
+            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro equipo'})
 
 
 def upload_to_func(instance, filename):
@@ -1554,7 +1581,7 @@ def translate_transcription(request, tour_id=117):
 
     translated_text_with_hashes = '\n########################################################################\n'.join(translated_sections)
 
-    output_key = f'transcriptions/{str(related_tour_id).zfill(5)}/complete_transcription.txt'
+    output_key = f'transcriptions/{str(related_tour_id).zfill(5)}/complete_transcription_translated.txt'
     s3 = boto3.client('s3', region_name=region_name)
     try:
         s3.put_object(
@@ -1594,7 +1621,7 @@ def convert_text_to_audio(request, tour_id=298):
 
     bucket_name = 'bucket-test-west2'
     region_name = 'eu-west-2' 
-    key = f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription.txt'
+    key = f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription_translated.txt'
     s3 = boto3.client('s3', region_name=region_name)
 
     transcription_text = get_complete_transcription(bucket_name, region_name, key)
@@ -1614,9 +1641,11 @@ def convert_text_to_audio(request, tour_id=298):
                 return JsonResponse({'error': audio_stream.decode('utf-8')}, status=500)
 
 
-            if step != 0:
+            if step !=0:
+                #output_key_audio = f'Tour_audio/{str(tour_id).zfill(5)}/{str(step).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
                 output_key_audio = f"Tour_audio/{str(tour_id).zfill(5)}/{str(step).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3"
 
+                
                 try:
                     paso = Paso.objects.get(tour=tour_id, step_number=step)
                     paso.audio = output_key_audio

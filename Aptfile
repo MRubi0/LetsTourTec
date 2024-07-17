@@ -1,0 +1,4 @@
+g++
+libatlas-base-dev
+libpq-dev
+libffi-dev
