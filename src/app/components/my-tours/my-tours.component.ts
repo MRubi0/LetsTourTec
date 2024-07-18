@@ -34,11 +34,15 @@ export class MyToursComponent {
         const decodedToken: any = jwtDecode(accessToken);
         this.id = decodedToken.user_id;        
     }
-    if(this.id==this.profile.id){
+    if(this.profile.id){
+      if(this.id==this.profile.id){
+        this.userId=this.id;
+      }
+      else{
+        this.userId=this.profile.id;
+      }
+    }else{
       this.userId=this.id;
-    }
-    else{
-      this.userId=this.profile.id;
     }   
     this.http.get(`${environment.apiUrl}api/get_user_tours?id=${this.userId}`).subscribe(data => {
         this.tours = (data as any)['tours'];
