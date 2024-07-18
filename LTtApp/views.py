@@ -1896,4 +1896,3 @@ def get_next_id():
         """)
         row = cursor.fetchone()
     return row[0] if row else None
-
