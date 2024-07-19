@@ -915,29 +915,52 @@ def create_tour_record(request):
 def get_user_tour_records(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
-        print(f'Received user_id: {user_id}')
+        language = request.GET.get('language', 'es')
+        print(f'Received user_id: {user_id}, language: {language}')
         
         if user_id:
             tours = Tour.objects.filter(user_id=user_id)
             print(f'Found tours for user {user_id}: {tours}')
             tours_data = []
+            processed_tours = set()
 
             for tour in tours:
-                # Buscar la relación del tour en otros idiomas
-                relation = TourRelation.objects.filter(tour_es=tour).first() or TourRelation.objects.filter(tour_en=tour).first()
+                if tour.id in processed_tours:
+                    continue
                 
+                # Obtener el tour en el idioma preferido
+                if language == 'es':
+                    related_tour = TourRelation.objects.filter(tour_es=tour).first()
+                else:
+                    related_tour = TourRelation.objects.filter(tour_en=tour).first()
+
+                if related_tour:
+                    if language == 'es':
+                        tour_to_use = related_tour.tour_es
+                        other_tour = related_tour.tour_en
+                    else:
+                        tour_to_use = related_tour.tour_en
+                        other_tour = related_tour.tour_es
+                else:
+                    tour_to_use = tour
+                    other_tour = None
+
+                # Registrar el tour procesado
+                processed_tours.add(tour_to_use.id)
+                if other_tour:
+                    processed_tours.add(other_tour.id)
+
                 # Obtener todas las valoraciones del tour actual solo del usuario autenticado
-                valoraciones = Valoracion.objects.filter(tour_id=tour.id, user_id=user_id)
-                print(f'Valoraciones iniciales del tour {tour.id} para el usuario {user_id}: {valoraciones}')
+                valoraciones = Valoracion.objects.filter(tour_id=tour_to_use.id, user_id=user_id)
+                print(f'Valoraciones iniciales del tour {tour_to_use.id} para el usuario {user_id}: {valoraciones}')
                 
                 # Si hay una relación, agregar las valoraciones del tour relacionado solo del usuario autenticado
-                if relation:
-                    if relation.tour_es == tour and relation.tour_en:
-                        valoraciones = valoraciones | Valoracion.objects.filter(tour_id=relation.tour_en.id, user_id=user_id)
-                    elif relation.tour_en == tour and relation.tour_es:
-                        valoraciones = valoraciones | Valoracion.objects.filter(tour_id=relation.tour_es.id, user_id=user_id)
+                if other_tour:
+                    valoraciones_otro = Valoracion.objects.filter(tour_id=other_tour.id, user_id=user_id)
+                    valoraciones = valoraciones | valoraciones_otro
+                    print(f'Valoraciones relacionadas del tour {other_tour.id} para el usuario {user_id}: {valoraciones_otro}')
                 
-                print(f'Valoraciones finales del tour {tour.id} para el usuario {user_id}: {valoraciones}')
+                print(f'Valoraciones finales del tour {tour_to_use.id} para el usuario {user_id}: {valoraciones}')
 
                 valoraciones_data = []
 
@@ -950,23 +973,23 @@ def get_user_tour_records(request):
                     valoraciones_data.append(valoracion_data)
 
                 tour_data = {
-                    "id": tour.id,
-                    "titulo": tour.titulo,
-                    "descripcion": tour.descripcion,
-                    "imagen": {'url': tour.imagen.url} if tour.imagen else None,
-                    "audio": {'url': tour.audio.url} if tour.audio else None,
-                    "latitude": tour.latitude,
-                    "longitude": tour.longitude,
-                    "tipo_de_tour": tour.tipo_de_tour,
-                    "recorrido": tour.recorrido,
-                    "duracion": tour.duracion,
+                    "id": tour_to_use.id,
+                    "titulo": tour_to_use.titulo,
+                    "descripcion": tour_to_use.descripcion,
+                    "imagen": {'url': tour_to_use.imagen.url} if tour_to_use.imagen else None,
+                    "audio": {'url': tour_to_use.audio.url} if tour_to_use.audio else None,
+                    "latitude": tour_to_use.latitude,
+                    "longitude": tour_to_use.longitude,
+                    "tipo_de_tour": tour_to_use.tipo_de_tour,
+                    "recorrido": tour_to_use.recorrido,
+                    "duracion": tour_to_use.duracion,
                     "user": {
-                        'id': tour.user.id,
-                        'email': tour.user.email,
-                        'first_name': tour.user.first_name, 
-                        'last_name': tour.user.last_name,
-                        'avatar': tour.user.avatar.url if tour.user.avatar else None,
-                        'bio': tour.user.bio,
+                        'id': tour_to_use.user.id,
+                        'email': tour_to_use.user.email,
+                        'first_name': tour_to_use.user.first_name, 
+                        'last_name': tour_to_use.user.last_name,
+                        'avatar': tour_to_use.user.avatar.url if tour_to_use.user.avatar else None,
+                        'bio': tour_to_use.user.bio,
                     },
                     "valoraciones": valoraciones_data
                 }
