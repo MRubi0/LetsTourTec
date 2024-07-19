@@ -6,8 +6,6 @@ import { environment } from 'src/enviroment/enviroment';
 import { SharedService } from 'src/app/services/shared.service';
 
 
-
-
 export interface Tour {
   id: number;
   title: string;
@@ -22,43 +20,62 @@ export interface Tour {
   templateUrl: './history-tours.component.html',
   styleUrls: ['./history-tours.component.scss']
 })
-
-
 export class HistoryToursComponent implements OnInit {
   tourRecords: any[] = [];
   p: number = 1;
   pageSize: number = 12;
-  $prof!:any;
-  profile:any;
-  userId:number=0;
-  id:number=0;
-  constructor(private http: HttpClient, private authService: AuthService, private sharedService:SharedService) {
-    this.$prof=this.sharedService.getProfile;
-  }
+  profile: any;
+  userId: number | null = null;
+
+  constructor(private http: HttpClient, private authService: AuthService, private sharedService: SharedService) {}
 
   ngOnInit() {
-    this.$prof.subscribe((data: any) => {
-      this.profile = data; 
+    // Corrigiendo la llamada a getProfile
+    this.sharedService.getProfile.subscribe((data: any) => {
+      this.profile = data;
+      this.setUserId();
+      this.loadTourRecords();
     });
-      this.loadTourRecords(); 
+  }
+
+  setUserId(): void {
+    const accessToken = this.authService.getToken();
+    if (accessToken) {
+      const decodedToken: any = jwtDecode(accessToken);
+      this.userId = decodedToken.user_id || this.profile.id;
+    } else {
+      this.userId = this.profile.id;
+    }
+
+    if (!this.userId) {
+      console.error('Error: userId is undefined');
+    }
   }
 
   loadTourRecords(): void {
-    const accessToken = this.authService.getToken();
-    if (accessToken) {     
-        const decodedToken: any = jwtDecode(accessToken);
-        this.id = decodedToken.user_id;      
+    if (!this.userId) {
+      console.error('Error: userId is undefined');
+      return;
     }
-    if(this.id==this.profile.id){
-      this.userId=this.id;
-    }
-    else{
-      this.userId=this.profile.id;
-    }     
+
+
     this.http.get(`${environment.apiUrl}api/get_user_tour_records?id=${this.userId}`).subscribe(data => {
-        this.tourRecords = (data as any)['tours'];
-      }, (error: any) => {
-        console.error('Error al cargar los registros de tours:', error);
+      this.tourRecords = (data as any)['tours'];
+    }, (error: any) => {
+      console.error('Error al cargar los registros de tours:', error);
     });
+
+
+    // this.http.get(`${environment.apiUrl}api/get_user_tour_records`, {
+    //   params: { id: this.userId.toString(), language: lang }
+    // }).subscribe(data => {
+    //   this.tourRecords = (data as any)['tours'];
+    // }, (error: any) => {
+    //   console.error('Error al cargar los registros de tours:', error);
+    // });
+
+
+
+
   }
 }
