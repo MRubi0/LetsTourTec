@@ -915,24 +915,30 @@ def create_tour_record(request):
 def get_user_tour_records(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
+        print(f'Received user_id: {user_id}')
+        
         if user_id:
             tours = Tour.objects.filter(user_id=user_id)
+            print(f'Found tours for user {user_id}: {tours}')
             tours_data = []
 
             for tour in tours:
                 # Buscar la relación del tour en otros idiomas
                 relation = TourRelation.objects.filter(tour_es=tour).first() or TourRelation.objects.filter(tour_en=tour).first()
                 
-                # Obtener todas las valoraciones del tour actual
-                valoraciones = Valoracion.objects.filter(tour_id=tour.id)
+                # Obtener todas las valoraciones del tour actual solo del usuario autenticado
+                valoraciones = Valoracion.objects.filter(tour_id=tour.id, user_id=user_id)
+                print(f'Valoraciones iniciales del tour {tour.id} para el usuario {user_id}: {valoraciones}')
                 
-                # Si hay una relación, agregar las valoraciones del tour relacionado
+                # Si hay una relación, agregar las valoraciones del tour relacionado solo del usuario autenticado
                 if relation:
                     if relation.tour_es == tour and relation.tour_en:
-                        valoraciones = valoraciones | Valoracion.objects.filter(tour_id=relation.tour_en.id)
+                        valoraciones = valoraciones | Valoracion.objects.filter(tour_id=relation.tour_en.id, user_id=user_id)
                     elif relation.tour_en == tour and relation.tour_es:
-                        valoraciones = valoraciones | Valoracion.objects.filter(tour_id=relation.tour_es.id)
-                print('valoraciones ', valoraciones)
+                        valoraciones = valoraciones | Valoracion.objects.filter(tour_id=relation.tour_es.id, user_id=user_id)
+                
+                print(f'Valoraciones finales del tour {tour.id} para el usuario {user_id}: {valoraciones}')
+
                 valoraciones_data = []
 
                 for valoracion in valoraciones:
@@ -970,7 +976,7 @@ def get_user_tour_records(request):
             return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
-current_key_index = 0
+
 
 @csrf_exempt
 @require_POST
