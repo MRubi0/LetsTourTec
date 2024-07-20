@@ -714,6 +714,10 @@ def get_tour_with_steps(request, tour_id, languaje):
             "image": tour.imagen.url,
             "audio": tour.audio.url,
             "description": tour.descripcion,
+            "duracion":tour.duracion,
+            "recorrido":tour.recorrido,
+            "tipo_de_tour":tour.tipo_de_tour,
+            "idioma":tour.idioma,
             "steps": [],
             "relation":[related_tour_id,tour_id]
         }
@@ -726,7 +730,8 @@ def get_tour_with_steps(request, tour_id, languaje):
                 "latitude": step.latitude,
                 "longitude": step.longitude,
                 "description": step.description,
-                "tittle": step.tittle
+                "tittle": step.tittle,
+                "step_number":step.step_number
             })
 
         return Response(tour_data)
@@ -1234,16 +1239,12 @@ def edit_tour(request, tour_id):
             serializer.save()
 
             pasos_data = request.data.get('steps', [])
-            print('pasos_data ---->', pasos_data)
             for paso_data in pasos_data:
                 paso_id = paso_data.get('id')
-                print('paso_id -->', paso_id)
                 if paso_id:
                     try:
                         paso = Paso.objects.get(id=paso_id, tour=tour)
-                        print('paso --->', paso, paso_id )
                         paso_serializer = PasoSerializer(paso, data=paso_data, partial=True)
-                        print('paso_serializer ', paso_serializer)
                         if paso_serializer.is_valid():
                             paso_serializer.save()
                         else:
