@@ -3,6 +3,7 @@ import json
 import math
 import os
 import random
+from django.conf import settings
 import requests
 import sqlite3
 import time
@@ -11,6 +12,7 @@ from math import atan2, cos, radians, sin, sqrt
 from django.db import transaction
 from botocore.exceptions import ClientError
 import boto3
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -253,7 +255,7 @@ def upload_tours(request):
                         paso_en.longitude = extra_longitude                             
 
                     extra_image_key = f'extra_step_image_{i}'
-                    print('here 1', extra_image_key)
+        
                     if extra_image_key in request.FILES:
                        extra_image_file = request.FILES[f'extra_step_image_{i}']
                        timestamp = int(time.time() * 1000)
@@ -1224,43 +1226,135 @@ def translate_text(text, idioma_origen, tour_destino):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def edit_tour(request, tour_id):
-    if not request.user.is_authenticated:
-        return Response({'error': 'Usuario no autenticado'}, status=401)
-
-    try:
-        tour = Tour.objects.get(id=tour_id, user=request.user)
-    except Tour.DoesNotExist:
-        return Response({'error': 'Tour no encontrado o no tiene permisos para editarlo'}, status=404)
+def edit_tour(request, tour_id, size):
+    error_message = None
+    
+    language = request.POST.get('idioma', 'es')
+    if language == 'es':
+        tour_source = get_object_or_404(Tour, id=tour_id)
+    else:
+        tour_source = get_object_or_404(TourRelation, tour_en_id=tour_id).tour_en
 
     if request.method == 'PUT':
-        serializer = TourSerializer(tour, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
+        if not request.user.is_authenticated:
+            return Response({'error': 'Usuario no autenticado'}, status=401)
 
-            pasos_data = request.data.get('steps', [])
-            for paso_data in pasos_data:
-                paso_id = paso_data.get('id')
-                if paso_id:
-                    try:
-                        paso = Paso.objects.get(id=paso_id, tour=tour)
-                        paso_serializer = PasoSerializer(paso, data=paso_data, partial=True)
-                        if paso_serializer.is_valid():
-                            paso_serializer.save()
-                        else:
-                            return Response(paso_serializer.errors, status=400)
-                    except Paso.DoesNotExist:
-                        return Response({'error': f'Paso con id {paso_id} no encontrado o no pertenece al tour con id {tour_id}'}, status=404)
+        form = TourForm(request.POST, request.FILES, instance=tour_source)
+
+        if form.is_valid():
+            tour_source = form.save(commit=False)
+            tour_destino = 'en' if language == 'es' else 'es'
+            tour_source.user = request.user
+            tour_source.idioma = language
+
+            if 'imagen' in request.FILES:
+                image_file = request.FILES['imagen']
+                timestamp = int(time.time() * 1000)
+                image_name = f"{tour_source.id}/{timestamp}.jpg"
+                delete_s3_file(tour_source.imagen.name)
+                tour_source.imagen.save(image_name, image_file)
+
+            if 'audio' in request.FILES:
+                audio_file = request.FILES['audio']
+                timestamp = int(time.time() * 1000)
+                audio_name = f"{tour_source.id}/aud_{timestamp}.mp3"
+                delete_s3_file(tour_source.audio.name)
+                tour_source.audio.save(audio_name, audio_file)
+
+            tour_source.validado = False
+            tour_source.save()
+
+            if language == 'es':
+                tour_target = get_object_or_404(TourRelation, tour_es=tour_source).tour_en
+            else:
+                tour_target = get_object_or_404(TourRelation, tour_en=tour_source).tour_es
+
+            tour_target.user = request.user
+            tour_target.imagen = tour_source.imagen
+            tour_target.audio = tour_source.audio
+            tour_target.tipo_de_tour = tour_source.tipo_de_tour
+            tour_target.recorrido = tour_source.recorrido
+            tour_target.duracion = tour_source.duracion
+            tour_target.validado = False
+            tour_target.latitude = tour_source.latitude
+            tour_target.longitude = tour_source.longitude
+
+            tour_target.descripcion = translate_text(tour_source.descripcion, tour_source.idioma, tour_destino)
+            tour_target.titulo = translate_text(tour_source.titulo, tour_source.idioma, tour_destino)
+            tour_target.save()
+
+            for i in range(size):
+                extra_audio_key = f'steps[{i}][audio]'
+                extra_description_key = f'steps[{i}][description]'
+                extra_tittle_key = f'steps[{i}][tittle]'
+                extra_latitude_key = f'steps[{i}][latitude]'
+                extra_longitude_key = f'steps[{i}][longitude]'
+                extra_image_key = f'steps[{i}][image]'
+
+                extra_description = request.POST.get(extra_description_key, '')
+                extra_tittle = request.POST.get(extra_tittle_key, '')
+
+                if Paso.objects.filter(tour=tour_source, step_number=i + 1).exists():
+                    paso_source = Paso.objects.get(tour=tour_source, step_number=i + 1)
+                    paso_target = Paso.objects.get(tour=tour_target, step_number=i + 1)
                 else:
-                    paso_data['tour'] = tour.id
-                    paso_serializer = PasoSerializer(data=paso_data)
-                    if paso_serializer.is_valid():
-                        paso_serializer.save()
-                    else:
-                        return Response(paso_serializer.errors, status=400)
+                    paso_source = Paso(tour=tour_source, step_number=i + 1)
+                    paso_target = Paso(tour=tour_target, step_number=i + 1)
 
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+                if extra_audio_key in request.FILES:
+                    extra_audio_file = request.FILES[extra_audio_key]
+                    timestamp = int(time.time() * 1000)
+                    extra_audio_name = f"extra_audio_{tour_source.id}/{timestamp}.mp3"
+                    delete_s3_file(paso_source.audio.name)
+                    paso_source.audio.save(extra_audio_name, extra_audio_file)
+                    paso_target.audio.save(extra_audio_name, extra_audio_file)
+
+                extra_latitude = float(request.POST.get(extra_latitude_key, 0))
+                extra_longitude = float(request.POST.get(extra_longitude_key, 0))
+
+                paso_source.latitude = float(extra_latitude) if extra_latitude else 0.0
+                paso_target.latitude = paso_source.latitude
+                paso_source.longitude = float(extra_longitude) if extra_longitude else 0.0
+                paso_target.longitude = paso_source.longitude
+
+                paso_source.description = extra_description
+                paso_target.description = translate_text(extra_description, tour_source.idioma, tour_destino)
+                paso_source.tittle = extra_tittle
+                paso_target.tittle = translate_text(extra_tittle, tour_source.idioma, tour_destino)
+
+
+                if extra_image_key in request.FILES:
+                    extra_image_file = request.FILES[extra_image_key]
+                    timestamp = int(time.time() * 1000)
+                    extra_image_name = f"extra_image_{tour_source.id}/{timestamp}.jpg"
+                    delete_s3_file(paso_source.image.name)
+                    paso_source.image.save(extra_image_name, extra_image_file, save=False)
+                    paso_target.image = paso_source.image
+
+                paso_source.save()
+                paso_target.save()
+             
+
+            response_data = tour_source.as_dict()
+            response_data.update({"tour_target": tour_target.as_dict()})
+
+            return Response(response_data)
+
+def delete_s3_file(file_name):
+    if not file_name:
+        return
+    s3 = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                      aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                      region_name=settings.AWS_S3_REGION_NAME )
+    try:
+        s3.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=file_name)
+    except NoCredentialsError:
+        print("No AWS credentials found")
+    except PartialCredentialsError:
+        print("Incomplete AWS credentials")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+
 @csrf_exempt
 @api_view(['POST'])
 def translate_and_save_tour(request, tour_id):
