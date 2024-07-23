@@ -178,7 +178,9 @@ def upload_tours(request):
                 tour.tipo_de_tour='ocio'
             elif tour.tipo_de_tour=='nature':
                 tour.tipo_de_tour='naturaleza'
-
+            
+            tour.original = 'original'
+           
             tour.save()
             print(tour)
             # Procesar pasos adicionales
@@ -1024,7 +1026,7 @@ def media_valoracion_tour(request, tour_id):
         tour = get_object_or_404(Tour, pk=tour_id)
         resultado = Valoracion.objects.filter(tour=tour).aggregate(media_puntuacion=Avg('puntuacion'))
         media_puntuacion = resultado.get('media_puntuacion', 5.0)
-        if media_puntuacion is None:
+        if media_puntuacion == 0.0:
             media_puntuacion = 5.0
         # Guarda el valor calculado en la caché para futuras solicitudes
         cache.set(cache_key, media_puntuacion, timeout=3600*25)  # Lo guarda en caché por 25 hora
