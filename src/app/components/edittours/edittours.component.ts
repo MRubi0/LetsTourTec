@@ -14,6 +14,7 @@ export class EdittoursComponent {
   tour_id: string = '';
   image_url!: string;
   aud_url!:string;
+  deleting_steps: number[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -86,17 +87,19 @@ export class EdittoursComponent {
     formData.append('recorrido', this.tourForm.get('recorrido')?.value);
     formData.append('idioma', this.tourForm.get('idioma')?.value);
     formData.append('tipo_de_tour', this.tourForm.get('tipo_de_tour')?.value);
+    formData.append('deleting', JSON.stringify(this.deleting_steps));
+    
     this.steps.controls.forEach((control: AbstractControl, index: number) => {
       const stepGroup = control as FormGroup;
       const step = stepGroup.value;
-    
+  
       formData.append(`steps[${index}][id]`, step.id);
       formData.append(`steps[${index}][latitude]`, step.latitude);
       formData.append(`steps[${index}][longitude]`, step.longitude);
       formData.append(`steps[${index}][description]`, step.description);
       formData.append(`steps[${index}][tittle]`, step.tittle);
       formData.append(`steps[${index}][stepNumber]`, step.stepNumber);
-
+  
       if (step.image instanceof File) {
         formData.append(`steps[${index}][image]`, step.image);
       }
@@ -104,7 +107,7 @@ export class EdittoursComponent {
         formData.append(`steps[${index}][audio]`, step.audio);
       }
     });
-    console.log('this.steps.value ', this.steps.value.length);
+  
     this.edittoursService.editTour(this.tour_id, formData, this.steps.value.length).subscribe({
       next: (response: any) => {
         console.log('Tour actualizado con éxito:', response);
@@ -113,18 +116,39 @@ export class EdittoursComponent {
         console.error('Error al actualizar el tour:', error);
       }
     });
-  }    
-
+  }
+  
   onFileChange(event: any, index: number, field: string) {
     const file = event.target.files[0];
-    console.log('file ', file, field)
     const type = file.type.split('/')[0];
     const blob = new Blob([file], { type: file.type });
     this.steps.at(index).get(field)?.setValue(file);
-    if (type=='image') {
+    if (type == 'image') {
       this.image_url = URL.createObjectURL(blob)
-    }else{
+    } else {
       this.aud_url = URL.createObjectURL(blob)
     }
+  }
+  
+  deleteStep(index: number): void {
+    const stepId = this.steps.at(index).get('id')?.value;
+    this.steps.removeAt(index);
+
+    if (stepId) {
+      this.deleting_steps.push(stepId);
+    }
+  }
+
+  addNewStep() {
+    this.steps.push(this.fb.group({
+      id: [''],
+      image: [''],
+      audio: [''],
+      latitude: [''],
+      longitude: [''],
+      description: [''],
+      tittle: [''],
+      stepNumber: ['']
+    }));
   }
 }

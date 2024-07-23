@@ -59,6 +59,12 @@
           <div formArrayName="steps">
             <mat-vertical-stepper>
               <mat-step *ngFor="let step of steps.controls; let i = index" [formGroupName]="i">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-end">
+                        <button class="button_trash btn btn-outline-danger" (click)="deleteStep(i)"><img class="svg-img"  src="../../../assets/iconos/trash.svg" alt=""></button>
+                    </div>
+                </div>
+                
                 <h3><label for="image-{{i}}">Imagen</label></h3><br>
                 <div class="mb-3">
                   <img *ngIf="image_url" [src]="image_url">

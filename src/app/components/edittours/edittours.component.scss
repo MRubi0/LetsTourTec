@@ -9,3 +9,14 @@
 .input-group-text {
     height: 100% !important;
 }
+.button_trash{
+    border-radius: 90px;
+}
+.button_trash:hover{
+    cursor: pointer;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    .svg-img {
+        filter: invert(100%) brightness(100%);
+      }
+}
