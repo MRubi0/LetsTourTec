@@ -102,9 +102,14 @@ class Tour(models.Model):
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     duracion = models.PositiveIntegerField("Duración en minutos", null=True, blank=True)
-    recorrido = models.FloatField(null=True, blank=True)  # Recorrido en kilómetros
+
+    recorrido = models.FloatField(null=True, blank=True)   # Recorrido en kilómetros
+    original = models.TextField(null=True, blank=True)
+    
+
     idioma = models.CharField(max_length=2, default='es')
     validado = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     TIPO_DE_TOUR_CHOICES = [

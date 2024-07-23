@@ -193,6 +193,25 @@ def upload_tours(request):
         if not request.user.is_authenticated:
             return Response({'error': 'Usuario no autenticado'}, status=401)     
         form = TourForm(request.POST, request.FILES)       
+
+        
+        
+        # if form.is_valid():
+            # tour = form.save(commit=False)
+            # tour.user = request.user
+            # tour.image = request.FILES['imagen'] if 'imagen' in request.FILES else None
+
+            # if tour.tipo_de_tour=='leisure':
+                # tour.tipo_de_tour='ocio'
+            # elif tour.tipo_de_tour=='nature':
+                # tour.tipo_de_tour='naturaleza'
+            
+            # tour.original = 'original'
+           
+            # tour.save()
+            # print(tour)
+            # Procesar pasos adicionales
+
         if form.is_valid():        
             tour_es = form.save(commit=False)
             tour_destino=request.POST['idioma_destino']
@@ -239,6 +258,7 @@ def upload_tours(request):
             tour_en.titulo = translate_text(tour_es.titulo, tour_es.idioma, tour_destino)            
             tour_en.save()
             
+
             for i in range(100):
                 extra_audio_key = f'extra_step_audio_{i}'
 
@@ -1163,7 +1183,7 @@ def media_valoracion_tour(request, tour_id):
 
         resultado = valoraciones.aggregate(media_puntuacion=Avg('puntuacion'))
         media_puntuacion = resultado.get('media_puntuacion', 5.0)
-        if media_puntuacion is None:
+        if media_puntuacion == 0.0:
             media_puntuacion = 5.0
         cache.set(cache_key, media_puntuacion, timeout=3600*25)  # Lo guarda en caché por 25 horas
     return JsonResponse({'media_puntuacion': media_puntuacion})
