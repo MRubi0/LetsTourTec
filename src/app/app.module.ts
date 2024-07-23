@@ -63,6 +63,8 @@ import { CustomSnackBarComponent } from './components/generics/custom-snack-bar/
 import { VotacionModalComponent } from './components/votacion-modal/votacion-modal.component';
 import { EdittoursComponent } from './components/edittours/edittours.component';
 import { CoordinateValidatorDirective } from './directives/coordinateValidatorDirective';
+import { DragedittoursComponent } from './components/dragedittours/dragedittours.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -104,7 +106,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ProfilecardsComponent,
     CustomSnackBarComponent,
     EdittoursComponent,   
-    CoordinateValidatorDirective 
+    CoordinateValidatorDirective, 
+    DragedittoursComponent 
   ],
   imports: [
     BrowserModule,
@@ -129,6 +132,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatDialogModule,
     MatMenuModule,
     NgbRatingModule,
+    DragDropModule,
     MatProgressSpinnerModule,
     TranslateModule.forRoot({
       loader: {

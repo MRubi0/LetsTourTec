@@ -3,7 +3,7 @@
     <div class="container mt-5">
       <h1>Edición de Tours</h1>
       <div class="mt-3">
-        <form [formGroup]="tourForm" (ngSubmit)="updateTour()">
+        <form [formGroup]="tourForm" (ngSubmit)="updateTour()">          
           <h3>Título</h3><br>
           <div class="input-group mb-3">
             <input type="text" class="form-control" aria-label="Título" formControlName="titulo">
@@ -11,6 +11,24 @@
               <span class="input-group-text"><img class="image" src="../../../assets/iconos/edit-pencil.svg" alt=""></span>
             </div>
           </div>
+          <h3>Imagen del Tour</h3><br>
+        <div class="mb-3">
+          <img *ngIf="image_url_tour" [src]="image_url_tour">
+          <img *ngIf="tourForm.get('image')?.value && !image_url_tour" [src]="tourForm.get('image')?.value" class="img-thumbnail" style="max-width: 200px;">
+          <input type="file" (change)="onFileChange($event, 'tour', 'image')" class="form-control">
+        </div>
+        <h3>Audio del Tour</h3><br>
+        <div class="mb-3">
+          <audio *ngIf="aud_url_tour" controls>
+            <source [src]="aud_url_tour" type="audio/mpeg">
+            Tu navegador no soporta el elemento de audio.
+          </audio>
+          <audio *ngIf="tourForm.get('audio')?.value && !aud_url_tour" controls>
+            <source [src]="tourForm.get('audio')?.value" type="audio/mpeg">
+            Tu navegador no soporta el elemento de audio.
+          </audio>
+          <input type="file" (change)="onFileChange($event, 'tour', 'audio')" class="form-control">
+        </div>
           <h3>Descripción</h3><br>
           <div class="input-group mb-3">
             <input type="text" class="form-control" aria-label="Descripción" formControlName="descripcion">
@@ -61,7 +79,7 @@
               <mat-step *ngFor="let step of steps.controls; let i = index" [formGroupName]="i">
                 <div class="row">
                     <div class="col-12 d-flex justify-content-end">
-                        <button class="button_trash btn btn-outline-danger" (click)="deleteStep(i)"><img class="svg-img"  src="../../../assets/iconos/trash.svg" alt=""></button>
+                        <button  [disabled]="disabled" class="button_trash btn btn-outline-danger" (click)="deleteStep(i)"><img class="svg-img"  src="../../../assets/iconos/trash.svg" alt=""></button>
                     </div>
                 </div>
                 
@@ -122,8 +140,10 @@
               </mat-step>
             </mat-vertical-stepper>
           </div>
-          <div>
-            <button mat-raised-button color="primary" type="submit" [disabled]="!tourForm.valid">Guardar</button>
+          <div class="row">
+            <div class="col-12 d-flex justify-content-center">
+              <button mat-raised-button color="primary" type="submit" [disabled]="!tourForm.valid">Guardar</button>
+            </div>            
           </div>
         </form>
       </div>

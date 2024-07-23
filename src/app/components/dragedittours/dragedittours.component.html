@@ -1,0 +1,8 @@
+<div class="container-fluid">
+    <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let movie of movies; trackBy: trackByMovie" class="example-box" cdkDrag>
+            <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+            {{ movie }}
+        </div>
+    </div>
+</div>
