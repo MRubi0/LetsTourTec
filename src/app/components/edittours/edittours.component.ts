@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EdittoursService } from 'src/app/services/edittours.service';
+import { SnackService } from 'src/app/services/snack.service';
 import { StepService } from 'src/app/services/step.service';
 
 @Component({
@@ -9,18 +10,20 @@ import { StepService } from 'src/app/services/step.service';
   templateUrl: './edittours.component.html',
   styleUrls: ['./edittours.component.scss']
 })
-export class EdittoursComponent {
+export class EdittoursComponent implements OnInit {
   tourForm: FormGroup; 
   tour_id: string = '';
   image_url!: string;
-  aud_url!:string;
+  aud_url!: string;
   deleting_steps: number[] = [];
+  loading = false;
 
   constructor(
     private fb: FormBuilder,
     private stepService: StepService, 
     private activatedRoute: ActivatedRoute,
-    private edittoursService: EdittoursService
+    private edittoursService: EdittoursService,
+    private snackbarService: SnackService
   ) {
     this.tourForm = this.fb.group({
       titulo: [''],
@@ -43,20 +46,31 @@ export class EdittoursComponent {
   }
 
   loadTourDetails() {
-    this.stepService.getTourDetail(this.tour_id).subscribe((res: any) => {
-      this.tourForm.patchValue({
-        titulo: res.titulo,
-        descripcion: res.description,
-        latitude: res.latitude,
-        longitude: res.longitude,
-        duracion: res.duracion,
-        recorrido: res.recorrido,
-        idioma: res.idioma,
-        tipo_de_tour: res.tipo_de_tour   
-      });
+    this.loading = true;
+    this.stepService.getTourDetail(this.tour_id).subscribe({
+      next: (res: any) => {
+        this.tourForm.patchValue({
+          titulo: res.titulo,
+          descripcion: res.description,
+          latitude: res.latitude,
+          longitude: res.longitude,
+          duracion: res.duracion,
+          recorrido: res.recorrido,
+          idioma: res.idioma,
+          tipo_de_tour: res.tipo_de_tour   
+        });
 
-      this.steps.clear();
-      res.steps.forEach((step: any) => this.addStep(step));
+        this.steps.clear();
+        res.steps.forEach((step: any) => this.addStep(step));
+        this.loading = false;
+        this.tourForm.enable();
+        this.snackbarService.openSnackBar('Cargado correctamente', 'OK');  
+      },
+      error: (error: any) => {
+        console.error('Error al cargar los detalles del tour:', error);
+        this.loading = false;
+        this.snackbarService.openSnackBar('Error al cargar los detalles del tour', 'OK');
+      }
     });
   }
 
@@ -77,7 +91,10 @@ export class EdittoursComponent {
     }));
   }
 
-  updateTour() {
+  updateTour() {      
+    this.loading = true; 
+    this.tourForm.disable();
+    
     const formData = new FormData();
     formData.append('titulo', this.tourForm.get('titulo')?.value);
     formData.append('descripcion', this.tourForm.get('descripcion')?.value);
@@ -111,9 +128,14 @@ export class EdittoursComponent {
     this.edittoursService.editTour(this.tour_id, formData, this.steps.value.length).subscribe({
       next: (response: any) => {
         console.log('Tour actualizado con éxito:', response);
+        this.loading = false;
+        this.snackbarService.openSnackBar('Tour actualizado con éxito', 'OK');        
       },
       error: (error: any) => {
         console.error('Error al actualizar el tour:', error);
+        this.loading = false;
+        this.tourForm.enable();
+        this.snackbarService.openSnackBar('Error al actualizar el tour', 'OK'); 
       }
     });
   }
