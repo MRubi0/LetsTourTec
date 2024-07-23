@@ -1227,8 +1227,6 @@ def translate_text(text, idioma_origen, tour_destino):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def edit_tour(request, tour_id, size):
-    error_message = None
-    
     language = request.POST.get('idioma', 'es')
     if language == 'es':
         tour_source = get_object_or_404(Tour, id=tour_id)
@@ -1282,8 +1280,19 @@ def edit_tour(request, tour_id, size):
             tour_target.descripcion = translate_text(tour_source.descripcion, tour_source.idioma, tour_destino)
             tour_target.titulo = translate_text(tour_source.titulo, tour_source.idioma, tour_destino)
             tour_target.save()
+              
+            deleting_steps = json.loads(request.POST.get('deleting', '[]'))
+            if deleting_steps:
+                for step_id in deleting_steps:      
+                    paso = get_object_or_404(Paso, id=step_id)
+                    if paso.image:
+                        delete_s3_file(paso.image.name)
+                    if paso.audio:
+                        delete_s3_file(paso.audio.name)
+                    paso.delete()
 
             for i in range(size):
+                step_id = request.POST.get(f'steps[{i}][id]', None)
                 extra_audio_key = f'steps[{i}][audio]'
                 extra_description_key = f'steps[{i}][description]'
                 extra_tittle_key = f'steps[{i}][tittle]'
@@ -1294,9 +1303,9 @@ def edit_tour(request, tour_id, size):
                 extra_description = request.POST.get(extra_description_key, '')
                 extra_tittle = request.POST.get(extra_tittle_key, '')
 
-                if Paso.objects.filter(tour=tour_source, step_number=i + 1).exists():
-                    paso_source = Paso.objects.get(tour=tour_source, step_number=i + 1)
-                    paso_target = Paso.objects.get(tour=tour_target, step_number=i + 1)
+                if step_id and Paso.objects.filter(id=int(step_id)).exists():
+                    paso_source = Paso.objects.get(id=int(step_id))
+                    paso_target = Paso.objects.get(tour=tour_target, step_number=paso_source.step_number)
                 else:
                     paso_source = Paso(tour=tour_source, step_number=i + 1)
                     paso_target = Paso(tour=tour_target, step_number=i + 1)
@@ -1309,20 +1318,6 @@ def edit_tour(request, tour_id, size):
                     paso_source.audio.save(extra_audio_name, extra_audio_file)
                     paso_target.audio.save(extra_audio_name, extra_audio_file)
 
-                extra_latitude = float(request.POST.get(extra_latitude_key, 0))
-                extra_longitude = float(request.POST.get(extra_longitude_key, 0))
-
-                paso_source.latitude = float(extra_latitude) if extra_latitude else 0.0
-                paso_target.latitude = paso_source.latitude
-                paso_source.longitude = float(extra_longitude) if extra_longitude else 0.0
-                paso_target.longitude = paso_source.longitude
-
-                paso_source.description = extra_description
-                paso_target.description = translate_text(extra_description, tour_source.idioma, tour_destino)
-                paso_source.tittle = extra_tittle
-                paso_target.tittle = translate_text(extra_tittle, tour_source.idioma, tour_destino)
-
-
                 if extra_image_key in request.FILES:
                     extra_image_file = request.FILES[extra_image_key]
                     timestamp = int(time.time() * 1000)
@@ -1331,14 +1326,28 @@ def edit_tour(request, tour_id, size):
                     paso_source.image.save(extra_image_name, extra_image_file, save=False)
                     paso_target.image = paso_source.image
 
+                extra_latitude = float(request.POST.get(extra_latitude_key, 0))
+                extra_longitude = float(request.POST.get(extra_longitude_key, 0))
+
+                paso_source.latitude = extra_latitude if extra_latitude else 0.0
+                paso_target.latitude = paso_source.latitude
+                paso_source.longitude = extra_longitude if extra_longitude else 0.0
+                paso_target.longitude = paso_source.longitude
+
+                paso_source.description = extra_description
+                paso_target.description = translate_text(extra_description, tour_source.idioma, tour_destino)
+                paso_source.tittle = extra_tittle
+                paso_target.tittle = translate_text(extra_tittle, tour_source.idioma, tour_destino)
+
                 paso_source.save()
                 paso_target.save()
-             
 
             response_data = tour_source.as_dict()
             response_data.update({"tour_target": tour_target.as_dict()})
 
             return Response(response_data)
+        else:
+            return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def delete_s3_file(file_name):
     if not file_name:
