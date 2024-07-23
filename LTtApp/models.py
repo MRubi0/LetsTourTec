@@ -3,13 +3,14 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.utils import timezone
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 from io import BytesIO
 import requests
 import boto3
 import os
+import time
 from django.core.files.base import ContentFile
-
+from rest_framework import serializers
 
 #from django.contrib.gis.db.models import PointField
 
@@ -95,15 +96,20 @@ class Location(models.Model):
 class Tour(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=255)
-    imagen = models.ImageField(upload_to='tours/')
+    imagen = models.ImageField(upload_to='Tour_imagen/', max_length=255)  # Aumentado el tamaño
     descripcion = models.TextField()
-    audio = models.FileField(upload_to='tour_audio/', null=True, blank=True)
+    audio = models.FileField(upload_to='Tour_audio/', null=True, blank=True)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     duracion = models.PositiveIntegerField("Duración en minutos", null=True, blank=True)
+
     recorrido = models.FloatField(null=True, blank=True)   # Recorrido en kilómetros
     original = models.TextField(null=True, blank=True)
     
+
+    idioma = models.CharField(max_length=2, default='es')
+    validado = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     TIPO_DE_TOUR_CHOICES = [
@@ -112,44 +118,49 @@ class Tour(models.Model):
         ('leisure', 'Ocio'),
     ]
     tipo_de_tour = models.CharField(max_length=10, choices=TIPO_DE_TOUR_CHOICES, default=None, blank=True, null=True)
-    
 
     def __str__(self):
         return self.titulo
 
     def save(self, *args, **kwargs):
-        # Guarda el objeto Tour como de costumbre
         super().save(*args, **kwargs)
 
         if self.imagen:
-            # Obtén la URL de la imagen almacenada en S3
-            image_url = self.imagen.url
+            try:
+                # Obtén la URL de la imagen almacenada en S3
+                image_url = self.imagen.url
+                # Descarga la imagen usando requests y ábrela con PIL
+                response = requests.get(image_url)
+                response.raise_for_status()
+                img = Image.open(BytesIO(response.content))
+                # Convierte la imagen a modo RGB si no lo está
+                if img.mode in ['P', 'RGBA']:
+                    img = img.convert('RGB')
+            except UnidentifiedImageError:
+                print("No se puede identificar el archivo de imagen")
+            except requests.exceptions.RequestException as e:
+                print(f"Error al descargar la imagen: {e}")
+            except Exception as e:
+                print(f"Error inesperado: {e}")
 
-            # Descarga la imagen usando requests y ábrela con PIL
-            response = requests.get(image_url)
-            img = Image.open(BytesIO(response.content))
+            # Construye el path de la imagen en S3
+            key = f'tours/{self.id}/images/{self.imagen.name}'
+            # Aquí necesitas configurar boto3 con tus credenciales de AWS y especificar el bucket y key adecuados
+            s3 = boto3.client(
+                's3',
+                aws_access_key_id='AKIAYTBLLQA7BS6GPBHU',
+                aws_secret_access_key='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',
+                region_name='eu-north-1'
+            )
 
-            # Convierte la imagen a modo RGB si no lo está
-            if img.mode in ['P', 'RGBA']:
-                img = img.convert('RGB')
-        # Construye el path de la imagen en S3
-        key = f'tours/{self.id}/images/{self.imagen.name}'
-        # Aquí necesitas configurar boto3 con tus credenciales de AWS y especificar el bucket y key adecuados
-        s3 = boto3.client(
-                            's3',
-                            aws_access_key_id='AKIAYTBLLQA7BS6GPBHU',
-                            aws_secret_access_key='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',
-                            region_name='eu-north-1'  # Asegúrate de que la región coincida con la del bucket
-                        )
+
+
+    # def __str__(self):
+    #     return self.titulo
 
 
 
 
-
-        #if self.imagen:
-            #img = Image.open(self.imagen.path)
-
-            
     def as_dict(self):
         return {
             "id": self.id,  # Incluye el id del tour
@@ -164,46 +175,62 @@ class Tour(models.Model):
             "latitude": self.latitude,
             "longitude": self.longitude,
         }
+class TourRelation(models.Model):
+    tour_es = models.OneToOneField('Tour', on_delete=models.CASCADE, related_name='tour_es')
+    tour_en = models.OneToOneField('Tour', on_delete=models.CASCADE, related_name='tour_en')
+
+    def __str__(self):
+        return f"Relation between {self.tour_es.id} and {self.tour_en.id}"
 
 class Paso(models.Model):
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
     step_number = models.IntegerField(default=None)
-    image = models.ImageField(upload_to='pasos/', null=True, blank=True)
-    audio = models.FileField(upload_to='paso_audio/', null=True, blank=True)
+    image = models.ImageField(upload_to='Tour_imagen/', null=True, blank=True, max_length=255)
+    audio = models.FileField(upload_to='Tour_audio/', null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    tittle = models.TextField(null=True, blank=True)
+    tittle = models.TextField(null=True, blank=True)  # Corregido "tittle" a "title"
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # class Meta:
+    #     ordering = ['step_number']
+
+    # def __str__(self):
+    #     return str(self.step_number)
+
+
     def save(self, *args, **kwargs):
         if self.image:
-            # Descarga la imagen desde S3 y ábrela con PIL
-            response = requests.get(self.image.url)
-            if response.status_code == 200:
-                img = Image.open(BytesIO(response.content))
+            try:
+                # Descarga la imagen desde S3 y ábrela con PIL
+                response = requests.get(self.image.url)
+                if response.status_code == 200:
+                    img = Image.open(BytesIO(response.content))
 
-                # Convierte la imagen a modo RGB si no lo está
-                if img.mode in ['P', 'RGBA']:
-                    img = img.convert('RGB')
+                    # Convierte la imagen a modo RGB si no lo está
+                    if img.mode in ['P', 'RGBA']:
+                        img = img.convert('RGB')
 
-                # Redimensionamiento si es necesario
-                if img.height > 150 or img.width > 150:
-                    output_size = (150, 150)
-                    img.thumbnail(output_size)
+                    # Redimensionamiento si es necesario
+                    if img.height > 150 or img.width > 150:
+                        output_size = (150, 150)
+                        img.thumbnail(output_size)
 
-                # Guardar la imagen convertida en un objeto BytesIO
-                buffer = BytesIO()
-                img.save(buffer, format='JPEG')
-                buffer.seek(0)
+                    # Guardar la imagen convertida en un objeto BytesIO
+                    buffer = BytesIO()
+                    img.save(buffer, format='JPEG')
+                    buffer.seek(0)
 
-                # Reemplazar la imagen original por la convertida
-                file_name = self.image.name
-                self.image.delete(save=False)  # Elimina la imagen antigua
-                self.image.save(file_name, ContentFile(buffer.getvalue()), save=False)
-            else:
-                # Manejar el caso donde la respuesta no es exitosa
-                # Por ejemplo, podrías registrar un error o lanzar una excepción
+                    # Reemplazar la imagen original por la convertida
+                    file_name = f"juan_extra_image_{int(time.time() * 1000)}.jpg"
+                    self.image.save(file_name, ContentFile(buffer.getvalue()), save=False)
+                else:
+                    # Manejar el caso donde la respuesta no es exitosa
+                    pass
+            except Exception as e:
+                # Manejar excepciones específicas (por ejemplo, conexión fallida, imagen no válida, etc.)
                 pass
 
         if not self.step_number:
@@ -211,8 +238,10 @@ class Paso(models.Model):
             self.step_number = existing_steps_count + 1
 
         super().save(*args, **kwargs)
+
     class Meta:
         ordering = ['step_number']
+
     def as_dict(self):
         return {
             "image": self.image.url if self.image else None,
@@ -222,9 +251,19 @@ class Paso(models.Model):
             "step_number": self.step_number if self.step_number else None,
             "description": self.description if self.description else None,
         }
-    def __str__(self):
-        return str(self.step_number)  
 
+    def __str__(self):
+        return str(self.step_number)
+
+class TourSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tour
+        fields = '__all__'
+
+class PasoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Paso
+        fields = '__all__'
 
 class TourRecord(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

@@ -190,8 +190,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'miguel6ortiz6@gmail.com'  # Tu dirección de correo electrónico
-EMAIL_HOST_PASSWORD = 'miguel1928'  # Tu contraseña de correo electrónico
+
 
 ALLOWED_HOSTS = ['letstourtec.com', 'www.letstourtec.com', 'letstourtec-c393a22f9c2b.herokuapp.com', 'localhost', '127.0.0.1', 'localhost:4200', "https://letstourtec-testing-2ac790364c4e.herokuapp.com"]
 
@@ -217,7 +216,7 @@ LOGGING = {
 
 AWS_ACCESS_KEY_ID = 'AKIAYTBLLQA7BS6GPBHU'
 AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'letstourtec-bucket-2'
+AWS_STORAGE_BUCKET_NAME = 'bucket-test-west2'
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 #AWS_DEFAULT_ACL = 'public-read'
@@ -245,9 +244,9 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=365), # Tiempo de vida del token de acceso
     'REFRESH_TOKEN_LIFETIME': timedelta(days=365 * 3),       # Tiempo de vida del token de actualización
 }
-AWS_S3_REGION_NAME = 'eu-north-1'
+AWS_S3_REGION_NAME = 'eu-west-2'
 CORS_ALLOW_ALL_ORIGINS = True
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 * 15 # 10MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 * 40 # 10MB
 
 #logging.basicConfig(level=logging.DEBUG)
 boto3.set_stream_logger(name='botocore')
@@ -261,11 +260,11 @@ boto3.setup_default_session(aws_access_key_id='AKIAYTBLLQA7BS6GPBHU',
 # Configuración personalizada con un timeout de conexión de 60 segundos
 # y un timeout de lectura de 300 segundos.
 my_config = Config(
-    connect_timeout=90,  # Tiempo de espera para la conexión en segundos
+    connect_timeout=200,  # Tiempo de espera para la conexión en segundos
     read_timeout=450,    # Tiempo de espera para la lectura en segundos
     retries={'max_attempts': 15}  # Número de reintentos en caso de errores transitorios
 )
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 * 15 # 150MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 * 40 # 150MB
 # Crear un cliente S3 con la configuración personalizada
 s3_client = boto3.client('s3', config=my_config)
 

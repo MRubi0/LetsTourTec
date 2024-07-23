@@ -3,26 +3,32 @@ import json
 import math
 import os
 import random
+import re
 import requests
+import folium
+import shutil
 import sqlite3
 import time
+import unicodedata
 from datetime import datetime
 from math import atan2, cos, radians, sin, sqrt
-
-from botocore.exceptions import ClientError
+import io
 import boto3
+from PIL import Image
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, get_user_model
+from django.contrib.auth import authenticate, get_user_model, login
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core import serializers
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.paginator import Paginator
-from django.db import OperationalError, connection
+from django.db import OperationalError, transaction, connection
 from django.db.models import Avg, ExpressionWrapper, F, FloatField, Func, Q
 from django.db.models.expressions import RawSQL
-from django.http import JsonResponse
+from botocore.exceptions import ClientError
+from django.http import JsonResponse, HttpResponseNotFound
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -31,18 +37,18 @@ from django.utils.crypto import get_random_string
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
-from PIL import Image
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .forms import (
-    AudioFileForm, CustomUserCreationForm, EditProfileForm, EncuestaForm,
-    GuideForm, ImageFileForm, LocationForm, TourForm, ValoracionForm)
-from .models import (
-    AudioFile, CustomUser, Encuesta, Guide, ImageFile, Location, Paso,
-    Tour, TourRecord, Valoracion)
+from .forms import (AudioFileForm, CustomUserCreationForm, EditProfileForm,
+                    EncuestaForm, GuideForm, ImageFileForm, LocationForm,
+                    TourForm, ValoracionForm)
+from .models import (AudioFile, CustomUser, Encuesta, Guide, ImageFile,
+                     Location, Paso, Tour, TourRecord, TourRelation, Valoracion, PasoSerializer, TourSerializer)
+
+
 
 
 
@@ -51,6 +57,8 @@ from .models import (
 def test_auth(request):
     # Esta vista es solo para propósitos de testeo.
     return Response({'message': 'El token es válido y el usuario está autenticado'}, status=status.HTTP_200_OK)
+
+
 @csrf_exempt
 def csrf_token_view(request):
     """Obtiene el token CSRF de Django."""
@@ -95,12 +103,33 @@ def profile(request):
     return render(request, 'user/profile.html', {'user': request.user})
 
 
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def edit_profile(request):
+#     if request.method == 'POST':
+#         user = request.user
+#         data = request.data
+
+#         if 'firstName' in data:
+#             user.first_name = data['firstName']
+#         if 'lastName' in data:
+#             user.last_name = data['lastName']
+#         if 'email' in data:
+#             user.email = data['email']
+#         if 'bio' in data:
+#             user.bio = data['bio']
+#         if 'avatar' in request.FILES:
+#             user.avatar.save(request.FILES['avatar'].name, request.FILES['avatar'])
+
+#         user.save()
+#         return Response({'message': 'Profile updated successfully'})
+#     return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 
 def get_user_tours(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
-
         if user_id:
             tours = Tour.objects.filter(user_id=user_id)
             tours_data = []
@@ -121,7 +150,7 @@ def get_user_tours(request):
                     'avatar': tour.user.avatar.url,
                     'bio': tour.user.bio,                   
                 }
-
+                
                 tours_data.append(tour_data)
             return JsonResponse({'tours': tours_data})
         else:
@@ -153,49 +182,94 @@ def login_view(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_tours(request):
-    print("Solicitud recibida con los siguientes datos: %s", request.FILES)
     error_message = None
     auth_header = request.META.get('HTTP_AUTHORIZATION')
     if auth_header:
         token = auth_header.split(' ')[1]
-        print(f"Token recibido: {token}")
     else:
         print("No se encontró el header de autorización")
     
     if request.method == 'POST':
         if not request.user.is_authenticated:
-            return Response({'error': 'Usuario no autenticado'}, status=401)
-        print(request.POST)  
-        print(request.FILES)  
-        
+            return Response({'error': 'Usuario no autenticado'}, status=401)     
         form = TourForm(request.POST, request.FILES)       
-        if form.is_valid():
-            tour = form.save(commit=False)
-            tour.user = request.user
-            tour.image = request.FILES['imagen'] if 'imagen' in request.FILES else None
 
-            if tour.tipo_de_tour=='leisure':
-                tour.tipo_de_tour='ocio'
-            elif tour.tipo_de_tour=='nature':
-                tour.tipo_de_tour='naturaleza'
+        
+        
+        # if form.is_valid():
+            # tour = form.save(commit=False)
+            # tour.user = request.user
+            # tour.image = request.FILES['imagen'] if 'imagen' in request.FILES else None
+
+            # if tour.tipo_de_tour=='leisure':
+                # tour.tipo_de_tour='ocio'
+            # elif tour.tipo_de_tour=='nature':
+                # tour.tipo_de_tour='naturaleza'
             
-            tour.original = 'original'
+            # tour.original = 'original'
            
-            tour.save()
-            print(tour)
+            # tour.save()
+            # print(tour)
             # Procesar pasos adicionales
+
+        if form.is_valid():        
+            tour_es = form.save(commit=False)
+            tour_destino=request.POST['idioma_destino']
+            tour_es.user = request.user
+            tour_es.idioma = request.POST['idioma']
+            
+            next_id_es = get_next_id()
+
+            print('next_id ----> ', next_id_es)
+            
+            if 'imagen' in request.FILES:
+                image_file = request.FILES['imagen']
+                timestamp = int(time.time() * 1000)
+                image_name = f"{str(next_id_es).zfill(5)}/{timestamp}.jpg"
+                
+                tour_es.imagen.save(image_name, image_file)
+
+            if 'audio' in request.FILES:
+                audio_file = request.FILES['audio']
+                timestamp = int(time.time() * 1000)
+                audio_name = f"{str(next_id_es).zfill(5)}/aud_{timestamp}.mp3"
+                tour_es.audio.save(audio_name, audio_file)    
+
+            if tour_es.tipo_de_tour == 'leisure':
+                tour_es.tipo_de_tour = 'ocio'
+            elif tour_es.tipo_de_tour == 'nature':
+                tour_es.tipo_de_tour = 'naturaleza'
+           
+            
+            tour_es.validado = False
+            tour_es.save()
+
+            next_id_en = get_next_id()
+
+            tour_en = Tour()
+            tour_en.user = request.user
+            tour_en.imagen = tour_es.imagen
+            tour_en.audio = tour_es.audio
+            tour_en.tipo_de_tour = tour_es.tipo_de_tour
+            tour_en.recorrido=tour_es.recorrido
+            tour_en.duracion=tour_es.duracion
+            tour_en.validado = False
+            tour_en.descripcion = translate_text(tour_es.descripcion, tour_es.idioma, tour_destino)
+            tour_en.titulo = translate_text(tour_es.titulo, tour_es.idioma, tour_destino)            
+            tour_en.save()
+            
+
             for i in range(100):
                 extra_audio_key = f'extra_step_audio_{i}'
-                
+
                 if extra_audio_key in request.FILES:
-                    extra_audio = request.FILES[extra_audio_key]
-                    
-                    extra_description= None
+                    extra_audio = request.FILES[extra_audio_key]                    
+                    extra_description = None
                     extra_image = None
                     extra_latitude = None
                     extra_longitude = None
                     extra_tittle = None
-                    
+           
                     extra_description_key = f'description_{i}'
                     if extra_description_key in request.POST:
                         extra_description = request.POST.get(extra_description_key, '')
@@ -204,12 +278,15 @@ def upload_tours(request):
                     if extra_tittle_key in request.POST:
                         extra_tittle = request.POST.get(extra_tittle_key, '')
 
-                    paso = Paso(tour=tour, audio=extra_audio, description=extra_description, tittle = extra_tittle)
+                    paso_es = Paso(tour=tour_es, description=extra_description, tittle=extra_tittle)
+                    paso_en = Paso(tour=tour_en, description=extra_description, tittle=extra_tittle)
 
-                    extra_image_key = f'extra_step_image_{i}'
-                    if extra_image_key in request.FILES:
-                        extra_image = request.FILES[extra_image_key]
-                        paso.image = extra_image
+                    if request.FILES[f'extra_step_audio_{i}']:          
+                        extra_audio_file = request.FILES[f'extra_step_audio_{i}']                        
+                        timestamp = int(time.time() * 1000)
+                        extra_audio_name = f"Tour_audio/{str(next_id_es).zfill(5)}/{str(i+1).zfill(5)}//{timestamp}.mp3"
+                        paso_en.audio.save(extra_audio_name, extra_audio_file)
+                        paso_es.audio.save(extra_audio_name, extra_audio_file)
 
                     extra_latitude_key = f'extra_step_latitude_{i}'
                     if extra_latitude_key in request.POST and request.POST[extra_latitude_key]:
@@ -219,41 +296,42 @@ def upload_tours(request):
                     if extra_longitude_key in request.POST and request.POST[extra_longitude_key]:
                         extra_longitude = float(request.POST[extra_longitude_key])
 
-                    
-                    print(paso)
-                    #if extra_image:
-                        #.image = extra_image
                     if extra_latitude:
-                        paso.latitude = extra_latitude
+                        paso_es.latitude = extra_latitude
+                        paso_en.latitude = extra_latitude
                     if extra_longitude:
-                        paso.longitude = extra_longitude
+                        paso_es.longitude = extra_longitude
+                        paso_en.longitude = extra_longitude                             
 
-                    paso.save()
+                    extra_image_key = f'extra_step_image_{i}'
+                    print('here 1', extra_image_key)
+                    if extra_image_key in request.FILES:
+                       extra_image_file = request.FILES[f'extra_step_image_{i}']
+                       timestamp = int(time.time() * 1000)
+                       extra_image_name = f"Tour_imagen/{str(next_id_es).zfill(5)}/{str(i+1).zfill(5)}/extra_image_{next_id_es}/{timestamp}.jpg"
+                       paso_es.image.save(extra_image_name, extra_image_file, save=False)  
+                       paso_en.image = paso_es.image                 
+                       paso_es.save()
+                    paso_en.save()
+                 
                 else:
-                    print
-                    print(i)
-                    print(request.POST)  
-                    print(request.FILES)  
-                    print("aviso a navegantes")
                     break
-                    
 
-            return redirect('index')
-        else:
-            
+            # Crear la relación entre los tours
+            tour_relation = TourRelation(tour_es=tour_es, tour_en=tour_en)
+            tour_relation.save()
 
-            error_message = 'Hubo un error al subir el tour. Asegúrate de haber seleccionado una imagen y un archivo de audio válidos.'
-            print(form.errors)
-            return Response({'errors': form.errors}, status=400)
-    else:
-        return Response({'error': 'Invalid request method'}, status=405)
-    return render(request, 'user/upload_tour.html', {'form': form, 'error_message': error_message})
+            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro equipo'})
+
+
+def upload_to_func(instance, filename):
+    timestamp = int(time.time() * 1000)
+    return f'{timestamp}_{filename}'
 
 
 @csrf_exempt
 @api_view(['POST'])
 def upload_encuesta(request):
-    print("im here")
     if request.method == 'POST':
         # Mapeo de los nombres de campos del formulario a los nombres de campos del modelo
         mapeo_campos = {
@@ -366,12 +444,15 @@ def sqlite_haversine(lat1, lon1, lat2, lon2):
 def get_nearest_tours(request):
     latitud_usuario = float(request.GET.get('latitude', None))
     longitud_usuario = float(request.GET.get('longitude', None))
-
+    idioma = request.GET.get('language', None)
     if latitud_usuario is None or longitud_usuario is None:
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
+    
+    if idioma is None:
+        return JsonResponse({"error": "Falta el parámetro: language"}, status=400)
 
     # Aquí iría la lógica para buscar los tours más cercanos
-    tours = Tour.objects.all()
+    tours = Tour.objects.filter(idioma=idioma)
     tours_with_distances = []
     for tour in tours:
         distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
@@ -388,7 +469,7 @@ def get_nearest_tours(request):
             filter(lambda x: x['tour'].tipo_de_tour == category, tours_with_distances),
             key=lambda x: x['distance']
         )
-    # Tomar el primer tour de la lista, que es el más cercano
+        # Tomar el primer tour de la lista, que es el más cercano
         if filtered_tours:
             tour = filtered_tours[0]['tour']
             tour_object = {
@@ -409,7 +490,7 @@ def get_nearest_tours(request):
                     'bio': tour.user.bio,                   
                 }
             }
-        result.append(tour_object)
+            result.append(tour_object)
 
     return JsonResponse(result, safe=False)
 
@@ -474,12 +555,14 @@ def get_latest_tours(request):
 
 
 def get_random_tours(request):
-    # Obtén todos los tours de las categorías
-    ocio_tours = Tour.objects.filter(tipo_de_tour="ocio")
-    naturaleza_tours = Tour.objects.filter(tipo_de_tour="naturaleza")
-    cultural_tours = Tour.objects.filter(tipo_de_tour="cultural")
-        
-       
+    idioma = request.GET.get('language', None)
+    if not idioma:
+        return JsonResponse({"error": "Falta el parámetro: language"}, status=400)
+    
+    ocio_tours = Tour.objects.filter(tipo_de_tour="ocio", idioma=idioma)
+    naturaleza_tours = Tour.objects.filter(tipo_de_tour="naturaleza",idioma=idioma)
+    cultural_tours = Tour.objects.filter(tipo_de_tour="cultural", idioma=idioma)
+               
     # Elige un tour aleatorio de cada categoría
     random_tours = {
         "cultural": random.choice(cultural_tours) if cultural_tours else None,
@@ -513,9 +596,22 @@ def get_random_tours(request):
 
 def get_tour_distance(request):
     tour_id = request.GET.get('tourId')
+    languaje = request.GET.get('languaje')
     latitud_usuario = request.GET.get('latitude', None)
     longitud_usuario = request.GET.get('longitude', None)
-
+    
+    if not tour_id or not languaje:
+        return JsonResponse({"error": "Faltan parámetros: tourId y/o languaje"}, status=400)
+    related_tour_id = tour_id  
+    
+    if languaje == "en":
+        relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
+        if relation:
+            related_tour_id = relation.tour_en.id
+    else:
+        relation = TourRelation.objects.filter(tour_en_id=tour_id).first()
+        if relation:
+            related_tour_id = relation.tour_es.id
     if latitud_usuario is None or longitud_usuario is None:
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
 
@@ -529,25 +625,25 @@ def get_tour_distance(request):
     else:
         longitud_usuario = None
 
-    tour = Tour.objects.get(id=tour_id)
-
-    
+    tour = get_object_or_404(Tour, id=related_tour_id)
 
     distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
-    
-    tour_data = serializers.serialize('python', [tour])
 
-    tour_data[0]['fields']['distance']=distance
-    return JsonResponse(
-         tour_data, safe=False
-    )
+    tour_data = serializers.serialize('python', [tour])
+    tour_data[0]['fields']['distance'] = distance
+    
+    return JsonResponse(tour_data, safe=False)
 
 def get_nearest_tours_all(request):
     latitud_usuario = request.GET.get('latitude', None)
     longitud_usuario = request.GET.get('longitude', None)
+    idioma = request.GET.get('language', None)
 
     if latitud_usuario is None or longitud_usuario is None:
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
+    
+    if idioma is None:
+        return JsonResponse({"error": "Falta el parámetro: language"}, status=400)
 
     if latitud_usuario != 'None':
         latitud_usuario = float(latitud_usuario)
@@ -559,11 +655,10 @@ def get_nearest_tours_all(request):
     else:
         longitud_usuario = None
 
-
-    # Obtener todos los tours
-    tours = Tour.objects.all()
+    # Obtener todos los tours filtrados por idioma
+    tours = Tour.objects.filter(idioma=idioma)
     tours_with_distances = []
-    if latitud_usuario != None or longitud_usuario != None:
+    if latitud_usuario is not None and longitud_usuario is not None:
         for tour in tours:
             distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
             tours_with_distances.append({'tour': tour, 'distance': distance})
@@ -572,9 +667,6 @@ def get_nearest_tours_all(request):
         for tour in tours:
             tours_with_distances.append({'tour': tour, 'id': tour.id, 'distance': None})
         sorted_tours = sorted(tours_with_distances, key=lambda x: x['id'])
-
-    # Ordenar todos los tours por distancia
-    
 
     per_page = len(sorted_tours)
     page = request.GET.get('page', 1)  # Obtiene el número de página de los parámetros GET
@@ -593,13 +685,13 @@ def get_nearest_tours_all(request):
         'recorrido': tour['tour'].recorrido,
         'duracion': tour['tour'].duracion,
         'user': {
-                    'id': tour['tour'].user.id,
-                    'email': tour['tour'].user.email,
-                    'first_name': tour['tour'].user.first_name, 
-                    'last_name': tour['tour'].user.last_name,
-                    'avatar': tour['tour'].user.avatar.url,
-                    'bio': tour['tour'].user.bio,
-                }
+            'id': tour['tour'].user.id,
+            'email': tour['tour'].user.email,
+            'first_name': tour['tour'].user.first_name, 
+            'last_name': tour['tour'].user.last_name,
+            'avatar': tour['tour'].user.avatar.url,
+            'bio': tour['tour'].user.bio,
+        }
     } for tour in current_page_tours]
 
     response_data = {
@@ -644,9 +736,25 @@ def directions(request, tour_id):
     return render(request, 'directions.html', {'tour': tour, 'step_id': step_id})
 
 @api_view(['GET'])
-def get_tour_with_steps(request, tour_id):
-    try:
-        tour = get_object_or_404(Tour, pk=tour_id)
+def get_tour_with_steps(request, tour_id, languaje):
+    try:        
+        relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
+        if relation:
+            if languaje == "en":                
+                related_tour_id = relation.tour_en_id
+            else:
+                related_tour_id = tour_id
+        else:
+            relation = TourRelation.objects.filter(tour_en_id=tour_id).first()
+            if relation:
+                if languaje == "es":             
+                    related_tour_id = relation.tour_es_id
+                else:
+                    related_tour_id = relation.tour_en_id
+            else:
+                related_tour_id = tour_id
+
+        tour = get_object_or_404(Tour, pk=related_tour_id)
         steps = Paso.objects.filter(tour=tour)
 
         tour_data = {
@@ -657,16 +765,17 @@ def get_tour_with_steps(request, tour_id):
             "image": tour.imagen.url,
             "audio": tour.audio.url,
             "description": tour.descripcion,
-            "steps": []
+            "steps": [],
+            "relation":[related_tour_id,tour_id]
         }
 
         for step in steps:
             tour_data["steps"].append({
                 "id": step.id,
-                "image":step.image.url if step.image else None,                
+                "image": step.image.url if step.image else None,                
                 "audio": step.audio.url if step.audio else None,
-                "latitude":step.latitude,
-                "longitude":step.longitude,
+                "latitude": step.latitude,
+                "longitude": step.longitude,
                 "description": step.description,
                 "tittle": step.tittle
             })
@@ -674,10 +783,7 @@ def get_tour_with_steps(request, tour_id):
         return Response(tour_data)
     except Tour.DoesNotExist:
         return Response({"error": "Tour no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-
-
-
-
+    
 def get_tour_data(tour_id):
     print('init')
     tour_objects = Tour.objects.get(id=tour_id)  
@@ -802,9 +908,7 @@ def get_tour_locations(request, tour_id):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def create_tour_record(request):
-    
+def create_tour_record(request):    
     tour_id = request.data.get('tour_id')
     if not tour_id:
         print("Error: Falta el ID del tour")
@@ -828,52 +932,94 @@ def create_tour_record(request):
         return JsonResponse({'error': 'Error al registrar el tour'}, status=500)
 
 
-
 def get_user_tour_records(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
+        language = request.GET.get('language', 'es')
+        print(f'Received user_id: {user_id}, language: {language}')
+        
         if user_id:
-            tour_records = TourRecord.objects.filter(user_id=user_id).prefetch_related('tour__valoraciones')
+            tours = Tour.objects.filter(user_id=user_id)
+            print(f'Found tours for user {user_id}: {tours}')
             tours_data = []
-            for record in tour_records:
-                tour_data = record.tour.as_dict()
+            processed_tours = set()
+
+            for tour in tours:
+                if tour.id in processed_tours:
+                    continue
+                
+                # Obtener el tour en el idioma preferido
+                if language == 'es':
+                    related_tour = TourRelation.objects.filter(tour_es=tour).first()
+                else:
+                    related_tour = TourRelation.objects.filter(tour_en=tour).first()
+
+                if related_tour:
+                    if language == 'es':
+                        tour_to_use = related_tour.tour_es
+                        other_tour = related_tour.tour_en
+                    else:
+                        tour_to_use = related_tour.tour_en
+                        other_tour = related_tour.tour_es
+                else:
+                    tour_to_use = tour
+                    other_tour = None
+
+                # Registrar el tour procesado
+                processed_tours.add(tour_to_use.id)
+                if other_tour:
+                    processed_tours.add(other_tour.id)
+
+                # Obtener todas las valoraciones del tour actual solo del usuario autenticado
+                valoraciones = Valoracion.objects.filter(tour_id=tour_to_use.id, user_id=user_id)
+                print(f'Valoraciones iniciales del tour {tour_to_use.id} para el usuario {user_id}: {valoraciones}')
+                
+                # Si hay una relación, agregar las valoraciones del tour relacionado solo del usuario autenticado
+                if other_tour:
+                    valoraciones_otro = Valoracion.objects.filter(tour_id=other_tour.id, user_id=user_id)
+                    valoraciones = valoraciones | valoraciones_otro
+                    print(f'Valoraciones relacionadas del tour {other_tour.id} para el usuario {user_id}: {valoraciones_otro}')
+                
+                print(f'Valoraciones finales del tour {tour_to_use.id} para el usuario {user_id}: {valoraciones}')
+
                 valoraciones_data = []
-                for valoracion in record.tour.valoraciones.all():
+
+                for valoracion in valoraciones:
                     valoracion_data = {
                         "puntuacion": valoracion.puntuacion,
                         "comentario": valoracion.comentario,
-                        "fecha": valoracion.fecha.strftime("%Y-%m-%d %H:%M:%S"),  # Formatea la fecha como string
+                        "fecha": valoracion.fecha.strftime("%Y-%m-%d %H:%M:%S"),
                     }
                     valoraciones_data.append(valoracion_data)
 
-                # Agrega las valoraciones serializadas al diccionario del tour
-                tour_data['valoraciones'] = valoraciones_data
-
-                if tour_data.get('imagen'):
-                    tour_data['imagen'] = {'url': tour_data['imagen']}
-                if tour_data.get('audio'):
-                    tour_data['audio'] = {'url': tour_data['audio']}
-                    
-                # Agrega la información del usuario que creó el tour
-                tour_data['user'] = {
-                    'id': record.tour.user.id,
-                    'email': record.tour.user.email,
-                    'first_name': record.tour.user.first_name, 
-                    'last_name': record.tour.user.last_name,
-                    'avatar': record.tour.user.avatar.url,
-                    'bio': record.tour.user.bio,                   
+                tour_data = {
+                    "id": tour_to_use.id,
+                    "titulo": tour_to_use.titulo,
+                    "descripcion": tour_to_use.descripcion,
+                    "imagen": {'url': tour_to_use.imagen.url} if tour_to_use.imagen else None,
+                    "audio": {'url': tour_to_use.audio.url} if tour_to_use.audio else None,
+                    "latitude": tour_to_use.latitude,
+                    "longitude": tour_to_use.longitude,
+                    "tipo_de_tour": tour_to_use.tipo_de_tour,
+                    "recorrido": tour_to_use.recorrido,
+                    "duracion": tour_to_use.duracion,
+                    "user": {
+                        'id': tour_to_use.user.id,
+                        'email': tour_to_use.user.email,
+                        'first_name': tour_to_use.user.first_name, 
+                        'last_name': tour_to_use.user.last_name,
+                        'avatar': tour_to_use.user.avatar.url if tour_to_use.user.avatar else None,
+                        'bio': tour_to_use.user.bio,
+                    },
+                    "valoraciones": valoraciones_data
                 }
-
                 tours_data.append(tour_data)
-
             return JsonResponse({'tours': tours_data})
         else:
             return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
-
-current_key_index = 0
 
 @csrf_exempt
 @require_POST
@@ -968,10 +1114,12 @@ def upload_file_to_s3(file_path, bucket_name, folder_path, file_name):
 @api_view(['POST'])
 @permission_classes([AllowAny])  # Cambia según tus requerimientos de autenticación
 def crear_valoracion(request):
+    
     data = request.data
-
-    # Asegúrate de que el 'tour_id' y la 'puntuacion' están presentes
+    
+    # Asegúrate de que el 'tour_id' y la 'puntuacion' están presentes, la resena no porque es opcional
     if 'tour_id' not in data or 'puntuacion' not in data:
+        
         return JsonResponse({'error': 'Faltan datos necesarios'}, status=400)
 
     # Intenta obtener el tour
@@ -982,6 +1130,7 @@ def crear_valoracion(request):
         'puntuacion': data['puntuacion'],
         'comentario': data.get('comentario', '')  # El comentario es opcional
     }
+    
     if request.user.is_authenticated:
         valoracion_existente = Valoracion.objects.filter(tour=tour, user=request.user).first()
 
@@ -991,12 +1140,13 @@ def crear_valoracion(request):
                 setattr(valoracion_existente, key, value)
             valoracion_existente.fecha = timezone.now()  # Actualiza la fecha
             valoracion_existente.save()
+            
             return JsonResponse({'mensaje': 'Valoración actualizada correctamente'}, status=200)
 
 
 
     form = ValoracionForm(valoracion_data)
-
+    
     if form.is_valid():
         valoracion = form.save(commit=False)
         valoracion.tour = tour
@@ -1004,36 +1154,39 @@ def crear_valoracion(request):
         # Asocia el usuario solo si está autenticado
         if request.user.is_authenticated:
             valoracion.user = request.user
-
+           
         try:
             valoracion.save()
+           
             return JsonResponse({'mensaje': 'Valoración creada correctamente'}, status=201)
         except ValidationError as e:
+         
             return JsonResponse({'error': str(e)}, status=400)
     else:
+        
         return JsonResponse({'error': 'Datos inválidos', 'detalles': form.errors}, status=400)
     
 
 
 def media_valoracion_tour(request, tour_id):
-    # La clave en la caché para este valor específico
     cache_key = f"media_valoracion_{tour_id}"
-    # Intenta obtener el valor de la caché
     media_puntuacion = cache.get(cache_key)
-
     if media_puntuacion is None:
-        # Si no está en la caché, calcula la media de las valoraciones
         tour = get_object_or_404(Tour, pk=tour_id)
-        resultado = Valoracion.objects.filter(tour=tour).aggregate(media_puntuacion=Avg('puntuacion'))
+        relation = TourRelation.objects.filter(tour_es=tour).first() or TourRelation.objects.filter(tour_en=tour).first()
+        valoraciones = Valoracion.objects.filter(tour=tour)
+        if relation:
+            if relation.tour_es == tour and relation.tour_en:
+                valoraciones = valoraciones | Valoracion.objects.filter(tour=relation.tour_en)
+            elif relation.tour_en == tour and relation.tour_es:
+                valoraciones = valoraciones | Valoracion.objects.filter(tour=relation.tour_es)
+
+        resultado = valoraciones.aggregate(media_puntuacion=Avg('puntuacion'))
         media_puntuacion = resultado.get('media_puntuacion', 5.0)
         if media_puntuacion == 0.0:
             media_puntuacion = 5.0
-        # Guarda el valor calculado en la caché para futuras solicitudes
-        cache.set(cache_key, media_puntuacion, timeout=3600*25)  # Lo guarda en caché por 25 hora
-
-    # Devuelve la media como respuesta JSON
+        cache.set(cache_key, media_puntuacion, timeout=3600*25)  # Lo guarda en caché por 25 horas
     return JsonResponse({'media_puntuacion': media_puntuacion})
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -1118,3 +1271,677 @@ def search_user_by_id(request):
 
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+
+
+def translate_text(text, idioma_origen, tour_destino):
+    url = "https://deep-translate1.p.rapidapi.com/language/translate/v2"
+    headers = {
+        'X-RapidAPI-Key': "75c294e6a8msh19ef7b3ebb91873p16517ejsn5f6bff2b1abd",
+        'X-RapidAPI-Host': "deep-translate1.p.rapidapi.com"
+    }
+    payload = {
+        "q": text,
+        "source": idioma_origen,
+        "target": tour_destino
+    } 
+    
+    response = requests.post(url, headers=headers, data=json.dumps(payload))
+    translated_text = response.json().get('data', {}).get('translations', {}).get('translatedText', '')
+    return translated_text
+    url = "https://deep-translate1.p.rapidapi.com/language/translate/v2"
+    headers = {
+        'X-RapidAPI-Key': "75c294e6a8msh19ef7b3ebb91873p16517ejsn5f6bff2b1abd",
+        'X-RapidAPI-Host': "deep-translate1.p.rapidapi.com"
+    }
+    payload = {
+        "q": text,
+        "source": "es",
+        "target": "en"
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(payload))
+    translated_text = response.json().get('data', {}).get('translations', [])[0].get('translatedText', '')
+    return translated_text
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_tour(request, tour_id):
+    if not request.user.is_authenticated:
+        return Response({'error': 'Usuario no autenticado'}, status=401)
+
+    try:
+        tour = Tour.objects.get(id=tour_id, user=request.user)
+    except Tour.DoesNotExist:
+        return Response({'error': 'Tour no encontrado o no tiene permisos para editarlo'}, status=404)
+
+    if request.method == 'PUT':
+        serializer = TourSerializer(tour, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+
+            pasos_data = request.data.get('steps', [])
+            print('pasos_data ---->', pasos_data)
+            for paso_data in pasos_data:
+                paso_id = paso_data.get('id')
+                print('paso_id -->', paso_id)
+                if paso_id:
+                    try:
+                        paso = Paso.objects.get(id=paso_id, tour=tour)
+                        print('paso --->', paso, paso_id )
+                        paso_serializer = PasoSerializer(paso, data=paso_data, partial=True)
+                        print('paso_serializer ', paso_serializer)
+                        if paso_serializer.is_valid():
+                            paso_serializer.save()
+                        else:
+                            return Response(paso_serializer.errors, status=400)
+                    except Paso.DoesNotExist:
+                        return Response({'error': f'Paso con id {paso_id} no encontrado o no pertenece al tour con id {tour_id}'}, status=404)
+                else:
+                    paso_data['tour'] = tour.id
+                    paso_serializer = PasoSerializer(data=paso_data)
+                    if paso_serializer.is_valid():
+                        paso_serializer.save()
+                    else:
+                        return Response(paso_serializer.errors, status=400)
+
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+@csrf_exempt
+@api_view(['POST'])
+def translate_and_save_tour(request, tour_id):
+    try:
+        tour_es = get_object_or_404(Tour, pk=tour_id, idioma='es')
+        tour_relation = TourRelation.objects.filter(tour_es=tour_es).first()
+        if tour_relation and tour_relation.tour_en:
+            return Response({
+                'message': 'El tour ya existe en inglés', 
+                'tour': {
+                    'id': tour_relation.tour_en.id,
+                    'latitude': tour_relation.tour_en.latitude,
+                    'longitude': tour_relation.tour_en.longitude,
+                    'titulo': tour_relation.tour_en.titulo,
+                    'image': tour_relation.tour_en.imagen.url,
+                    'audio': tour_relation.tour_en.audio.url,
+                    'description': tour_relation.tour_en.descripcion,
+                    'steps': [
+                        {
+                            'id': paso.id,
+                            'image': paso.image.url if paso.image else None,
+                            'audio': paso.audio.url if paso.audio else None,
+                            'latitude': paso.latitude,
+                            'longitude': paso.longitude,
+                            'description': paso.description,
+                            'tittle': paso.tittle
+                        } for paso in Paso.objects.filter(tour=tour_relation.tour_en)
+                    ]
+                }
+            }, status=200)
+        tour_en = Tour()
+        tour_en.user = tour_es.user
+        tour_en.imagen = tour_es.imagen
+        tour_en.audio = tour_es.audio
+        tour_en.tipo_de_tour = tour_es.tipo_de_tour
+        tour_en.idioma = 'en'
+        tour_en.validado = False
+        tour_en.descripcion = translate_text(tour_es.descripcion, tour_es.idioma)
+        tour_en.titulo = translate_text(tour_es.titulo, tour_es.idioma)
+        tour_en.latitude = tour_es.latitude
+        tour_en.longitude = tour_es.longitude
+        tour_en.save()
+
+        # Crear y guardar la relación entre los tours
+        tour_relation = TourRelation(tour_es=tour_es, tour_en=tour_en)
+        tour_relation.save()
+
+        # Traducir y guardar los pasos
+        pasos_es = Paso.objects.filter(tour=tour_es)
+        for paso_es in pasos_es:
+            paso_en = Paso()
+            paso_en.tour = tour_en
+            paso_en.image = paso_es.image
+            paso_en.audio = paso_es.audio
+            paso_en.latitude = paso_es.latitude
+            paso_en.longitude = paso_es.longitude
+            paso_en.description = translate_text(paso_es.description, tour_es.idioma)
+            paso_en.tittle = translate_text(paso_es.tittle, tour_es.idioma)
+            paso_en.save()
+        tour_data = {
+            'id': tour_en.id,
+            'latitude': tour_en.latitude,
+            'longitude': tour_en.longitude,
+            'titulo': tour_en.titulo,
+            'image': tour_en.imagen.url,
+            'audio': tour_en.audio.url,
+            'description': tour_en.descripcion,
+            'steps': [
+                {
+                    'id': paso.id,
+                    'image': paso.image.url if paso.image else None,
+                    'audio': paso.audio.url if paso.audio else None,
+                    'latitude': paso.latitude, 
+                    'longitude': paso.longitude,
+                    'description': paso.description,
+                    'tittle': paso.tittle
+                } for paso in Paso.objects.filter(tour=tour_en)
+            ]
+        }
+
+        return Response({'message': 'Tour traducido y guardado exitosamente', 'tour': tour_data}, status=200)
+    except Tour.DoesNotExist:
+        return Response({'error': 'Tour no encontrado'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+    
+
+def get_transcription_text(bucket_name, key):
+    s3 = boto3.client('s3')
+    try:
+        response = s3.get_object(Bucket=bucket_name, Key=key)
+        raw_data = response['Body'].read()
+        
+        # Detectar la codificación
+        result = chardet.detect(raw_data)
+        encoding = result['encoding']
+        
+        # Decodificar el texto usando la codificación detectada
+        transcription_data = json.loads(raw_data.decode(encoding))
+        transcription_text = transcription_data['results']['transcripts'][0]['transcript']
+        return transcription_text
+    except Exception as e:
+        return f"Error retrieving transcription: {e}"
+
+
+
+def normalize_filename(filename):
+        # Normalize unicode characters
+        nfkd_form = unicodedata.normalize('NFKD', filename)
+        # Encode to ASCII bytes, ignore errors, then decode back to string
+        only_ascii = nfkd_form.encode('ASCII', 'ignore').decode('ASCII')
+        # Replace any remaining invalid characters with '_'
+        return re.sub(r'[^0-9a-zA-Z._-]', '_', only_ascii)
+
+def wait_for_transcription_completion(transcribe_client, job_name):
+    while True:
+        time.sleep(30)        
+        status = transcribe_client.get_transcription_job(TranscriptionJobName=job_name)
+        job_status = status['TranscriptionJob']['TranscriptionJobStatus']
+        if job_status in ['COMPLETED', 'FAILED']:
+            return status
+
+
+def start_transcription_job(request, tour_id = 117):
+
+
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2' 
+
+
+    tour_og = get_object_or_404(Tour, pk=tour_id)
+    print(f"Tour Object: {tour_og}")
+    print(f"User: {tour_og.user}")
+    print(f"Idioma: {tour_og.idioma}")
+    print(f"Audio: {tour_og.audio}")
+
+    key = str(tour_og.audio)
+
+
+    transcribe = boto3.client('transcribe', region_name=region_name)
+    job_name_base = normalize_filename(f"{key.split('/')[-1].split('.')[0]}_{tour_og.user.id}_{tour_id}")
+    job_name = f"{job_name_base}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+    
+    job_uri = f's3://{bucket_name}/{key}'
+    output_key = f'transcriptions/{str(tour_id).zfill(5)}/{job_name}.json'
+    langCode = 'es-ES' if tour_og.idioma == 'es' else tour_og.idioma
+
+    try:
+        response = transcribe.start_transcription_job(
+            TranscriptionJobName=job_name,
+            Media={'MediaFileUri': job_uri},
+            MediaFormat=key.split('.')[-1],
+            LanguageCode=langCode,
+            OutputBucketName=bucket_name,
+            OutputKey=output_key
+        )
+    except ClientError as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    wait_for_transcription_completion(transcribe, job_name)
+    transcription_file = io.StringIO()
+    
+    # Transcribir el audio del tour principal
+    transcription_text = get_transcription_text(bucket_name, output_key)
+    transcription_file.write(transcription_text)
+    transcription_file.write('\n########################################################################\n')
+    transcription_file.write('\n\n')
+        #return JsonResponse(response)
+    
+    
+    pasos_og = Paso.objects.filter(tour=tour_og)
+
+    for paso in pasos_og:
+
+            key = str( paso.audio)
+
+            #transcribe = boto3.client('transcribe', region_name=region_name)
+            job_name_base = normalize_filename(f"{key.split('/')[-1].split('.')[0]}_{tour_og.user.id}_{tour_id}")
+            job_name = f"{job_name_base}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+            
+            job_uri = f's3://{bucket_name}/{key}'
+            output_key = f'transcriptions/{str(tour_id).zfill(5)}/{str(paso.step_number).zfill(5)}/{job_name}.json'
+            #langCode = 'es-ES' if tour_og.idioma == 'es' else tour_og.idioma
+            try:
+                response = transcribe.start_transcription_job(
+                    TranscriptionJobName=job_name,
+                    Media={'MediaFileUri': job_uri},
+                    MediaFormat=key.split('.')[-1],
+                    LanguageCode=langCode,
+                    OutputBucketName=bucket_name,
+                    OutputKey=output_key
+                )
+            except ClientError as e:
+                return JsonResponse({'error': str(e)}, status=500)
+            
+            wait_for_transcription_completion(transcribe, job_name)
+        # Obtener la transcripción del paso
+            transcription_text = get_transcription_text(bucket_name, output_key)
+            transcription_file.write(transcription_text)
+            transcription_file.write('\n########################################################################\n')
+
+
+    s3 = boto3.client('s3', region_name=region_name)
+    transcription_file.seek(0)  # Volver al inicio del archivo
+    s3.put_object(
+        Bucket=bucket_name,
+        Key=f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription.txt',
+        Body=transcription_file.read(),
+        ContentType='text/plain'
+    )
+
+    return JsonResponse({'message': 'Transcription jobs were successfully'})
+
+
+def get_complete_transcription(bucket_name, region_name, key):
+    s3 = boto3.client('s3', region_name=region_name)
+    try:
+        response = s3.get_object(Bucket=bucket_name, Key=key)
+        raw_data = response['Body'].read()
+        # Asumimos que la codificación es UTF-8
+        transcription_text = raw_data.decode('utf-8')
+        return transcription_text
+    except ClientError as e:
+        return f"Error retrieving complete transcription: {e}"
+
+
+def translate_text_aws(region_name, text, source_language_code, target_language_code):
+    translate = boto3.client('translate', region_name=region_name)
+    try:
+        response = translate.translate_text(
+            Text=text,
+            SourceLanguageCode=source_language_code,
+            TargetLanguageCode=target_language_code
+        )
+        return response['TranslatedText']
+    except ClientError as e:
+        return f"Error translating text: {e}"
+
+
+
+def translate_transcription(request, tour_id=117):
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2' 
+    key = f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription.txt'
+
+    relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
+    source_language_code = 'es'
+    target_language_code = 'en'
+    
+    if not relation:
+        relation = TourRelation.objects.filter(tour_en_id=tour_id).first()
+        source_language_code = 'en'
+        target_language_code = 'es'
+
+    if not relation:
+        return JsonResponse({'error': 'No relation found for the provided tour_id'}, status=404)
+    
+    if source_language_code == 'es':
+        related_tour_id = relation.tour_en.id
+    else:
+        related_tour_id = relation.tour_es.id
+
+    transcription_text = get_complete_transcription(bucket_name, region_name, key)
+
+    if "Error" in transcription_text:
+        return JsonResponse({'error': transcription_text}, status=500)
+
+    sections = transcription_text.split('########################################################################')
+    translated_sections = []
+
+    for section in sections:
+        if section.strip():
+            translated_text = translate_text_aws(region_name, section.strip(), source_language_code, target_language_code)
+            if "Error" in translated_text:
+                return JsonResponse({'error': translated_text}, status=500)
+            translated_sections.append(translated_text)
+        else:
+            translated_sections.append('')
+
+    translated_text_with_hashes = '\n########################################################################\n'.join(translated_sections)
+
+    output_key = f'transcriptions/{str(related_tour_id).zfill(5)}/complete_transcription_translated.txt'
+    s3 = boto3.client('s3', region_name=region_name)
+    try:
+        s3.put_object(
+            Bucket=bucket_name,
+            Key=output_key,
+            Body=translated_text_with_hashes,
+            ContentType='text/plain'
+        )
+    except ClientError as e:
+        return JsonResponse({'error': f"Error uploading translated text: {e}"}, status=500)
+
+    # Verificar que el archivo se haya subido correctamente
+    try:
+        response = s3.head_object(Bucket=bucket_name, Key=output_key)
+        if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+            return JsonResponse({'message': 'Translation of transcription job was successful', 'translated_text': translated_text_with_hashes})
+        else:
+            return JsonResponse({'error': 'Error verifying upload of translated text'}, status=500)
+    except ClientError as e:
+        return JsonResponse({'error': f"Error verifying upload of translated text: {e}"}, status=500)
+
+
+def synthesize_speech(region_name, text, output_format='mp3', voice_id='Joanna'):
+    polly = boto3.client('polly', region_name=region_name)
+    try:
+        response = polly.synthesize_speech(
+            Text=text,
+            OutputFormat=output_format,
+            VoiceId=voice_id
+        )
+        return response['AudioStream'].read()
+    except ClientError as e:
+        return f"Error synthesizing speech: {e}".encode('utf-8')
+    
+
+def convert_text_to_audio(request, tour_id=298):
+
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2' 
+    key = f'transcriptions/{str(tour_id).zfill(5)}/complete_transcription_translated.txt'
+    s3 = boto3.client('s3', region_name=region_name)
+
+    transcription_text = get_complete_transcription(bucket_name, region_name, key)
+
+    if "Error" in transcription_text:
+        return JsonResponse({'error': transcription_text}, status=500) 
+
+    sections = transcription_text.split('########################################################################')
+    
+    step = 0
+    for section in sections:
+        if section.strip():
+            if "End Of File" in section:
+                pass
+            audio_stream = synthesize_speech(region_name, section)
+            if isinstance(audio_stream, bytes) and audio_stream.startswith(b"Error"):
+                return JsonResponse({'error': audio_stream.decode('utf-8')}, status=500)
+
+
+            if step !=0:
+                #output_key_audio = f'Tour_audio/{str(tour_id).zfill(5)}/{str(step).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3'
+                output_key_audio = f"Tour_audio/{str(tour_id).zfill(5)}/{str(step).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3"
+
+                
+                try:
+                    paso = Paso.objects.get(tour=tour_id, step_number=step)
+                    paso.audio = output_key_audio
+                    paso.save()
+                except Paso.DoesNotExist:
+                    return JsonResponse({'error': 'Paso not found'}, status=404)
+            else:
+                output_key_audio = f"Tour_audio/{str(tour_id).zfill(5)}/audio_traducido_{str(step).zfill(5)}_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp3"
+                try:
+                    tour = Tour.objects.get(id=tour_id)
+                    tour.audio = output_key_audio
+                    tour.save()
+                except Tour.DoesNotExist:
+                    return JsonResponse({'error': 'Tour not found'}, status=404)
+            try:
+                s3.put_object(
+                    Bucket=bucket_name,
+                    Key=output_key_audio,
+                    Body=audio_stream,
+                    ContentType='audio/mpeg'
+                )
+            except ClientError as e:
+                return JsonResponse({'error': f"Error uploading audio file: {e}"}, status=500)
+            
+            try:
+                response = s3.head_object(Bucket=bucket_name, Key=output_key_audio)
+                if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+                    return JsonResponse({'error': 'Error verifying upload of audio file'}, status=500)
+                
+
+            except ClientError as e:
+                return JsonResponse({'error': f"Error verifying upload of audio file: {e}"}, status=500)
+            
+            
+
+            step+=1
+
+
+    return JsonResponse({'message': 'Speech synthesis of transcription job were successful'})
+
+
+
+
+def copy_tour_images_to_s3():
+    # Configuración de AWS S3
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2'
+    source_bucket = 'bucket-test-west2'
+    destination_bucket = 'bucket-test-west2'
+    s3 = boto3.client('s3', region_name=region_name)
+    base_path = 'Tour_imagen'
+
+    # Obtener todos los tours
+    tours = Tour.objects.all()
+
+    with transaction.atomic():
+        for tour in tours:
+
+            # Crear la ruta del directorio del tour
+            tour_dir = f"{base_path}/{str(tour.id).zfill(5)}"
+            print(f"Procesando tour ID: {tour.id} - Directorio: {tour_dir}")
+
+
+            # Copiar la imagen del tour, si existe
+            if tour.imagen:
+                source_key = str(tour.imagen)
+                image_name = os.path.basename(source_key)
+                destination_key = f"{tour_dir}/{image_name}"
+
+                if tour.imagen.name != destination_key:
+                    copy_source = {'Bucket': source_bucket, 'Key': source_key}
+                    print(f"Copiando imagen del tour: {source_key} a {destination_key}")
+
+                    # Comprobar si el objeto existe antes de copiarlo
+                    try:
+                        s3.head_object(Bucket=source_bucket, Key=source_key)
+                        s3.copy_object(
+                            CopySource=copy_source,
+                            Bucket=destination_bucket,
+                            Key=destination_key,
+                            MetadataDirective='REPLACE',
+                            Metadata={'x-amz-meta-copied': 'true'}  # Cambiar metadatos para permitir la copia
+                        )
+
+                        # Actualizar el path en la base de datos
+                        tour.imagen.name = destination_key
+                        tour.save()
+                        print(f"Path actualizado en la DB para tour ID: {tour.id} - Nuevo path: {tour.imagen.name}")
+                    except s3.exceptions.NoSuchKey:
+                        print(f"El archivo {source_key} no existe en el bucket {source_bucket}.")
+                    except Exception as e:
+                        print(f"Error al copiar {source_key} a {destination_key}: {e}")
+            
+            # Obtener todos los pasos asociados al tour
+            pasos = Paso.objects.filter(tour=tour)
+
+            for paso in pasos:
+                # Crear la ruta del directorio del paso
+                paso_dir = f"{tour_dir}/{str(paso.step_number).zfill(5)}"
+                print(f"Procesando paso ID: {paso.id} - Directorio: {paso_dir}")
+
+                # Copiar la imagen del paso, si existe
+                if paso.image:
+                    source_key = str(paso.image)
+                    image_name = os.path.basename(source_key)
+                    destination_key = f"{paso_dir}/{image_name}"
+
+                    if paso.image.name != destination_key:
+                        copy_source = {'Bucket': source_bucket, 'Key': source_key}
+                        print(f"Copiando imagen del paso: {source_key} a {destination_key}")
+
+                        # Comprobar si el objeto existe antes de copiarlo
+                        try:
+                            s3.head_object(Bucket=source_bucket, Key=source_key)
+                            s3.copy_object(
+                                CopySource=copy_source,
+                                Bucket=destination_bucket,
+                                Key=destination_key,
+                                MetadataDirective='REPLACE',
+                                Metadata={'x-amz-meta-copied': 'true'}  # Cambiar metadatos para permitir la copia
+                            )
+
+                            # Actualizar el path en la base de datos
+                            paso.image.name = destination_key
+                            paso.save()
+                            print(f"Path actualizado en la DB para paso ID: {paso.id} - Nuevo path: {paso.image.name}")
+                        except s3.exceptions.NoSuchKey:
+                            print(f"El archivo {source_key} no existe en el bucket {source_bucket}.")
+                        except Exception as e:
+                            print(f"Error al copiar {source_key} a {destination_key}: {e}")
+                else:
+                    print("ya esta modificado")
+    print("llegamos")
+
+    return "Imágenes copiadas y paths actualizados correctamente"
+
+
+
+def copy_images_view(request):
+    result = copy_tour_images_to_s3()
+    return JsonResponse({'message': result})
+
+
+def copy_tour_audio_to_s3():
+    # Configuración de AWS S3
+    bucket_name = 'bucket-test-west2'
+    region_name = 'eu-west-2'
+    source_bucket = 'bucket-test-west2'
+    destination_bucket = 'bucket-test-west2'
+    s3 = boto3.client('s3', region_name=region_name)
+    base_path = 'Tour_audio'
+
+    # Obtener todos los tours
+    tours = Tour.objects.all()
+
+    with transaction.atomic():
+        for tour in tours:
+
+            # Crear la ruta del directorio del tour
+            tour_dir = f"{base_path}/{str(tour.id).zfill(5)}"
+            print(f"Procesando tour ID: {tour.id} - Directorio: {tour_dir}")
+
+            # Copiar el audio del tour, si existe
+            if tour.audio:
+                source_key = str(tour.audio)
+                audio_name = os.path.basename(source_key)
+                destination_key = f"{tour_dir}/{audio_name}"
+
+                if tour.audio.name != destination_key:
+                    copy_source = {'Bucket': source_bucket, 'Key': source_key}
+                    print(f"Copiando audio del tour: {source_key} a {destination_key}")
+
+                    # Comprobar si el objeto existe antes de copiarlo
+                    try:
+                        s3.head_object(Bucket=source_bucket, Key=source_key)
+                        s3.copy_object(
+                            CopySource=copy_source,
+                            Bucket=destination_bucket,
+                            Key=destination_key,
+                            MetadataDirective='REPLACE',
+                            Metadata={'x-amz-meta-copied': 'true'}  # Cambiar metadatos para permitir la copia
+                        )
+
+                        # Actualizar el path en la base de datos
+                        tour.audio.name = destination_key
+                        tour.save()
+                        print(f"Path actualizado en la DB para tour ID: {tour.id} - Nuevo path: {tour.audio.name}")
+                    except s3.exceptions.NoSuchKey:
+                        print(f"El archivo {source_key} no existe en el bucket {source_bucket}.")
+                    except Exception as e:
+                        print(f"Error al copiar {source_key} a {destination_key}: {e}")
+
+            # Obtener todos los pasos asociados al tour
+            pasos = Paso.objects.filter(tour=tour)
+
+            for paso in pasos:
+                # Crear la ruta del directorio del paso
+                paso_dir = f"{tour_dir}/{str(paso.step_number).zfill(5)}"
+                print(f"Procesando paso ID: {paso.id} - Directorio: {paso_dir}")
+
+                # Copiar el audio del paso, si existe
+                if paso.audio:
+                    source_key = str(paso.audio)
+                    audio_name = os.path.basename(source_key)
+                    destination_key = f"{paso_dir}/{audio_name}"
+
+                    if paso.audio.name != destination_key:
+                        copy_source = {'Bucket': source_bucket, 'Key': source_key}
+                        print(f"Copiando audio del paso: {source_key} a {destination_key}")
+
+                        # Comprobar si el objeto existe antes de copiarlo
+                        try:
+                            s3.head_object(Bucket=source_bucket, Key=source_key)
+                            s3.copy_object(
+                                CopySource=copy_source,
+                                Bucket=destination_bucket,
+                                Key=destination_key,
+                                MetadataDirective='REPLACE',
+                                Metadata={'x-amz-meta-copied': 'true'}  # Cambiar metadatos para permitir la copia
+                            )
+
+                            # Actualizar el path en la base de datos
+                            paso.audio.name = destination_key
+                            paso.save()
+                            print(f"Path actualizado en la DB para paso ID: {paso.id} - Nuevo path: {paso.audio.name}")
+                        except s3.exceptions.NoSuchKey:
+                            print(f"El archivo {source_key} no existe en el bucket {source_bucket}.")
+                        except Exception as e:
+                            print(f"Error al copiar {source_key} a {destination_key}: {e}")
+                else:
+                    print("ya esta modificado")
+    print("llegamos")
+
+    return "Audios copiados y paths actualizados correctamente"
+
+def copy_audios_view(request):
+    result = copy_tour_audio_to_s3()
+    return JsonResponse({'message': result})
+
+
+
+def get_next_id():
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT last_value + increment_by AS next_id
+            FROM pg_sequences
+            WHERE schemaname = 'public' AND sequencename = 'LTtApp_tour_id_seq';
+        """)
+        row = cursor.fetchone()
+    return row[0] if row else None
