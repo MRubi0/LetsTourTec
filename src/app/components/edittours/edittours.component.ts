@@ -12,7 +12,9 @@ import { StepService } from 'src/app/services/step.service';
 export class EdittoursComponent {
   tourForm: FormGroup; 
   tour_id: string = '';
-  
+  image_url!: string;
+  aud_url!:string;
+
   constructor(
     private fb: FormBuilder,
     private stepService: StepService, 
@@ -102,8 +104,8 @@ export class EdittoursComponent {
         formData.append(`steps[${index}][audio]`, step.audio);
       }
     });
-    
-    this.edittoursService.editTour(this.tour_id, formData).subscribe({
+    console.log('this.steps.value ', this.steps.value.length);
+    this.edittoursService.editTour(this.tour_id, formData, this.steps.value.length).subscribe({
       next: (response: any) => {
         console.log('Tour actualizado con éxito:', response);
       },
@@ -115,8 +117,14 @@ export class EdittoursComponent {
 
   onFileChange(event: any, index: number, field: string) {
     const file = event.target.files[0];
-    if (file) {
-      this.steps.at(index).get(field)?.setValue(file);
+    console.log('file ', file, field)
+    const type = file.type.split('/')[0];
+    const blob = new Blob([file], { type: file.type });
+    this.steps.at(index).get(field)?.setValue(file);
+    if (type=='image') {
+      this.image_url = URL.createObjectURL(blob)
+    }else{
+      this.aud_url = URL.createObjectURL(blob)
     }
   }
 }

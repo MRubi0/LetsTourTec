@@ -62,6 +62,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { CustomSnackBarComponent } from './components/generics/custom-snack-bar/custom-snack-bar.component';
 import { VotacionModalComponent } from './components/votacion-modal/votacion-modal.component';
 import { EdittoursComponent } from './components/edittours/edittours.component';
+import { CoordinateValidatorDirective } from './directives/coordinateValidatorDirective';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -103,6 +104,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ProfilecardsComponent,
     CustomSnackBarComponent,
     EdittoursComponent,   
+    CoordinateValidatorDirective 
   ],
   imports: [
     BrowserModule,

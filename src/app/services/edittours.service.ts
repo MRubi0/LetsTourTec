@@ -10,10 +10,9 @@ export class EdittoursService {
 
   constructor(private http: HttpClient) { }
 
-  editTour(id: string, body: any): Observable<any> {
-    const lang = localStorage.getItem('language');
-    console.log('body --> ', body, id);
-    return this.http.put(`${environment.apiUrl}api/edit_tour/${id}/`, body, {
+  editTour(id: string, body: any, size: number): Observable<any> {
+    console.log('body --> ', body, id, size);
+    return this.http.put(`${environment.apiUrl}api/edit_tour/${id}/${size}/`, body, {
       headers: {
         'Accept': 'application/json',
       }
