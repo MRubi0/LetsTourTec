@@ -48,9 +48,6 @@ export class EdittoursComponent implements OnInit {
       this.tour_id = params['id'];
       this.loadTourDetails();
     });
-    this.tourForm.valueChanges.subscribe(data=>{
-      console.log('res ---> ', data);
-    });
   }
 
   loadTourDetails() {
@@ -115,13 +112,10 @@ export class EdittoursComponent implements OnInit {
     formData.append('idioma', this.tourForm.get('idioma')?.value);
     formData.append('tipo_de_tour', this.tourForm.get('tipo_de_tour')?.value);
     formData.append('deleting', JSON.stringify(this.deleting_steps));
-    console.log('here');
     if (this.tourForm.get('image')?.value instanceof File) {
-      console.log('here 1');
       formData.append('image', this.tourForm.get('image')?.value);
     }
     if (this.tourForm.get('audio')?.value instanceof File) {
-      console.log('here 2');
       formData.append('audio', this.tourForm.get('audio')?.value);
     }
   
@@ -146,7 +140,6 @@ export class EdittoursComponent implements OnInit {
   
     this.edittoursService.editTour(this.tour_id, formData, this.steps.value.length).subscribe({
       next: (response: any) => {
-        console.log('Tour actualizado con éxito:', response);
         this.loading = false;
         this.snackbarService.openSnackBar('Tour actualizado con éxito', 'OK');
       },
@@ -165,7 +158,6 @@ export class EdittoursComponent implements OnInit {
     const type = file.type.split('/')[0];
     const blob = new Blob([file], { type: file.type });    
     if (index === 'tour') {
-      console.log('index--> ', field, file);
       this.tourForm.get(field)?.setValue(file);
       if (type == 'image') {
         this.image_url_tour = URL.createObjectURL(blob);
