@@ -65,6 +65,7 @@ import { EdittoursComponent } from './components/edittours/edittours.component';
 import { CoordinateValidatorDirective } from './directives/coordinateValidatorDirective';
 import { DragedittoursComponent } from './components/dragedittours/dragedittours.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -134,6 +135,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     NgbRatingModule,
     DragDropModule,
     MatProgressSpinnerModule,
+    MatExpansionModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
