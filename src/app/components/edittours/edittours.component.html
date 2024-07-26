@@ -95,13 +95,13 @@
               </div>
 
               <h3><label for="image-{{i}}">Imagen</label></h3><br>
+              {{step.get('image')?.value}}
               <div class="mb-3">
-                {{step.get('image')?.value && !step.get('imageUrl')?.value}}
-                {{step.get('image')?.value}} - {{!step.get('imageUrl')?.value}}
-                <img *ngIf="step.get('imageUrl')?.value" [src]="step.get('imageUrl')?.value" alt="Imagen del Paso"
+                <img *ngIf="step.get('imageUrl')?.value" [src]="step.get('imageUrl')?.value" alt="Imagen del Paso 1"
                   class="img-thumbnail" style="max-width: 200px;">
-                <img *ngIf="step.get('image')?.value && !step.get('imageUrl')?.value" [src]="step.get('image')?.value"
-                  alt="Imagen del Paso" class="img-thumbnail" style="max-width: 200px;">
+                <img *ngIf="step.get('image')?.value && !step.get('imageUrl')?.value" 
+                    [src]="step.get('image')?.value"
+                    alt="Imagen del Paso 2" class="img-thumbnail" style="max-width: 200px;">
                 <input type="file" (change)="onFileChange($event, i, 'image')" class="form-control">
               </div>
               <h3><label for="audio-{{i}}">Audio</label></h3><br>

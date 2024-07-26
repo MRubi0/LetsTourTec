@@ -9,6 +9,7 @@ import { moveItemInArray } from '@angular/cdk/drag-drop';
 })
 export class DragedittoursComponent {
   @Input('form') form!: any;
+  form_to_send:any;
 
   constructor(
     public dialogRef: MatDialogRef<DragedittoursComponent>,
@@ -18,7 +19,7 @@ export class DragedittoursComponent {
   }
 
   ngOnInit() {
-    this.form = this.form.map((data: any) => {
+    this.form_to_send = this.form.map((data: any) => {
       const type = typeof data.image;
       if (type !== 'string') {
         const blob = new Blob([data.image], { type: data.image.type });
@@ -34,15 +35,13 @@ export class DragedittoursComponent {
       data.stepNumber = index + 1;
       return data;
     });
-    console.log('this.form ', this.form);
   }
 
   trackByMovie(index: number, movie: string): number {
-    return index;
+    return index;    
   }
 
   save() {
-    console.log('this.form 2', this.form);
-    this.dialogRef.close(this.form);
+    this.dialogRef.close(this.form_to_send);
   }
 }

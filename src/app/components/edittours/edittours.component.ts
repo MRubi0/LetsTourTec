@@ -58,9 +58,6 @@ export class EdittoursComponent implements OnInit {
       this.tour_id = params['id'];
       this.loadTourDetails();
     });
-    this.tourForm.valueChanges.subscribe((data:any)=>{
-      console.log('data -->', data);
-    });
   }
 
   loadTourDetails() {
@@ -132,11 +129,9 @@ export class EdittoursComponent implements OnInit {
       if (result) {
         const blobUrlPattern = /^blob:http(s)?:\/\/.+/;
         result = result.map((data:any, index:number)=>{
-          console.log('type ', typeof data.image)
           const stepFormGroup = this.steps.at(index) as FormGroup;          
           
           if (blobUrlPattern.test(data.image)) {
-            console.log('Image URL is a blob:', data.image);
             data.image = stepFormGroup.get('image')?.value;
           }
 
@@ -161,6 +156,7 @@ export class EdittoursComponent implements OnInit {
     formData.append('idioma', this.tourForm.get('idioma')?.value);
     formData.append('tipo_de_tour', this.tourForm.get('tipo_de_tour')?.value);
     formData.append('deleting', JSON.stringify(this.deleting_steps));
+
     if (this.tourForm.get('image')?.value instanceof File) {
       formData.append('image', this.tourForm.get('image')?.value);
     }
@@ -177,15 +173,10 @@ export class EdittoursComponent implements OnInit {
       formData.append(`steps[${index}][longitude]`, step.longitude);
       formData.append(`steps[${index}][description]`, step.description);
       formData.append(`steps[${index}][tittle]`, step.tittle);
-      formData.append(`steps[${index}][stepNumber]`, step.stepNumber);
-       
-      console.log('image ', step.image, step.image instanceof File);
-      if (step.image instanceof File) {
-        formData.append(`steps[${index}][image]`, step.image);
-      }
-      if (step.audio instanceof File) {
-        formData.append(`steps[${index}][audio]`, step.audio);
-      }
+      formData.append(`steps[${index}][stepNumber]`, step.stepNumber);       
+      formData.append(`steps[${index}][image]`, step.image);
+      formData.append(`steps[${index}][audio]`, step.audio);
+      
     });
 
     this.edittoursService.editTour(this.tour_id, formData, this.steps.value.length).subscribe({
