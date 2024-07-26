@@ -189,7 +189,7 @@ class Paso(models.Model):
     audio = models.FileField(upload_to='Tour_audio/', null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    tittle = models.TextField(null=True, blank=True)  # Corregido "tittle" a "title"
+    tittle = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
@@ -222,12 +222,10 @@ class Paso(models.Model):
                     buffer = BytesIO()
                     img.save(buffer, format='JPEG')
                     buffer.seek(0)
-
                     # Reemplazar la imagen original por la convertida
-                    file_name = f"juan_extra_image_{int(time.time() * 1000)}.jpg"
+                    file_name = f"extra_image_{int(time.time() * 1000)}.jpg"
                     self.image.save(file_name, ContentFile(buffer.getvalue()), save=False)
                 else:
-                    # Manejar el caso donde la respuesta no es exitosa
                     pass
             except Exception as e:
                 # Manejar excepciones específicas (por ejemplo, conexión fallida, imagen no válida, etc.)
@@ -236,13 +234,12 @@ class Paso(models.Model):
         if not self.step_number:
             existing_steps_count = Paso.objects.filter(tour=self.tour).count()
             self.step_number = existing_steps_count + 1
-
         super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['step_number']
 
-    def as_dict(self):
+    def as_dict(self):        
         return {
             "image": self.image.url if self.image else None,
             "audio": self.audio.url if self.audio else None,
@@ -253,6 +250,7 @@ class Paso(models.Model):
         }
 
     def __str__(self):
+        print('here! 6')
         return str(self.step_number)
 
 class TourSerializer(serializers.ModelSerializer):
