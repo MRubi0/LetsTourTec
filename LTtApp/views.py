@@ -1213,7 +1213,6 @@ def translate_text(text, idioma_origen, tour_destino):
             translated_text = response_data.get('data', {}).get('translations', {}).get('translatedText', '')
             return translated_text if translated_text else text
         else:
-            print(f"Error in translation: {response_data.get('message', 'Unknown error')}")
             return text
     except Exception as e:
         print(f"Exception in translation: {str(e)}")
@@ -1268,7 +1267,7 @@ def edit_tour(request, tour_id, size):
             tour_target.descripcion = translate_text(tour_source.descripcion, tour_source.idioma, tour_destino)
             tour_target.titulo = translate_text(tour_source.titulo, tour_source.idioma, tour_destino)
             tour_target.save()
-    
+
             deleting_steps = json.loads(request.POST.get('deleting', '[]'))
             if deleting_steps:
                 for step_id in deleting_steps:
@@ -1306,6 +1305,11 @@ def edit_tour(request, tour_id, size):
                     if paso_source.audio:
                         delete_s3_file(paso_source.audio.name)
                     paso_source.audio.save(extra_audio_name, extra_audio_file)
+                else:
+                    extra_audio = request.POST.get(extra_audio_key, None)
+                    if extra_audio:
+                        extra_audio = extra_audio.replace("https://bucket-test-west2.s3.amazonaws.com", "")
+                        paso_source.audio = extra_audio
 
                 if extra_image_key in request.FILES:
                     extra_image_file = request.FILES[extra_image_key]
@@ -1313,6 +1317,11 @@ def edit_tour(request, tour_id, size):
                     extra_image_name = f"extra_image_{tour_source.id}/{timestamp}.jpg"
                     delete_s3_file(paso_source.image.name)
                     paso_source.image.save(extra_image_name, extra_image_file, save=False)
+                else:
+                    extra_image = request.POST.get(extra_image_key, None)
+                    if extra_image:
+                        extra_image = extra_image.replace("https://bucket-test-west2.s3.amazonaws.com", "")
+                        paso_source.image = extra_image
 
                 extra_latitude = float(request.POST.get(extra_latitude_key, 0))
                 extra_longitude = float(request.POST.get(extra_longitude_key, 0))
