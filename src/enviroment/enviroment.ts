@@ -7,7 +7,7 @@ export const environment = {
   }
 */
 
-export const environment = {
+  export const environment = {
     production : false, 
     apiUrl:"https://letstourtec-c393a22f9c2b.herokuapp.com/",
     bucket:"https://bucket-test-west2.s3.eu-west-2.amazonaws.com"

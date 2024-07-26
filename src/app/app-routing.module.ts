@@ -20,6 +20,8 @@ import { HistoryToursComponent } from './components/history-tours/history-tours.
 import { ExitComponent } from './components/exit/exit.component'
 import { MusicPlayerDetailComponent } from './components/generics/music-player-detail/music-player-detail.component';
 import { ProfilecardsComponent } from './components/profilecards/profilecards.component';
+import { EdittoursComponent } from './components/edittours/edittours.component';
+import { DragedittoursComponent } from './components/dragedittours/dragedittours.component';
 
 
 const routes: Routes = [
@@ -95,6 +97,16 @@ const routes: Routes = [
   {
     path: 'edit-profile', 
     component: EditProfileComponent,
+    canActivate: [AuthGuard] 
+  },  
+  {
+    path: 'edit-tours/:id', 
+    component: EdittoursComponent,
+    canActivate: [AuthGuard] 
+  },
+  {
+    path: 'edit-drag', 
+    component: DragedittoursComponent,
     canActivate: [AuthGuard] 
   },
   {

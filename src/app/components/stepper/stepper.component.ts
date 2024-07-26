@@ -11,6 +11,7 @@ import { MusicPlayerComponent } from '../generics/music-player/music-player.comp
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CountdownComponent } from '../generics/countdown/countdown.component';
 import { MsgInicioModalComponent } from '../msg-inicio-modal/msg-inicio-modal.component';
+import { SnackService } from 'src/app/services/snack.service';
 
 @Component({
   selector: 'app-stepper',
@@ -54,7 +55,7 @@ export class StepperComponent {
 
   constructor(private router: Router, private dialog: MatDialog, private _formBuilder: FormBuilder,
     private stepService: StepService, private activatedRoute: ActivatedRoute,
-    private ngbModal: NgbModal
+    private ngbModal: NgbModal, private snackService:SnackService
     ) { }
 
   ngOnInit() {
@@ -227,8 +228,13 @@ export class StepperComponent {
   finishTour() {
     const tourId = this.tour_id;
     this.stepService.createTourRecord(tourId).subscribe(
-      response => console.log('Tour finalizado:', response),
-      error => console.error('Error al finalizar el tour:', error)
+      (response:any) => {
+        console.log('Tour finalizado:', response)
+      },
+      (error:any)=>{
+        this.snackService.openSnackBar(error.error.error, 'error');
+        this.router.navigate(['/home']);
+      }
     );
   }
 

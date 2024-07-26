@@ -1,0 +1,183 @@
+<!-- tour.component.html -->
+<div class="container-fluid">
+  <div class="container mt-5">
+    <h1>Edición de Tours</h1>
+    <div class="mt-3">
+      <form [formGroup]="tourForm">
+        <h3>Título</h3><br>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" aria-label="Título" formControlName="titulo">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><img class="image" src="../../../assets/iconos/edit-pencil.svg"
+                alt=""></span>
+          </div>
+        </div>
+        <h3>Imagen del Tour</h3><br>
+        <div class="mb-3">
+          <img *ngIf="image_url_tour" [src]="image_url_tour">
+          <img *ngIf="tourForm.get('image')?.value && !image_url_tour" [src]="tourForm.get('image')?.value"
+            class="img-thumbnail" style="max-width: 200px;">
+          <input type="file" (change)="onFileChange($event, 'tour', 'image')" class="form-control">
+        </div>
+        <h3>Audio del Tour</h3><br>
+        <div class="mb-3">
+          <audio *ngIf="aud_url_tour" controls>
+            <source [src]="aud_url_tour" type="audio/mpeg">
+            Tu navegador no soporta el elemento de audio.
+          </audio>
+          <audio *ngIf="tourForm.get('audio')?.value && !aud_url_tour" controls>
+            <source [src]="tourForm.get('audio')?.value" type="audio/mpeg">
+            Tu navegador no soporta el elemento de audio.
+          </audio>
+          <input type="file" (change)="onFileChange($event, 'tour', 'audio')" class="form-control">
+        </div>
+        <h3>Descripción</h3><br>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" aria-label="Descripción" formControlName="descripcion">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><img class="image" src="../../../assets/iconos/edit-pencil.svg"
+                alt=""></span>
+          </div>
+        </div>
+        <h3>Latitud</h3><br>
+        <div class="input-group mb-3">
+          <input type="number" class="form-control" aria-label="Latitud" formControlName="latitude"
+            appCoordinateValidator="latitude">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><img class="image" src="../../../assets/iconos/edit-pencil.svg"
+                alt=""></span>
+          </div>
+        </div>
+        <h3>Longitud</h3><br>
+        <div class="input-group mb-3">
+          <input type="number" class="form-control" aria-label="Longitud" formControlName="longitude"
+            appCoordinateValidator="longitude">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><img class="image" src="../../../assets/iconos/edit-pencil.svg"
+                alt=""></span>
+          </div>
+        </div>
+        <h3>Duración</h3><br>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" aria-label="Duración" formControlName="duracion">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><img class="image" src="../../../assets/iconos/edit-pencil.svg"
+                alt=""></span>
+          </div>
+        </div>
+        <h3>Recorrido</h3><br>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" aria-label="Recorrido" formControlName="recorrido">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><img class="image" src="../../../assets/iconos/edit-pencil.svg"
+                alt=""></span>
+          </div>
+        </div>
+        <h3>Tipo de Tour</h3><br>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" aria-label="Tipo de Tour" formControlName="tipo_de_tour">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><img class="image" src="../../../assets/iconos/edit-pencil.svg"
+                alt=""></span>
+          </div>
+        </div>
+        <div>
+          <h3>Pasos</h3>
+        </div>
+        <div formArrayName="steps">
+          <mat-vertical-stepper>
+            <mat-step *ngFor="let step of steps.controls; let i = index" [formGroupName]="i">
+              <div class="row">
+                <div class="col-12 d-flex justify-content-end">
+                  <button [disabled]="disabled" class="button_trash btn btn-outline-danger" (click)="deleteStep(i)"><img
+                      class="svg-img" src="../../../assets/iconos/trash.svg" alt=""></button>
+                </div>
+              </div>
+
+              <h3><label for="image-{{i}}">Imagen</label></h3><br>
+              {{step.get('image')?.value}}
+              <div class="mb-3">
+                <img *ngIf="step.get('imageUrl')?.value" [src]="step.get('imageUrl')?.value" alt="Imagen del Paso 1"
+                  class="img-thumbnail" style="max-width: 200px;">
+                <img *ngIf="step.get('image')?.value && !step.get('imageUrl')?.value" 
+                    [src]="step.get('image')?.value"
+                    alt="Imagen del Paso 2" class="img-thumbnail" style="max-width: 200px;">
+                <input type="file" (change)="onFileChange($event, i, 'image')" class="form-control">
+              </div>
+              <h3><label for="audio-{{i}}">Audio</label></h3><br>
+              <div class="mb-3">
+                   <app-music-player 
+                    *ngIf="step.get('audioUrl')?.value"
+                    class="w-100" [audio]="step.get('audioUrl')?.value" [index]="i"
+                    [rates]="rates"  [volum]="volumen_rate" 
+                    (emitRates)="velocity($event)" (emitVolumen)="volumen($event)"></app-music-player>
+                    <app-music-player 
+                    *ngIf="!step.get('audioUrl')?.value && step.get('audio')?.value"
+                    class="w-100" [audio]="step.get('audio')?.value" [index]="i"
+                    [rates]="rates"  [volum]="volumen_rate" 
+                    (emitRates)="velocity($event)" (emitVolumen)="volumen($event)"></app-music-player>
+                <!--<audio controls>
+                  <source *ngIf="step.get('audioUrl')?.value" [src]="step.get('audioUrl')?.value" type="audio/mpeg">
+                  Tu navegador no soporta el elemento de audio.
+                </audio>-->
+                <!--<audio controls>
+                  <source [src]="step.get('audio')?.value" *ngIf="!step.get('audioUrl')?.value && step.get('audio')?.value" type="audio/mpeg">
+                  Tu navegador no soporta el elemento de audio.
+                </audio>-->
+                <input type="file" (change)="onFileChange($event, i, 'audio')" class="form-control">
+              </div>
+              <h3><label for="latitude-{{i}}">Latitud</label></h3><br>
+              <div class="input-group mb-3">
+                <input type="number" class="form-control" id="latitude-{{i}}" formControlName="latitude"
+                  appCoordinateValidator="latitude">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <img class="image" src="../../../assets/iconos/edit-pencil.svg" alt="">
+                  </span>
+                </div>
+              </div>
+              <h3><label for="longitude-{{i}}">Longitud</label></h3><br>
+              <div class="input-group mb-3">
+                <input type="number" class="form-control" id="longitude-{{i}}" formControlName="longitude"
+                  appCoordinateValidator="longitude">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <img class="image" src="../../../assets/iconos/edit-pencil.svg" alt="">
+                  </span>
+                </div>
+              </div>
+              <h3><label for="description-{{i}}">Descripción</label></h3><br>
+              <div class="input-group mb-3">
+                <textarea class="form-control" id="description-{{i}}" formControlName="description"></textarea>
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <img class="image" src="../../../assets/iconos/edit-pencil.svg" alt="">
+                  </span>
+                </div>
+              </div>
+              <h3><label for="tittle-{{i}}">Título del Paso</label></h3><br>
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" id="tittle-{{i}}" formControlName="tittle">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <img class="image" src="../../../assets/iconos/edit-pencil.svg" alt="">
+                  </span>
+                </div>
+              </div>
+            </mat-step>
+          </mat-vertical-stepper>
+        </div>
+        <div class="row">
+          <div class="col-12 d-flex justify-content-center">
+            <button mat-raised-button color="primary" type="button" (click)="updateTour()">Guardar</button>
+
+            <button mat-raised-button color="primary" type="button" (click)="addNewStep()">+</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="text-center m-4 spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>
