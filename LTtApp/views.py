@@ -691,7 +691,7 @@ def get_nearest_tours_all(request):
             'email': tour['tour'].user.email,
             'first_name': tour['tour'].user.first_name, 
             'last_name': tour['tour'].user.last_name,
-            'avatar': tour['tour'].user.avatar.url,
+            'avatar': tour['tour'].user.avatar.url if tour['tour'].user.avatar else None,
             'bio': tour['tour'].user.bio,
         }
     } for tour in current_page_tours]
@@ -703,7 +703,6 @@ def get_nearest_tours_all(request):
 
     # Devolver los tours más cercanos como respuesta JSON
     return JsonResponse(response_data)
-
 
 def all_tours(request):
     # Obtenemos todos los tours disponibles
@@ -1358,9 +1357,9 @@ def edit_tour(request, tour_id, size):
             deleting_steps = json.loads(request.POST.get('deleting', '[]'))
             if deleting_steps:
                 for step_id in deleting_steps:
-                    paso = get_object_or_404(Paso, id=step_id)
-                    if paso.image:
-                        delete_s3_file(paso.image.name)
+                    paso = Paso.objects.filter(id=step_id).first()                   
+                    if paso.image:   
+                        delete_s3_file(paso.image)
                     if paso.audio:
                         delete_s3_file(paso.audio.name)
                     paso.delete()
