@@ -28,6 +28,11 @@ export class EdittoursComponent implements OnInit {
   velocity_rate:number=1;
   volumen_rate:number=0.5;
   rates=0;
+  opciones = [
+    { value: 'cultural', viewValue: 'Cultural Tour' },
+    { value: 'leisure', viewValue: 'Leisure Tour' },
+    { value: 'nature', viewValue: 'Nature Tour' },
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -134,12 +139,11 @@ export class EdittoursComponent implements OnInit {
           if (blobUrlPattern.test(data.image)) {
             data.image = stepFormGroup.get('image')?.value;
           }
-
+          this.updateSteps(result);  
           return data;
-        }); 
-        this.updateSteps(result);        
-        this.updateTourModal();
-      }
+        });         
+      }            
+      this.updateTourModal();
     });
   }
 
@@ -226,7 +230,6 @@ export class EdittoursComponent implements OnInit {
   deleteStep(index: number): void {
     const stepId = this.steps.at(index).get('id')?.value;
     this.steps.removeAt(index);
-
     if (stepId) {
       this.deleting_steps.push(stepId);
     }

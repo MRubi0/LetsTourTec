@@ -16,9 +16,13 @@ export class AlltoursComponent {
   }
 
   ngOnInit(){
-    this.latestToursService.getAllTours().subscribe((data=>{
-      this.alltours=data;
-    }));
+    navigator.geolocation.getCurrentPosition((position) => {
+      const latitud = String(position.coords.latitude);
+      const longitud = String(position.coords.longitude);
+      this.latestToursService.getAllTours(latitud, longitud).subscribe((data=>{
+        this.alltours=data;
+      }));
+    })   
   }
 
   sortByDistance() {
@@ -31,6 +35,7 @@ export class AlltoursComponent {
         const lang: string = localStorage.getItem('language') ?? 'es';
         const latitud = String(position.coords.latitude);
         const longitud = String(position.coords.longitude);
+        console.log('latitud ',latitud, longitud)
         this.http.get(`${environment.apiUrl}`, {
           params: {latitude: latitud , longitude: longitud,language:lang}})
 

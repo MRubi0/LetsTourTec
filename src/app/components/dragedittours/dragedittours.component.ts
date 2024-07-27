@@ -19,7 +19,7 @@ export class DragedittoursComponent {
   }
 
   ngOnInit() {
-    this.form_to_send = this.form.map((data: any) => {
+     this.form.map((data: any) => {
       const type = typeof data.image;
       if (type !== 'string') {
         const blob = new Blob([data.image], { type: data.image.type });
@@ -31,7 +31,7 @@ export class DragedittoursComponent {
 
   drop(event: any) {
     moveItemInArray(this.form, event.previousIndex, event.currentIndex);
-    this.form = this.form.map((data: any, index: number) => {
+    this.form_to_send = this.form.map((data: any, index: number) => {
       data.stepNumber = index + 1;
       return data;
     });
