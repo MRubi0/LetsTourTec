@@ -21,7 +21,7 @@ import { ExitComponent } from './components/exit/exit.component'
 import { MusicPlayerDetailComponent } from './components/generics/music-player-detail/music-player-detail.component';
 import { ProfilecardsComponent } from './components/profilecards/profilecards.component';
 import { EdittoursComponent } from './components/edittours/edittours.component';
-
+import { DonationComponent } from './components/donation/donation.component';
 
 const routes: Routes = [
   {
@@ -114,6 +114,10 @@ const routes: Routes = [
   {
     path:'profile-card',
     component: ProfilecardsComponent,
+  },
+  {
+    path:'donation',
+    component: DonationComponent,
   }
 ];
 
