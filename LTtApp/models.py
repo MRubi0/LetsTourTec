@@ -84,8 +84,11 @@ class Tour(models.Model):
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     duracion = models.PositiveIntegerField("Duración en minutos", null=True, blank=True)
+
     recorrido = models.FloatField(null=True, blank=True)   # Recorrido en kilómetros
     original = models.TextField(null=True, blank=True)
+    
+
     idioma = models.CharField(max_length=2, default='es')
     validado = models.BooleanField(default=False)
 
@@ -168,6 +171,13 @@ class Paso(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # class Meta:
+    #     ordering = ['step_number']
+
+    # def __str__(self):
+    #     return str(self.step_number)
+
+
     def save(self, *args, **kwargs):
         if self.image:
             try:
@@ -182,6 +192,7 @@ class Paso(models.Model):
                     buffer = BytesIO()
                     img.save(buffer, format='JPEG')
                     buffer.seek(0)
+                    # Reemplazar la imagen original por la convertida
                     file_name = f"extra_image_{int(time.time() * 1000)}.jpg"
                     self.image.save(file_name, ContentFile(buffer.getvalue()), save=False)
                 else:

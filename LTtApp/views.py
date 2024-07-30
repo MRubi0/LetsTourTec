@@ -17,6 +17,7 @@ from math import atan2, cos, radians, sin, sqrt
 import io
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
+from PIL import Image
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login
 
@@ -69,6 +70,11 @@ from .forms import ( EditProfileForm,
                     TourForm, ValoracionForm)
 from .models import (CustomUser, Encuesta,Paso, Tour, TourRecord, TourRelation, 
                      Valoracion)
+from .forms import (AudioFileForm, CustomUserCreationForm, EditProfileForm,
+                    EncuestaForm, GuideForm, ImageFileForm, LocationForm,
+                    TourForm, ValoracionForm)
+from .models import (AudioFile, CustomUser, Encuesta, Guide, ImageFile,
+                     Location, Paso, Tour, TourRecord, TourRelation, Valoracion, PasoSerializer, TourSerializer)
 
 
 
