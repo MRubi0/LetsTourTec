@@ -6,6 +6,7 @@ import random
 from django.conf import settings
 import requests
 import sqlite3
+import folium
 import time
 from datetime import datetime
 from math import atan2, cos, radians, sin, sqrt
@@ -16,15 +17,18 @@ from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, get_user_model
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core import serializers
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db import OperationalError, connection
 from django.db.models import Avg, ExpressionWrapper, F, FloatField, Func, Q
 from django.db.models.expressions import RawSQL
 from django.http import JsonResponse
+from django.db import transaction, connection
+from django.db.models import Avg
+from botocore.exceptions import ClientError
+from django.http import JsonResponse, HttpResponseNotFound
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -43,8 +47,27 @@ from .forms import (
     AudioFileForm, CustomUserCreationForm, EditProfileForm, EncuestaForm,
     GuideForm, ImageFileForm, LocationForm, TourForm, ValoracionForm)
 from .models import (
-    AudioFile, CustomUser, Encuesta, Guide, ImageFile, Location, Paso, PasoSerializer,
-    Tour, TourRecord, TourRelation, TourSerializer, Valoracion)
+    AudioFile, CustomUser, Encuesta,Paso,
+    Tour, TourRecord, TourRelation, Valoracion)
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from django.contrib.auth import authenticate
+from .models import CustomUser
+from .serializers import TourSerializer, PasoSerializer, CustomUserSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.mail import send_mail
+from django.conf import settings
+import random
+import string
+
+from .forms import ( EditProfileForm,                    
+                    TourForm, ValoracionForm)
+from .models import (CustomUser, Encuesta,Paso, Tour, TourRecord, TourRelation, 
+                     Valoracion)
+
+
 
 
 
@@ -99,6 +122,7 @@ def profile(request):
 
 
 
+
 def get_user_tours(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
@@ -130,26 +154,41 @@ def get_user_tours(request):
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
-@csrf_exempt
-def login_view(request):
-    if request.method == 'POST':
-        # Assuming you send 'username' and 'password' in the request body
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
+class LoginView(APIView):
+    permission_classes = [AllowAny]
 
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        user = authenticate(request, email=email, password=password)
         if user is not None:
-            login(request, user)
-            # Return a JSON response indicating success
-            return JsonResponse({'success': True})
-        else:
-            # Return a JSON response indicating failure
-            return JsonResponse({'error': 'Invalid credentials'}, status=401)
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            })
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    # If it's a GET request, you may want to handle it differently
-    # This part depends on your application's logic
-    return JsonResponse({'error': 'GET request not supported'}, status=405)
+class PasswordResetView(APIView):
+    permission_classes = [AllowAny]
 
+    def post(self, request):
+        email = request.data.get('email')
+        try:
+            user = CustomUser.objects.get(email=email)
+            temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+            user.set_password(temp_password)
+            user.save()
+            send_mail(
+                'Temporary Password',
+                f'Your temporary password is {temp_password}',
+                settings.EMAIL_HOST_USER,
+                [user.email],
+                fail_silently=False,
+            )
+            return Response({"message": "Temporary password sent"}, status=status.HTTP_200_OK)
+        except CustomUser.DoesNotExist:
+            return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 @csrf_exempt
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -330,35 +369,22 @@ def upload_encuesta(request):
 
     return Response({'error': 'Método no permitido'}, status=405)
 
-@csrf_exempt
-def register_view(request):
-    if request.method == 'POST':
-        # Cargamos el cuerpo de la solicitud (que es un JSON) en un diccionario de Python
-        data = json.loads(request.body.decode('utf-8'))
-        print(data)
-        # En lugar de usar request.POST, usamos el diccionario data que acabamos de crear
-        form = CustomUserCreationForm(data)
-        
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return JsonResponse({"success": True, "message": "Registration successful!"})
-        else:
-            errors = {}
-            for field, error_list in form.errors.as_data().items():
-                errors[field] = [str(error) for error in error_list]
-            print(errors)
-            messages.error(request, "Ha ocurrido un error en el registro. Por favor, verifica tus datos e inténtalo de nuevo.")
+class RegisterView(APIView):
+    permission_classes = [AllowAny]
 
-            return JsonResponse({
-                "success": False,
-                "message": "Error in registration. Please verify your data and try again.",
-                "errors": errors
-            })            
-    else:
-        form = CustomUserCreationForm()
-
-    return JsonResponse({"success": False, "message": "Invalid request method."})
+    def post(self, request):
+        serializer = CustomUserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            send_mail(
+                'Welcome to Our Site',
+                'Thank you for registering.',
+                os.getenv('EMAIL_HOST_USER'),
+                [user.email],
+                fail_silently=False,
+            )
+            return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def registration_success(request):
     return render(request, 'registration/success.html')

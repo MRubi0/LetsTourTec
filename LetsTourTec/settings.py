@@ -19,6 +19,7 @@ from datetime import timedelta
 import logging
 import boto3
 from botocore.config import Config
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,8 +46,17 @@ INSTALLED_APPS = [
     'corsheaders',
     'django.contrib.staticfiles',
     'storages',
-    
-    #'django.contrib.gis',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration'
+]
+
+AUTHENTICATION_BACKENDS = [
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +69,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware'     
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware'     
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -186,11 +197,12 @@ GDAL_LIBRARY_PATH = 'C:/Program Files/GDAL/gdal.dll'
 if sys.platform.startswith('win'):
     os.environ['PATH'] = GDAL_LIBRARY_PATH + ';' + os.environ['PATH']
 '''
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 ALLOWED_HOSTS = ['letstourtec.com', 'www.letstourtec.com', 'letstourtec-c393a22f9c2b.herokuapp.com', 'localhost', '127.0.0.1', 'localhost:4200', "https://letstourtec-testing-2ac790364c4e.herokuapp.com"]
 
@@ -240,9 +252,11 @@ CSRF_COOKIE_SAMESITE = None
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
+
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=365), # Tiempo de vida del token de acceso
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=365 * 3),       # Tiempo de vida del token de actualización
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1)
 }
 AWS_S3_REGION_NAME = 'eu-west-2'
 CORS_ALLOW_ALL_ORIGINS = True
@@ -270,3 +284,11 @@ s3_client = boto3.client('s3', config=my_config)
 
 # Ahora puedes usar este cliente para subir archivos, por ejemplo:
 # s3_client.upload_file('mi_archivo_local.txt', 'mi-bucket', 'mi_archivo_en_s3.txt')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')

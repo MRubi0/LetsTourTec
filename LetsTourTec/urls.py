@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from LTtApp.views import edit_tour, register_view,  test_auth
+from LTtApp.views import RegisterView, edit_tour,  test_auth
 from LTtApp.views import upload_tours, crear_valoracion
 #from LTtApp.views import upload_tour
 from LTtApp import views
@@ -13,10 +13,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     #path('signup/', vista_registro.as_view(), name='signup'),
-    path('register/', register_view, name='register'),
+    path('register/', views.RegisterView.as_view(), name='register'),
     path('', include('LTtApp.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('registration_success/', views.registration_success, name='registration_success'),
@@ -55,7 +55,14 @@ urlpatterns = [
     path('tour/<int:tour_id>/media-valoracion/', views.media_valoracion_tour, name='media-valoracion-tour'),
     path('api/get_tour_with_steps/<int:tour_id>/<str:languaje>/', views.get_tour_with_steps, name='get_tour_with_steps'),
     path('api/translate_and_save_tour/<int:tour_id>/', views.translate_and_save_tour, name='translate_and_save_tour'),
-    path('api/edit_tour/<int:tour_id>/<int:size>/', views.edit_tour, name='edit_tour') 
+    path('api/edit_tour/<int:tour_id>/<int:size>/', views.edit_tour, name='edit_tour'),
+    ##path('start_transcription_job/<int:tour_id>/', views.start_transcription_job, name='start_transcription_job'),
+    ##path('translate_transcription/<int:tour_id>/', views.translate_transcription, name='translate_transcription'), 
+    ##path('convert_text_to_audio/<int:tour_id>/', views.convert_text_to_audio, name='convert_text_to_audio'),
+    ##path('copy-audios/', views.copy_audios_view, name='copy-audios'),
+    ##path('copy-images/', views.copy_images_view, name='copy-images'),
+
+    
     ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

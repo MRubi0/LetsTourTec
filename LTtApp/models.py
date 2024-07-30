@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, User
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.utils import timezone
@@ -9,65 +9,47 @@ import requests
 import boto3
 import os
 from django.core.files.base import ContentFile
-from rest_framework import serializers
-
-#from django.contrib.gis.db.models import PointField
-
-
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(self, email, username, password=None, **extra_fields):
         if not email:
             raise ValueError("The Email field must be set")
-        user = self.model(email=self.normalize_email(email), **extra_fields)
+        if not username:
+            raise ValueError("The Username field must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-        return self.create_user(email, password, **extra_fields)
+    def create_superuser(self, email, username, password=None, **extra_fields):
+        extra_fields.setdefault("rol", "superadmin")
+        return self.create_user(email, username, password, **extra_fields)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    username = None
+    username = models.CharField(max_length=30, unique=True)
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
-
-    objects = CustomUserManager()
+    last_login = models.DateTimeField(auto_now=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     bio = models.TextField(blank=True)
+    is_staff = models.BooleanField(default=False)
+    rol = models.CharField(max_length=50, default='user')
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name", "last_name"]
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+
+    class Meta:
+        db_table = 'users'
 
     def __str__(self):
         return self.email
-
-    groups = models.ManyToManyField(
-        'auth.Group',
-        verbose_name=_('groups'),
-        blank=True,
-        related_query_name="customuser",
-        related_name="customuser_set",
-        help_text=_(
-            'The groups this user belongs to. A user will get all permissions '
-            'granted to each of their groups.'
-        ),
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        verbose_name=_('user permissions'),
-        blank=True,
-        related_query_name="customuser",
-        related_name="customuser_set",
-        help_text=_('Specific permissions for this user.'),
-    )
-
 
 class Guide(models.Model):
     title = models.CharField(max_length=200)
@@ -101,7 +83,8 @@ class Tour(models.Model):
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     duracion = models.PositiveIntegerField("Duración en minutos", null=True, blank=True)
-    recorrido = models.FloatField(null=True, blank=True)  # Recorrido en kilómetros
+    recorrido = models.FloatField(null=True, blank=True)   # Recorrido en kilómetros
+    original = models.TextField(null=True, blank=True)
     idioma = models.CharField(max_length=2, default='es')
     validado = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
@@ -118,16 +101,12 @@ class Tour(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-
         if self.imagen:
             try:
-                # Obtén la URL de la imagen almacenada en S3
                 image_url = self.imagen.url
-                # Descarga la imagen usando requests y ábrela con PIL
                 response = requests.get(image_url)
                 response.raise_for_status()
                 img = Image.open(BytesIO(response.content))
-                # Convierte la imagen a modo RGB si no lo está
                 if img.mode in ['P', 'RGBA']:
                     img = img.convert('RGB')
             except UnidentifiedImageError:
@@ -137,9 +116,7 @@ class Tour(models.Model):
             except Exception as e:
                 print(f"Error inesperado: {e}")
 
-            # Construye el path de la imagen en S3
             key = f'tours/{self.id}/images/{self.imagen.name}'
-            # Aquí necesitas configurar boto3 con tus credenciales de AWS y especificar el bucket y key adecuados
             s3 = boto3.client(
                 's3',
                 aws_access_key_id='AKIAYTBLLQA7BS6GPBHU',
@@ -149,7 +126,7 @@ class Tour(models.Model):
 
     def as_dict(self):
         return {
-            "id": self.id,  # Incluye el id del tour
+            "id": self.id,
             "user": self.user.username if self.user else None,
             "titulo": self.titulo,
             "descripcion": self.descripcion,
@@ -161,6 +138,7 @@ class Tour(models.Model):
             "latitude": self.latitude,
             "longitude": self.longitude,
         }
+
 class TourRelation(models.Model):
     tour_es = models.OneToOneField('Tour', on_delete=models.CASCADE, related_name='tour_es')
     tour_en = models.OneToOneField('Tour', on_delete=models.CASCADE, related_name='tour_en')
@@ -180,35 +158,25 @@ class Paso(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
-
     def save(self, *args, **kwargs):
         if self.image:
             try:
-                # Descarga la imagen desde S3 y ábrela con PIL
                 response = requests.get(self.image.url)
                 if response.status_code == 200:
                     img = Image.open(BytesIO(response.content))
-
-                    # Convierte la imagen a modo RGB si no lo está
                     if img.mode in ['P', 'RGBA']:
                         img = img.convert('RGB')
-
-                    # Redimensionamiento si es necesario
                     if img.height > 150 or img.width > 150:
                         output_size = (150, 150)
                         img.thumbnail(output_size)
-
-                    # Guardar la imagen convertida en un objeto BytesIO
                     buffer = BytesIO()
                     img.save(buffer, format='JPEG')
                     buffer.seek(0)
-                    # Reemplazar la imagen original por la convertida
                     file_name = f"extra_image_{int(time.time() * 1000)}.jpg"
                     self.image.save(file_name, ContentFile(buffer.getvalue()), save=False)
                 else:
                     pass
             except Exception as e:
-                # Manejar excepciones específicas (por ejemplo, conexión fallida, imagen no válida, etc.)
                 pass
 
         if not self.step_number:
@@ -230,34 +198,23 @@ class Paso(models.Model):
         }
 
     def __str__(self):
-        print('here! 6')
         return str(self.step_number)
-
-class TourSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tour
-        fields = '__all__'
-
-class PasoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Paso
-        fields = '__all__'
 
 class TourRecord(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
+
     def as_dict(self):
         return {
             "id": self.id,
             "tour_id": self.tour.id,
             "tour_title": self.tour.titulo,
             "date": self.date.strftime("%Y-%m-%d %H:%M:%S"),
-            # Puedes añadir más campos si es necesario
         }
+
     def __str__(self):
         return f"{self.user.username} - {self.tour.titulo} - {self.date}"
-
 
 class Encuesta(models.Model):
     edad = models.CharField(max_length=100, blank=True)   
@@ -289,10 +246,8 @@ class Encuesta(models.Model):
     correo = models.EmailField(blank=True, null=True)
     id_tour = models.TextField(blank=True, null=True)
 
-
     def __str__(self):
         return f"Encuesta {self.id}"
-    
 
 class Valoracion(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='valoraciones')
