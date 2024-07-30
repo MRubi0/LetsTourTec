@@ -8,6 +8,7 @@ from io import BytesIO
 import requests
 import boto3
 import os
+import time
 from django.core.files.base import ContentFile
 
 class CustomUserManager(BaseUserManager):
@@ -77,9 +78,9 @@ class Location(models.Model):
 class Tour(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=255)
-    imagen = models.ImageField(upload_to='tours/')
+    imagen = models.ImageField(upload_to='Tour_imagen/', max_length=255)  # Aumentado el tamaño
     descripcion = models.TextField()
-    audio = models.FileField(upload_to='tour_audio/', null=True, blank=True)
+    audio = models.FileField(upload_to='Tour_audio/', null=True, blank=True)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     duracion = models.PositiveIntegerField("Duración en minutos", null=True, blank=True)
@@ -87,6 +88,7 @@ class Tour(models.Model):
     original = models.TextField(null=True, blank=True)
     idioma = models.CharField(max_length=2, default='es')
     validado = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     TIPO_DE_TOUR_CHOICES = [
@@ -124,6 +126,14 @@ class Tour(models.Model):
                 region_name='eu-north-1'
             )
 
+
+
+    # def __str__(self):
+    #     return self.titulo
+
+
+
+
     def as_dict(self):
         return {
             "id": self.id,
@@ -149,8 +159,8 @@ class TourRelation(models.Model):
 class Paso(models.Model):
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
     step_number = models.IntegerField(default=None)
-    image = models.ImageField(upload_to='pasos/', null=True, blank=True)
-    audio = models.FileField(upload_to='paso_audio/', null=True, blank=True)
+    image = models.ImageField(upload_to='Tour_imagen/', null=True, blank=True, max_length=255)
+    audio = models.FileField(upload_to='Tour_audio/', null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     tittle = models.TextField(null=True, blank=True)
@@ -198,6 +208,7 @@ class Paso(models.Model):
         }
 
     def __str__(self):
+        print('here! 6')
         return str(self.step_number)
 
 class TourRecord(models.Model):
