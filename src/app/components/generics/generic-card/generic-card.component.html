@@ -24,7 +24,7 @@
                         </button>                        
                     </div>
                     <div class="col-6 d-flex justify-content-end">
-                        <button class='button-fab' mat-fab data-bs-toggle="tooltip" matTooltip="Editar"
+                        <button *ngIf="show" class='button-fab' mat-fab data-bs-toggle="tooltip" matTooltip="Editar"
                             aria-label="Button that displays a tooltip when focused or hovered over"
                             [routerLink]="['/edit-tours/', tours.id]">
                             <div class="icon_type_tour">

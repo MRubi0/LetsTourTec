@@ -2,7 +2,7 @@ import { Component, Input, ViewChild } from '@angular/core';
 import { PaginationControlsComponent } from 'ngx-pagination';
 import { SharedService } from 'src/app/services/shared.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 
 
@@ -25,8 +25,19 @@ export class GenericCardComponent {
   autoHide=true
   responsive=true
   showMore=false;
+  show=false;
 
-  constructor(private sharedService: SharedService, private translate: TranslateService, private router: Router) {}
+  constructor(private sharedService: SharedService, private translate: TranslateService, 
+    private router: Router, private route: ActivatedRoute
+  ) {}
+
+  ngOnInit(){
+    this.router.events.subscribe(() => {
+      const currentRoute = this.router.url;
+      const route = currentRoute.includes('/my-tours');
+      this.show=route;
+    });
+  }
 
   ngOnChanges() {
     this.toursdata.forEach((tour: any) => {

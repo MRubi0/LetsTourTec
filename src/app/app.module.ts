@@ -66,6 +66,7 @@ import { CoordinateValidatorDirective } from './directives/coordinateValidatorDi
 import { DragedittoursComponent } from './components/dragedittours/dragedittours.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { CsrfInterceptor } from './interceptors/csrf.interceptor';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -149,6 +150,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     LoggingService, 
     AuthGuard,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true }
 
   ],
   bootstrap: [AppComponent],
