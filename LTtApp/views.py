@@ -4,14 +4,19 @@ import math
 import os
 import random
 import re
+from tokenize import TokenError
 from django.conf import settings
 import requests
 import folium
-import shutil
-import sqlite3
 import folium
 import time
 import unicodedata
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.response import Response
+from rest_framework import status
 from datetime import datetime
 from math import atan2, cos, radians, sin, sqrt
 import io
@@ -19,7 +24,7 @@ import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from PIL import Image
 from django.contrib import messages
-from django.contrib.auth import authenticate, get_user_model, login
+from django.contrib.auth import authenticate, get_user_model
 
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
@@ -59,7 +64,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
 from .models import CustomUser
-from .serializers import TourSerializer, PasoSerializer, CustomUserSerializer
+from .serializers import TourSerializer, CustomUserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
 from django.conf import settings
@@ -74,7 +79,7 @@ from .forms import (AudioFileForm, CustomUserCreationForm, EditProfileForm,
                     EncuestaForm, GuideForm, ImageFileForm, LocationForm,
                     TourForm, ValoracionForm)
 from .models import (AudioFile, CustomUser, Encuesta, Guide, ImageFile,
-                     Location, Paso, Tour, TourRecord, TourRelation, Valoracion, PasoSerializer, TourSerializer)
+                     Location, Paso, Tour, TourRecord, TourRelation, Valoracion)
 
 
 
@@ -171,12 +176,13 @@ def get_user_tours(request):
                     tour_data['audio'] = {'url': tour_data['audio']}
                     
                 # Agregar la información del usuario que creó el tour
+                avatar_url = tour.user.avatar.url if tour.user.avatar and tour.user.avatar.name else None
                 tour_data['user'] = {
                     'id': tour.user.id,
                     'email': tour.user.email,
                     'first_name': tour.user.first_name, 
                     'last_name': tour.user.last_name,
-                    'avatar': tour.user.avatar.url,
+                    'avatar': avatar_url,
                     'bio': tour.user.bio,                   
                 }
                 
@@ -222,6 +228,25 @@ class PasswordResetView(APIView):
             return Response({"message": "Temporary password sent"}, status=status.HTTP_200_OK)
         except CustomUser.DoesNotExist:
             return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class CustomTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            raise InvalidToken(e.args[0])
+
+        refresh = request.data.get("refresh")
+        new_refresh = RefreshToken(refresh)
+        data = {
+            'access': serializer.validated_data['access'],
+            'refresh': str(new_refresh)
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
+
 @csrf_exempt
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -517,7 +542,7 @@ def get_nearest_tours(request):
                     'email': tour.user.email,
                     'first_name': tour.user.first_name, 
                     'last_name': tour.user.last_name,
-                    'avatar': tour.user.avatar.url,
+                    'avatar': tour.user.avatar.url if tour.user.avatar else None,
                     'bio': tour.user.bio,                   
                 }
             }
@@ -766,6 +791,7 @@ def directions(request, tour_id):
     return render(request, 'directions.html', {'tour': tour, 'step_id': step_id})
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def get_tour_with_steps(request, tour_id, languaje):
     try:        
         relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
@@ -2082,3 +2108,6 @@ def get_next_id():
         """)
         row = cursor.fetchone()
     return row[0] if row else None
+
+def get_csrf_token(request):
+    return JsonResponse({'csrfToken': get_token(request)})

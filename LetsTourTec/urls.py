@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from LTtApp.views import RegisterView, edit_tour,  test_auth
+from LTtApp.views import CustomTokenRefreshView, RegisterView, edit_tour,  test_auth
 from LTtApp.views import upload_tours, crear_valoracion
 #from LTtApp.views import upload_tour
 from LTtApp import views
@@ -39,12 +39,12 @@ urlpatterns = [
     path('step/<int:tour_id>/<int:step_id>/', views.next_step, name='next_step'),
     #path('step/<int:tour_id>/<int:step_id>/', views.step_detail, name='step_detail'),
     path('api/tour/<int:tour_id>/step/<int:step_id>/', views.next_step, name='next_step'),
-    path('csrf-token/', views.csrf_token_view, name='csrf_token'),
+    path('api/get-csrf-token/', views.get_csrf_token),
     path('encuesta/', views.upload_encuesta, name='encuesta'),
     #path('token-auth/', obtain_jwt_token),
     # JWT Auth
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
     path('api/test_auth/', test_auth, name='test_auth'),
     path('tour-locations/<int:tour_id>/', views.get_tour_locations, name='tour-locations'),
     path('api/get_user_tours', views.get_user_tours, name='get_user_tours'),
