@@ -12,6 +12,7 @@
 
 .row {
     width: 100%;
+    margin-bottom: 15px;
 }
 
 .subtitle {
@@ -92,4 +93,11 @@ mat-card {
 
 .espacio-entre-imagen-y-mapa {
     margin-top: 100px;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #042f71b5;
+    margin: 10px 0;
 }

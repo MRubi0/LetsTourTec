@@ -8,6 +8,8 @@ import 'leaflet-routing-machine';
 import { MapService } from 'src/app/services/map.service';
 import { TranslateService } from '@ngx-translate/core';
 // import { GraphHopperRouting } from 'leaflet-routing-machine/dist/leaflet-routing-machine';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/enviroment/enviroment';
 
 @Component({
   selector: 'app-tour-detail',
@@ -22,6 +24,7 @@ export class TourDetailComponent {
   private watchId: number | null = null;
   private control: L.Routing.Control | null = null;
   detail:any;
+  mediaPuntuacion: number | null = null; // Variable para almacenar la media de valoración
   $url!:any;
   image_url:string='';
   convertedCoordinates: Array<any>=[];
@@ -32,6 +35,7 @@ export class TourDetailComponent {
     private mapService:MapService,
     private router:Router,
     private translateService: TranslateService,
+    private http: HttpClient // Inyección de HttpClient
     ){
       this.$url=this.sharedService.getImage;
       
@@ -51,6 +55,7 @@ export class TourDetailComponent {
     this.tour_id=id;
     this.toursDetailService.getTourDetail(id).subscribe((data: any) => {
       this.detail = data[0].fields;
+      this.getMediaValoracion(this.tour_id);
       //const res = this.translateService.instant(this.detail.descripcion, 'en');
       //console.log(res);      
       this.toursDetailService.getAdditionalLocations(id).subscribe((locationsData: any) => {
@@ -111,6 +116,15 @@ export class TourDetailComponent {
       navigator.geolocation.clearWatch(this.watchId);
     }
   }
+
+
+  getMediaValoracion(id: number): void {
+    this.toursDetailService.getMediaValoracion(id).subscribe((response: { media_puntuacion: number }) => {
+      this.mediaPuntuacion = response.media_puntuacion;
+    });
+  }
+
+  
 
   displayRouteOnMap(data: any): void {
     const map = L.map('map').setView(this.convertedCoordinates[0], 13);

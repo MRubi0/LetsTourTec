@@ -35,11 +35,17 @@
                     <hr>
                     <span class="subtitle">{{ 'TOUR-DETAIL.Covered_distance' | translate }}: </span> {{detail.recorrido}} km                   
                 </div>
-
+                <hr>
+                <div class="col-12">
+                    <span class="subtitle">{{ 'TOUR-DETAIL.Average_Rating' | translate }}: </span>
+                    <span *ngIf="mediaPuntuacion !== null">{{ mediaPuntuacion }}</span>
+                    <span *ngIf="mediaPuntuacion === null">{{ "TOUR-DETAIL.Loading" | translate }}</span>
+                </div>
             </div>
+            <hr>
             <div class="d-flex justify-content-center mt-3">
                 <button mat-raised-button color="primary" class="custom-button-color" (click)="letsTour(detail)">{{ "TOUR-DETAIL.Let's_tour" | translate }}</button>
             </div>
         </mat-card-content>
-    </mat-card >
+    </mat-card>
 </div>
