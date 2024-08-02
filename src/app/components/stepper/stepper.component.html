@@ -4,6 +4,9 @@
       <img [src]="url_icon_home" alt="">
     </div>
     <mat-vertical-stepper (selectionChange)="onStepChange($event)" class="mt-4" #stepper>              
+      <mat-step>
+        <app-maps [latitud]="tour.latitude" [longitud]="tour.longitude"></app-maps>        
+      </mat-step>
       <mat-step [stepControl]="firstFormGroup" *ngFor="let step of tour.steps;let i = index; let last = last" id="step{{i}}">
         <div class="step-icon d-flex justify-content-center" *ngIf="i==0">
           <img [src]="url_icon_home" alt="">

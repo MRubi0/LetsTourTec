@@ -63,7 +63,7 @@ export class StepperComponent {
       firstCtrl: ['', Validators.required]
     });
     this.activatedRoute.params.subscribe((params: any) => {
-      this.tour_id = params.id
+      this.tour_id = params.id;      
     });
     this.openWelcomeModal();
     this.data();  

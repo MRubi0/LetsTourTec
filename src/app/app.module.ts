@@ -35,7 +35,6 @@ import { AuthGuard } from './services/auth.guard';
 import { UploadTourComponent } from './components/upload-tour/upload-tour.component';
 import { MatSelectModule } from '@angular/material/select';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { MyToursComponent } from './components/my-tours/my-tours.component';
 import { MapModalComponent } from './components/map-modal/map-modal.component'; 
 import { MatDialogModule } from '@angular/material/dialog';
@@ -149,9 +148,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   providers: [
     LoggingService, 
     AuthGuard,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true }
-
   ],
   bootstrap: [AppComponent],
 })

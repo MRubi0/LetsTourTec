@@ -45,14 +45,13 @@ export class TourDetailComponent {
 
   letsTour(data:any){
   this.sharedService.setCoordinates=data;
-  this.router.navigate([`/maps/${data.latitude}/${data.longitude}/${this.tour_id}`]);
+  //this.router.navigate([`/maps/${data.latitude}/${data.longitude}/${this.tour_id}`]);
+  this.router.navigate([`/stepper/${this.tour_id}`]);
  }  
   loadData(id: any) {
     this.tour_id=id;
     this.toursDetailService.getTourDetail(id).subscribe((data: any) => {
-      this.detail = data[0].fields;
-      //const res = this.translateService.instant(this.detail.descripcion, 'en');
-      //console.log(res);      
+      this.detail = data[0].fields;  
       this.toursDetailService.getAdditionalLocations(id).subscribe((locationsData: any) => {
         const additionalLocations = locationsData.locations;
         this.convertedCoordinates = additionalLocations.map((coord:any) => [coord.long, coord.lat]);
