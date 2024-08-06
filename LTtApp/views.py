@@ -537,6 +537,7 @@ def get_nearest_tours(request):
                 'distance': filtered_tours[0]['distance'],
                 'duracion': tour.duracion,
                 'recorrido': tour.recorrido,
+                'valoracion':tour.valoracion,
                 'user': {
                     'id': tour.user.id,
                     'email': tour.user.email,
