@@ -5,14 +5,18 @@ import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
-  currentUser!:any;
+  currentUser: any;
 
-  ngOnInit(){
+  constructor(private authService: AuthService) {
     this.authService.isAuthenticated$.subscribe(
       (isAuthenticated) => {
-        this.currentUser=isAuthenticated;
-        console.log('this.currentUser ', this.currentUser);
+        if (isAuthenticated) {
+          this.currentUser = {
+            access: this.authService.getToken()
+          };
+        } else {
+          this.currentUser = null;
+        }
       }
     );
   }

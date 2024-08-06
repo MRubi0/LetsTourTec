@@ -66,6 +66,7 @@ import { DragedittoursComponent } from './components/dragedittours/dragedittours
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { CsrfInterceptor } from './interceptors/csrf.interceptor';
+import { JwtInterceptor } from './interceptors/jwt-interceptor.interceptor';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -148,7 +149,8 @@ export function HttpLoaderFactory(http: HttpClient) {
   providers: [
     LoggingService, 
     AuthGuard,
-    { provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
 })

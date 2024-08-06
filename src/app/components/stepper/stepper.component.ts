@@ -230,6 +230,7 @@ export class StepperComponent {
     this.stepService.createTourRecord(tourId).subscribe(
       (response:any) => {
         console.log('Tour finalizado:', response)
+        this.router.navigate(['/exit/'+this.tour_id]);
       },
       (error:any)=>{
         this.snackService.openSnackBar(error.error.error, 'error');
