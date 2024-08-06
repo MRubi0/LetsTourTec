@@ -5,7 +5,7 @@
         totalItems: toursdata.length }">
         <mat-card class="tour-card">
             <mat-card-header class="p-0">     
-                <img class="image" mat-card-image [src]=tours.imagen.url alt="Image"
+                <img class="image" mat-card-image src={{tours.imagen.url}} alt="Image"
                     [routerLink]="['/tour/', tours.id]" (click)="sendImage(tours.id)" >
                 <div class="iconos_container row">
                     <div class="col-6" (click)="sendImage(tours.id)">

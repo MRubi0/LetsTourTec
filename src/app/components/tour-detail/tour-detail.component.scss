@@ -93,3 +93,21 @@ mat-card {
 .espacio-entre-imagen-y-mapa {
     margin-top: 100px;
 }
+::ng-deep .votacion-modal {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 10px; 
+  }
+  
+  ::ng-deep ngb-rating {
+    margin-top: 0px; 
+    margin-bottom: 15px;
+  }
+  
+  ::ng-deep  ngb-rating > span {
+    cursor: pointer;
+    font-size: 40px; 
+    margin-top: 0px;
+    color: gold;
+  }

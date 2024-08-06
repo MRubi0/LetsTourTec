@@ -4,9 +4,6 @@
       <img [src]="url_icon_home" alt="">
     </div>
     <mat-vertical-stepper (selectionChange)="onStepChange($event)" class="mt-4" #stepper>              
-      <mat-step>
-        <app-maps [latitud]="tour.latitude" [longitud]="tour.longitude"></app-maps>        
-      </mat-step>
       <mat-step [stepControl]="firstFormGroup" *ngFor="let step of tour.steps;let i = index; let last = last" id="step{{i}}">
         <div class="step-icon d-flex justify-content-center" *ngIf="i==0">
           <img [src]="url_icon_home" alt="">
@@ -29,16 +26,24 @@
               </mat-card-header>
               <mat-card-content>
                 <div class="img-container">
-                <div class="d-flex justify-content-center w-100">
-                  <img src="{{tour.image}}" alt="">
-                </div></div>
+                  <div class="d-flex justify-content-center w-100">
+                    <img src="{{tour.image}}" alt="">
+                  </div>
+                </div>
+                <div class="row mt-2 mb-2">
+                  <div class="col-12 d-flex justify-content-center">
+                    <button mat-button (click)="openMapModal(tour.latitude, tour.longitude)" type="button">{{ "STEPPER.Open_map" | translate }}</button>
+                  </div>
+                </div>                
                 <div class="w-100">
                   <p>{{tour.description}}</p>
                 </div>
                 <div class="audio d-flex justify-content-center">
-                  <app-music-player class="w-100" [audio]="tour.audio" [index]="i" [next]="next" 
-                    (stepChange)="musicAction($event)" [rates]="rates"  [volum]="volumen_rate" (emitRates)="velocity($event)" (emitVolumen)="volumen($event)"></app-music-player>                    
-                </div>
+                  <app-music-player  class="w-100" [audio]="step.audio" [index]="i" [next]="next" 
+                (stepChange)="musicAction($event)" [rates]="rates" [volum]="volumen_rate" 
+                (emitRates)="velocity($event)" (emitVolumen)="volumen($event)">
+              </app-music-player>
+                </div>>
               </mat-card-content>
             </mat-card>
             <mat-card *ngIf="i>0 " id="step{{i}}" class="text-center">
@@ -61,8 +66,10 @@
                   </div>
                 </div>
                 <div class="audio d-flex justify-content-center w-100" *ngIf="audioControlsVisible">
-                  <app-music-player class="w-100" [audio]="step.audio" [index]="i" [next]="next" [last]="last"
-                    (stepChange)="musicAction($event)" [rates]="rates"  [volum]="volumen_rate" (emitRates)="velocity($event)" (emitVolumen)="volumen($event)"></app-music-player>
+                  <app-music-player *ngIf="isStepOpen[i]" class="w-100" [audio]="step.audio" [index]="i" [next]="next" [last]="last"
+                (stepChange)="musicAction($event)" [rates]="rates" [volum]="volumen_rate" 
+                (emitRates)="velocity($event)" (emitVolumen)="volumen($event)">
+              </app-music-player>
                 </div>     
                 <div  class="d-flex justify-content-end" *ngIf="last">
                   <!-- <button mat-raised-button class="exit" data-cy="submit" [routerLink]="'/exit/' + tour_id">Exit</button> -->

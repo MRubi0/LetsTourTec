@@ -22,6 +22,7 @@ import { MusicPlayerDetailComponent } from './components/generics/music-player-d
 import { ProfilecardsComponent } from './components/profilecards/profilecards.component';
 import { EdittoursComponent } from './components/edittours/edittours.component';
 import { DragedittoursComponent } from './components/dragedittours/dragedittours.component';
+import { AdminCosoleComponent } from './components/admin-cosole/admin-cosole.component';
 
 
 const routes: Routes = [
@@ -120,7 +121,12 @@ const routes: Routes = [
   {
     path:'profile-card',
     component: ProfilecardsComponent,
+  },
+  {
+    path:'admin-console',
+    component: AdminCosoleComponent,
   }
+  
 ];
 
 @NgModule({

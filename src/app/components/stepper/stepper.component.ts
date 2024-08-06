@@ -48,6 +48,7 @@ export class StepperComponent {
   evento: any
   last_step=true;
   rates=0;
+  isStepOpen: boolean[] = [];
 
   checkIfMapModalIsRequired(step: any) {
     this.audioControlsVisible = !(step.latitude && step.longitude);
@@ -70,6 +71,8 @@ export class StepperComponent {
   }
   ngAfterViewInit() {}
   onStepChange(event: any) {
+    this.isStepOpen.fill(false);
+    this.isStepOpen[event.selectedIndex] = true; 
     const currentStep = this.tour.steps[event.selectedIndex];   
     this.checkIfMapModalIsRequired(currentStep); 
       const tourSteps = {

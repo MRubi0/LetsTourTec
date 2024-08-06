@@ -45,25 +45,20 @@ export class HistoryToursComponent implements OnInit {
 
   loadTourRecords(): void {
     const accessToken = this.authService.getToken();
-    console.log('this.userId 1', accessToken)
     if (accessToken) {     
         const decodedToken: any = jwtDecode(accessToken);
-        this.id = decodedToken.user_id; 
-        console.log('this.userId 2', this.id)     
+        this.id = decodedToken.user_id;  
     }
     if(this.profile.id){
       if(this.id==this.profile.id){
         this.userId=this.id;
-        console.log('this.userId 3', this.id) 
       }
       else{
         this.userId=this.profile.id;
-        console.log('this.userId 4', this.userId) 
       } 
     }else{
       this.userId=this.id;
     }       
-    console.log('this.userId ', this.userId)
     this.http.get(`${environment.apiUrl}api/get_user_tour_records?id=${this.userId}`).subscribe(data => {
         this.tourRecords = (data as any)['tours'];
       }, (error: any) => {

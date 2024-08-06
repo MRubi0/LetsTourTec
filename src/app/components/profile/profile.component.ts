@@ -21,7 +21,6 @@ export class ProfileComponent {
     const token = localStorage.getItem('access_token');
     if (token !== null) {
         decodedToken = jwtDecode(token);
-        console.log(decodedToken);
     } else {
         console.error('No se encontró el token en el localStorage.');
     }    

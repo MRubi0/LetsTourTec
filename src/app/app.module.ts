@@ -67,6 +67,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { CsrfInterceptor } from './interceptors/csrf.interceptor';
 import { JwtInterceptor } from './interceptors/jwt-interceptor.interceptor';
+import { AdminCosoleComponent } from './components/admin-cosole/admin-cosole.component';
+import { MatTableModule } from '@angular/material/table';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -109,7 +111,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     CustomSnackBarComponent,
     EdittoursComponent,   
     CoordinateValidatorDirective, 
-    DragedittoursComponent 
+    DragedittoursComponent, AdminCosoleComponent 
   ],
   imports: [
     BrowserModule,
@@ -137,6 +139,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DragDropModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
+    MatTableModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

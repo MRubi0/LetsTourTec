@@ -75,3 +75,6 @@ card::-webkit-scrollbar-track {
   --mat-mdc-snack-bar-button-color: white !important;
   border-radius: 10px;
 }
+:host ::ng-deep .cdk-overlay-container {
+  z-index: 2100 !important;
+}

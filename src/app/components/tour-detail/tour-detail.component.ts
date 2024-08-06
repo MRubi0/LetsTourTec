@@ -24,6 +24,8 @@ export class TourDetailComponent {
   detail:any;
   $url!:any;
   image_url:string='';
+  calificacion:number=0;
+
   convertedCoordinates: Array<any>=[];
   constructor(
     private toursDetailService:ToursDetailService,
