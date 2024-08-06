@@ -56,7 +56,7 @@ from .forms import (
     AudioFileForm, CustomUserCreationForm, EditProfileForm, EncuestaForm,
     GuideForm, ImageFileForm, LocationForm, TourForm, ValoracionForm)
 from .models import (
-    AudioFile, CustomUser, Encuesta,Paso,
+    AudioFile, Calificacion, CustomUser, Encuesta,Paso,
     Tour, TourRecord, TourRelation, Valoracion)
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -969,20 +969,21 @@ def get_tour_locations(request, tour_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_tour_record(request):    
     tour_id = request.data.get('tour_id')
+    
     if not tour_id:
         print("Error: Falta el ID del tour")
         return JsonResponse({'error': 'Falta el ID del tour'}, status=400)
-
+    
     # Verifica si el tour existe
     tour = get_object_or_404(Tour, pk=tour_id)
-
     # Verificar si ya existe un registro para este tour y usuario
-    if TourRecord.objects.filter(user=request.user, tour=tour).exists():
+ 
+    """if TourRecord.objects.filter(user=request.user, tour=tour).exists():
         print("El usuario ya ha registrado este tour.")
-        return JsonResponse({'error': 'Este tour ya ha sido registrado por el usuario'}, status=400)
-
+        return JsonResponse({'error': 'Este tour ya ha sido registrado por el usuario'}, status=400)"""
     try:
         tour_record = TourRecord(user=request.user, tour=tour)
         tour_record.save()
@@ -1178,18 +1179,15 @@ def crear_valoracion(request):
     
     data = request.data
     
-    # Asegúrate de que el 'tour_id' y la 'puntuacion' están presentes, la resena no porque es opcional
     if 'tour_id' not in data or 'puntuacion' not in data:
         
         return JsonResponse({'error': 'Faltan datos necesarios'}, status=400)
 
-    # Intenta obtener el tour
     tour = get_object_or_404(Tour, pk=data['tour_id'])
 
-    # Crea una instancia de ValoracionForm para validar los datos
     valoracion_data = {
         'puntuacion': data['puntuacion'],
-        'comentario': data.get('comentario', '')  # El comentario es opcional
+        'comentario': data.get('comentario', '')
     }
     
     if request.user.is_authenticated:
@@ -2111,3 +2109,32 @@ def get_next_id():
 
 def get_csrf_token(request):
     return JsonResponse({'csrfToken': get_token(request)})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_calificacion(request):
+    tour_id = request.data.get('tour_id')
+    valor = request.data.get('valor')
+
+    if not tour_id or valor is None:
+        return Response({'error': 'Faltan datos requeridos'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        valor = int(valor)
+        if valor < 0 or valor > 5:
+            return Response({'error': 'El valor debe estar entre 0 y 5'}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'error': 'El valor debe ser un número entero'}, status=status.HTTP_400_BAD_REQUEST)
+
+    tour = get_object_or_404(Tour, pk=tour_id)   
+    tour.total_valoraciones += 1
+    tour.suma_valoraciones += int(valor)
+
+    if tour.total_valoraciones==0:
+        tour.valoracion = round(tour.suma_valoraciones / 1, 2)
+    else:
+        tour.valoracion = round(tour.suma_valoraciones / tour.total_valoraciones, 2)
+    tour.save()
+
+    return Response({'message': 'Calificación añadida con éxito', 'valoracion': tour.valoracion})
+    

@@ -28,7 +28,7 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, username, password, **extra_fields)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(max_length=30, unique=True)
+    username = models.CharField(max_length=150, unique=True, null=True, blank=True)
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -78,20 +78,19 @@ class Location(models.Model):
 class Tour(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=255)
-    imagen = models.ImageField(upload_to='Tour_imagen/', max_length=255)  # Aumentado el tamaño
+    imagen = models.ImageField(upload_to='Tour_imagen/', max_length=255)
     descripcion = models.TextField()
     audio = models.FileField(upload_to='Tour_audio/', null=True, blank=True)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     duracion = models.PositiveIntegerField("Duración en minutos", null=True, blank=True)
-
-    recorrido = models.FloatField(null=True, blank=True)   # Recorrido en kilómetros
+    valoracion = models.DecimalField(max_digits=3, decimal_places=2, default=0.0)
+    total_valoraciones = models.IntegerField(default=0)
+    suma_valoraciones = models.IntegerField(default=0)
+    recorrido = models.FloatField(null=True, blank=True)  
     original = models.TextField(null=True, blank=True)
-    
-
     idioma = models.CharField(max_length=2, default='es')
     validado = models.BooleanField(default=False)
-
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     TIPO_DE_TOUR_CHOICES = [
@@ -280,3 +279,15 @@ class Valoracion(models.Model):
 
     def __str__(self):
         return f"{self.user.username if self.user else 'Anónimo'} - {self.tour.titulo} - {self.puntuacion}"
+
+class Calificacion(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
+    valor = models.IntegerField(default=0)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'tour')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.tour.titulo} - {self.valor}"

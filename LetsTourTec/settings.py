@@ -255,8 +255,8 @@ CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1)
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=2)
 }
 AWS_S3_REGION_NAME = 'eu-west-2'
 CORS_ALLOW_ALL_ORIGINS = True
