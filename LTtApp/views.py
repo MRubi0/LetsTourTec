@@ -586,6 +586,7 @@ def get_latest_tours(request):
     for t in tour_types:
         try:
             latest_tour = Tour.objects.filter(tipo_de_tour=t).latest('created_at')
+            
             tour_data = {
                 'id': latest_tour.id,
                 'titulo': latest_tour.titulo,
@@ -601,7 +602,7 @@ def get_latest_tours(request):
                     'email': latest_tour.user.email,
                     'first_name': latest_tour.user.first_name, 
                     'last_name': latest_tour.user.last_name,
-                    'avatar': latest_tour.user.avatar.url,
+                    'avatar':latest_tour.user.avatar.url if latest_tour.user.avatar else None,                    
                     'bio': latest_tour.user.bio               
                 }
             }
@@ -646,7 +647,7 @@ def get_random_tours(request):
                     'email': tour.user.email,
                     'first_name': tour.user.first_name, 
                     'last_name': tour.user.last_name,
-                    'avatar': tour.user.avatar.url,
+                    'avatar': tour.user.avatar.url if tour.user.avatar else None,                    
                     'bio': tour.user.bio,                   
                 }                       
             result.append(random_tours_json)      
