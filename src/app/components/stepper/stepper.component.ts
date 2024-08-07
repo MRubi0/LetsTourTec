@@ -45,6 +45,7 @@ export class StepperComponent {
   maps = 'maps';
   url = environment.bucket;
   audioControlsVisible = false;
+  audioControlsVisibleTour = false;
   evento: any
   last_step=true;
   rates=0;
@@ -205,7 +206,7 @@ export class StepperComponent {
     });
     dialogRef.componentInstance.cordinates={ lat: lat, long: lng }
     dialogRef.afterClosed().subscribe(result => {
-      this.audioControlsVisible = true;
+      this.audioControlsVisible = this.audioControlsVisibleTour =true;
     });
   }
   goToNextStep(event:string) {

@@ -11,7 +11,7 @@ import { Modal } from 'bootstrap';
   styleUrls: ['./admin-cosole.component.scss']
 })
 export class AdminCosoleComponent {
-  displayedColumns: string[] = ['id', 'username', 'email', 'first_name', 'last_name', 'rol', 'is_active', 'edit'];
+  displayedColumns: string[] = ['id', 'username', 'rol', 'edit'];
   dataSource!: MatTableDataSource<any>;
   selectedRole: string = 'user';
   role:string = 'user';
