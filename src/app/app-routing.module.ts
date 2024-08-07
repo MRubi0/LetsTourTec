@@ -23,6 +23,8 @@ import { ProfilecardsComponent } from './components/profilecards/profilecards.co
 import { EdittoursComponent } from './components/edittours/edittours.component';
 import { DragedittoursComponent } from './components/dragedittours/dragedittours.component';
 import { AdminCosoleComponent } from './components/admin-cosole/admin-cosole.component';
+import { ValidateToursComponent } from './components/validate-tours/validate-tours.component';
+import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
 
 
 const routes: Routes = [
@@ -125,8 +127,15 @@ const routes: Routes = [
   {
     path:'admin-console',
     component: AdminCosoleComponent,
-  }
-  
+  },
+  {
+    path:'validate-console',
+    component: ValidateToursComponent,
+  },
+  {
+    path:'admin-panel',
+    component: AdminPanelComponent,
+  }  
 ];
 
 @NgModule({

@@ -35,11 +35,8 @@ export class AlltoursComponent {
         const lang: string = localStorage.getItem('language') ?? 'es';
         const latitud = String(position.coords.latitude);
         const longitud = String(position.coords.longitude);
-        console.log('latitud ',latitud, longitud)
-        this.http.get(`${environment.apiUrl}`, {
+          this.http.get(`${environment.apiUrl}`, {
           params: {latitude: latitud , longitude: longitud,language:lang}})
-
-
           .subscribe((data: any) => {
             this.alltours = data;  
           });

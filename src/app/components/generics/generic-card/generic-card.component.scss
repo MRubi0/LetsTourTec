@@ -66,10 +66,20 @@ button.mat-raised-button.my-icon {
     }
 }
 
-.button-fab {
+.button-fab{
+    background-color: #0d6efd !important;
+}
+
+.button-fab.validated {
     z-index: 1;
     position: absolute;
     background-color: #0d6efd !important;
+}
+
+.button-fab.not-validated {
+    z-index: 1;
+    position: absolute;
+    background-color: white !important;
 }
 
 .content {
@@ -135,10 +145,16 @@ mat-card {
   .icon_type_spe{
     width: 30px !important;
   }
+  .icon_type_cancel{
+    width: 40px !important;
+  }
   .iconos{
     width: 40%;
   }
   .iconos_container{
     width: 107%;
     position: absolute;
+  }
+  .icon_type_tour_cancel{
+    width: 42px !important;
   }

@@ -15,7 +15,7 @@
         <a class="nav-link" *ngIf="isLoggedIn" routerLink="/profile">{{ 'NAVBAR.My_profile' | translate }}</a>
         <button class="btn btn-link nav-link" *ngIf="isLoggedIn" (click)="logout()">{{ 'NAVBAR.Log_out' | translate }}</button>
 
-        <button class="btn btn-link nav-link" *ngIf="isLoggedIn" routerLink="/admin-console">Admin</button>
+        <button class="btn btn-link nav-link" *ngIf="isLoggedIn" routerLink="/admin-panel">Admin</button>
       </div>
       <!-- Logo Section -->
       <a class="navbar-brand" [routerLink]="['/home']">

@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { PaginationControlsComponent } from 'ngx-pagination';
 import { SharedService } from 'src/app/services/shared.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,7 +19,8 @@ export class GenericCardComponent {
   @ViewChild(PaginationControlsComponent) paginationControls!: PaginationControlsComponent;
   @Input('toursdata') toursdata:any=[];
   @Input('all-tours') view!:boolean; 
-
+  @Input('validate') validate:boolean=false; 
+  @Output() check = new EventEmitter<any>();
   p: number=1;
   pageSize:number=12;
   autoHide=true
@@ -95,4 +96,10 @@ export class GenericCardComponent {
         this.router.navigate([ '/profile-card']);
     }        
   }  
+  validateTour(tour:any){
+    this.check.emit({
+      tour_id:tour.id,
+      validate:!tour.validado
+    });
+  }
 }

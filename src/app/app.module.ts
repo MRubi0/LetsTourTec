@@ -69,6 +69,8 @@ import { CsrfInterceptor } from './interceptors/csrf.interceptor';
 import { JwtInterceptor } from './interceptors/jwt-interceptor.interceptor';
 import { AdminCosoleComponent } from './components/admin-cosole/admin-cosole.component';
 import { MatTableModule } from '@angular/material/table';
+import { ValidateToursComponent } from './components/validate-tours/validate-tours.component';
+import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -111,7 +113,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     CustomSnackBarComponent,
     EdittoursComponent,   
     CoordinateValidatorDirective, 
-    DragedittoursComponent, AdminCosoleComponent 
+    DragedittoursComponent, AdminCosoleComponent, ValidateToursComponent, AdminPanelComponent 
   ],
   imports: [
     BrowserModule,

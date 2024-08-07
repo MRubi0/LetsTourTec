@@ -31,6 +31,16 @@
                                 <img class="icon_type_spe" src="../../../assets/iconos/edit-pencil-white.svg" alt="">
                             </div>
                         </button>
+                        <button *ngIf="validate" class='button-fab' mat-fab data-bs-toggle="tooltip" matTooltip="Editar"
+                            aria-label="Button that displays a tooltip when focused or hovered over"
+                            (click)="validateTour(tours)"  [ngClass]="{'validated': tours.validado, 'not-validated': !tours.validado}" >
+                            <div class="icon_type_tour_cancel" *ngIf="!tours.validado">
+                                <img class="icon_type_cancel" src="../../../assets/iconos/cancel.svg" alt="">
+                            </div>
+                            <div class="icon_type_tour" *ngIf="tours.validado">
+                                <img class="icon_type_spe" src="../../../assets/iconos/check-circle-fill-white.svg" alt="">
+                            </div>
+                        </button>
                     </div>
                 </div>
             </mat-card-header>
