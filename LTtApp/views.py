@@ -4,6 +4,7 @@ import math
 import os
 import random
 import re
+from rest_framework.permissions import BasePermission
 from tokenize import TokenError
 from django.conf import settings
 import requests
@@ -204,6 +205,7 @@ class LoginView(APIView):
             refresh = RefreshToken.for_user(user)
             return Response({
                 'refresh': str(refresh),
+                'rol': user.rol, 
                 'access': str(refresh.access_token),
             })
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -669,6 +671,7 @@ def get_tour_distance(request):
         relation = TourRelation.objects.filter(tour_en_id=tour_id).first()
         if relation:
             related_tour_id = relation.tour_es.id
+
     if latitud_usuario is None or longitud_usuario is None:
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
 
@@ -741,6 +744,7 @@ def get_nearest_tours_all(request):
         'distance': tour['distance'],
         'recorrido': tour['tour'].recorrido,
         'duracion': tour['tour'].duracion,
+        'validado': tour['tour'].validado,
         'user': {
             'id': tour['tour'].user.id,
             'email': tour['tour'].user.email,
@@ -2138,4 +2142,82 @@ def add_calificacion(request):
     tour.save()
 
     return Response({'message': 'Calificación añadida con éxito', 'valoracion': tour.valoracion})
+
+class IsSuperAdmin(BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and request.user.rol == 'superadmin'
+    
+class ChangeUserRoleView(APIView):
+    permission_classes = [IsSuperAdmin]
+
+    def post(self, request, user_id):
+        try:
+            user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
+            return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        new_role = request.data.get('rol')
+        if not new_role:
+            return Response({"message": "Role is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        valid_roles = ['user', 'admin', 'superadmin']
+        if new_role not in valid_roles:
+            return Response({"message": "Invalid role"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.rol = new_role
+        user.save()
+
+        return Response({"message": "Role updated successfully"}, status=status.HTTP_200_OK)
+    
+class SimpleUserListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        users = CustomUser.objects.all()
+        serializer = CustomUserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_validated_field(request, tour_id):
+    tour = get_object_or_404(Tour, id=tour_id)
+
+    if request.method == 'PUT':
+        if not request.user.is_authenticated:
+            return Response({'error': 'Usuario no autenticado'}, status=401)
+        
+        validado = request.data.get('validado', None)
+        if validado is None:
+            return Response({'error': 'El campo "validado" es requerido'}, status=400)
+        tour.validado = validado
+        tour.save()
+        try:
+            relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
+            if relation:
+                if tour.idioma == "en":                
+                    related_tour = relation.tour_en_id
+                else:
+                    related_tour = tour_id
+            else:
+                relation = TourRelation.objects.filter(tour_en_id=tour_id).first()
+                if relation:
+                    if tour.idioma == "es":             
+                        related_tour = relation.tour_es_id
+                    else:
+                        related_tour = relation.tour_en_id
+                else:
+                    related_tour = tour_id
+
+            tour_related = get_object_or_404(Tour, pk=related_tour)
+            tour_related.validado = validado
+            tour_related.save()
+        except TourRelation.DoesNotExist:
+            pass
+        except Exception as e:
+            return Response({'error': f"Excepción inesperada: {e}"}, status=500)
+
+        return Response({'message': 'Campo "validado" actualizado correctamente en ambos tours'}, status=200)
+    else:
+        return Response({'error': 'Método no permitido'}, status=405)
     

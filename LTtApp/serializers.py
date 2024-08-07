@@ -5,10 +5,7 @@ from .models import CustomUser, Tour, Paso
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['email', 'username', 'first_name', 'last_name', 'password', 'groups']
-        extra_kwargs = {'password': {'write_only': True},
-                        'groups': {'required': False}
-                        }
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'rol', 'is_active', 'date_joined', 'last_login', 'avatar', 'bio']
 
     def validate_password(self, value):
         try:

@@ -1,13 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from LTtApp.views import CustomTokenRefreshView, RegisterView, edit_tour,  test_auth
+from LTtApp.views import ChangeUserRoleView, CustomTokenRefreshView, SimpleUserListView, edit_tour,  test_auth, update_validated_field
 from LTtApp.views import upload_tours, crear_valoracion
 #from LTtApp.views import upload_tour
 from LTtApp import views
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 #app_name = 'LTtApp'
 
@@ -61,13 +61,12 @@ urlpatterns = [
     path('convert_text_to_audio/<int:tour_id>/', views.convert_text_to_audio, name='convert_text_to_audio'),
     path('copy-audios/', views.copy_audios_view, name='copy-audios'),
     path('copy-images/', views.copy_images_view, name='copy-images'),
-     path('api/add-calificacion/', views.add_calificacion, name='add-calificacion'),
+    path('api/add-calificacion/', views.add_calificacion, name='add-calificacion'),
+    path('api/change-role/<int:user_id>/', ChangeUserRoleView.as_view(), name='change-role'),
+    path('api/users/', SimpleUserListView.as_view(), name='user-list'),
+    path('api/tours/<int:tour_id>/validado/', views.update_validated_field, name='update_validated_field'),
 
-
-
-
-
-    
+ 
     ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
