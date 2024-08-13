@@ -149,6 +149,9 @@
   "EXIT.Seleccione_una_opción...": "Select an option...",
   "EXIT.Seleccione_una_probabilidad...": "Select a probability...",
 
+  "DONAR.¿Quiere_apoyar?": "Would you like to support this project?",
+  "DONAR.Cantidad": "Introduce the quantity you would like to donate",
+
   "ALLTOURS.All_tours": "All tours",
   "ALLTOURS.Sort_by_distance": "Sort by distance",
 
