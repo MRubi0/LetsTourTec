@@ -65,7 +65,7 @@ urlpatterns = [
     path('api/change-role/<int:user_id>/', ChangeUserRoleView.as_view(), name='change-role'),
     path('api/users/', SimpleUserListView.as_view(), name='user-list'),
     path('api/tours/<int:tour_id>/validado/', views.update_validated_field, name='update_validated_field'),
-
+    path('get_nearest_validated_tours/', views.get_nearest_validated_tours, name='get_nearest_validated_tours'),
  
     ]
 if settings.DEBUG:

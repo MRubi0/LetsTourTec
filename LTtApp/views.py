@@ -249,7 +249,7 @@ class CustomTokenRefreshView(TokenRefreshView):
 
         return Response(data, status=status.HTTP_200_OK)
 
-@csrf_exempt
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_tours(request):
@@ -265,34 +265,13 @@ def upload_tours(request):
             return Response({'error': 'Usuario no autenticado'}, status=401)     
         form = TourForm(request.POST, request.FILES)       
 
-        
-        
-        # if form.is_valid():
-            # tour = form.save(commit=False)
-            # tour.user = request.user
-            # tour.image = request.FILES['imagen'] if 'imagen' in request.FILES else None
-
-            # if tour.tipo_de_tour=='leisure':
-                # tour.tipo_de_tour='ocio'
-            # elif tour.tipo_de_tour=='nature':
-                # tour.tipo_de_tour='naturaleza'
-            
-            # tour.original = 'original'
-           
-            # tour.save()
-            # print(tour)
-            # Procesar pasos adicionales
-
         if form.is_valid():        
             tour_es = form.save(commit=False)
-            tour_destino=request.POST['idioma_destino']
             tour_es.user = request.user
             tour_es.idioma = request.POST['idioma']
             
             next_id_es = get_next_id()
-
-            print('next_id ----> ', next_id_es)
-            
+          
             if 'imagen' in request.FILES:
                 image_file = request.FILES['imagen']
                 timestamp = int(time.time() * 1000)
@@ -311,24 +290,8 @@ def upload_tours(request):
             elif tour_es.tipo_de_tour == 'nature':
                 tour_es.tipo_de_tour = 'naturaleza'
            
-            
             tour_es.validado = False
             tour_es.save()
-
-            next_id_en = get_next_id()
-
-            tour_en = Tour()
-            tour_en.user = request.user
-            tour_en.imagen = tour_es.imagen
-            tour_en.audio = tour_es.audio
-            tour_en.tipo_de_tour = tour_es.tipo_de_tour
-            tour_en.recorrido=tour_es.recorrido
-            tour_en.duracion=tour_es.duracion
-            tour_en.validado = False
-            tour_en.descripcion = translate_text(tour_es.descripcion, tour_es.idioma, tour_destino)
-            tour_en.titulo = translate_text(tour_es.titulo, tour_es.idioma, tour_destino)            
-            tour_en.save()
-            
 
             for i in range(100):
                 extra_audio_key = f'extra_step_audio_{i}'
@@ -350,13 +313,11 @@ def upload_tours(request):
                         extra_tittle = request.POST.get(extra_tittle_key, '')
 
                     paso_es = Paso(tour=tour_es, description=extra_description, tittle=extra_tittle)
-                    paso_en = Paso(tour=tour_en, description=extra_description, tittle=extra_tittle)
 
                     if request.FILES[f'extra_step_audio_{i}']:          
                         extra_audio_file = request.FILES[f'extra_step_audio_{i}']                        
                         timestamp = int(time.time() * 1000)
                         extra_audio_name = f"Tour_audio/{str(next_id_es).zfill(5)}/{str(i+1).zfill(5)}//{timestamp}.mp3"
-                        paso_en.audio.save(extra_audio_name, extra_audio_file)
                         paso_es.audio.save(extra_audio_name, extra_audio_file)
 
                     extra_latitude_key = f'extra_step_latitude_{i}'
@@ -369,10 +330,8 @@ def upload_tours(request):
 
                     if extra_latitude:
                         paso_es.latitude = extra_latitude
-                        paso_en.latitude = extra_latitude
                     if extra_longitude:
-                        paso_es.longitude = extra_longitude
-                        paso_en.longitude = extra_longitude                             
+                        paso_es.longitude = extra_longitude                             
 
                     extra_image_key = f'extra_step_image_{i}'
         
@@ -380,20 +339,13 @@ def upload_tours(request):
                        extra_image_file = request.FILES[f'extra_step_image_{i}']
                        timestamp = int(time.time() * 1000)
                        extra_image_name = f"Tour_imagen/{str(next_id_es).zfill(5)}/{str(i+1).zfill(5)}/extra_image_{next_id_es}/{timestamp}.jpg"
-                       paso_es.image.save(extra_image_name, extra_image_file, save=False)  
-                       paso_en.image = paso_es.image                 
+                       paso_es.image.save(extra_image_name, extra_image_file, save=False)                  
                        paso_es.save()
-                    paso_en.save()
                  
                 else:
                     break
 
-            # Crear la relación entre los tours
-            tour_relation = TourRelation(tour_es=tour_es, tour_en=tour_en)
-            tour_relation.save()
-
-            return Response({'message': 'Gracias por tu esfuerzo, el tour sera validado por nuestro equipo'})
-
+            return Response({'message': 'Gracias por tu esfuerzo, el tour será validado por nuestro equipo'})
 
 def upload_to_func(instance, filename):
     timestamp = int(time.time() * 1000)
@@ -503,21 +455,22 @@ def get_nearest_tours(request):
     latitud_usuario = float(request.GET.get('latitude', None))
     longitud_usuario = float(request.GET.get('longitude', None))
     idioma = request.GET.get('language', None)
+    
     if latitud_usuario is None or longitud_usuario is None:
         return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
     
     if idioma is None:
         return JsonResponse({"error": "Falta el parámetro: language"}, status=400)
 
-    # Aquí iría la lógica para buscar los tours más cercanos
-    tours = Tour.objects.filter(idioma=idioma)
+    # Aquí se filtran los tours por idioma y por si están validados
+    tours = Tour.objects.filter(idioma=idioma, validado=True)
     tours_with_distances = []
     for tour in tours:
         distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
         tours_with_distances.append({'tour': tour, 'distance': distance})
 
     tour_categories = ['cultural', 'naturaleza', 'ocio']
-    nearest_tours = {}
+    nearest_tours = []
 
     result = []
 
@@ -539,7 +492,7 @@ def get_nearest_tours(request):
                 'distance': filtered_tours[0]['distance'],
                 'duracion': tour.duracion,
                 'recorrido': tour.recorrido,
-                'valoracion':tour.valoracion,
+                'valoracion': tour.valoracion,
                 'user': {
                     'id': tour.user.id,
                     'email': tour.user.email,
@@ -552,6 +505,7 @@ def get_nearest_tours(request):
             result.append(tour_object)
 
     return JsonResponse(result, safe=False)
+
 
 
 def tour_detail(request, tour_id):
@@ -695,6 +649,7 @@ def get_tour_distance(request):
     
     return JsonResponse(tour_data, safe=False)
 
+@permission_classes([IsAuthenticated])
 def get_nearest_tours_all(request):
     latitud_usuario = request.GET.get('latitude', None)
     longitud_usuario = request.GET.get('longitude', None)
@@ -763,6 +718,71 @@ def get_nearest_tours_all(request):
 
     # Devolver los tours más cercanos como respuesta JSON
     return JsonResponse(response_data)
+
+
+def get_nearest_validated_tours(request):
+    latitud_usuario = request.GET.get('latitude', None)
+    longitud_usuario = request.GET.get('longitude', None)
+    idioma = request.GET.get('language', None)
+
+    if latitud_usuario is None or longitud_usuario is None:
+        return JsonResponse({"error": "Faltan parámetros: latitude y/o longitude"}, status=400)
+    
+    if idioma is None:
+        return JsonResponse({"error": "Falta el parámetro: language"}, status=400)
+
+    if latitud_usuario != 'None':
+        latitud_usuario = float(latitud_usuario)
+    else:
+        latitud_usuario = None
+
+    if longitud_usuario != 'None':
+        longitud_usuario = float(longitud_usuario)
+    else:
+        longitud_usuario = None
+    tours = Tour.objects.filter(idioma=idioma, validado=True)
+    tours_with_distances = []
+    if latitud_usuario is not None and longitud_usuario is not None:
+        for tour in tours:
+            distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
+            tours_with_distances.append({'tour': tour, 'distance': distance})
+        sorted_tours = sorted(tours_with_distances, key=lambda x: x['distance'])
+    else:
+        for tour in tours:
+            tours_with_distances.append({'tour': tour, 'id': tour.id, 'distance': None})
+        sorted_tours = sorted(tours_with_distances, key=lambda x: x['id'])
+
+    per_page = len(sorted_tours)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(sorted_tours, per_page)
+    current_page_tours = paginator.get_page(page)
+    serialized_tours = [{
+        'id': tour['tour'].id,
+        'titulo': tour['tour'].titulo,
+        'descripcion': tour['tour'].descripcion,
+        'tipo_de_tour': tour['tour'].tipo_de_tour,
+        'imagen': {'url': tour['tour'].imagen.url},
+        'distance': tour['distance'],
+        'recorrido': tour['tour'].recorrido,
+        'duracion': tour['tour'].duracion,
+        'validado': tour['tour'].validado,
+        'user': {
+            'id': tour['tour'].user.id,
+            'email': tour['tour'].user.email,
+            'first_name': tour['tour'].user.first_name, 
+            'last_name': tour['tour'].user.last_name,
+            'avatar': tour['tour'].user.avatar.url if tour['tour'].user.avatar else None,
+            'bio': tour['tour'].user.bio,
+        }
+    } for tour in current_page_tours]
+
+    response_data = {
+        'tours': serialized_tours,
+        'total_pages': paginator.num_pages 
+    }
+
+    return JsonResponse(response_data)
+
 
 def all_tours(request):
     # Obtenemos todos los tours disponibles
@@ -1340,6 +1360,7 @@ def search_user_by_id(request):
 
 
 def translate_text(text, idioma_origen, tour_destino):
+    print('tour_destino', tour_destino);
     url = "https://deep-translate1.p.rapidapi.com/language/translate/v2"
     headers = {
         'X-RapidAPI-Key': "75c294e6a8msh19ef7b3ebb91873p16517ejsn5f6bff2b1abd",
@@ -2178,7 +2199,6 @@ class SimpleUserListView(APIView):
         serializer = CustomUserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def update_validated_field(request, tour_id):
@@ -2191,8 +2211,42 @@ def update_validated_field(request, tour_id):
         validado = request.data.get('validado', None)
         if validado is None:
             return Response({'error': 'El campo "validado" es requerido'}, status=400)
+        
         tour.validado = validado
         tour.save()
+
+        if validado:
+            tour_destino = "en"
+
+            next_id_en = get_next_id()
+
+            tour_en = Tour()
+            tour_en.user = tour.user
+            tour_en.imagen = tour.imagen
+            tour_en.audio = tour.audio
+            tour_en.tipo_de_tour = tour.tipo_de_tour
+            tour_en.recorrido = tour.recorrido
+            tour_en.duracion = tour.duracion
+            tour_en.validado = True
+            tour_en.descripcion = translate_text(tour.descripcion, tour.idioma, tour_destino)
+            tour_en.titulo = translate_text(tour.titulo, tour.idioma, tour_destino)            
+            tour_en.save()
+
+            for paso_es in Paso.objects.filter(tour=tour):
+                paso_en = Paso(
+                    tour=tour_en,
+                    description=translate_text(paso_es.description, tour.idioma, tour_destino),
+                    tittle=translate_text(paso_es.tittle, tour.idioma, tour_destino),
+                    latitude=paso_es.latitude,
+                    longitude=paso_es.longitude,
+                    audio=paso_es.audio,
+                    image=paso_es.image
+                )
+                paso_en.save()
+
+            tour_relation = TourRelation(tour_es=tour, tour_en=tour_en)
+            tour_relation.save()
+
         try:
             relation = TourRelation.objects.filter(tour_es_id=tour_id).first()
             if relation:
@@ -2218,7 +2272,6 @@ def update_validated_field(request, tour_id):
         except Exception as e:
             return Response({'error': f"Excepción inesperada: {e}"}, status=500)
 
-        return Response({'message': 'Campo "validado" actualizado correctamente en ambos tours'}, status=200)
+        return Response({'message': 'Campo "validado" actualizado correctamente en ambos tours y traducción creada si corresponde'}, status=200)
     else:
         return Response({'error': 'Método no permitido'}, status=405)
-    
