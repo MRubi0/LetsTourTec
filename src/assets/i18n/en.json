@@ -77,6 +77,9 @@
   "EXIT.Mantente_en_contacto": "Stay in contact",
   "EXIT.Agradeceríamos_que_realizaras_una_pequeña_encuesta_para_ayudarnos_a_mejorar": "We would appreciate it if you could take a short survey to help us improve",
   "EXIT.Únicamente_las_preguntas_multivalue_son_obligatorias,_pero_agradecemos_que_respondan_el_mayor_número_posible": "Only multivalue and age questions are mandatory, but we appreciate answering as many as possible",
+  "EXIT.Ir_donacion": "Skip to donation page" ,
+  "EXIT.Pasa_de_encuesta": "We appreciate the effort you make to be with us. We know your time is valuable, and any form of support, big or small, makes a difference. If you choose to contribute in another way, we’ll always be grateful. We hope to see you again soon!",
+  
   "EXIT.Encuesta": "Form",
   "EXIT.Preguntas_sobre_el_usuario": "Questions about the user",
   "EXIT.Preguntas_sobre_el_producto": "Questions about the product",

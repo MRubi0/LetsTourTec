@@ -9,7 +9,7 @@
         La cantidad debe ser igual o mayor a 1 euro.
       </div>
     </mat-form-field>
-    <button mat-raised-button color="primary" [disabled]="!finishForm.valid" class="donation-button">
+    <button class="donation-button" [disabled]="!finishForm.valid">
       Donar {{ finishForm.get('donationAmount')?.value }} euros
     </button>
   </form>

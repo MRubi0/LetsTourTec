@@ -36,6 +36,11 @@
   width: 100%;
   padding: 10px;
   box-sizing: border-box;
+  color: white; /* Asegura que el texto sea blanco para buen contraste */
+  background-color: #0d6efd; /* Cambia el color de fondo al color deseado */
+  border: none; /* Elimina bordes adicionales */
+  border-radius: 5px; /* Bordes redondeados */
+  text-align: center;
 }
 
 .custom-error {
@@ -43,3 +48,4 @@
   font-size: 12px; /* Tamaño de fuente más pequeño */
   margin-top: 5px; /* Espaciado arriba */
 }
+
