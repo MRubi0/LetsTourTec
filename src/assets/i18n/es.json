@@ -79,6 +79,9 @@
   "EXIT.Mantente_en_contacto": "Mantente en contacto",
   "EXIT.Agradeceríamos_que_realizaras_una_pequeña_encuesta_para_ayudarnos_a_mejorar": "Agradeceríamos que realizaras una pequeña encuesta para ayudarnos a mejorar",
   "EXIT.Únicamente_las_preguntas_multivalue_son_obligatorias,_pero_agradecemos_que_respondan_el_mayor_número_posible": "Únicamente las preguntas multivalue y la edad son obligatorias, pero agradecemos que respondan el mayor número posible",
+  "EXIT.Ir_donacion": "Ir a página de donación" ,
+  "EXIT.Pasa_de_encuesta": "Apreciamos el esfuerzo que realizas al estar con nosotros. Sabemos que tu tiempo es valioso, y cualquier forma de apoyo, grande o pequeña, marca la diferencia. Si decides contribuir de otra manera, siempre estaremos agradecidos. ¡Esperamos poder contar contigo de nuevo pronto!",
+  
   "EXIT.Encuesta": "Encuesta",
   "EXIT.Preguntas_sobre_el_usuario": "Preguntas sobre el usuario",
   "EXIT.Preguntas_sobre_el_producto": "Preguntas sobre el producto",
@@ -150,6 +153,9 @@
   "EXIT.Enviar":"Enviar",
   "EXIT.Seleccione_una_opción...": "Seleccione una opción...",
   "EXIT.Seleccione_una_probabilidad...": "Seleccione una probabilidad...",
+
+  "DONAR.¿Quiere_apoyar?": "¿Le gustaría apoyar nuestro proyecto?",
+  "DONAR.Cantidad": "Introduzca la cantidad que desea donar",
 
 
   "ALLTOURS.All_tours": "Todos los tours",

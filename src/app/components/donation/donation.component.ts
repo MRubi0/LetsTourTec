@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { loadStripe } from '@stripe/stripe-js';
 import { HttpClient } from '@angular/common/http';
+import { FormGroup, FormControl, Validators, NgForm, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-donation',
@@ -10,10 +11,17 @@ import { HttpClient } from '@angular/common/http';
 export class DonationComponent implements OnInit {
   stripePromise = loadStripe('pk_live_51PbuRQHruQ7absctI9yFcPLBHfXE52gBuzHYtU5IP6A6aDJ7wdksaIJ08lfi0qPl7onM6KhHRMoToIS7c1Ymw6gy00BeAWaMyq');
   donationAmount: number = 3; // Valor por defecto para la donación
+  finishForm!: FormGroup;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    private formBuilder: FormBuilder
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.finishForm = this.formBuilder.group({
+      donationAmount: [this.donationAmount, [Validators.required, Validators.min(1.00)]]
+    });
+  }
 
   async donate() {
     const stripe = await this.stripePromise;
