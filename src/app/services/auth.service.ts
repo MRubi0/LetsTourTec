@@ -64,7 +64,7 @@ export class AuthService {
           console.error('Error during token refresh', error);
         }
       });
-    }, 2 * 60 * 1000);
+    }, 2* 60 * 59 * 1000);
   }
   
 
