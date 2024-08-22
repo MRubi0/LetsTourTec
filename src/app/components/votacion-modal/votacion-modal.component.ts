@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { StepService } from 'src/app/services/step.service';
 import { TranslateService } from '@ngx-translate/core';
 import { FormGroup, FormControl, Validators, NgForm, FormBuilder } from '@angular/forms';
-
+import { CalificacionService } from 'src/app/services/calificacion-service.service';
 
 
 @Component({
@@ -21,7 +21,8 @@ export class VotacionModalComponent {
     public dialogRef: MatDialogRef<VotacionModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private StepService: StepService ,
-    private translate: TranslateService 
+    private translate: TranslateService,
+    private calificacionService: CalificacionService
   ) {}
 
   ngOnInit(){
@@ -52,6 +53,8 @@ export class VotacionModalComponent {
     if (this.finishForm.valid) {
       const { calificacion, comentario } = this.finishForm.value;
       console.log(this.data.tourId, this.calificacion, this.comentario);
+      this.calificacionService.setCalificacion(calificacion);
+      //sessionStorage.setItem('tourCalificacion', calificacion.toString());
       this.StepService.enviarValoracion(this.data.tourId, this.calificacion, this.comentario).subscribe(
         response => {
           console.log(response);

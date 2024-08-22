@@ -7,7 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { VotacionModalComponent } from '../votacion-modal/votacion-modal.component';
-
+import { CalificacionService } from 'src/app/services/calificacion-service.service';
 
 @Component({
   selector: 'app-exit',
@@ -20,11 +20,19 @@ export class ExitComponent implements AfterViewInit {
   edadInvalida: boolean = false;
   id:string='';
   finishForm!: FormGroup;
+  mostrarDonacion: boolean = false;
 
-  constructor(public dialog: MatDialog, private http: HttpClient, public ngbModal: NgbModal, private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute) {}
+  constructor(public dialog: MatDialog, private http: HttpClient, public ngbModal: NgbModal, private formBuilder: FormBuilder,private calificacionService: CalificacionService, private activatedRoute: ActivatedRoute) {}
 
   ngOnInit(){
-     
+    //const calificacion = sessionStorage.getItem('tourCalificacion');
+    this.calificacionService.calificacion$.subscribe(calificacion => {
+    if (calificacion === null || calificacion === 4 || calificacion === 5) {
+      this.mostrarDonacion = true;
+    } else {
+      this.mostrarDonacion = false;
+    }
+  });
     this.finishForm = this.formBuilder.group({
       pregunta1: ['', [Validators.required, Validators.min(1)]],
       pregunta2: ['', [Validators.required]],

@@ -12,7 +12,13 @@
             <div class="about-section">
                 <h3 class="card-title">{{ "EXIT.Mantente_en_contacto" | translate }}</h3>
                 <p class="card-text">{{ "EXIT.Agradeceríamos_que_realizaras_una_pequeña_encuesta_para_ayudarnos_a_mejorar" | translate }}</p>
-                <p class="card-text">{{ "EXIT.Únicamente_las_preguntas_multivalue_son_obligatorias,_pero_agradecemos_que_respondan_el_mayor_número_posible" | translate }}</p>
+                <p class="card-text" style="margin-bottom: 50px;">{{ "EXIT.Únicamente_las_preguntas_multivalue_son_obligatorias,_pero_agradecemos_que_respondan_el_mayor_número_posible" | translate }}</p>
+                <div *ngIf="mostrarDonacion">
+                <h3 class="card-title">{{ "EXIT.Donacion" | translate }}</h3>
+                  <p class="card-text">{{ "EXIT.Pasa_de_encuesta" | translate }}</p>
+                  <button class="btn btn-primary mt-3" [routerLink]="['/donation']">
+                    {{ "EXIT.Ir_donacion" | translate }}
+                </button>
             </div>
         </div>
     </div>

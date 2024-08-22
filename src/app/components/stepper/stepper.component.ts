@@ -238,7 +238,7 @@ export class StepperComponent {
       },
       (error:any)=>{
         this.snackService.openSnackBar(error.error.error, 'error');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/exit/' + this.tour_id]);
       }
     );
   }
@@ -248,9 +248,17 @@ export class StepperComponent {
     return currentIndex === this.tour.steps.length - 1;
   }
   openWelcomeModal(): void {
-    this.dialog.open(MsgInicioModalComponent, {
-      width: '500px'
-    });
+    const modalShown = sessionStorage.getItem('welcomeModalShown');
+  
+    if (!modalShown) {
+      // Si el modal no ha sido mostrado, abrirlo
+      this.dialog.open(MsgInicioModalComponent, {
+        width: '500px'
+      });
+  
+      // Guardar en sessionStorage que el modal ya ha sido mostrado
+      sessionStorage.setItem('welcomeModalShown', 'true');
+    }
   }
   velocity(event:any){
     this.velocity_rate=event;
