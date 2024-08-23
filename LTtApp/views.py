@@ -2215,21 +2215,28 @@ def update_validated_field(request, tour_id):
         tour.validado = validado
         tour.save()
 
-        if validado:
+        if validado:            
+            existing_relation = TourRelation.objects.filter(tour_es_id=tour.id).first()
+            
+            if not existing_relation:               
+                existing_relation = TourRelation.objects.filter(tour_en_id=tour.id).first()
+            
+            if existing_relation:
+                return Response({'message': 'El tour ya tiene una traducción existente, no se creó una nueva traducción.'}, status=200)
+
             tour_destino = "en"
 
-            next_id_en = get_next_id()
-
-            tour_en = Tour()
-            tour_en.user = tour.user
-            tour_en.imagen = tour.imagen
-            tour_en.audio = tour.audio
-            tour_en.tipo_de_tour = tour.tipo_de_tour
-            tour_en.recorrido = tour.recorrido
-            tour_en.duracion = tour.duracion
-            tour_en.validado = True
-            tour_en.descripcion = translate_text(tour.descripcion, tour.idioma, tour_destino)
-            tour_en.titulo = translate_text(tour.titulo, tour.idioma, tour_destino)            
+            tour_en = Tour(
+                user=tour.user,
+                imagen=tour.imagen,
+                audio=tour.audio,
+                tipo_de_tour=tour.tipo_de_tour,
+                recorrido=tour.recorrido,
+                duracion=tour.duracion,
+                validado=True,
+                descripcion=translate_text(tour.descripcion, tour.idioma, tour_destino),
+                titulo=translate_text(tour.titulo, tour.idioma, tour_destino)
+            )
             tour_en.save()
 
             for paso_es in Paso.objects.filter(tour=tour):
@@ -2244,7 +2251,8 @@ def update_validated_field(request, tour_id):
                 )
                 paso_en.save()
 
-            tour_relation = TourRelation(tour_es=tour, tour_en=tour_en)
+            tour_relation = TourRelation(tour_es=tour if tour.idioma == "es" else tour_en,
+                                         tour_en=tour_en if tour.idioma == "es" else tour)
             tour_relation.save()
 
         try:
