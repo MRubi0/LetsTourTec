@@ -727,7 +727,6 @@ def get_nearest_tours_all(request):
     # Devolver los tours más cercanos como respuesta JSON
     return JsonResponse(response_data)
 
-
 def get_nearest_validated_tours(request):
     latitud_usuario = request.GET.get('latitude', None)
     longitud_usuario = request.GET.get('longitude', None)
@@ -748,6 +747,7 @@ def get_nearest_validated_tours(request):
         longitud_usuario = float(longitud_usuario)
     else:
         longitud_usuario = None
+
     tours = Tour.objects.filter(idioma=idioma, validado=True)
     tours_with_distances = []
     if latitud_usuario is not None and longitud_usuario is not None:
@@ -760,7 +760,7 @@ def get_nearest_validated_tours(request):
             tours_with_distances.append({'tour': tour, 'id': tour.id, 'distance': None})
         sorted_tours = sorted(tours_with_distances, key=lambda x: x['id'])
 
-    per_page = len(sorted_tours)
+    per_page = max(len(sorted_tours), 1)
     page = request.GET.get('page', 1)
     paginator = Paginator(sorted_tours, per_page)
     current_page_tours = paginator.get_page(page)
@@ -790,7 +790,6 @@ def get_nearest_validated_tours(request):
     }
 
     return JsonResponse(response_data)
-
 
 def all_tours(request):
     # Obtenemos todos los tours disponibles
