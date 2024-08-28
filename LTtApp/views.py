@@ -450,7 +450,6 @@ def sqlite_haversine(lat1, lon1, lat2, lon2):
     return 6371 * c
 
 
-
 def get_nearest_tours(request):
     latitud_usuario = float(request.GET.get('latitude', None))
     longitud_usuario = float(request.GET.get('longitude', None))
@@ -461,26 +460,36 @@ def get_nearest_tours(request):
     
     if idioma is None:
         return JsonResponse({"error": "Falta el parámetro: language"}, status=400)
+    if idioma == "es":
+        tours = Tour.objects.filter(
+            Q(idioma="es") | Q(id__in=TourRelation.objects.values_list('tour_es_id', flat=True)),
+            validado=True
+        )
+    elif idioma == "en":
+        tours = Tour.objects.filter(
+            Q(idioma="en") | Q(id__in=TourRelation.objects.values_list('tour_en_id', flat=True)),
+            validado=True
+        )
+    else:
+        return JsonResponse({"error": "Idioma no soportado"}, status=400)
 
-    # Aquí se filtran los tours por idioma y por si están validados
-    tours = Tour.objects.filter(idioma=idioma, validado=True)
+    # Calcular las distancias a cada tour
+    print('tours --->', tours )
     tours_with_distances = []
     for tour in tours:
         distance = haversine(latitud_usuario, longitud_usuario, tour.latitude, tour.longitude)
         tours_with_distances.append({'tour': tour, 'distance': distance})
 
     tour_categories = ['cultural', 'naturaleza', 'ocio']
-    nearest_tours = []
-
     result = []
 
     for category in tour_categories:
-        # Ordenar por distancia y filtrar por categoría
+        
         filtered_tours = sorted(
             filter(lambda x: x['tour'].tipo_de_tour == category, tours_with_distances),
             key=lambda x: x['distance']
         )
-        # Tomar el primer tour de la lista, que es el más cercano
+        print('filtered_tours ', filtered_tours)
         if filtered_tours:
             tour = filtered_tours[0]['tour']
             tour_object = {
@@ -505,7 +514,6 @@ def get_nearest_tours(request):
             result.append(tour_object)
 
     return JsonResponse(result, safe=False)
-
 
 
 def tour_detail(request, tour_id):
