@@ -657,7 +657,6 @@ def get_tour_distance(request):
     
     return JsonResponse(tour_data, safe=False)
 
-@permission_classes([IsAuthenticated])
 def get_nearest_tours_all(request):
     latitud_usuario = request.GET.get('latitude', None)
     longitud_usuario = request.GET.get('longitude', None)
@@ -679,8 +678,8 @@ def get_nearest_tours_all(request):
     else:
         longitud_usuario = None
 
-    # Obtener todos los tours filtrados por idioma
-    tours = Tour.objects.filter(idioma=idioma)
+    # Obtener todos los tours filtrados por idioma y validados
+    tours = Tour.objects.filter(idioma=idioma, validado=True)
     tours_with_distances = []
     if latitud_usuario is not None and longitud_usuario is not None:
         for tour in tours:
