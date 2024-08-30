@@ -56,15 +56,19 @@ export class AuthService {
 
   startTokenRefresh(): void {
     setInterval(() => {
-      this.refreshToken().subscribe({
-        next: (tokens: AuthTokens) => {
-          this.saveTokens(tokens);
-        },
-        error: (error) => {
-          console.error('Error during token refresh', error);
-        }
-      });
-    }, 2* 60 * 59 * 1000);
+      const token = localStorage.getItem('refresh_token');
+      if(token){
+        this.refreshToken().subscribe({
+          next: (tokens: AuthTokens) => {
+            this.saveTokens(tokens);
+          },
+          error: (error) => {
+            console.error('Error during token refresh', error);
+            this.logout();
+          }
+        });
+      }      
+    }, 2 * 60 * 59 * 1000);
   }
   
 
