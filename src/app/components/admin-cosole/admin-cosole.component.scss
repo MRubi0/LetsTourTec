@@ -1,0 +1,45 @@
+.table-container {
+    margin: 20px;
+  }
+  
+  .search-container {
+    margin-bottom: 20px;
+  }
+  
+  mat-form-field {
+    width: 100%;
+  }
+.table{
+    width: 100% !important;    
+}  
+.table-container {
+    margin: 20px;
+    overflow-x: auto;
+  }
+
+  mat-header-cell, mat-cell {
+    min-width: 120px;
+  }
+
+  @media (max-width: 600px) {
+    mat-header-cell, mat-cell {
+      padding: 8px;
+      font-size: 12px;
+    }
+  }
+  .modal-body{
+    z-index: 2100 !important;
+  }
+  .cdk-overlay-pane{
+    z-index: 2100 !important;
+  }
+  :host ::ng-deep .cdk-overlay-container {
+    z-index: 2100 !important;
+  }
+  .modal {
+    z-index: 2050;
+  }
+  
+  .modal-backdrop {
+    z-index: 2040;
+  }

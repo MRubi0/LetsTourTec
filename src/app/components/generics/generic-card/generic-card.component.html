@@ -3,53 +3,90 @@
         itemsPerPage: pageSize,
         currentPage: p,
         totalItems: toursdata.length }">
-            <mat-card class="tour-card" (click)="sendImage(tours.id)">
-            <mat-card-header class="p-0">                 
-                <img class="image" mat-card-image 
-                src={{tours.imagen.url}} 
-                alt="Image" [routerLink]="['/tour/', tours.id]">
-                <button class='button-fab' mat-fab data-bs-toggle="tooltip" matTooltip={{tours.tipo_de_tour}}
-                    aria-label="Button that displays a tooltip when focused or hovered over">
-                    <div [ngSwitch]=tours.tipo_de_tour class="icon_type_tour">
-                        <img *ngSwitchCase="'Cultural'" class="icon_type_spe" src="../../../assets/iconos/TdesignMuseum1.svg" alt="">                            
-                        <img *ngSwitchCase="'Nature'" src="../../../assets/iconos/HealthiconsForestPersons.svg" alt="">
-                        <img *ngSwitchCase="'Leisure'" class="icon_type_spe"  src="../../../assets/iconos/MapAmusementPark.svg" alt="">
+        <mat-card class="tour-card">
+            <mat-card-header class="p-0">     
+                <img class="image" mat-card-image src={{tours.imagen.url}} alt="Image"
+                    [routerLink]="['/tour/', tours.id]" (click)="sendImage(tours.id)" >
+                <div class="iconos_container row">
+                    <div class="col-6" (click)="sendImage(tours.id)">
+                        <button class='button-fab' mat-fab data-bs-toggle="tooltip" matTooltip={{tours.tipo_de_tour}}
+                            aria-label="Button that displays a tooltip when focused or hovered over">
+                            <div [ngSwitch]=tours.tipo_de_tour class="icon_type_tour">
+                                <img *ngSwitchCase="'Cultural'" class="icon_type_spe"
+                                    src="../../../assets/iconos/TdesignMuseum1.svg" alt="">
+                                <img *ngSwitchCase="'Nature'" src="../../../assets/iconos/HealthiconsForestPersons.svg"
+                                    alt="">
+                                <img *ngSwitchCase="'Leisure'" class="icon_type_spe"
+                                    src="../../../assets/iconos/MapAmusementPark.svg" alt="">
 
-                        <p *ngSwitchDefault>Icono no disponible</p>
+                                <p *ngSwitchDefault>Icono no disponible</p>
+                            </div>
+                        </button>                        
                     </div>
-                </button>
+                    <div class="col-6 d-flex justify-content-end">
+                        <button *ngIf="show" class='button-fab' mat-fab data-bs-toggle="tooltip" matTooltip="Editar"
+                            aria-label="Button that displays a tooltip when focused or hovered over"
+                            [routerLink]="['/edit-tours/', tours.id]">
+                            <div class="icon_type_tour">
+                                <img class="icon_type_spe" src="../../../assets/iconos/edit-pencil-white.svg" alt="">
+                            </div>
+                        </button>
+                        <button *ngIf="validate" class='button-fab' mat-fab data-bs-toggle="tooltip" matTooltip="Editar"
+                            aria-label="Button that displays a tooltip when focused or hovered over"
+                            (click)="validateTour(tours)"  [ngClass]="{'validated': tours.validado, 'not-validated': !tours.validado}" >
+                            <div class="icon_type_tour_cancel" *ngIf="!tours.validado">
+                                <img class="icon_type_cancel" src="../../../assets/iconos/cancel.svg" alt="">
+                            </div>
+                            <div class="icon_type_tour" *ngIf="tours.validado">
+                                <img class="icon_type_spe" src="../../../assets/iconos/check-circle-fill-white.svg" alt="">
+                            </div>
+                        </button>
+                    </div>
+                </div>
             </mat-card-header>
             <mat-card-content class="content mt-2">
-                <mat-card-title class="center-title" [routerLink]="['/tour/', tours.id]">{{tours.titulo}}</mat-card-title>
+                <mat-card-title class="center-title"
+                    [routerLink]="['/tour/', tours.id]">{{tours.titulo}}</mat-card-title>
 
                 <strong>{{ 'GENERIC-CARD.Description' | translate }}: </strong>
-                    <p>
-                        {{showFullDescription[tours.id] ? tours.descripcion : (tours.descripcion.length > 50 ? tours.descripcion.slice(0, 50) + '...' : tours.descripcion)}}
-                        <span *ngIf="tours.descripcion.length > 50" class="showMore" (click)="toggleDescription($event, tours.id)">
-                            {{showFullDescription[tours.id] ? ('GENERIC-CARD.Show_less' | translate) : ('GENERIC-CARD.Show_more' | translate)}}</span>
-                    </p>      
+                <p>
+                    {{showFullDescription[tours.id] ? tours.descripcion : (tours.descripcion.length > 50 ?
+                    tours.descripcion.slice(0, 50) + '...' : tours.descripcion)}}
+                    <span *ngIf="tours.descripcion.length > 50" class="showMore"
+                        (click)="toggleDescription($event, tours.id)">
+                        {{showFullDescription[tours.id] ? ('GENERIC-CARD.Show_less' | translate) :
+                        ('GENERIC-CARD.Show_more' | translate)}}</span>
+                </p>
                 <ul>
-                    <li><strong>{{ 'GENERIC-CARD.Type_of_tour' | translate }}: </strong> {{tours.translatedTourType}}</li>
-                    <li><strong>{{ 'GENERIC-CARD.Average_rating' | translate }}: </strong> <span>{{tours.mediaValoracion | number:'1.1-1'}}</span> <img src="../../../assets/iconos/star-mark-svgrepo-com.svg" alt="Valoración media" class="valoracion-estrella"></li>
-                    <li><strong>{{ 'GENERIC-CARD.Distance_to_starting_point' | translate }}: </strong> {{tours.distance | number: '1.0-2'}} km</li>
+                    <li><strong>{{ 'GENERIC-CARD.Type_of_tour' | translate }}: </strong> {{tours.translatedTourType}}
+                    </li>
+                    <li><strong>{{ 'GENERIC-CARD.Distance_to_starting_point' | translate }}: </strong> {{tours.distance
+                        | number: '1.0-2'}} km</li>
                     <li><strong>{{ 'GENERIC-CARD.Duration' | translate }}: </strong>{{tours.duracion}} min.</li>
                     <li><strong>{{ 'GENERIC-CARD.Covered_distance' | translate }}: </strong>{{tours.recorrido}} km</li>
-                    <li (click)="loadUser(tours.user)"><strong>Created by: </strong><span class="user">{{tours.user.first_name}} {{tours.user.last_name}}</span></li>
+                    <li (click)="loadUser(tours.user)"><strong>Created by: </strong><span
+                            class="user">{{tours.user.first_name}} {{tours.user.last_name}}</span></li>
+                            <li *ngIf="tours.valoraciones && tours.valoraciones.length > 0">
+                                <strong>{{ 'EXIT.Valora_la_duración_del_tour:' | translate }}</strong>
+                                {{ tours.valoraciones[0]?.puntuacion }} 
+                            </li>
+                            <li *ngIf="!tours.valoraciones || tours.valoraciones.length === 0">
+                                <strong>{{ 'EXIT.Valora_la_duración_del_tour:' | translate }}</strong>
+                                {{ 'Sin valoración disponible'}}
+                            </li>
                 </ul>
             </mat-card-content>
             <mat-card-actions class="d-flex justify-content-center">
-                <button mat-raised-button color="primary" class="custom-button-color" [routerLink]="['/tour/', tours.id]">{{ "GENERIC-CARD.Let's_do_it!" | translate }}</button>                
+                <button mat-raised-button color="primary" class="custom-button-color"
+                    [routerLink]="['/tour/', tours.id]">{{ "GENERIC-CARD.Let's_do_it!" | translate }}</button>
             </mat-card-actions>
         </mat-card>
     </div>
 </div>
 <div class="paginator row w-100 mt-4" *ngIf="view">
     <div class="col-12 d-flex justify-content-center">
-        <pagination-controls (pageChange)="p = $event; onPageChange()" 
-                             (autoHide)="autoHide" 
-                             (responsive)="responsive" 
-                             previousLabel="Previous" 
-                             nextLabel="Next">
+        <pagination-controls (pageChange)="p = $event; onPageChange()" (autoHide)="autoHide" (responsive)="responsive"
+            previousLabel="Previous" nextLabel="Next">
         </pagination-controls>
     </div>
 </div>

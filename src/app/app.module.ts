@@ -35,7 +35,6 @@ import { AuthGuard } from './services/auth.guard';
 import { UploadTourComponent } from './components/upload-tour/upload-tour.component';
 import { MatSelectModule } from '@angular/material/select';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { MyToursComponent } from './components/my-tours/my-tours.component';
 import { MapModalComponent } from './components/map-modal/map-modal.component'; 
 import { MatDialogModule } from '@angular/material/dialog';
@@ -62,7 +61,16 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { CustomSnackBarComponent } from './components/generics/custom-snack-bar/custom-snack-bar.component';
 import { VotacionModalComponent } from './components/votacion-modal/votacion-modal.component';
 import { EdittoursComponent } from './components/edittours/edittours.component';
-import { DonationComponent } from './components/donation/donation.component';
+import { CoordinateValidatorDirective } from './directives/coordinateValidatorDirective';
+import { DragedittoursComponent } from './components/dragedittours/dragedittours.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import {MatExpansionModule} from '@angular/material/expansion';
+import { CsrfInterceptor } from './interceptors/csrf.interceptor';
+import { JwtInterceptor } from './interceptors/jwt-interceptor.interceptor';
+import { AdminCosoleComponent } from './components/admin-cosole/admin-cosole.component';
+import { MatTableModule } from '@angular/material/table';
+import { ValidateToursComponent } from './components/validate-tours/validate-tours.component';
+import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -103,8 +111,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     VotacionModalComponent,
     ProfilecardsComponent,
     CustomSnackBarComponent,
-    EdittoursComponent,
-    DonationComponent,   
+    EdittoursComponent,   
+    CoordinateValidatorDirective, 
+    DragedittoursComponent, AdminCosoleComponent, ValidateToursComponent, AdminPanelComponent 
   ],
   imports: [
     BrowserModule,
@@ -129,7 +138,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatDialogModule,
     MatMenuModule,
     NgbRatingModule,
+    DragDropModule,
     MatProgressSpinnerModule,
+    MatExpansionModule,
+    MatTableModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -142,8 +154,8 @@ export function HttpLoaderFactory(http: HttpClient) {
   providers: [
     LoggingService, 
     AuthGuard,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-
+    { provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
 })

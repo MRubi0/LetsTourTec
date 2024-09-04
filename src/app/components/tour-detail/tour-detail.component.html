@@ -19,7 +19,11 @@
             </div>            
         </mat-card-header> 
         <mat-card-content>
-            <div class="row mt-4">
+            <div class="w-100 mt-4">
+                <span  class="subtitle">Calificación:</span>
+                <ngb-rating [rate]="detail.valoracion" [max]="5"></ngb-rating>
+            </div>            
+            <div class="row mt-2">
                 <div class="col-12">
                     <span  class="subtitle">{{ "TOUR-DETAIL.Created_at" | translate }}: </span> <br>
                     <span>{{detail.created_at | date :'MM/yyyy'}}</span>

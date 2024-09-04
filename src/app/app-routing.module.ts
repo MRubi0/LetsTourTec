@@ -21,7 +21,11 @@ import { ExitComponent } from './components/exit/exit.component'
 import { MusicPlayerDetailComponent } from './components/generics/music-player-detail/music-player-detail.component';
 import { ProfilecardsComponent } from './components/profilecards/profilecards.component';
 import { EdittoursComponent } from './components/edittours/edittours.component';
-import { DonationComponent } from './components/donation/donation.component';
+import { DragedittoursComponent } from './components/dragedittours/dragedittours.component';
+import { AdminCosoleComponent } from './components/admin-cosole/admin-cosole.component';
+import { ValidateToursComponent } from './components/validate-tours/validate-tours.component';
+import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
+
 
 const routes: Routes = [
   {
@@ -99,8 +103,13 @@ const routes: Routes = [
     canActivate: [AuthGuard] 
   },  
   {
-    path: 'edit-tours', 
+    path: 'edit-tours/:id', 
     component: EdittoursComponent,
+    canActivate: [AuthGuard] 
+  },
+  {
+    path: 'edit-drag', 
+    component: DragedittoursComponent,
     canActivate: [AuthGuard] 
   },
   {
@@ -116,9 +125,17 @@ const routes: Routes = [
     component: ProfilecardsComponent,
   },
   {
-    path:'donation',
-    component: DonationComponent,
-  }
+    path:'admin-console',
+    component: AdminCosoleComponent,
+  },
+  {
+    path:'validate-console',
+    component: ValidateToursComponent,
+  },
+  {
+    path:'admin-panel',
+    component: AdminPanelComponent,
+  }  
 ];
 
 @NgModule({

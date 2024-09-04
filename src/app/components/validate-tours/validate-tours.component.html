@@ -1,0 +1,10 @@
+<mat-card class="container-card">
+    <mat-card-header class="mb-3">
+        <mat-card-title>Validar tours</mat-card-title>
+      </mat-card-header>      
+    <mat-card-content>        
+        <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px" class="card-contianer d-flex justify-content-center" *ngIf="alltours">       
+            <app-generic-card class="d-flex flex-wrap" [toursdata]=alltours.tours [all-tours]="true" [validate]="true" (check)="validate($event)"></app-generic-card>
+        </div>
+    </mat-card-content>    
+</mat-card>

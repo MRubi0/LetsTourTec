@@ -1,4 +1,4 @@
-import { Component, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, AfterViewInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
@@ -10,6 +10,8 @@ import { MapService } from 'src/app/services/map.service';
   styleUrls: ['./maps.component.scss']
 })
 export class MapsComponent implements OnDestroy, AfterViewInit {
+  @Input('latitud')latitud!:string; 
+  @Input('longitud')longitud!:string; 
   lat: number = 0;
   long: number = 0;
   private watchId: number | null = null;
@@ -17,20 +19,22 @@ export class MapsComponent implements OnDestroy, AfterViewInit {
   tour_id = 0;
   private locationUpdateInterval: any;
   private map!: L.Map;
-  constructor(private activatedRoute: ActivatedRoute, private mapService: MapService) {}
+  constructor(private mapService: MapService) {}
   private isFirstLoad: boolean = true;
 
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe((params: any) => {
+    /*this.activatedRoute.params.subscribe((params: any) => {
       this.load(params);
-    });  
+    }); */ 
+    this.load();
   }
 
   updateLocation() {
     navigator.geolocation.getCurrentPosition((position) => {
       const latitud = Number(position.coords.latitude);
       const longitud = Number(position.coords.longitude);
+     
       this.mapService.createRoute(this.lat, this.long, longitud, latitud).subscribe((data: any) => {
         if (data[0].message || data[0].error) {
           this.alternative();
@@ -53,7 +57,7 @@ export class MapsComponent implements OnDestroy, AfterViewInit {
   
 
   ngAfterViewInit() {
-    // Inicializa la ubicación y luego actualiza cada 20 segundos
+    // Inicializa la ubicación y luego actualiza cada 20 segundos    
     this.updateLocation();
     this.locationUpdateInterval = setInterval(() => {
       this.updateLocation();
@@ -66,10 +70,10 @@ export class MapsComponent implements OnDestroy, AfterViewInit {
     e.stopPropagation();
   }
 
-  load(coordenadas: any): void {    
-    this.lat = coordenadas.lat;
-    this.long = coordenadas.long;
-    this.tour_id=coordenadas.id
+  load(): void {    
+    this.lat = Number(this.latitud);
+    this.long = Number(this.latitud);
+    //this.tour_id=coordenadas.id
   }
 
   ngOnDestroy() {

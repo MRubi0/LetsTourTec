@@ -33,9 +33,16 @@ export class LatestToursService {
         return data;
       }));
   }
-  getAllTours() {    
+  getAllTours(lat:string, long:string) {    
     const lang = localStorage.getItem('language');
-    return this.http.get(`${environment.apiUrl}get_nearest_tours_all/?page=1&latitude=None&longitude=None&language=${lang}`)
+    return this.http.get(`${environment.apiUrl}get_nearest_tours_all/?page=1&latitude=${lat}&longitude=${long}&language=${lang}`)
+      .pipe(map((data: any) => {        
+        return data;
+      }));
+  }
+  getAllToursValidated(lat:string, long:string) {    
+    const lang = localStorage.getItem('language');
+    return this.http.get(`${environment.apiUrl}get_nearest_validated_tours/?page=1&latitude=${lat}&longitude=${long}&language=${lang}`)
       .pipe(map((data: any) => {        
         return data;
       }));

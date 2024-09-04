@@ -45,9 +45,11 @@ export class StepperComponent {
   maps = 'maps';
   url = environment.bucket;
   audioControlsVisible = false;
+  audioControlsVisibleTour = false;
   evento: any
   last_step=true;
   rates=0;
+  isStepOpen: boolean[] = [];
 
   checkIfMapModalIsRequired(step: any) {
     this.audioControlsVisible = !(step.latitude && step.longitude);
@@ -63,13 +65,15 @@ export class StepperComponent {
       firstCtrl: ['', Validators.required]
     });
     this.activatedRoute.params.subscribe((params: any) => {
-      this.tour_id = params.id
+      this.tour_id = params.id;      
     });
     this.openWelcomeModal();
     this.data();  
   }
   ngAfterViewInit() {}
   onStepChange(event: any) {
+    this.isStepOpen.fill(false);
+    this.isStepOpen[event.selectedIndex] = true; 
     const currentStep = this.tour.steps[event.selectedIndex];   
     this.checkIfMapModalIsRequired(currentStep); 
       const tourSteps = {
@@ -202,7 +206,7 @@ export class StepperComponent {
     });
     dialogRef.componentInstance.cordinates={ lat: lat, long: lng }
     dialogRef.afterClosed().subscribe(result => {
-      this.audioControlsVisible = true;
+      this.audioControlsVisible = this.audioControlsVisibleTour =true;
     });
   }
   goToNextStep(event:string) {
@@ -230,10 +234,11 @@ export class StepperComponent {
     this.stepService.createTourRecord(tourId).subscribe(
       (response:any) => {
         console.log('Tour finalizado:', response)
+        this.router.navigate(['/exit/'+this.tour_id]);
       },
       (error:any)=>{
         this.snackService.openSnackBar(error.error.error, 'error');
-        this.router.navigate([`/exit/${this.tour_id}`]);
+        this.router.navigate(['/exit/' + this.tour_id]);
       }
     );
   }
@@ -243,9 +248,17 @@ export class StepperComponent {
     return currentIndex === this.tour.steps.length - 1;
   }
   openWelcomeModal(): void {
-    this.dialog.open(MsgInicioModalComponent, {
-      width: '500px'
-    });
+    const modalShown = sessionStorage.getItem('welcomeModalShown');
+  
+    if (!modalShown) {
+      // Si el modal no ha sido mostrado, abrirlo
+      this.dialog.open(MsgInicioModalComponent, {
+        width: '500px'
+      });
+  
+      // Guardar en sessionStorage que el modal ya ha sido mostrado
+      sessionStorage.setItem('welcomeModalShown', 'true');
+    }
   }
   velocity(event:any){
     this.velocity_rate=event;

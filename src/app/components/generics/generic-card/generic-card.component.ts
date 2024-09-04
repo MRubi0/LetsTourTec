@@ -1,8 +1,8 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { PaginationControlsComponent } from 'ngx-pagination';
 import { SharedService } from 'src/app/services/shared.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 
 
@@ -19,27 +19,30 @@ export class GenericCardComponent {
   @ViewChild(PaginationControlsComponent) paginationControls!: PaginationControlsComponent;
   @Input('toursdata') toursdata:any=[];
   @Input('all-tours') view!:boolean; 
-
+  @Input('validate') validate:boolean=false; 
+  @Output() check = new EventEmitter<any>();
   p: number=1;
   pageSize:number=12;
   autoHide=true
   responsive=true
   showMore=false;
+  show=false;
 
-  constructor(private sharedService: SharedService, private translate: TranslateService, private router: Router) {}
+  constructor(private sharedService: SharedService, private translate: TranslateService, 
+    private router: Router, private route: ActivatedRoute
+  ) {}
+
+  ngOnInit(){
+    this.router.events.subscribe(() => {
+      const currentRoute = this.router.url;
+      const route = currentRoute.includes('/my-tours');
+      this.show=route;
+    });
+  }
 
   ngOnChanges() {
     this.toursdata.forEach((tour: any) => {
-      this.showFullDescription[tour.id] = false;
-  
-      this.sharedService.getMediaValoraciones(tour.id).subscribe({
-        next: (response:any) => {
-          tour.mediaValoracion = response.media_puntuacion;
-        },
-        error: (error:any) => {
-          console.error('Error al obtener la media de valoraciones:', error);
-        }
-      });
+      this.showFullDescription[tour.id] = false;     
     });
     this.toursdata.map((data:any)=>{
       if(data.tipo_de_tour=='ocio'){
@@ -93,4 +96,10 @@ export class GenericCardComponent {
         this.router.navigate([ '/profile-card']);
     }        
   }  
+  validateTour(tour:any){
+    this.check.emit({
+      tour_id:tour.id,
+      validate:!tour.validado
+    });
+  }
 }
