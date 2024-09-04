@@ -66,6 +66,14 @@
                     <li><strong>{{ 'GENERIC-CARD.Covered_distance' | translate }}: </strong>{{tours.recorrido}} km</li>
                     <li (click)="loadUser(tours.user)"><strong>Created by: </strong><span
                             class="user">{{tours.user.first_name}} {{tours.user.last_name}}</span></li>
+                            <li *ngIf="tours.valoraciones && tours.valoraciones.length > 0">
+                                <strong>{{ 'EXIT.Valora_la_duración_del_tour:' | translate }}</strong>
+                                {{ tours.valoraciones[0]?.puntuacion }} 
+                            </li>
+                            <li *ngIf="!tours.valoraciones || tours.valoraciones.length === 0">
+                                <strong>{{ 'EXIT.Valora_la_duración_del_tour:' | translate }}</strong>
+                                {{ 'Sin valoración disponible'}}
+                            </li>
                 </ul>
             </mat-card-content>
             <mat-card-actions class="d-flex justify-content-center">
