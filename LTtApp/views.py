@@ -547,7 +547,7 @@ def get_latest_tours(request):
 
     for t in tour_types:
         try:
-            latest_tour = Tour.objects.filter(tipo_de_tour=t).latest('created_at')
+            latest_tour = Tour.objects.filter(tipo_de_tour=t, validado=True).latest('created_at')
             
             tour_data = {
                 'id': latest_tour.id,
@@ -1024,58 +1024,47 @@ def create_tour_record(request):
     except Exception as e:
         print("Error al registrar el tour:", str(e))
         return JsonResponse({'error': 'Error al registrar el tour'}, status=500)
-
-
+    
 def get_user_tour_records(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
-        language = request.GET.get('language', 'es')
-        print(f'Received user_id: {user_id}, language: {language}')
-        
+        language = request.GET.get('language', 'es')  # El idioma predeterminado es español (es)
+
         if user_id:
             tours = Tour.objects.filter(user_id=user_id)
-            print(f'Found tours for user {user_id}: {tours}')
             tours_data = []
             processed_tours = set()
 
             for tour in tours:
+                # Saltar el tour si ya ha sido procesado en otro idioma
                 if tour.id in processed_tours:
                     continue
-                
+
                 # Obtener el tour en el idioma preferido
                 if language == 'es':
+                    # Si se selecciona español, obtenemos el tour en español
                     related_tour = TourRelation.objects.filter(tour_es=tour).first()
+                    tour_to_use = related_tour.tour_es if related_tour else tour
                 else:
+                    # Si se selecciona inglés, obtenemos el tour en inglés
                     related_tour = TourRelation.objects.filter(tour_en=tour).first()
+                    tour_to_use = related_tour.tour_en if related_tour else None
 
-                if related_tour:
-                    if language == 'es':
-                        tour_to_use = related_tour.tour_es
-                        other_tour = related_tour.tour_en
-                    else:
-                        tour_to_use = related_tour.tour_en
-                        other_tour = related_tour.tour_es
-                else:
-                    tour_to_use = tour
-                    other_tour = None
+                # Si no hay un tour en el idioma solicitado, continúa con el siguiente
+                if not tour_to_use:
+                    continue
 
-                # Registrar el tour procesado
+                # Registrar el tour procesado para no traer la otra versión (en otro idioma)
                 processed_tours.add(tour_to_use.id)
-                if other_tour:
-                    processed_tours.add(other_tour.id)
+                # Registrar también el tour en el otro idioma si existe, para no traerlo después
+                if related_tour:
+                    if language == 'es' and related_tour.tour_en:
+                        processed_tours.add(related_tour.tour_en.id)
+                    elif language == 'en' and related_tour.tour_es:
+                        processed_tours.add(related_tour.tour_es.id)
 
-                # Obtener todas las valoraciones del tour actual solo del usuario autenticado
+                # Filtrar valoraciones solo para el tour seleccionado en el idioma
                 valoraciones = Valoracion.objects.filter(tour_id=tour_to_use.id, user_id=user_id)
-                print(f'Valoraciones iniciales del tour {tour_to_use.id} para el usuario {user_id}: {valoraciones}')
-                
-                # Si hay una relación, agregar las valoraciones del tour relacionado solo del usuario autenticado
-                if other_tour:
-                    valoraciones_otro = Valoracion.objects.filter(tour_id=other_tour.id, user_id=user_id)
-                    valoraciones = valoraciones | valoraciones_otro
-                    print(f'Valoraciones relacionadas del tour {other_tour.id} para el usuario {user_id}: {valoraciones_otro}')
-                
-                print(f'Valoraciones finales del tour {tour_to_use.id} para el usuario {user_id}: {valoraciones}')
-
                 valoraciones_data = []
 
                 for valoracion in valoraciones:
@@ -1086,6 +1075,7 @@ def get_user_tour_records(request):
                     }
                     valoraciones_data.append(valoracion_data)
 
+                # Crear los datos del tour en el idioma solicitado
                 tour_data = {
                     "id": tour_to_use.id,
                     "titulo": tour_to_use.titulo,
@@ -1100,7 +1090,7 @@ def get_user_tour_records(request):
                     "user": {
                         'id': tour_to_use.user.id,
                         'email': tour_to_use.user.email,
-                        'first_name': tour_to_use.user.first_name, 
+                        'first_name': tour_to_use.user.first_name,
                         'last_name': tour_to_use.user.last_name,
                         'avatar': tour_to_use.user.avatar.url if tour_to_use.user.avatar else None,
                         'bio': tour_to_use.user.bio,
@@ -1113,7 +1103,6 @@ def get_user_tour_records(request):
             return JsonResponse({'error': 'Se necesita proporcionar un ID de usuario'}, status=400)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
-
 
 @csrf_exempt
 @require_POST
