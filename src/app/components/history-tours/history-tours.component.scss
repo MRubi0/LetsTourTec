@@ -3,12 +3,18 @@
   }
   
   .valoracion-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
     padding: 1rem;
     margin: 1rem auto; /* Centra la tarjeta con márgenes automáticos */
-    max-width: 80%; /* Ajusta al porcentaje deseado */
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Opcional: añade una sombra para resaltar la tarjeta */
+    border-radius: 20px;
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
+    max-width: 18rem;
+    min-width: 18rem;
+    max-height: 450px;
+    min-height: 450px;
+    scroll-behavior: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   
   .valoracion-header h3 {
@@ -53,14 +59,7 @@
     margin-top: 1rem;
   }
   
-  .valoracion-card {
-    border: 1px solid #e0e0e0; /* Cambiar según el diseño deseado */
-    border-radius: 5px; /* Redondear las esquinas */
-    padding: 1rem;
-
-
-  }
-  
+ 
   .valoracion-header {
     margin-bottom: 1rem;
   }
@@ -93,8 +92,3 @@
     color: #757575; /* o el color que prefieras */
     font-style: italic;
   }
-  mat-card {
-    border-radius: 20px;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-}
-  
