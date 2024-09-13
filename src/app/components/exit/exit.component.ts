@@ -75,12 +75,13 @@ export class ExitComponent implements AfterViewInit {
     setTimeout(() => {
       this.dialog.open(VotacionModalComponent, {
         width: '90%',
-        height:'400px',
+        height:'440px',
+        panelClass: 'custom-modal',
         data: { tourId: this.id }
       }).afterClosed().subscribe(result => {
         console.log('El modal de votación fue cerrado', result);
       });
-    }, 500);
+    }, 800);
   }
   submitSurvey() {
     if (this.finishForm.valid) {

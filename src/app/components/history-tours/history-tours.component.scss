@@ -10,7 +10,7 @@
     max-width: 18rem;
     min-width: 18rem;
     max-height: 450px;
-    min-height: 450px;
+    min-height: 150px;
     scroll-behavior: auto;
     display: flex;
     flex-direction: column;
@@ -19,6 +19,7 @@
   
   .valoracion-header h3 {
     margin-bottom: 1rem;
+    font-weight: bold;
   }
   
   .valoracion-content {
@@ -39,7 +40,11 @@
   }
   
   .valoracion-text {
+    font-weight: 200;
     margin-top: 1rem;
+  }
+  .text_comment{
+    font-weight: bold;
   }
   
   .valoracion-fecha {
