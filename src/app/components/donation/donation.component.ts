@@ -25,8 +25,8 @@ export class DonationComponent implements OnInit {
 
   async donate() {
     const stripe = await this.stripePromise;
-    const amountInCents = this.donationAmount * 100; // Convertir a centavos
-  
+    const amountInCents = this.donationAmount * 100;
+    console.log('donate url')
     try {
       const session = await this.http.post<{ id: string }>(
         'http://localhost:8000/create-checkout-session/',
