@@ -21,7 +21,7 @@ export class ValidateToursComponent {
     navigator.geolocation.getCurrentPosition((position) => {
       const latitud = String(position.coords.latitude);
       const longitud = String(position.coords.longitude);
-      this.latestToursService.getAllTours(latitud, longitud).subscribe((data=>{
+      this.latestToursService.getAllToursValidation().subscribe((data=>{
         this.alltours=data;
       }));
     }) 
