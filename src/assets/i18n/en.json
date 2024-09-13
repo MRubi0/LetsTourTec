@@ -182,8 +182,8 @@
     "3": "It's been ok",
     "4": "I liked it",
     "5": "I loved it!"
-  }
+  },
 
-
-
+  "DONAR.¿Quiere_apoyar?":"Do you want to support?",
+"DONAR.Cantidad":"Quantity"
 }

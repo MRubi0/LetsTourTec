@@ -179,5 +179,7 @@
     "3": "Ha estado bien",
     "4": "Me ha gustado",
     "5": "¡Me ha encantado!"
-  }
+  },
+  "DONAR.¿Quiere_apoyar?":"¿Quiere apoyar?",
+  "DONAR.Cantidad":"Cantidad"
 }

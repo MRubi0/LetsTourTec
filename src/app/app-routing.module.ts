@@ -25,6 +25,7 @@ import { DragedittoursComponent } from './components/dragedittours/dragedittours
 import { AdminCosoleComponent } from './components/admin-cosole/admin-cosole.component';
 import { ValidateToursComponent } from './components/validate-tours/validate-tours.component';
 import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
+import { DonationComponent } from './components/donation/donation.component';
 
 
 const routes: Routes = [
@@ -135,6 +136,10 @@ const routes: Routes = [
   {
     path:'admin-panel',
     component: AdminPanelComponent,
+  },
+  {
+    path:'donation',
+    component: DonationComponent,
   }  
 ];
 
