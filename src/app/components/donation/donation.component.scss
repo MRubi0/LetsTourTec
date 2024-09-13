@@ -1,0 +1,51 @@
+.donation-form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: center;
+ 
+}
+
+.donation-header {
+  font-size: 24px;
+  margin-bottom: 10px;
+  gap: 20px; /* Añade espacio entre los elementos */
+}
+
+.donation-subheader {
+  font-size: 16px;
+  margin-bottom: 20px;
+  gap: 20px; /* Añade espacio entre los elementos */
+}
+
+.donation-form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  gap: 20px; /* Añade espacio entre los elementos */
+}
+
+.donation-input-field {
+  margin-bottom: 20px;
+}
+
+.donation-button {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  color: white; /* Asegura que el texto sea blanco para buen contraste */
+  background-color: #0d6efd; /* Cambia el color de fondo al color deseado */
+  border: none; /* Elimina bordes adicionales */
+  border-radius: 5px; /* Bordes redondeados */
+  text-align: center;
+}
+
+.custom-error {
+  color: #0d6efd;
+  font-size: 12px; /* Tamaño de fuente más pequeño */
+  margin-top: 5px; /* Espaciado arriba */
+}
+
