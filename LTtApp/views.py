@@ -535,20 +535,19 @@ def tour_detail(request, tour_id):
     return render(request, 'tour_detail.html', context)
 
 
-
 def get_latest_tours(request):
-    # Lista de tipos de tours
-    tour_types = ['cultural', 'naturaleza','ocio']
-
-    # Consulta el último tour de cada tipo
-    tour_data = {}
+    tour_types = ['cultural', 'naturaleza', 'ocio']
+    idioma = request.GET.get('language', None)
 
     result = []
 
     for t in tour_types:
         try:
-            latest_tour = Tour.objects.filter(tipo_de_tour=t, validado=True).latest('created_at')
-            
+            if idioma:
+                latest_tour = Tour.objects.filter(tipo_de_tour=t, validado=True, idioma=idioma).latest('created_at')
+            else:
+                latest_tour = Tour.objects.filter(tipo_de_tour=t, validado=True).latest('created_at')
+
             tour_data = {
                 'id': latest_tour.id,
                 'titulo': latest_tour.titulo,
@@ -564,18 +563,16 @@ def get_latest_tours(request):
                     'email': latest_tour.user.email,
                     'first_name': latest_tour.user.first_name, 
                     'last_name': latest_tour.user.last_name,
-                    'avatar':latest_tour.user.avatar.url if latest_tour.user.avatar else None,                    
+                    'avatar': latest_tour.user.avatar.url if latest_tour.user.avatar else None,
                     'bio': latest_tour.user.bio               
                 }
             }
             result.append(tour_data)
+
         except Tour.DoesNotExist:
-            # No hay tours para este tipo
             pass
 
     return JsonResponse(result, safe=False)
-
-
 def get_random_tours(request):
     idioma = request.GET.get('language', None)
     if not idioma:
@@ -725,6 +722,38 @@ def get_nearest_tours_all(request):
 
     # Devolver los tours más cercanos como respuesta JSON
     return JsonResponse(response_data)
+
+def get_nearest_tours_valitation(request):
+    idioma = request.GET.get('language', None)
+
+    if idioma is None:
+        return JsonResponse({"error": "Falta el parámetro: language"}, status=400)
+
+    tours = Tour.objects.filter(idioma=idioma)
+    
+    if not tours.exists():
+        return JsonResponse({"error": "No se encontraron tours para este idioma"}, status=404)
+    serialized_tours = [{
+        'id': tour.id,
+        'titulo': tour.titulo,
+        'descripcion': tour.descripcion,
+        'tipo_de_tour': tour.tipo_de_tour,
+        'imagen': {'url': tour.imagen.url},
+        'recorrido': tour.recorrido,
+        'duracion': tour.duracion,
+        'validado': tour.validado,
+        'user': {
+            'id': tour.user.id,
+            'email': tour.user.email,
+            'first_name': tour.user.first_name, 
+            'last_name': tour.user.last_name,
+            'avatar': tour.user.avatar.url if tour.user.avatar else None,
+            'bio': tour.user.bio,
+        }
+    } for tour in tours]
+
+    return JsonResponse({'tours': serialized_tours}, status=200)
+
 
 def get_nearest_validated_tours(request):
     latitud_usuario = request.GET.get('latitude', None)

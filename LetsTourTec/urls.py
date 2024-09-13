@@ -32,6 +32,7 @@ urlpatterns = [
     path('get_latest_tours/', views.get_latest_tours, name='get_latest_tours'),
     path('get_random_tours/', views.get_random_tours, name='get_random_tours'),
     path('get_nearest_tours_all/', views.get_nearest_tours_all, name='get_nearest_tours_all'),
+    path('get_nearest_tours_valitation/', views.get_nearest_tours_valitation, name='get_nearest_tours_valitation'),
     path('all_tours/', views.all_tours, name='all_tours'),
     path('custom_tours_page/', views.custom_tours_page, name='custom_tours_page'),
     path('get_tour_distance/', views.get_tour_distance, name='get_tour_distance'),
@@ -65,7 +66,7 @@ urlpatterns = [
     path('api/change-role/<int:user_id>/', ChangeUserRoleView.as_view(), name='change-role'),
     path('api/users/', SimpleUserListView.as_view(), name='user-list'),
     path('api/tours/<int:tour_id>/validado/', views.update_validated_field, name='update_validated_field'),
-    path('get_nearest_validated_tours/', views.get_nearest_validated_tours, name='get_nearest_validated_tours'),
+    path('get_nearest_validated_tours/<str:languaje>/', views.get_nearest_validated_tours, name='get_nearest_validated_tours'),
  
     ]
 if settings.DEBUG:
