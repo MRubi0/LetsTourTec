@@ -67,7 +67,7 @@ urlpatterns = [
     path('api/users/', SimpleUserListView.as_view(), name='user-list'),
     path('api/tours/<int:tour_id>/validado/', views.update_validated_field, name='update_validated_field'),
     path('get_nearest_validated_tours/<str:languaje>/', views.get_nearest_validated_tours, name='get_nearest_validated_tours'),
- 
+    path('create-checkout-session/', views.create_checkout_session, name='create-checkout-session')
     ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

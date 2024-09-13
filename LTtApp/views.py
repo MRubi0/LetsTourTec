@@ -9,7 +9,7 @@ from tokenize import TokenError
 from django.conf import settings
 import requests
 import folium
-import folium
+import stripe
 import time
 import unicodedata
 from rest_framework_simplejwt.views import TokenRefreshView
@@ -1057,7 +1057,7 @@ def create_tour_record(request):
 def get_user_tour_records(request):
     if request.method == 'GET':
         user_id = request.GET.get('id')
-        language = request.GET.get('language', 'es')  # El idioma predeterminado es español (es)
+        language = request.GET.get('language', 'es')
 
         if user_id:
             tours = Tour.objects.filter(user_id=user_id)
@@ -1065,34 +1065,27 @@ def get_user_tour_records(request):
             processed_tours = set()
 
             for tour in tours:
-                # Saltar el tour si ya ha sido procesado en otro idioma
                 if tour.id in processed_tours:
                     continue
-
-                # Obtener el tour en el idioma preferido
-                if language == 'es':
-                    # Si se selecciona español, obtenemos el tour en español
+                if language == 'es':                    
                     related_tour = TourRelation.objects.filter(tour_es=tour).first()
-                    tour_to_use = related_tour.tour_es if related_tour else tour
-                else:
-                    # Si se selecciona inglés, obtenemos el tour en inglés
+                    if related_tour:
+                        tour_to_use = related_tour.tour_es if related_tour else tour                    
+                    else: 
+                        continue
+                else:                    
                     related_tour = TourRelation.objects.filter(tour_en=tour).first()
                     tour_to_use = related_tour.tour_en if related_tour else None
 
-                # Si no hay un tour en el idioma solicitado, continúa con el siguiente
                 if not tour_to_use:
                     continue
-
-                # Registrar el tour procesado para no traer la otra versión (en otro idioma)
                 processed_tours.add(tour_to_use.id)
-                # Registrar también el tour en el otro idioma si existe, para no traerlo después
                 if related_tour:
                     if language == 'es' and related_tour.tour_en:
                         processed_tours.add(related_tour.tour_en.id)
                     elif language == 'en' and related_tour.tour_es:
                         processed_tours.add(related_tour.tour_es.id)
 
-                # Filtrar valoraciones solo para el tour seleccionado en el idioma
                 valoraciones = Valoracion.objects.filter(tour_id=tour_to_use.id, user_id=user_id)
                 valoraciones_data = []
 
@@ -2307,3 +2300,30 @@ def update_validated_field(request, tour_id):
         return Response({'message': 'Campo "validado" actualizado correctamente en ambos tours y traducción creada si corresponde'}, status=200)
     else:
         return Response({'error': 'Método no permitido'}, status=405)
+
+@csrf_exempt 
+def create_checkout_session(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        amount = data.get('amount', 0)
+        try:
+            session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[{
+                    'price_data': {
+                        'currency': 'eur',
+                        'product_data': {
+                            'name': 'Donación',
+                        },
+                        'unit_amount': amount,
+                    },
+                    'quantity': 1,
+                }],
+                mode='payment',
+                success_url='http://localhost:4200/success',
+                cancel_url='http://localhost:4200/cancel',
+            )
+            return JsonResponse({'id': session.id})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=403)

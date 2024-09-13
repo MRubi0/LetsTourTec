@@ -84,7 +84,7 @@ class Tour(models.Model):
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     duracion = models.PositiveIntegerField("Duración en minutos", null=True, blank=True)
-    valoracion = models.DecimalField(max_digits=3, decimal_places=2, default=0.0)
+    valoracion = models.DecimalField(max_digits=3, decimal_places=2, default=5.0)
     total_valoraciones = models.IntegerField(default=0)
     suma_valoraciones = models.IntegerField(default=0)
     recorrido = models.FloatField(null=True, blank=True)  
