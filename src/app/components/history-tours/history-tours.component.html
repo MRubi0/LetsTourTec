@@ -21,9 +21,7 @@
           </div>
           <p class="valoracion-fecha">Fecha: {{ valoracion.fecha | date }}</p>
           <div *ngIf="valoracion.comentario " class="valoracion-text">
-            <span>
-              <div class="text_comment">
-                Comentario:</div>{{ valoracion.comentario }}</span>           
+            <span>Comentario: {{ valoracion.comentario }} </span>           
           </div>
         </div>
       </mat-card>
