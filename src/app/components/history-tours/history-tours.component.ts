@@ -14,7 +14,6 @@ export interface Tour {
   description: string;
   // otros campos según sean necesarios...
 }
-
 @Component({
   selector: 'app-history-tours',
   templateUrl: './history-tours.component.html',
@@ -59,20 +58,20 @@ export class HistoryToursComponent implements OnInit {
     }
 
 
-    // this.http.get(`${environment.apiUrl}api/get_user_tour_records?id=${this.userId}`).subscribe(data => {
-    //   this.tourRecords = (data as any)['tours'];
-    // }, (error: any) => {
-    //   console.error('Error al cargar los registros de tours:', error);
-    // });
-    const lang: string = localStorage.getItem('language') ?? 'es';
-
-    this.http.get(`${environment.apiUrl}api/get_user_tour_records`, {
-      params: { id: this.userId.toString(), language: lang }
-    }).subscribe(data => {
+    /*this.http.get(`${environment.apiUrl}api/?id=${this.userId}`).subscribe(data => {
       this.tourRecords = (data as any)['tours'];
     }, (error: any) => {
       console.error('Error al cargar los registros de tours:', error);
-    });
+    });*/
+
+    const lang: string = localStorage.getItem('language') ?? 'es'; 
+     this.http.get(`${environment.apiUrl}api/get_user_tour_records`, {
+       params: { id: this.userId.toString(), language: lang }
+     }).subscribe(data => {
+       this.tourRecords = (data as any)['tours'];
+     }, (error: any) => {
+       console.error('Error al cargar los registros de tours:', error);
+     });
 
 
 

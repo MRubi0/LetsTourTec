@@ -67,12 +67,12 @@
                     <li (click)="loadUser(tours.user)"><strong>Created by: </strong><span
                             class="user">{{tours.user.first_name}} {{tours.user.last_name}}</span></li>
                             <li *ngIf="tours.valoraciones && tours.valoraciones.length > 0">
-                                <strong>{{ 'EXIT.Valora_la_duración_del_tour:' | translate }}</strong>
-                                {{ tours.valoraciones[0]?.puntuacion }} 
+                                <strong>Valoración del tour</strong>
+                                {{ tours.valoraciones[0]?.puntuacion |  number:'1.0-0'}} 
                             </li>
                             <li *ngIf="!tours.valoraciones || tours.valoraciones.length === 0">
-                                <strong>{{ 'EXIT.Valora_la_duración_del_tour:' | translate }}</strong>
-                                {{ 'Sin valoración disponible'}}
+                                <strong>Valoración del tour</strong>
+                                {{ '5.0'}}
                             </li>
                 </ul>
             </mat-card-content>

@@ -1,5 +1,5 @@
 <mat-card-header class="mb-3">
-    <mat-card-title>My Tour Records</mat-card-title>
+    <mat-card-title>{{ 'My_Tour_Records' | translate }}</mat-card-title>
 </mat-card-header>      
 
 <div *ngFor="let tour of tourRecords" class="tour-record">
@@ -9,20 +9,19 @@
       <mat-card class="valoracion-card">
         <div class="valoracion-header">
             <h3>Valoración:</h3>
-            <h3 class="valoracion-titulo">{{tour.titulo}}</h3>
-          </div>
+         </div>
 
         <div *ngFor="let valoracion of tour.valoraciones" class="valoracion-content">
-            <p class="valoracion-fecha">Fecha: {{ valoracion.fecha | date }}</p>
+            
           <div class="valoracion-stars">
             <img *ngFor="let _ of [].constructor(valoracion.puntuacion); let i = index" 
                  src="../../../assets/iconos/star-mark-svgrepo-com.svg" 
                  alt="Estrella de valoración"
                  class="valoracion-estrella" />
           </div>
+          <p class="valoracion-fecha">Fecha: {{ valoracion.fecha | date }}</p>
           <div *ngIf="valoracion.comentario " class="valoracion-text">
-            <p>Comentario: {{ valoracion.comentario }}</p>
-
+            <span>Comentario: {{ valoracion.comentario }} </span>           
           </div>
         </div>
       </mat-card>

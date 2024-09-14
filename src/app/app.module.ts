@@ -71,6 +71,7 @@ import { AdminCosoleComponent } from './components/admin-cosole/admin-cosole.com
 import { MatTableModule } from '@angular/material/table';
 import { ValidateToursComponent } from './components/validate-tours/validate-tours.component';
 import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
+import { DonationComponent } from './components/donation/donation.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -112,6 +113,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ProfilecardsComponent,
     CustomSnackBarComponent,
     EdittoursComponent,   
+    DonationComponent,
     CoordinateValidatorDirective, 
     DragedittoursComponent, AdminCosoleComponent, ValidateToursComponent, AdminPanelComponent 
   ],
