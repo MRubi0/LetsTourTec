@@ -5,6 +5,10 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { LoggingService } from 'src/app/services/logging.service';
 import { environment } from 'src/enviroment/enviroment';
 
+export interface AuthTokens {
+  access: string;
+  refresh: string;
+}
 
 
 export interface AuthTokens {
@@ -14,8 +18,6 @@ export interface AuthTokens {
 @Injectable({
   providedIn: 'root'
 })
-
-
 export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
   public current = new BehaviorSubject<string | null>(this.getToken());
@@ -95,12 +97,12 @@ export class AuthService {
     localStorage.setItem('refresh_token', refresh );
    }
 
-   clearToken(): void {
+  clearToken(): void {
     localStorage.removeItem('access_token');
-   }
-   isAuthenticated(): boolean {
+  }
+
+  isAuthenticated(): boolean {
     const token = this.getToken();
     return !!token;
    }      
 }
-

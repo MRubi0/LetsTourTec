@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { environment } from 'src/enviroment/enviroment';
+import { environment } from 'src/enviroment/enviroment'
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +16,10 @@ export class ToursDetailService {
       .pipe(map((data: any) => {
         return data;
       }));
+  }
+
+  getMediaValoracion(tourId:number): Observable<{ media_puntuacion:number}> {
+    return this.http.get<{media_puntuacion: number}>(`${environment.apiUrl}/tour/${tourId}/media-valoracion/`);
   }
 
   getAdditionalLocations(tourId: number): Observable<any> {
