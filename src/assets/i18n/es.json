@@ -155,7 +155,10 @@
   "EXIT.Seleccione_una_probabilidad...": "Seleccione una probabilidad...",
 
   "DONAR.¿Quiere_apoyar?": "¿Le gustaría apoyar nuestro proyecto?",
-  "DONAR.Cantidad": "Introduzca la cantidad que desea donar",
+  "DONAR.Cantidaddeseada": "Introduzca la cantidad que desea donar",
+  "DONAR.Resumen": "Resumen: Donarás ",
+  "DONAR.Mayorque1": "La cantidad debe ser igual o mayor a 1 euro.",
+  "DONAR.Cantidad":"Cantidad",
 
 
   "ALLTOURS.All_tours": "Todos los tours",
