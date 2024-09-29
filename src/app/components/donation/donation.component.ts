@@ -13,9 +13,7 @@ export class DonationComponent implements OnInit {
   donationAmount: number = 3; // Valor por defecto para la donación
   finishForm!: FormGroup;
 
-  constructor(private http: HttpClient,
-    private formBuilder: FormBuilder
-  ) { }
+  constructor(private http: HttpClient, private formBuilder: FormBuilder) {}
 
   ngOnInit(): void {
     this.finishForm = this.formBuilder.group({
@@ -23,20 +21,32 @@ export class DonationComponent implements OnInit {
     });
   }
 
+  increaseAmount() {
+    const currentValue = this.finishForm.get('donationAmount')?.value || this.donationAmount;
+    this.finishForm.patchValue({ donationAmount: currentValue + 1 });
+  }
+
+  decreaseAmount() {
+    const currentValue = this.finishForm.get('donationAmount')?.value || this.donationAmount;
+    if (currentValue > 1) {
+      this.finishForm.patchValue({ donationAmount: currentValue - 1 });
+    }
+  }
+
   async donate() {
     const stripe = await this.stripePromise;
-    const amountInCents = this.donationAmount * 100;
+    const amountInCents = this.finishForm.get('donationAmount')?.value * 100;
     try {
       const session = await this.http.post<{ id: string }>(
         'https://letstourtec-c393a22f9c2b.herokuapp.com/create-checkout-session/',
         { amount: amountInCents }
       ).toPromise();
-  
+
       if (session && session.id) {
         const { error } = await stripe!.redirectToCheckout({
           sessionId: session.id,
         });
-  
+
         if (error) {
           console.error(error);
         }
@@ -46,4 +56,6 @@ export class DonationComponent implements OnInit {
     } catch (error) {
       console.error('Error creating session:', error);
     }
-  }}
+  }
+}
+
