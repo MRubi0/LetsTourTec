@@ -20,7 +20,7 @@
         </mat-card-header> 
         <mat-card-content>
             <div class="w-100 mt-4">
-                <span  class="subtitle">Calificación:</span>
+                <span class="subtitle">{{ 'TOUR-DETAIL.Average_Rating' | translate }}: </span>
                 <ngb-rating [rate]="detail.valoracion" [max]="5"></ngb-rating>
             </div>            
             <div class="row mt-2">
@@ -40,11 +40,6 @@
                     <span class="subtitle">{{ 'TOUR-DETAIL.Covered_distance' | translate }}: </span> {{detail.recorrido}} km                   
                 </div>
                 <hr>
-                <div class="col-12">
-                    <span class="subtitle">{{ 'TOUR-DETAIL.Average_Rating' | translate }}: </span>
-                    <span *ngIf="mediaPuntuacion !== null">{{ mediaPuntuacion }}</span>
-                    <span *ngIf="mediaPuntuacion === null">{{ "TOUR-DETAIL.Loading" | translate }}</span>
-                </div>
             </div>
             <hr>
             <div class="d-flex justify-content-center mt-3">
