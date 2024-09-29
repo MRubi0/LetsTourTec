@@ -28,7 +28,7 @@ export class DonationComponent implements OnInit {
     const amountInCents = this.donationAmount * 100;
     try {
       const session = await this.http.post<{ id: string }>(
-        'http://localhost:8000/create-checkout-session/',
+        'https://letstourtec-c393a22f9c2b.herokuapp.com/create-checkout-session/',
         { amount: amountInCents }
       ).toPromise();
   
