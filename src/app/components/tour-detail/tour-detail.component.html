@@ -32,16 +32,17 @@
                     <hr>
                     <span  class="subtitle">{{ 'TOUR-DETAIL.Description' | translate }}: </span>                    
                        <p>{{detail.descripcion}}</p>  <br>
+                <hr>                       
                    </div>
-                <hr>
+
                 <div class="col-12">
                    <span class="subtitle">{{ 'TOUR-DETAIL.Duration' | translate }}: </span> {{detail.duracion}} min.
                     <hr>
                     <span class="subtitle">{{ 'TOUR-DETAIL.Covered_distance' | translate }}: </span> {{detail.recorrido}} km                   
                 </div>
-                <hr>
+
             </div>
-            <hr>
+
             <div class="d-flex justify-content-center mt-3">
                 <button mat-raised-button color="primary" class="custom-button-color" (click)="letsTour(detail)">{{ "TOUR-DETAIL.Let's_tour" | translate }}</button>
             </div>
