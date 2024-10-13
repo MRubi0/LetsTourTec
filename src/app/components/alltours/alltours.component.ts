@@ -19,7 +19,8 @@ export class AlltoursComponent {
     navigator.geolocation.getCurrentPosition((position) => {
       const latitud = String(position.coords.latitude);
       const longitud = String(position.coords.longitude);
-      this.latestToursService.getAllToursValidated(latitud, longitud).subscribe((data=>{
+      //this.latestToursService.getAllToursValidated(latitud, longitud).subscribe((data=>{
+        this.latestToursService.getAllTours(latitud, longitud).subscribe((data=>{
         this.alltours=data;
       }));
     })   
