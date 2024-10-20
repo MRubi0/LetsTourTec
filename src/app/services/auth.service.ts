@@ -31,7 +31,8 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<AuthTokens> {
-      return this.http.post<AuthTokens>( environment.apiUrl + 'login/', { email, password }).pipe(
+      //return this.http.post<AuthTokens>( environment.apiUrl + 'login/', { email, password }).pipe(
+        return this.http.post<AuthTokens>( environment.apiUrl + 'api/token/', { email, password }).pipe(
       tap((tokens: AuthTokens) => this.saveTokens(tokens)),
       catchError(error => {
         this.loggingService.error('Error during login: ' + error.message);
