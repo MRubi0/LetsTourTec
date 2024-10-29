@@ -11,21 +11,21 @@ app.use((req, res, next) => {
   });
 
   
-// Middleware para redireccionar de letstourtec.com a www.letstourtec.com
-app.use((req, res, next) => {
-  const host = req.headers.host;
-  if (host === 'letstourtec.com' || host === 'www.letstourtec.com') {
-      // Asegúrate de que la solicitud es HTTPS
-      const protocol = req.headers['x-forwarded-proto'] || req.protocol;
-      if (protocol !== 'https') {
-          return res.redirect(301, 'https://' + host + req.url);
-      }
-  }
-  if (host === 'letstourtec.com') {
-      return res.redirect(301, 'https://www.letstourtec.com' + req.url);
-  }
-  next();
-});
+// // Middleware para redireccionar de letstourtec.com a www.letstourtec.com
+// app.use((req, res, next) => {
+//   const host = req.headers.host;
+//   if (host === 'letstourtec.com' || host === 'www.letstourtec.com') {
+//       // Asegúrate de que la solicitud es HTTPS
+//       const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+//       if (protocol !== 'https') {
+//           return res.redirect(301, 'https://' + host + req.url);
+//       }
+//   }
+//   if (host === 'letstourtec.com') {
+//       return res.redirect(301, 'https://www.letstourtec.com' + req.url);
+//   }
+//   next();
+// });
 
 
 // Configura el proxy
