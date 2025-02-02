@@ -39,7 +39,8 @@
                   <p>{{tour.description}}</p>
                 </div>              
                 <div class="audio d-flex justify-content-center" *ngIf="audioControlsVisibleTour">
-                <app-music-player  class="w-100" [audio]="step.audio" [index]="i" [next]="next" 
+
+                <app-music-player  class="w-100" [audio]="tour.audio" [index]="i" [next]="next" 
                 (stepChange)="musicAction($event)" [rates]="rates" [volum]="volumen_rate" 
                 (emitRates)="velocity($event)" (emitVolumen)="volumen($event)">
               </app-music-player>

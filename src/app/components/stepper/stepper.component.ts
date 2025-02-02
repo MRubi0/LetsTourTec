@@ -67,7 +67,7 @@ export class StepperComponent {
     this.activatedRoute.params.subscribe((params: any) => {
       this.tour_id = params.id;      
     });
-    this.openWelcomeModal();
+    //this.openWelcomeModal();
     this.data();  
   }
   ngAfterViewInit() {}
@@ -247,7 +247,7 @@ export class StepperComponent {
     const currentIndex = this.stepper.selectedIndex;
     return currentIndex === this.tour.steps.length - 1;
   }
-  openWelcomeModal(): void {
+  /* openWelcomeModal(): void {
     const modalShown = sessionStorage.getItem('welcomeModalShown');
   
     if (!modalShown) {
@@ -259,7 +259,7 @@ export class StepperComponent {
       // Guardar en sessionStorage que el modal ya ha sido mostrado
       sessionStorage.setItem('welcomeModalShown', 'true');
     }
-  }
+  } */
   velocity(event:any){
     this.velocity_rate=event;
   }
