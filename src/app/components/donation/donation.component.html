@@ -13,6 +13,7 @@
     
     <mat-card-content class="content mt-2">
       <form [formGroup]="finishForm" class="donation-form-container">
+        <p class="donation-purpose">{{ 'DONAR.PURPOSE_STATEMENT' | translate }}</p>
         <div class="donation-input-group">
           <button type="button" class="btn btn-decrement" (click)="decreaseAmount()">-</button>
           <mat-form-field appearance="fill" class="donation-input-field">
@@ -32,8 +33,9 @@
     </mat-card-content>
     
     <mat-card-actions class="d-flex justify-content-center">
-      <button class="donation-button" [disabled]="!finishForm.valid" (click)="donate()">
-        Donar {{ finishForm.get('donationAmount')?.value || donationAmount }} euros
+      <button class="donation-button" [disabled]="!finishForm.valid || isProcessing" (click)="donate()">
+        <span *ngIf="!isProcessing">Donar {{ finishForm.get('donationAmount')?.value || donationAmount }} euros</span>
+        <span *ngIf="isProcessing">{{ 'DONAR.PROCESANDO' | translate }}</span>
       </button>
     </mat-card-actions>
   </mat-card>

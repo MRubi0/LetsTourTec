@@ -154,12 +154,15 @@
   "EXIT.Seleccione_una_opción...": "Seleccione una opción...",
   "EXIT.Seleccione_una_probabilidad...": "Seleccione una probabilidad...",
 
-  "DONAR.¿Quiere_apoyar?": "¿Le gustaría apoyar nuestro proyecto?",
-  "DONAR.Cantidaddeseada": "Introduzca la cantidad que desea donar",
-  "DONAR.Resumen": "Resumen: Donarás ",
-  "DONAR.Mayorque1": "La cantidad debe ser igual o mayor a 1 euro.",
-  "DONAR.Cantidad":"Cantidad",
-
+  "DONAR": {
+    "¿Quiere_apoyar?": "¿Le gustaría apoyar nuestro proyecto?",
+    "Cantidaddeseada": "Introduzca la cantidad que desea donar",
+    "Resumen": "Resumen: Donarás ",
+    "Mayorque1": "La cantidad debe ser igual o mayor a 1 euro.",
+    "Cantidad":"Cantidad",
+    "PURPOSE_STATEMENT": "¡Cada contribución nos ayuda a mantener los tours en funcionamiento y desarrollar nuevas experiencias!",
+    "PROCESANDO": "Procesando..."
+  },
 
   "ALLTOURS.All_tours": "Todos los tours",
   "ALLTOURS.Sort_by_distance": "Ordenar por distancia",

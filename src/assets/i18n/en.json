@@ -152,24 +152,18 @@
   "EXIT.Seleccione_una_opción...": "Select an option...",
   "EXIT.Seleccione_una_probabilidad...": "Select a probability...",
 
-  "DONAR.¿Quiere_apoyar?": "Would you like to support this project?",
-  "DONAR.Cantidaddeseada": "Introduce the quantity you would like to donate",
-  "DONAR.Resumen": "Summarizing: You´ll donate ",
-  "DONAR.Mayorque1": "The quantity must be greater than 1 euro.",
-  "DONAR.Cantidad":"Quantity",
-
-
-
+  "DONAR": {
+    "¿Quiere_apoyar?": "Would you like to support this project?",
+    "Cantidaddeseada": "Introduce the quantity you would like to donate",
+    "Resumen": "Summarizing: You´ll donate ",
+    "Mayorque1": "The quantity must be greater than 1 euro.",
+    "Cantidad":"Quantity",
+    "PURPOSE_STATEMENT": "Every contribution helps us keep the tours running and develop new experiences!",
+    "PROCESANDO": "Processing..."
+  },
 
   "ALLTOURS.All_tours": "All tours",
   "ALLTOURS.Sort_by_distance": "Sort by distance",
-
-
-
-
-
-
-
 
   "MY-PROFILE.Welcome_back": "Welcome back",
   "MAP-MODAL.Let's_go_to_the_next_point": "Let's go to the next point",
