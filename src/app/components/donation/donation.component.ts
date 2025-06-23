@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { loadStripe } from '@stripe/stripe-js';
 import { HttpClient } from '@angular/common/http';
 import { FormGroup, FormControl, Validators, NgForm, FormBuilder } from '@angular/forms';
+import { environment } from 'src/enviroment/enviroment';
+
 
 @Component({
   selector: 'app-donation',
@@ -37,10 +39,12 @@ export class DonationComponent implements OnInit {
     const stripe = await this.stripePromise;
     const amountInCents = this.finishForm.get('donationAmount')?.value * 100;
     try {
-      const session = await this.http.post<{ id: string }>(
-        'https://letstourtec-c393a22f9c2b.herokuapp.com/create-checkout-session/',
-        { amount: amountInCents }
-      ).toPromise();
+      const session = await this.http
+        .post<{ id: string }>(
+          `${environment.apiUrl}/create-checkout-session/`,
+          { amount: amountInCents }
+        )
+        .toPromise();
 
       if (session && session.id) {
         const { error } = await stripe!.redirectToCheckout({
