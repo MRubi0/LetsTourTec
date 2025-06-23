@@ -5,7 +5,7 @@
     apiUrl:'http://35.177.186.168/api/', 
     bucket:"https://bucket-test-west2.s3.eu-west-2.amazonaws.com"
   }
-
+ 
 
   /*export const environment = {
     production : false, 
