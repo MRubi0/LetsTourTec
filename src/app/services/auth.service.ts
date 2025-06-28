@@ -32,7 +32,7 @@ export class AuthService {
 
   login(email: string, password: string): Observable<AuthTokens> {
       //return this.http.post<AuthTokens>( environment.apiUrl + 'login/', { email, password }).pipe(
-        return this.http.post<AuthTokens>( environment.apiUrl + 'api/token/', { email, password }).pipe(
+        return this.http.post<AuthTokens>( environment.apiUrl + 'token/', { email, password }).pipe(
       tap((tokens: AuthTokens) => this.saveTokens(tokens)),
       catchError(error => {
         this.loggingService.error('Error during login: ' + error.message);
@@ -80,7 +80,7 @@ export class AuthService {
   }
   refreshToken() {
     const token = localStorage.getItem('refresh_token');
-    return this.http.post<any>(`${environment.apiUrl}api/token/refresh/`, { refresh: token })
+    return this.http.post<any>(`${environment.apiUrl}token/refresh/`, { refresh: token })
       .pipe(map((user:any) => {
         this.setToken(user.access, user.refresh);
         this.isAuthenticatedSubject.next(true);

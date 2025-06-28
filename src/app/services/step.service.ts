@@ -13,7 +13,7 @@ export class StepService {
   }
   getTourDetail(id: string) {
     const lang = localStorage.getItem('language');
-    return this.http.get(`${environment.apiUrl}api/get_tour_with_steps/${id}/${lang}`)
+    return this.http.get(`${environment.apiUrl}/get_tour_with_steps/${id}/${lang}`)
       .pipe(map((data: any) => {
         if (data && data.steps && Array.isArray(data.steps)) {
           const adjustedSteps = data.steps.map((step: any, index: number) => {
@@ -27,7 +27,7 @@ export class StepService {
 
 
   createTourRecord(tourId: string) {
-    const url = `${environment.apiUrl}api/create-tour-record/`;
+    const url = `${environment.apiUrl}/create-tour-record/`;
     return this.http.post(url, { tour_id: tourId });
   }
   

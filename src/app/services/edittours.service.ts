@@ -11,7 +11,7 @@ export class EdittoursService {
   constructor(private http: HttpClient) { }
 
   editTour(id: string, body: any, size: number): Observable<any> {
-    return this.http.put(`${environment.apiUrl}api/edit_tour/${id}/${size}/`, body, {
+    return this.http.put(`${environment.apiUrl}edit_tour/${id}/${size}/`, body, {
       headers: {
         'Accept': 'application/json',
       }

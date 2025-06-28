@@ -44,7 +44,7 @@ export class MyToursComponent {
     }else{
       this.userId=this.id;
     }   
-    this.http.get(`${environment.apiUrl}api/get_user_tours?id=${this.userId}`).subscribe(data => {
+    this.http.get(`${environment.apiUrl}get_user_tours?id=${this.userId}`).subscribe(data => {
         this.tours = (data as any)['tours'];
     }, error => {
         console.error('Error al cargar los tours:', error);

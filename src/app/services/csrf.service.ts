@@ -11,7 +11,7 @@ export class CsrfService {
   constructor(private http: HttpClient) {}
 
   loadCsrfToken(): Observable<any> {
-    return this.http.get('/api/get-csrf-token/', { withCredentials: true });
+    return this.http.get('get-csrf-token/', { withCredentials: true });
   }
 
   setCsrfToken(token: string) {

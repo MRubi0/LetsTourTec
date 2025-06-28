@@ -12,13 +12,13 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   getUsers(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl+'api/users/');
+    return this.http.get<any[]>(this.apiUrl+'users/');
   }
 
 
   
   editUsers(user_id:number, role:string){
-    return this.http.post<any>(`${environment.apiUrl}api/change-role/${user_id}/`, { rol: role  })
+    return this.http.post<any>(`${environment.apiUrl}change-role/${user_id}/`, { rol: role  })
     .pipe(map((users:any) => {
       return users;
     }));

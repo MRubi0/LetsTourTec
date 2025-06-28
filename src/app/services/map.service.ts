@@ -12,7 +12,7 @@ export class MapService {
   constructor(private http: HttpClient) { }  
 
   createRoute(lat_dest: number, long_dest: number, lat_org: number, long_org: number) {
-    const url = `${environment.apiUrl}api/get_routes`;
+    const url = `${environment.apiUrl}get_routes`;
     return this.http.post(url,
       {
         "points": [
@@ -35,7 +35,7 @@ export class MapService {
     );
   }
   createRouteDetail(route:any) {
-    const url = `${environment.apiUrl}api/get_routes`;
+    const url = `${environment.apiUrl}get_routes`;
     console.log('route ',route);
     return this.http.post(url,
       {
