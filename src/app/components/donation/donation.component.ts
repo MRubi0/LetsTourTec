@@ -41,7 +41,7 @@ export class DonationComponent implements OnInit {
     try {
       const session = await this.http
         .post<{ id: string }>(
-          `${environment.apiUrl}/create-checkout-session/`,
+          `${environment.apiUrl}create-checkout-session/`,
           { amount: amountInCents }
         )
         .toPromise();

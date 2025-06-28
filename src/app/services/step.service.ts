@@ -27,7 +27,7 @@ export class StepService {
 
 
   createTourRecord(tourId: string) {
-    const url = `${environment.apiUrl}/create-tour-record/`;
+    const url = `${environment.apiUrl}create-tour-record/`;
     return this.http.post(url, { tour_id: tourId });
   }
   

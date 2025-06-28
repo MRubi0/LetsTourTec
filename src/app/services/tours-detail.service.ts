@@ -19,7 +19,7 @@ export class ToursDetailService {
   }
 
   getMediaValoracion(tourId:number): Observable<{ media_puntuacion:number}> {
-    return this.http.get<{media_puntuacion: number}>(`${environment.apiUrl}/tour/${tourId}/media-valoracion/`);
+    return this.http.get<{media_puntuacion: number}>(`${environment.apiUrl}tour/${tourId}/media-valoracion/`);
   }
 
   getAdditionalLocations(tourId: number): Observable<any> {
