@@ -35,7 +35,7 @@
 }
 
 .mat-mdc-raised-button.mat-primary {
-  background-color: #0d6efd !important;
+  background-color: var(--ltt-primary-mid) !important;
 }
 
 /* Ajustes específicos para el form-container y mat-form-field */
@@ -62,7 +62,7 @@ textarea {
 }
 
 .mat-form-field-label {
-  color: #0d6efd !important;
+  color: var(--ltt-primary-mid) !important;
   font-size: 20px; /* Reducir el tamaño de la fuente del label */
   white-space: normal; /* Permitir que el texto del label se divida en varias líneas */
   display: block;

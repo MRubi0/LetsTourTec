@@ -1,5 +1,5 @@
 ::ng-deep .mat-step-header .mat-step-icon-selected, .mat-step-header .mat-step-icon-state-done, .mat-step-header .mat-step-icon-state-edit {
-    background-color: #0d6efd !important;
+    background-color: var(--ltt-primary-mid) !important;
     .mat-mdc-button.mat-unthemed {
         color: white !important;
     }
@@ -12,7 +12,7 @@
 }
 
 .mdc-button {
-    background-color: #0d6efd !important;
+    background-color: var(--ltt-primary-mid) !important;
 
     .mat-mdc-button.mat-unthemed {
         color: white !important;
@@ -29,7 +29,7 @@ mat-card {
 .step-icon{
     width: 25px;
     height: 25px;
-    background-color: #0d6efd;
+    background-color: var(--ltt-primary-mid);
     border-radius: 100%;
     z-index: 100;
     position: absolute;
@@ -37,8 +37,8 @@ mat-card {
     margin-top: -48px;
 }
 ::ng-deep .mat-vertical-stepper-header .mat-step-icon {
-    color: #0d6efd;
-    background-color: #0d6efd !important;
+    color: var(--ltt-primary-mid);
+    background-color: var(--ltt-primary-mid) !important;
     background-image: url('../../../assets/iconos/steps.svg');
     background-size: cover;
     .ng-star-inserted{
@@ -48,7 +48,7 @@ mat-card {
 .step-icon-home{
     width: 25px;
     height: 25px;
-    background-color: #0d6efd;
+    background-color: var(--ltt-primary-mid);
     border-radius: 100%;
     z-index: 100;
     position: absolute;
@@ -59,7 +59,7 @@ mat-card {
     padding: 3px;
     width: 35px;
     height: 35px;
-    background-color: #0d6efd;
+    background-color: var(--ltt-primary-mid);
     border-radius: 100%;
     z-index: 100;
     position: absolute;
@@ -87,7 +87,7 @@ mat-card {
   }
   .exit:hover {
     color: #ffff !important ;
-    box-shadow: inset 300px 0 0 0 #0d6efd !important;
+    box-shadow: inset 300px 0 0 0 var(--ltt-primary-mid) !important;
   }
   
   ::ng-deep mat-step-header .mat-step-label strong {

@@ -10,7 +10,7 @@
 }
 
 .mdc-button {
-    background-color: #0d6efd !important;
+    background-color: var(--ltt-primary-mid) !important;
 
     .mat-button-wrapper {
         color: white;
@@ -32,5 +32,5 @@ mat-card {
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #007bff; /* Ajusta el color de borde según tu paleta */
+    border: 3px solid var(--ltt-primary-lite); /* Ajusta el color de borde según tu paleta */
 }

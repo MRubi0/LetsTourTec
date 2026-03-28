@@ -68,3 +68,17 @@ body {
 }
 
 :host ::ng-deep .cdk-overlay-container { z-index: 2100 !important; }
+
+/* ── Botón Bootstrap en paleta verde (reemplaza btn-primary) ── */
+.btn-primary,
+.btn-ltt {
+  background-color: var(--ltt-primary-mid) !important;
+  border-color: var(--ltt-primary-mid) !important;
+  color: #fff !important;
+
+  &:hover, &:focus, &:active {
+    background-color: var(--ltt-primary) !important;
+    border-color: var(--ltt-primary) !important;
+    color: #fff !important;
+  }
+}

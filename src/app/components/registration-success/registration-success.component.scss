@@ -38,8 +38,8 @@ mat-mdc-card-title{
 }
 
 .my-icon {
-    fill: #0d6efd !important;
-    color: #0d6efd !important;
+    fill: var(--ltt-primary-mid) !important;
+    color: var(--ltt-primary-mid) !important;
 }
 
 .mat-mdc-card-title {
@@ -52,7 +52,7 @@ mat-mdc-card-title{
 
 
 .custom-button-color {
-    background-color: #0d6efd !important;
+    background-color: var(--ltt-primary-mid) !important;
 
     & .mat-button-wrapper {
         color: white !important;
@@ -60,7 +60,7 @@ mat-mdc-card-title{
 }
 
 button.mat-raised-button.my-icon {
-    background-color: #0d6efd !important;
+    background-color: var(--ltt-primary-mid) !important;
 
     .mat-button-wrapper {
         color: white;

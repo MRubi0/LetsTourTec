@@ -9,16 +9,16 @@
     border: none !important;
   }
   #card-login {
-    border: 1px solid #126cfa !important;
+    border: 1px solid var(--ltt-primary-lite) !important;
     border-radius: 40px;
   }
   #login-pass {
     border: none !important;
-    border-bottom: 1px solid #126cfa !important;
+    border-bottom: 1px solid var(--ltt-primary-lite) !important;
   }
   .form-control {
     border: none !important;
-    border-bottom: 1px solid #126cfa !important;
+    border-bottom: 1px solid var(--ltt-primary-lite) !important;
   }
   .ng-invalid:not(form) {
     border-left: 5px solid red !important;
