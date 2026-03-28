@@ -2,7 +2,7 @@
 <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" class="bi bi-caret-right-fill">
  <g class="layer">
   <title>Layer 1</title>
-  <path d="m12.14,8.75l-5.48,4.8c-0.65,0.57 -1.66,0.1 -1.66,-0.75l0,-9.6a1,1 0 0 1 1.66,-0.75l5.48,4.8a1,1 0 0 1 0,1.5z" fill="#0d6efd" id="svg_1"/>
+  <path d="m12.14,8.75l-5.48,4.8c-0.65,0.57 -1.66,0.1 -1.66,-0.75l0,-9.6a1,1 0 0 1 1.66,-0.75l5.48,4.8a1,1 0 0 1 0,1.5z" fill="currentColor" id="svg_1"/>
   <line fill="none" id="svg_2" stroke="#0f72fc" stroke-width="2" x1="13.44" x2="13.5" y1="1.63" y2="14.19"/>
  </g>
 </svg>

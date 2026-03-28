@@ -2,6 +2,8 @@
     border: none;
     background-color: transparent;
     width: 60px;
+    color: var(--ltt-primary-mid);
+    font-weight: 600;
 }
 
 .control_rest {
@@ -15,6 +17,7 @@
 .icon {
     height: 100%;
     width: 100%;
+    color: var(--ltt-primary-mid); /* propaga currentColor a los SVG */
 }
 
 .progres-bar {
@@ -48,6 +51,7 @@
 .progress-bar-audio {
     width: 100%;
     margin: 0 10px;
+    accent-color: var(--ltt-primary-mid);
 }
 
 .controls-row {
@@ -93,7 +97,12 @@
     align-self: center;
     input{
         width: 100%;
+        accent-color: var(--ltt-primary-mid);
     }
+}
+
+.volume-bar input {
+    accent-color: var(--ltt-primary-mid);
 }
 .colunm{
     width: auto;
