@@ -17,6 +17,14 @@
   overflow: visible !important;
 }
 
+::ng-deep .ltt-stepper .mat-vertical-content-container {
+  overflow: visible !important;
+}
+
+::ng-deep .ltt-stepper .mat-vertical-stepper-content {
+  overflow: visible !important;
+}
+
 ::ng-deep .ltt-stepper .mat-vertical-stepper-header .mat-step-icon {
   background-color: var(--ltt-primary-mid) !important;
   color: #fff;
@@ -64,7 +72,6 @@
   background: var(--ltt-surface);
   border-radius: var(--ltt-radius);
   box-shadow: var(--ltt-shadow);
-  overflow: hidden;
   margin-top: 8px;
   margin-bottom: 4px;
 }
@@ -73,6 +80,8 @@
 .ltt-step-hero {
   position: relative;
   height: 200px;
+  overflow: hidden;
+  border-radius: var(--ltt-radius) var(--ltt-radius) 0 0;
 
   &__img {
     width: 100%;
@@ -105,6 +114,7 @@
   width: 100%;
   max-height: 200px;
   overflow: hidden;
+  border-radius: var(--ltt-radius) var(--ltt-radius) 0 0;
 }
 
 .ltt-step-img {
@@ -188,6 +198,7 @@
   display: flex;
   justify-content: center;
   margin-top: 1.25rem;
+  padding-bottom: 0.5rem;
 }
 
 .ltt-exit-btn {
