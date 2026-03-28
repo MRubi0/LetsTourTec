@@ -50,6 +50,8 @@ export class StepperComponent {
   last_step=true;
   rates=0;
   isStepOpen: boolean[] = [];
+  showFullTourDescription = false;
+  readonly DESCRIPTION_LIMIT = 200;
 
   checkIfMapModalIsRequired(step: any) {
     this.audioControlsVisible = !(step.latitude && step.longitude);

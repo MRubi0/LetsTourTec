@@ -106,3 +106,14 @@ mat-card {
   .card-container{
     padding-top: 12px;
   }
+
+  .show-more-link {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ltt-primary-mid);
+    cursor: pointer;
+
+    &:hover { text-decoration: underline; }
+  }

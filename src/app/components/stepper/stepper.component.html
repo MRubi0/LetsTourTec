@@ -36,7 +36,16 @@
                   </div>
                 </div>                
                 <div class="w-100">
-                  <p>{{tour.description}}</p>
+                  <p>
+                    {{ showFullTourDescription || tour.description.length <= DESCRIPTION_LIMIT
+                      ? tour.description
+                      : (tour.description | slice:0:DESCRIPTION_LIMIT) + '…' }}
+                  </p>
+                  <span *ngIf="tour.description.length > DESCRIPTION_LIMIT"
+                        class="show-more-link"
+                        (click)="showFullTourDescription = !showFullTourDescription">
+                    {{ (showFullTourDescription ? 'GENERIC-CARD.Show_less' : 'GENERIC-CARD.Show_more') | translate }}
+                  </span>
                 </div>              
                 <div class="audio d-flex justify-content-center" *ngIf="audioControlsVisibleTour">
 
