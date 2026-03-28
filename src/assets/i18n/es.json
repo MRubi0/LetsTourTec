@@ -26,6 +26,17 @@
 
 
 
+  "HOME.Eyebrow": "Let's Tour Tec",
+  "HOME.Title": "Descubre tu próxima aventura",
+  "HOME.Subtitle": "Tours guiados por ciudades, listos para recorrer a tu ritmo.",
+
+  "DONATION.Title": "¡Gracias por tu interés!",
+  "DONATION.Body": "Te agradecemos muchísimo que quieras apoyar este proyecto. Las donaciones aún no están disponibles, pero pronto lo estarán. ¡Vuelve en breve!",
+
+  "CARDS.Filter_cultural": "Cultural",
+  "CARDS.Filter_naturaleza": "Naturaleza",
+  "CARDS.Filter_ocio": "Ocio",
+
   "CARDS.Closest_tours": "Tours más cercanos",
   "CARDS.Last_tours_uploaded": "Últimos tours subidos",
   "CARDS.Random_tours": "Tours aleatorios",

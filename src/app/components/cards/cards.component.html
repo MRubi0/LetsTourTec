@@ -9,13 +9,13 @@
         </div>
         <div class="type-chips">
             <button class="chip" [class.chip--active]="activeType === 'cultural'" (click)="filterByType('cultural')">
-                <img src="assets/iconos/TdesignMuseum1.svg" alt="Cultural"> Cultural
+                <img src="assets/iconos/TdesignMuseum1.svg" [attr.alt]="'CARDS.Filter_cultural' | translate"> {{ 'CARDS.Filter_cultural' | translate }}
             </button>
             <button class="chip" [class.chip--active]="activeType === 'naturaleza'" (click)="filterByType('naturaleza')">
-                <img src="assets/iconos/HealthiconsForestPersons.svg" alt="Naturaleza"> Naturaleza
+                <img src="assets/iconos/HealthiconsForestPersons.svg" [attr.alt]="'CARDS.Filter_naturaleza' | translate"> {{ 'CARDS.Filter_naturaleza' | translate }}
             </button>
             <button class="chip" [class.chip--active]="activeType === 'ocio'" (click)="filterByType('ocio')">
-                <img src="assets/iconos/MapAmusementPark.svg" alt="Ocio"> Ocio
+                <img src="assets/iconos/MapAmusementPark.svg" [attr.alt]="'CARDS.Filter_ocio' | translate"> {{ 'CARDS.Filter_ocio' | translate }}
             </button>
         </div>
         <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px" class="card-contianer" *ngIf="lastTours">       
