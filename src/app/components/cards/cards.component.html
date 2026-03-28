@@ -3,10 +3,20 @@
         <mat-card-title>{{ title | translate }}</mat-card-title>
     </mat-card-header>
     <mat-card-content class="content">        
-        <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px" class="mb-5 me-2 ms-2">
+        <div class="btn-group-ltt">
             <button mat-raised-button color="primary" class="custom-button-color" (click)="lastToursF()">{{ button1Text | translate }}</button>
             <button mat-raised-button color="primary" class="custom-button-color" (click)="closestToursF()">{{ button2Text | translate }}</button>
-            <button mat-raised-button color="primary" class="custom-button-color" (click)="randomToursF()">{{ button3Text | translate }}</button>
+        </div>
+        <div class="type-chips">
+            <button class="chip" [class.chip--active]="activeType === 'cultural'" (click)="filterByType('cultural')">
+                <img src="assets/iconos/TdesignMuseum1.svg" alt="Cultural"> Cultural
+            </button>
+            <button class="chip" [class.chip--active]="activeType === 'naturaleza'" (click)="filterByType('naturaleza')">
+                <img src="assets/iconos/HealthiconsForestPersons.svg" alt="Naturaleza"> Naturaleza
+            </button>
+            <button class="chip" [class.chip--active]="activeType === 'ocio'" (click)="filterByType('ocio')">
+                <img src="assets/iconos/MapAmusementPark.svg" alt="Ocio"> Ocio
+            </button>
         </div>
         <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px" class="card-contianer" *ngIf="lastTours">       
             <app-generic-card [toursdata]=lastTours class="d-flex"></app-generic-card>

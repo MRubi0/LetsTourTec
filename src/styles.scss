@@ -1,80 +1,70 @@
-// Custom Theming for Angular Material
-// For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
-// Plus imports for other components in your app.
 
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
-@include mat.core();
+// Paleta Material personalizada — verde bosque
+$ltt-primary-palette: (
+  50:  #e8f5e9, 100: #c8e6c9, 200: #a5d6a7,
+  300: #81c784, 400: #66bb6a, 500: #2D6A4F,
+  600: #265c44, 700: #1e4d38, 800: #163d2c,
+  900: #0e2e20, A100: #b9f6ca, A200: #69f0ae,
+  A400: #00e676, A700: #00c853,
+  contrast: (
+    50: #000, 100: #000, 200: #000, 300: #000,
+    400: #fff, 500: #fff, 600: #fff, 700: #fff,
+    800: #fff, 900: #fff,
+  )
+);
 
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://material.io/design/color/
-$LETSTOURTEC-primary: mat.define-palette(mat.$indigo-palette);
-$LETSTOURTEC-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$ltt-primary:  mat.define-palette($ltt-primary-palette, 500);
+$ltt-accent:   mat.define-palette(mat.$teal-palette, 300);
+$ltt-warn:     mat.define-palette(mat.$red-palette);
 
-// The warn palette is optional (defaults to red).
-$LETSTOURTEC-warn: mat.define-palette(mat.$red-palette);
-
-// Create the theme object. A theme consists of configurations for individual
-// theming systems such as "color" or "typography".
-$LETSTOURTEC-theme: mat.define-light-theme((
-  color: (
-    primary: $LETSTOURTEC-primary,
-    accent: $LETSTOURTEC-accent,
-    warn: $LETSTOURTEC-warn,
-  ),
+$ltt-theme: mat.define-light-theme((
+  color: (primary: $ltt-primary, accent: $ltt-accent, warn: $ltt-warn),
 ));
 
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-@include mat.all-component-themes($LETSTOURTEC-theme);
+@include mat.core();
+@include mat.all-component-themes($ltt-theme);
 
-/* You can add global styles to this file, and also import other style files */
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-/* Importing Bootstrap SCSS file. */
+/* ── Importar Bootstrap ── */
 @import 'bootstrap/scss/bootstrap';
 
-::-webkit-scrollbar {
-  width: 8px; 
-  border-radius: 8px;
+/* ── Variables de diseño ── */
+:root {
+  --ltt-bg:           #F8F7F4;
+  --ltt-surface:      #FFFFFF;
+  --ltt-primary:      #1E3A2F;
+  --ltt-primary-mid:  #2D6A4F;
+  --ltt-primary-lite: #52B788;
+  --ltt-text:         #1A1A1A;
+  --ltt-muted:        #6B7280;
+  --ltt-border:       #E5E7EB;
+  --ltt-radius:       12px;
+  --ltt-shadow:       0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
 }
 
-::-webkit-scrollbar-thumb {
-  background-color: #0d6efd; 
-  border-radius: 8px; 
+/* ── Base ── */
+html, body {
+  height: 100%;
+  background-color: var(--ltt-bg);
+}
+body {
+  margin: 0;
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+  color: var(--ltt-text);
+  -webkit-font-smoothing: antialiased;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent; 
-  border-radius: 8px;
-}
+/* ── Scrollbar ── */
+::-webkit-scrollbar       { width: 6px; border-radius: 6px; }
+::-webkit-scrollbar-thumb { background-color: var(--ltt-primary-lite); border-radius: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
 
-card::-webkit-scrollbar {
-  width: 8px; 
-  border-radius: 8px;
-}
-
-card::-webkit-scrollbar-thumb {
-  background-color: #0d6efd; 
-  border-radius: 8px; 
-}
-
-card::-webkit-scrollbar-track {
-  background: transparent; 
-  border-radius: 8px;
-}
+/* ── Snackbar ── */
 .success-snackbar {
-  --mdc-snackbar-container-color: #0d6efd !important;
-  --mdc-snackbar-supporting-text-color: white !important;
-  --mat-mdc-snack-bar-button-color: white !important;
+  --mdc-snackbar-container-color: var(--ltt-primary-mid) !important;
+  --mdc-snackbar-supporting-text-color: #fff !important;
+  --mat-mdc-snack-bar-button-color: #fff !important;
   border-radius: 10px;
 }
-:host ::ng-deep .cdk-overlay-container {
-  z-index: 2100 !important;
-}
+
+:host ::ng-deep .cdk-overlay-container { z-index: 2100 !important; }

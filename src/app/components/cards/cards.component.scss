@@ -1,87 +1,119 @@
-.container {
-    margin: 0px;
-    padding: 30px;
-}
-
-.row-buttons {
-    width: 50%;
-}
-
-.image {
-    border-radius: 20px 20px 0px 0px;
-    height: 145px;
-    width: 100%;
-}
-
-mat-mdc-card-title{
-    font-size: 18px;
+// Quitar la mat-card wrapper del contenedor principal
+mat-card.container-card {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
 }
 
 .container-card {
-    max-width: 80%;
-    margin: 50px auto;
-    height: auto;
-}
-
-.tour-card {
-    max-width: 18rem;   
-    max-height: 450px;
-    min-height: 450px;
-    scroll-behavior: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.mt-3 {
-    margin-top: 16px;
-}
-
-.my-icon {
-    fill: #0d6efd !important;
-    color: #0d6efd !important;
+  max-width: 1100px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
 }
 
 .mat-mdc-card-title {
-    color: black;
-    font-size: 1.25rem;
-    padding-left: 0;
-    font-weight: auto;
-
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--ltt-text);
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+  padding-left: 0;
 }
 
+.content { padding: 0; }
 
+// Grupo de botones — flex wrap para que nunca se superpongan
+.btn-group-ltt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-bottom: 1.5rem;
+}
+
+// Botones de categoría — pill outline
 .custom-button-color {
-    margin-bottom: 20px;
-    background-color: #0d6efd !important;
-    min-height: 50px;
+  background: transparent !important;
+  color: var(--ltt-primary-mid) !important;
+  border: 1.5px solid var(--ltt-border) !important;
+  border-radius: 100px !important;
+  padding: 0.45rem 1.25rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  min-height: 38px !important;
+  height: auto !important;
+  box-shadow: none !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap;
 
-    & .mat-button-wrapper {
-        color: white !important;
-    }
+  &:hover {
+    background: var(--ltt-primary) !important;
+    color: #fff !important;
+    border-color: var(--ltt-primary) !important;
+  }
 }
 
-button.mat-raised-button.my-icon {
-    background-color: #0d6efd !important;
-
-    .mat-button-wrapper {
-        color: white;
-    }
-}
 mat-card {
-    border-radius: 20px;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: var(--ltt-radius) !important;
 }
 
-.mat-mdc-button.mat-mdc-button-base, .mat-mdc-raised-button.mat-mdc-button-base, .mat-mdc-unelevated-button.mat-mdc-button-base, .mat-mdc-outlined-button.mat-mdc-button-base{
-    height: auto;
+.type-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.35rem 0.875rem;
+  border-radius: 100px;
+  border: 1.5px solid var(--ltt-border);
+  background: transparent;
+  color: var(--ltt-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  img {
+    width: 16px;
+    height: 16px;
+    // El SVG es blanco — lo invertimos a oscuro para fondo claro
+    filter: brightness(0);
+    opacity: 0.55;
+    transition: filter 0.15s, opacity 0.15s;
+  }
+
+  &:hover {
+    border-color: var(--ltt-primary-mid);
+    color: var(--ltt-primary-mid);
+
+    img { opacity: 0.85; }
+  }
+
+  &--active {
+    background: var(--ltt-primary);
+    border-color: var(--ltt-primary);
+    color: #fff;
+
+    img {
+      filter: none; // vuelve a blanco sobre fondo verde
+      opacity: 1;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .container-card { margin: 2rem auto; }
+
+  .custom-button-color {
+    font-size: 0.75rem !important;
+    padding: 0.4rem 0.875rem !important;
+  }
 }
 
 @media screen and (max-width: 400px) {
-    .container-card {
-        max-width: 90%;
-    }
-}
-.content{
-    padding: 0;
+  .container-card { max-width: 95%; }
 }

@@ -128,14 +128,17 @@ const routes: Routes = [
   {
     path:'admin-console',
     component: AdminCosoleComponent,
+    canActivate: [AuthGuard],
   },
   {
     path:'validate-console',
     component: ValidateToursComponent,
+    canActivate: [AuthGuard],
   },
   {
     path:'admin-panel',
     component: AdminPanelComponent,
+    canActivate: [AuthGuard],
   },
   {
     path:'donation',

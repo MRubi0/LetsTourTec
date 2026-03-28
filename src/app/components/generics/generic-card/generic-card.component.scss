@@ -1,160 +1,159 @@
-
-.row-buttons {
-    width: 50%;
-}
-
-.image {
-    border-radius: 20px 20px 0px 0px;
-    height: 145px;
-    width: 100%;
-}
-
-mat-mdc-card-title {
-    font-size: 18px;
-}
-
 .container-card {
-    opacity: 0.8;
-    margin: 10px 0px 10px 0px;
-}
-.container-card:hover{
+  margin: 0.75rem;
+  opacity: 1;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
     cursor: pointer;
-    opacity: 1;
+  }
 }
 
 .tour-card {
-    max-width: 18rem;
-    min-width: 18rem;
-    max-height: 450px;
-    min-height: 450px;
-    scroll-behavior: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  width: 280px;
+  min-height: 440px;
+  max-height: 440px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 16px !important;
+  background: #fff !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.08) !important;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 12px 32px rgba(0,0,0,0.12) !important;
+  }
 }
 
-.mt-3 {
-    margin-top: 16px;
+.image {
+  height: 160px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  display: block;
 }
 
-.my-icon {
-    fill: #0d6efd !important;
-    color: #0d6efd !important;
+.iconos_container {
+  width: 100%;
+  position: absolute;
+  top: 8px;
+  padding: 0 8px;
 }
 
-.mat-mdc-card-title {
-    color: black;
-    font-size: 1.25rem;
-    padding-left: 0;
-    font-weight: auto;
+.button-fab {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  background-color: var(--ltt-primary) !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
+
+  &.not-validated {
+    background-color: rgba(255,255,255,0.9) !important;
+  }
+
+  &.validated {
+    background-color: var(--ltt-primary) !important;
+  }
 }
 
+.icon_type_tour    { width: 20px; img { width: 100%; } }
+.icon_type_spe     { width: 18px !important; }
+.icon_type_cancel  { width: 24px !important; }
+.icon_type_tour_cancel { width: 24px !important; }
+
+// Contenido de la tarjeta
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem 1rem !important;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ltt-primary-lite) transparent;
+  height: auto;
+  max-height: 220px;
+}
+
+.mat-mdc-card-title, .center-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--ltt-text);
+  text-align: center;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.content p, .content ul, .content li, .content strong {
+  font-size: 0.8125rem;
+  color: var(--ltt-muted);
+  line-height: 1.5;
+}
+
+.content ul {
+  padding-left: 0;
+  list-style: none;
+  margin: 0;
+}
+
+.content li {
+  padding: 0.15rem 0;
+  border-bottom: 1px solid var(--ltt-border);
+
+  &:last-child { border-bottom: none; }
+
+  strong { color: var(--ltt-text); font-weight: 600; }
+}
+
+.showMore {
+  color: var(--ltt-primary-mid);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover { text-decoration: underline; }
+}
+
+.user {
+  color: var(--ltt-primary-mid);
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover { text-decoration: underline; cursor: pointer; }
+}
+
+// Botón CTA
+mat-card-actions {
+  padding: 0.75rem 1rem !important;
+  border-top: 1px solid var(--ltt-border);
+}
 
 .custom-button-color {
-    background-color: #0d6efd !important;
+  width: 100%;
+  background-color: var(--ltt-primary) !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+  box-shadow: none !important;
+  transition: background 0.15s !important;
 
-    & .mat-button-wrapper {
-        color: white !important;
-    }
-}
-
-button.mat-raised-button.my-icon {
-    background-color: #0d6efd !important;
-
-    .mat-button-wrapper {
-        color: white;
-    }
-}
-
-.button-fab{
-    background-color: #0d6efd !important;
-}
-
-.button-fab.validated {
-    z-index: 1;
-    position: absolute;
-    background-color: #0d6efd !important;
-}
-
-.button-fab.not-validated {
-    z-index: 1;
-    position: absolute;
-    background-color: white !important;
-}
-
-.content {
-    overflow: auto;
-    height: 280px;
-    scrollbar-width: thin !important;
-    scrollbar-color: #0d6efd;
-}
-.center-title {
-    text-align: center;
-    width: 100%; /* Asegura que el elemento ocupe todo el ancho disponible */
-    margin-bottom: 10px;
+  &:hover {
+    background-color: var(--ltt-primary-mid) !important;
   }
-mat-card {
-    border-radius: 20px;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.showMore{
-    color: #0d6efd;
-    font-weight: bold;
-    text-decoration: underline;
+// Paginador
+.paginator {
+  padding: 1rem 0 2rem;
 }
-@media screen and (max-width: 600px) {
-    .container-card {
-        padding: 0;
-    }
-}
-.valoracion-media {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.9); /* Fondo ligeramente transparente */
-    padding: 5px;
-    border-radius: 5px;
-  }
-  
-  .valoracion-estrella {
-    width: 20px; /* O el tamaño que prefieras */
-    height: auto; /* Esto mantendrá la proporción de la imagen */
-  }
 
-  .user{
-    color:#0d6efd;
-    text-decoration: underline;
-  } 
-
-  ::-webkit-scrollbar {
-    max-width: 8px !important;
+@media (max-width: 600px) {
+  .tour-card {
+    width: calc(100vw - 3rem);
+    min-width: unset;
+    max-width: 340px;
+  }
+  .container-card { margin: 0.5rem auto; }
 }
-::-webkit-scrollbar-thumb {
-    background-color: #0d6efd !important;
-    border-radius: 4px !important;
-}
-.icon_type_tour{
-    width: 32px;
-    img{
-        width: 100%;
-    }
-  }
-  .icon_type_spe{
-    width: 30px !important;
-  }
-  .icon_type_cancel{
-    width: 40px !important;
-  }
-  .iconos{
-    width: 40%;
-  }
-  .iconos_container{
-    width: 107%;
-    position: absolute;
-  }
-  .icon_type_tour_cancel{
-    width: 42px !important;
-  }

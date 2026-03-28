@@ -71,7 +71,7 @@ export class AuthService {
           }
         });
       }      
-    }, 2 * 60 * 59 * 1000);
+    }, 55 * 60 * 1000); // cada 55 minutos (el token dura 1 hora)
   }
   
 

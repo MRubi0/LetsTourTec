@@ -11,7 +11,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 
 export class NavbarComponent implements OnInit, OnDestroy {
-  isLoggedIn: boolean = false; 
+  isLoggedIn: boolean = false;
+  menuOpen: boolean = false;
   languaje:string='';
   private authSubscription!: Subscription;
 
