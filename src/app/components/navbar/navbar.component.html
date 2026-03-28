@@ -23,7 +23,7 @@
       <ng-container *ngIf="isLoggedIn">
         <a class="ltt-link" routerLink="/profile" (click)="menuOpen=false">{{ 'NAVBAR.My_profile' | translate }}</a>
         <button class="ltt-link ltt-link--btn" (click)="logout()">{{ 'NAVBAR.Log_out' | translate }}</button>
-        <a class="ltt-link" routerLink="/admin-panel" (click)="menuOpen=false">Admin</a>
+        <a class="ltt-link" routerLink="/admin-panel" (click)="menuOpen=false">{{ 'NAVBAR.Admin' | translate }}</a>
       </ng-container>
 
       <!-- Banderas -->

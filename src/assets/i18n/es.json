@@ -5,6 +5,37 @@
   "NAVBAR.Log_out": "Cerrar sesión",
   "NAVBAR.Log_in": "Iniciar sesión",
   "NAVBAR.Sign_up": "Registrarse",
+  "NAVBAR.Admin": "Admin",
+
+  "LOGIN.Title": "Iniciar sesión",
+  "LOGIN.Email": "Email",
+  "LOGIN.Password": "Contraseña",
+  "LOGIN.Submit": "Iniciar sesión",
+  "LOGIN.Error_title": "¡Algo salió mal!",
+  "LOGIN.Error_body": "Revisa tus credenciales e inténtalo de nuevo.",
+
+  "SIGNUP.Title": "Registrarse",
+  "SIGNUP.First_name": "Nombre",
+  "SIGNUP.Last_name": "Apellido",
+  "SIGNUP.Repeat_password": "Repetir contraseña",
+  "SIGNUP.Passwords_mismatch": "Las contraseñas no coinciden.",
+  "SIGNUP.Submit": "Registrarse",
+
+  "PROFILE.My_profile": "Mi perfil",
+  "PROFILE.Welcome_back": "Bienvenido/a de nuevo,",
+  "PROFILE.Email": "Email",
+  "PROFILE.Biography": "Biografía",
+  "PROFILE.Location": "Ubicación",
+  "PROFILE.Interests": "Intereses",
+  "PROFILE.None": "Ninguno",
+  "PROFILE.Upload_tour": "Subir un tour",
+  "PROFILE.Edit_profile": "Editar mi perfil",
+  "PROFILE.History_tours": "Historial de tours",
+  "PROFILE.Tours_uploaded": "Tours subidos",
+
+  "GENERIC-CARD.Created_by": "Creado por",
+  "GENERIC-CARD.Previous": "Anterior",
+  "GENERIC-CARD.Next": "Siguiente",
 
   
   "ABOUTUS.About_Us":"Sobre nosotros",

@@ -64,14 +64,14 @@
                         | number: '1.0-2'}} km</li>
                     <li><strong>{{ 'GENERIC-CARD.Duration' | translate }}: </strong>{{tours.duracion}} min.</li>
                     <li><strong>{{ 'GENERIC-CARD.Covered_distance' | translate }}: </strong>{{tours.recorrido}} km</li>
-                    <li (click)="loadUser(tours.user)"><strong>Created by: </strong><span
+                    <li (click)="loadUser(tours.user)"><strong>{{ 'GENERIC-CARD.Created_by' | translate }}: </strong><span
                             class="user">{{tours.user.first_name}} {{tours.user.last_name}}</span></li>
                             <li *ngIf="tours.valoraciones && tours.valoraciones.length > 0">
-                                <strong>Valoración del tour</strong>
-                                {{ tours.valoraciones[0]?.puntuacion |  number:'1.0-0'}} 
+                                <strong>{{ 'GENERIC-CARD.Average_rating' | translate }}: </strong>
+                                {{ tours.valoraciones[0]?.puntuacion |  number:'1.0-0'}}
                             </li>
                             <li *ngIf="!tours.valoraciones || tours.valoraciones.length === 0">
-                                <strong>Valoración del tour</strong>
+                                <strong>{{ 'GENERIC-CARD.Average_rating' | translate }}: </strong>
                                 {{ '5.0'}}
                             </li>
                 </ul>
@@ -86,7 +86,7 @@
 <div class="paginator row w-100 mt-4" *ngIf="view">
     <div class="col-12 d-flex justify-content-center">
         <pagination-controls (pageChange)="p = $event; onPageChange()" (autoHide)="autoHide" (responsive)="responsive"
-            previousLabel="Previous" nextLabel="Next">
+            [previousLabel]="'GENERIC-CARD.Previous' | translate" [nextLabel]="'GENERIC-CARD.Next' | translate">
         </pagination-controls>
     </div>
 </div>
