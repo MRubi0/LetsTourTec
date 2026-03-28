@@ -25,12 +25,6 @@
   overflow: visible !important;
 }
 
-::ng-deep .ltt-stepper .mat-vertical-stepper-header .mat-step-icon {
-  background-color: var(--ltt-primary-mid) !important;
-  color: #fff;
-}
-
-::ng-deep .ltt-stepper .mat-step-icon-selected,
 ::ng-deep .ltt-stepper .mat-step-icon-state-done,
 ::ng-deep .ltt-stepper .mat-step-icon-state-edit {
   background-color: var(--ltt-primary) !important;
@@ -46,25 +40,37 @@
   word-break: break-word;
 }
 
-/* ── Pins decorativos ── */
-.ltt-step-pin {
-  width: 28px;
-  height: 28px;
-  border-radius: 100%;
-  background: var(--ltt-primary-mid);
+/* ── Icono combinado dentro del círculo Material ── */
+::ng-deep .ltt-stepper .mat-step-icon {
+  width: 38px !important;
+  height: 38px !important;
+  background-color: var(--ltt-primary-mid) !important;
+}
+
+::ng-deep .ltt-stepper .mat-step-icon-selected {
+  background-color: var(--ltt-primary) !important;
+}
+
+.ltt-sicon {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  z-index: 10;
-  padding: 4px;
+  gap: 1px;
 
-  img { width: 100%; height: 100%; }
+  &__img {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    filter: brightness(0) invert(1); /* fuerza blanco sobre fondo verde */
+  }
 
-  &--home      { left: 22px; top: 16px; }
-  &--mid       { left: 22px; margin-top: -46px; }
-  &--flag      { left: 22px; margin-top: -46px; }
-  &--flag-bottom { left: 22px; margin-top: -48px; }
+  &__num {
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+  }
 }
 
 /* ── Tarjeta de cada paso ── */

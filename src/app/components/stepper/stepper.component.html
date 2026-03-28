@@ -1,23 +1,41 @@
 <div class="ltt-stepper-wrap" *ngIf="tour">
 
-  <!-- Icono de inicio flotante sobre el stepper -->
-  <div class="ltt-step-pin ltt-step-pin--home">
-    <img [src]="url_icon_home" alt="">
-  </div>
-
   <mat-vertical-stepper (selectionChange)="onStepChange($event)" class="ltt-stepper" #stepper>
+
+    <!-- ── Icono personalizado dentro del círculo del paso ── -->
+    <ng-template matStepperIcon="number" let-index>
+      <div class="ltt-sicon">
+        <img [src]="index === 0 ? url_icon_home
+                  : (index === tour.steps.length - 1 ? url_icon_flag : url_icon)"
+             class="ltt-sicon__img" alt="">
+        <span *ngIf="index > 0 && index < tour.steps.length - 1"
+              class="ltt-sicon__num">{{ index }}</span>
+      </div>
+    </ng-template>
+
+    <ng-template matStepperIcon="edit" let-index>
+      <div class="ltt-sicon">
+        <img [src]="index === 0 ? url_icon_home
+                  : (index === tour.steps.length - 1 ? url_icon_flag : url_icon)"
+             class="ltt-sicon__img" alt="">
+        <span *ngIf="index > 0 && index < tour.steps.length - 1"
+              class="ltt-sicon__num">{{ index }}</span>
+      </div>
+    </ng-template>
+
+    <ng-template matStepperIcon="done" let-index>
+      <div class="ltt-sicon">
+        <img [src]="index === 0 ? url_icon_home
+                  : (index === tour.steps.length - 1 ? url_icon_flag : url_icon)"
+             class="ltt-sicon__img" alt="">
+        <span *ngIf="index > 0 && index < tour.steps.length - 1"
+              class="ltt-sicon__num">{{ index }}</span>
+      </div>
+    </ng-template>
 
     <mat-step [stepControl]="firstFormGroup"
               *ngFor="let step of tour.steps; let i = index; let last = last"
               id="step{{i}}">
-
-      <!-- Icono de pin del paso -->
-      <div class="ltt-step-pin ltt-step-pin--mid" *ngIf="i > 0 && !last">
-        <img [src]="url_icon" alt="">
-      </div>
-      <div class="ltt-step-pin ltt-step-pin--flag" *ngIf="last && tour.steps.length > 1">
-        <img [src]="url_icon_flag" alt="">
-      </div>
 
       <form [formGroup]="firstFormGroup">
         <ng-template matStepLabel>
@@ -114,11 +132,5 @@
     </mat-step>
 
   </mat-vertical-stepper>
-
-  <!-- Pin de meta al llegar al último paso -->
-  <div class="ltt-step-pin ltt-step-pin--flag-bottom"
-       *ngIf="tour.steps.length > 1 && last_step">
-    <img [src]="url_icon_flag" alt="">
-  </div>
 
 </div>
