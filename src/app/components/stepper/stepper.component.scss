@@ -1,119 +1,236 @@
-::ng-deep .mat-step-header .mat-step-icon-selected, .mat-step-header .mat-step-icon-state-done, .mat-step-header .mat-step-icon-state-edit {
-    background-color: var(--ltt-primary-mid) !important;
-    .mat-mdc-button.mat-unthemed {
-        color: white !important;
-    }
-
+/* ── Contenedor raíz ── */
+.ltt-stepper-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 1rem 0 3rem;
+  position: relative;
 }
 
-.maps{
-    width: 900px;
-    height: 400px;
+/* ── Stepper Material: quitar fondo y padding por defecto ── */
+.ltt-stepper {
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
-.mdc-button {
-    background-color: var(--ltt-primary-mid) !important;
-
-    .mat-mdc-button.mat-unthemed {
-        color: white !important;
-    }
+::ng-deep .ltt-stepper .mat-step-header {
+  margin-top: 8px !important;
+  overflow: visible !important;
 }
 
-.mat-mdc-button.mat-mdc-button-base{
-    color: white !important;
+::ng-deep .ltt-stepper .mat-vertical-stepper-header .mat-step-icon {
+  background-color: var(--ltt-primary-mid) !important;
+  color: #fff;
 }
-mat-card {
-    border-radius: 20px;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
+
+::ng-deep .ltt-stepper .mat-step-icon-selected,
+::ng-deep .ltt-stepper .mat-step-icon-state-done,
+::ng-deep .ltt-stepper .mat-step-icon-state-edit {
+  background-color: var(--ltt-primary) !important;
 }
-.step-icon{
-    width: 25px;
-    height: 25px;
-    background-color: var(--ltt-primary-mid);
-    border-radius: 100%;
-    z-index: 100;
+
+/* ── Etiqueta del paso — sin uppercase, sin corte ── */
+.ltt-step-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ltt-text);
+  white-space: normal;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* ── Pins decorativos ── */
+.ltt-step-pin {
+  width: 28px;
+  height: 28px;
+  border-radius: 100%;
+  background: var(--ltt-primary-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  z-index: 10;
+  padding: 4px;
+
+  img { width: 100%; height: 100%; }
+
+  &--home      { left: 22px; top: 16px; }
+  &--mid       { left: 22px; margin-top: -46px; }
+  &--flag      { left: 22px; margin-top: -46px; }
+  &--flag-bottom { left: 22px; margin-top: -48px; }
+}
+
+/* ── Tarjeta de cada paso ── */
+.ltt-step-card {
+  background: var(--ltt-surface);
+  border-radius: var(--ltt-radius);
+  box-shadow: var(--ltt-shadow);
+  overflow: hidden;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+/* ── Hero del paso 0 ── */
+.ltt-step-hero {
+  position: relative;
+  height: 200px;
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__overlay {
     position: absolute;
-    margin-left: -36px;
-    margin-top: -48px;
-}
-::ng-deep .mat-vertical-stepper-header .mat-step-icon {
-    color: var(--ltt-primary-mid);
-    background-color: var(--ltt-primary-mid) !important;
-    background-image: url('../../../assets/iconos/steps.svg');
-    background-size: cover;
-    .ng-star-inserted{
-        opacity: 0;
-    }
-}
-.step-icon-home{
-    width: 25px;
-    height: 25px;
-    background-color: var(--ltt-primary-mid);
-    border-radius: 100%;
-    z-index: 100;
-    position: absolute;
-    margin-left: 25px;
-    margin-top: 23px;
-}
-.step-icon-last{
-    padding: 3px;
-    width: 35px;
-    height: 35px;
-    background-color: var(--ltt-primary-mid);
-    border-radius: 100%;
-    z-index: 100;
-    position: absolute;
-    margin-left: 22px;
-    margin-top: -51px;
-}
-
-.img-container img {
-    max-width: 100%; 
-    //max-height: 300px; 
-    height: auto; 
-    display: block; 
-    margin: 0 auto; 
-  }
-  .exit {
-    padding: auto !important;
-    color: #333333 !important;
-    border: none !important;
-    border-radius: 20px !important;
-    height: 50px !important;
-    background-color: #cdd1dd !important;
-    box-shadow: inset 0 0 0 0 #f5f3f7 !important;
-    transition: ease-out 0.8s !important;
-    outline: none !important;
-  }
-  .exit:hover {
-    color: #ffff !important ;
-    box-shadow: inset 300px 0 0 0 var(--ltt-primary-mid) !important;
-  }
-  
-  ::ng-deep mat-step-header .mat-step-label strong {
-    white-space: normal !important;
-    line-height: 1.2 !important;
-    font-size: 16px !important;
-    text-align: center !important;
-  }
-  .text-center {
-    text-align: center;
-  }
-  ::ng-deep .mat-step-header {
-    margin-top: 10px !important;
-    overflow:visible !important;
-  }
-  .card-container{
-    padding-top: 12px;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.05) 60%);
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
   }
 
-  .show-more-link {
-    display: inline-block;
-    margin-top: 4px;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--ltt-primary-mid);
-    cursor: pointer;
-
-    &:hover { text-decoration: underline; }
+  &__title {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
   }
+}
+
+/* ── Imagen de pasos intermedios ── */
+.ltt-step-img-wrap {
+  width: 100%;
+  max-height: 200px;
+  overflow: hidden;
+}
+
+.ltt-step-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Cuerpo del paso ── */
+.ltt-step-body {
+  padding: 1rem;
+
+  &__desc {
+    font-size: 0.9375rem;
+    color: var(--ltt-text);
+    line-height: 1.6;
+    margin: 0 0 0.75rem;
+  }
+}
+
+/* ── Aviso de ubicación diferente ── */
+.ltt-step-location-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f0faf4;
+  border-left: 3px solid var(--ltt-primary-mid);
+  padding: 0.6rem 0.875rem;
+  font-size: 0.8125rem;
+  color: var(--ltt-primary);
+  font-weight: 500;
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+}
+
+/* ── Botón de abrir mapa ── */
+.ltt-map-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1.5px solid var(--ltt-primary-mid) !important;
+  color: var(--ltt-primary-mid) !important;
+  border-radius: 100px !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  padding: 0.35rem 1rem !important;
+  background: transparent !important;
+  margin-bottom: 0.75rem;
+  box-shadow: none !important;
+
+  &__icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    background: var(--ltt-primary-mid) !important;
+    color: #fff !important;
+  }
+}
+
+/* ── Audio player ── */
+.ltt-step-audio {
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--ltt-border);
+  padding-top: 0.75rem;
+
+  /* Barra de progreso verde */
+  input[type=range] {
+    accent-color: var(--ltt-primary-mid);
+  }
+}
+
+/* ── Botón de finalizar tour ── */
+.ltt-step-exit {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.25rem;
+}
+
+.ltt-exit-btn {
+  background-color: var(--ltt-primary-mid) !important;
+  color: #fff !important;
+  border-radius: 100px !important;
+  padding: 0 2.5rem !important;
+  height: 48px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  width: 100%;
+  max-width: 280px;
+  box-shadow: 0 2px 8px rgba(45,106,79,0.3) !important;
+}
+
+/* ── "Mostrar más" ── */
+.ltt-show-more {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ltt-primary-mid);
+  cursor: pointer;
+
+  &:hover { text-decoration: underline; }
+}
+
+/* ── Velocidad del reproductor (menú) ── */
+::ng-deep .customize {
+  background-color: rgba(45, 106, 79, 0.95) !important;
+  color: #f0f0f0;
+  border-radius: 10px !important;
+  overflow-x: hidden !important;
+}
+
+::ng-deep .list:hover {
+  cursor: pointer !important;
+  background-color: var(--ltt-primary) !important;
+  color: white;
+}
+
+@media (max-width: 480px) {
+  .ltt-step-hero    { height: 160px; }
+  .ltt-step-img     { height: 160px; }
+  .ltt-step-label   { font-size: 0.875rem; }
+}

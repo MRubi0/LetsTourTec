@@ -114,6 +114,7 @@
   "MSG-INICIO-MODAL.Aceptar":"Aceptar",
 
   "STEPPER.Step": "Paso",
+  "STEPPER.Finish": "Finalizar tour",
   "STEPPER.The_following_step_is_in_another_location,_open_the_map_to_continue_the_tour": "El tour continua en otra ubicación, abre el mapa para continuar el tour",
   "STEPPER.Open_map": "Abrir mapa",
   "EXIT.Muchas_gracias_por_hacer_TOURismo_con_nosotros!": "¡Muchas gracias por hacer TOURismo con nosotros!",

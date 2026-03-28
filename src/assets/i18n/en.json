@@ -111,6 +111,7 @@
 
 
   "STEPPER.Step": "Step",
+  "STEPPER.Finish": "Finish tour",
   "STEPPER.The_following_step_is_in_another_location,_open_the_map_to_continue_the_tour": "The following step is in another location, open the map to continue the tour",
   "STEPPER.Open_map": "Open map",
 
