@@ -1,51 +1,57 @@
-<div class="container-detail p-5">
-    <mat-card *ngIf="detail">
-        <mat-card-header>
-            <div class="d-flex flex-wrap justify-content-center w-100">
-                <div class="row">
-                    <div class="col-12 d-flex justify-content-center">
-                        <h1>{{detail.titulo}}</h1>
-                    </div>
-                </div>   
-                <div class="image row mt-3 mb-3">
-                    <div class="col-12 d-flex justify-content-center h-100">
-                        
-                        <img class="responsive-image" src='https://bucket-test-west2.s3.eu-west-2.amazonaws.com/{{detail.imagen}}' alt=""> 
-                    </div>                
-                </div> 
-                <p></p>         
-                <div class="maps col-12 espacio-entre-imagen-y-mapa" id="map"></div>
+<div class="ltt-detail" *ngIf="detail">
 
-            </div>            
-        </mat-card-header> 
-        <mat-card-content>
-            <div class="w-100 mt-4">
-                <span class="subtitle">{{ 'TOUR-DETAIL.Average_Rating' | translate }}: </span>
-                <ngb-rating [rate]="detail.valoracion" [max]="5"></ngb-rating>
-            </div>            
-            <div class="row mt-2">
-                <div class="col-12">
-                    <span  class="subtitle">{{ "TOUR-DETAIL.Created_at" | translate }}: </span> <br>
-                    <span>{{detail.created_at | date :'MM/yyyy'}}</span>
-                </div> 
-                 <div class="col-12">
-                    <hr>
-                    <span  class="subtitle">{{ 'TOUR-DETAIL.Description' | translate }}: </span>                    
-                       <p>{{detail.descripcion}}</p>  <br>
-                <hr>                       
-                   </div>
+  <!-- Imagen de cabecera con título encima -->
+  <div class="ltt-detail-hero">
+    <img class="ltt-detail-hero__img"
+         src="https://bucket-test-west2.s3.eu-west-2.amazonaws.com/{{detail.imagen}}"
+         alt="{{detail.titulo}}">
+    <div class="ltt-detail-hero__overlay">
+      <h1 class="ltt-detail-hero__title">{{detail.titulo}}</h1>
+    </div>
+  </div>
 
-                <div class="col-12">
-                   <span class="subtitle">{{ 'TOUR-DETAIL.Duration' | translate }}: </span> {{detail.duracion}} min.
-                    <hr>
-                    <span class="subtitle">{{ 'TOUR-DETAIL.Covered_distance' | translate }}: </span> {{detail.recorrido}} km                   
-                </div>
+  <div class="ltt-detail-body">
 
-            </div>
+    <!-- Chips de metadatos -->
+    <div class="ltt-detail-meta">
+      <div class="ltt-detail-meta__item">
+        <span class="ltt-detail-meta__label">{{ 'TOUR-DETAIL.Duration' | translate }}</span>
+        <span class="ltt-detail-meta__value">{{detail.duracion}} min.</span>
+      </div>
+      <div class="ltt-detail-meta__item">
+        <span class="ltt-detail-meta__label">{{ 'TOUR-DETAIL.Covered_distance' | translate }}</span>
+        <span class="ltt-detail-meta__value">{{detail.recorrido}} km</span>
+      </div>
+      <div class="ltt-detail-meta__item">
+        <span class="ltt-detail-meta__label">{{ 'TOUR-DETAIL.Created_at' | translate }}</span>
+        <span class="ltt-detail-meta__value">{{detail.created_at | date:'MM/yyyy'}}</span>
+      </div>
+    </div>
 
-            <div class="d-flex justify-content-center mt-3">
-                <button mat-raised-button color="primary" class="custom-button-color" (click)="letsTour(detail)">{{ "TOUR-DETAIL.Let's_tour" | translate }}</button>
-            </div>
-        </mat-card-content>
-    </mat-card>
+    <!-- Valoración -->
+    <div class="ltt-detail-rating">
+      <span class="ltt-detail-rating__label">{{ 'TOUR-DETAIL.Average_Rating' | translate }}</span>
+      <ngb-rating [rate]="detail.valoracion" [max]="5"></ngb-rating>
+    </div>
+
+    <!-- Descripción -->
+    <div class="ltt-detail-section">
+      <h2 class="ltt-detail-section__title">{{ 'TOUR-DETAIL.Description' | translate }}</h2>
+      <p class="ltt-detail-section__body">{{detail.descripcion}}</p>
+    </div>
+
+    <!-- Mapa del recorrido -->
+    <div class="ltt-detail-section">
+      <h2 class="ltt-detail-section__title">{{ 'TOUR-DETAIL.Route' | translate }}</h2>
+      <div class="ltt-detail-map" id="map"></div>
+    </div>
+
+    <!-- CTA -->
+    <div class="ltt-detail-cta">
+      <button mat-raised-button color="primary" class="ltt-detail-cta__btn" (click)="letsTour(detail)">
+        {{ "TOUR-DETAIL.Let's_tour" | translate }}
+      </button>
+    </div>
+
+  </div>
 </div>

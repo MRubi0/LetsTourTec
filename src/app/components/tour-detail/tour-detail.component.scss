@@ -1,115 +1,166 @@
-.container-detail {
-    margin-top: 10px;
-    padding-bottom: 3rem !important;
+/* ── Contenedor raíz ── */
+.ltt-detail {
+  max-width: 680px;
+  margin: 0 auto;
+  padding-bottom: 3rem;
 }
 
-.image {
-    height: 220px;
-    img {
-        width: 100%;
-        border-radius: 20px;
-    }
-}
+/* ── Hero: imagen + título superpuesto ── */
+.ltt-detail-hero {
+  position: relative;
+  width: 100%;
+  height: 240px;
 
-.row {
+  &__img {
     width: 100%;
-    margin-bottom: 15px;
-}
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 
-.subtitle {
-    font-weight: bold;
-}
-
-.custom-button-color {
-    background-color: var(--ltt-primary-mid) !important;
-
-    & .mat-button-wrapper {
-        color: white !important;
-    }
-}
-
-#map {
-    height: 400px;
-    /* Ajusta la altura según sea necesario */
-}
-
-.leaflet-routing-container {
-    position: absolute !important;
-    margin-top: 10px !important;
-    top: 20px;
-    right: 10px;
-    width: 25%;
-    z-index: 1;
-}
-
-#prueba {
-    pointer-events: none;
-}
-
-.input_map {
-    width: 100%;
-    height: 80%;
-    z-index: 100;
+  &__overlay {
     position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.maps {
-    z-index: 0;
-}
-
-.container-detail {
-    margin-top: 10px;
-}
-
-.mat-mdc-card {
-    width: 100%;
-    margin: auto;
-    max-width: 98%;
-    box-sizing: border-box;
-}
-
-
-.mat-mdc-card {
-    max-width: 100%;
-}
-
-.p-5 {
-    padding: 0.5rem !important;
-}
-
-mat-card {
-    border-radius: 20px;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.responsive-image {
-    width: 100%; 
-    height: 350px; 
-    object-fit: contain; 
-     
-    object-position: center;
-}
-
-.espacio-entre-imagen-y-mapa {
-    margin-top: 24px;
-}
-::ng-deep .votacion-modal {
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.1) 60%);
     display: flex;
-    flex-direction: column; 
+    align-items: flex-end;
+    padding: 1.25rem 1rem;
+  }
+
+  &__title {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+}
+
+/* ── Cuerpo con padding lateral ── */
+.ltt-detail-body {
+  padding: 0 1rem;
+}
+
+/* ── Chips de metadatos ── */
+.ltt-detail-meta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 1.25rem 0;
+
+  &__item {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    padding: 10px; 
+    flex: 1;
+    min-width: 80px;
+    background: var(--ltt-surface);
+    border: 1.5px solid var(--ltt-border);
+    border-radius: var(--ltt-radius);
+    padding: 0.6rem 0.5rem;
+    box-shadow: var(--ltt-shadow);
   }
-  
-  ::ng-deep ngb-rating {
-    margin-top: 0px; 
-    margin-bottom: 15px;
+
+  &__label {
+    font-size: 0.7rem;
+    color: var(--ltt-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.2rem;
+    text-align: center;
   }
-  
-  ::ng-deep  ngb-rating > span {
-    cursor: pointer;
-    font-size: 40px; 
-    margin-top: 0px;
-    color: gold;
+
+  &__value {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--ltt-primary);
   }
+}
+
+/* ── Valoración ── */
+.ltt-detail-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+
+  &__label {
+    font-size: 0.875rem;
+    color: var(--ltt-muted);
+    font-weight: 500;
+  }
+}
+
+::ng-deep ngb-rating > span {
+  cursor: default;
+  font-size: 1.75rem;
+  color: gold;
+}
+
+/* ── Secciones (descripción, mapa) ── */
+.ltt-detail-section {
+  margin-bottom: 1.5rem;
+
+  &__title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ltt-muted);
+    margin-bottom: 0.5rem;
+    border-bottom: 1.5px solid var(--ltt-border);
+    padding-bottom: 0.25rem;
+  }
+
+  &__body {
+    font-size: 0.9375rem;
+    color: var(--ltt-text);
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+/* ── Mapa ── */
+.ltt-detail-map {
+  height: 280px;
+  border-radius: var(--ltt-radius);
+  overflow: hidden;
+  box-shadow: var(--ltt-shadow);
+}
+
+/* ── Botón CTA ── */
+.ltt-detail-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+
+  &__btn {
+    background-color: var(--ltt-primary-mid) !important;
+    color: #fff !important;
+    border-radius: 100px !important;
+    padding: 0 2.5rem !important;
+    height: 48px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.01em;
+    box-shadow: 0 2px 8px rgba(45, 106, 79, 0.3) !important;
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+/* Estilos de Leaflet que no se pueden cambiar */
+.leaflet-routing-container {
+  position: absolute !important;
+  margin-top: 10px !important;
+  top: 20px;
+  right: 10px;
+  width: 25%;
+  z-index: 1;
+}
+
+@media (max-width: 480px) {
+  .ltt-detail-hero { height: 200px; }
+  .ltt-detail-map  { height: 220px; }
+}
