@@ -100,16 +100,22 @@
 
 .ltt-stars {
   display: flex;
-  gap: 1px;
+  gap: 2px;
 
   &__star {
     position: relative;
+    display: inline-block;
     font-size: 1.6rem;
     line-height: 1;
+    width: 1em;
+    height: 1em;
   }
 
   &__bg {
-    color: #ddd;
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #bbb;
   }
 
   &__fg {

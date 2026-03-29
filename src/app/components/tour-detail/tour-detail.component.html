@@ -32,7 +32,7 @@
     <div class="ltt-detail-rating">
       <span class="ltt-detail-rating__label">{{ 'TOUR-DETAIL.Average_Rating' | translate }}</span>
       <div class="ltt-stars" *ngIf="mediaPuntuacion !== null">
-        <div class="ltt-stars__star" *ngFor="let i of [1,2,3,4,5]">
+        <div class="ltt-stars__star" *ngFor="let i of starPositions">
           <span class="ltt-stars__bg">&#9733;</span>
           <span class="ltt-stars__fg" [style.width.%]="starFill(i)">&#9733;</span>
         </div>

@@ -27,6 +27,7 @@ export class TourDetailComponent {
   mediaPuntuacion: number | null = null;
   valoraciones: any[] = [];
   reviewsOpen = false;
+  starPositions = [1, 2, 3, 4, 5];
   $url!:any;
   image_url:string='';
   calificacion:number=0;
