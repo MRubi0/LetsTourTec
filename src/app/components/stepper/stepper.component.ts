@@ -34,7 +34,7 @@ export class StepperComponent {
   isLinear = false;
   screenWidth: number = window.innerWidth;
   screenHeight: number = window.innerHeight;
-  url_icon = '';
+  url_icon = '../../../assets/iconos/steps.svg';
   url_icon_home = '../../../assets/iconos/home-white.svg'
   url_icon_flag = '../../../assets/iconos/win_flag.svg'
   lat: number = 0;
