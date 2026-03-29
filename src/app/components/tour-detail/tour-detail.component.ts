@@ -127,13 +127,13 @@ export class TourDetailComponent {
   }
 
 
-  // Devuelve el porcentaje de relleno de la estrella en posición i, redondeado al cuarto más cercano
-  starFill(i: number): number {
+  starStyle(i: number): object {
     const rate = this.mediaPuntuacion ?? 0;
-    if (rate >= i) return 100;
-    if (rate <= i - 1) return 0;
-    const frac = rate - (i - 1);
-    return Math.round(frac * 4) / 4 * 100; // redondea a 0, 25, 50, 75 o 100
+    let fill: number;
+    if (rate >= i) fill = 100;
+    else if (rate <= i - 1) fill = 0;
+    else fill = Math.round((rate - (i - 1)) * 4) / 4 * 100;
+    return { background: `linear-gradient(to right, gold ${fill}%, #bbb ${fill}%)` };
   }
 
   getMediaValoracion(id: number): void {
