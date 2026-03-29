@@ -46,6 +46,19 @@
       <div class="ltt-detail-map" id="map"></div>
     </div>
 
+    <!-- Reseñas -->
+    <div class="ltt-detail-section" *ngIf="valoraciones.length > 0">
+      <h2 class="ltt-detail-section__title">{{ 'TOUR-DETAIL.Reviews' | translate }}</h2>
+      <div class="ltt-review" *ngFor="let v of valoraciones">
+        <div class="ltt-review__header">
+          <ngb-rating [rate]="v.puntuacion" [max]="5" [readonly]="true"></ngb-rating>
+          <span class="ltt-review__user">{{ v.usuario }}</span>
+          <span class="ltt-review__date">{{ v.fecha }}</span>
+        </div>
+        <p class="ltt-review__comment">{{ v.comentario }}</p>
+      </div>
+    </div>
+
     <!-- CTA -->
     <div class="ltt-detail-cta">
       <button mat-raised-button color="primary" class="ltt-detail-cta__btn" (click)="letsTour(detail)">

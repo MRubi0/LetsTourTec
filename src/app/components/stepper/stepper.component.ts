@@ -45,7 +45,7 @@ export class StepperComponent {
   maps = 'maps';
   url = environment.bucket;
   audioControlsVisible = false;
-  audioControlsVisibleTour = false;
+  audioControlsVisibleTour = true;
   evento: any
   last_step=true;
   rates=0;
