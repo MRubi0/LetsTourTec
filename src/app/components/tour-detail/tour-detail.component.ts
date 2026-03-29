@@ -127,13 +127,11 @@ export class TourDetailComponent {
   }
 
 
-  starStyle(i: number): object {
+  starFill(i: number): number {
     const rate = this.mediaPuntuacion ?? 0;
-    let fill: number;
-    if (rate >= i) fill = 100;
-    else if (rate <= i - 1) fill = 0;
-    else fill = Math.round((rate - (i - 1)) * 4) / 4 * 100;
-    return { background: `linear-gradient(to right, gold ${fill}%, #bbb ${fill}%)` };
+    if (rate >= i) return 100;
+    if (rate <= i - 1) return 0;
+    return Math.round((rate - (i - 1)) * 4) / 4 * 100;
   }
 
   getMediaValoracion(id: number): void {

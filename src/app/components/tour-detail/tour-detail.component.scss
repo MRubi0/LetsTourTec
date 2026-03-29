@@ -104,11 +104,23 @@
 }
 
 .ltt-star {
+  position: relative;
+  display: inline-block;
   font-size: 1.6rem;
   line-height: 1;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+
+  &__bg {
+    color: #bbb;
+  }
+
+  &__fg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    color: gold;
+    white-space: nowrap;
+  }
 }
 
 /* ── Secciones (descripción, mapa) ── */
