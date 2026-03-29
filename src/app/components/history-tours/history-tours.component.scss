@@ -35,8 +35,9 @@
   }
   
   .valoracion-estrella {
-    width: 20px; /* Ajusta el tamaño de la estrella según sea necesario */
-    margin: 0 2px; /* Ajusta el espacio entre las estrellas */
+    width: 20px;
+    margin: 0 2px;
+    color: var(--ltt-primary-mid); /* propaga currentColor a la estrella SVG */
   }
   
   .valoracion-text {

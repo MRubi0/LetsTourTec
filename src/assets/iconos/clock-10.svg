@@ -2,7 +2,7 @@
 <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="bi bi-arrow-clockwise">
  <g class="layer">
   <title>Layer 1</title>
-  <text fill="#007fff" font-family="Serif" font-size="24" id="svg_3" stroke="#000000" stroke-width="0" text-anchor="middle" transform="matrix(0.329178 0 0 0.295912 -5.75896 -0.366835)" x="39.87" xml:space="preserve" y="32.91">10</text>
+  <text fill="currentColor" font-family="Serif" font-size="24" id="svg_3" stroke="currentColor" stroke-width="0" text-anchor="middle" transform="matrix(0.329178 0 0 0.295912 -5.75896 -0.366835)" x="39.87" xml:space="preserve" y="32.91">10</text>
   <use id="svg_5" transform="matrix(1 0 0 1 0 0) matrix(-0.994756 -0.00231487 0.00231487 -0.994756 8.74751 10.0027)" x="-7.13" xlink:href="#svg_4" y="-4.88"/>
  </g>
  <defs>
