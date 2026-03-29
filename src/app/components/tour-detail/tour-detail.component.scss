@@ -101,31 +101,15 @@
 .ltt-stars {
   display: flex;
   gap: 2px;
+}
 
-  &__star {
-    position: relative;
-    display: inline-block;
-    font-size: 1.6rem;
-    line-height: 1;
-    width: 1em;
-    height: 1em;
-  }
-
-  &__bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    color: #bbb;
-  }
-
-  &__fg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    overflow: hidden;
-    color: gold;
-    white-space: nowrap;
-  }
+.ltt-star {
+  font-size: 1.6rem;
+  line-height: 1;
+  background: linear-gradient(to right, gold var(--fill, 0%), #bbb var(--fill, 0%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* ── Secciones (descripción, mapa) ── */
