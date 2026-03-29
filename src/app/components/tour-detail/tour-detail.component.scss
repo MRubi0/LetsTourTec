@@ -129,6 +129,31 @@
   box-shadow: var(--ltt-shadow);
 }
 
+/* ── Botón toggle reseñas ── */
+.ltt-reviews-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1.5px solid var(--ltt-border);
+  padding: 0.35rem 0 0.35rem 0;
+  margin-bottom: 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ltt-muted);
+  cursor: pointer;
+
+  &__arrow {
+    font-size: 0.65rem;
+    transition: transform 0.2s;
+    &.open { transform: rotate(180deg); }
+  }
+}
+
 /* ── Reseñas ── */
 .ltt-review {
   background: var(--ltt-surface);
