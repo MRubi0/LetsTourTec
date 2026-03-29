@@ -48,7 +48,7 @@
                       <div class="col-3">
                           <input type="password" class="form-control" name="password2" id="login-repeatPassword" [placeholder]="'SIGNUP.Repeat_password' | translate" formControlName="password2" data-cy="password2" />
                       </div>
-                      <div *ngIf="loginForm.errors && loginForm.errors['mismatch'] && (loginForm.get('password')?.touched || loginForm.get('repeatPassword')?.touched)">
+                      <div *ngIf="loginForm.errors && loginForm.errors['mismatch'] && (loginForm.get('password1')?.touched || loginForm.get('password2')?.touched)">
                         {{ 'SIGNUP.Passwords_mismatch' | translate }}
                       </div>
                       <div *ngIf="serverErrors.password2" class="error-message">

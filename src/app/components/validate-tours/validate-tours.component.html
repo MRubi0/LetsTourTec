@@ -1,10 +1,61 @@
-<mat-card class="container-card">
-    <mat-card-header class="mb-3">
-        <mat-card-title>Validar tours</mat-card-title>
-      </mat-card-header>      
-    <mat-card-content>        
-        <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px" class="card-contianer d-flex justify-content-center" *ngIf="alltours">       
-            <app-generic-card class="d-flex flex-wrap" [toursdata]=alltours.tours [all-tours]="true" [validate]="true" (check)="validate($event)"></app-generic-card>
+<div class="ltt-validate">
+
+  <div class="ltt-validate__header">
+    <a routerLink="/admin-panel" class="ltt-validate__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      Panel
+    </a>
+    <h1 class="ltt-validate__title">Validación de tours</h1>
+    <p class="ltt-validate__subtitle">Tours pendientes de revisión antes de publicarse</p>
+  </div>
+
+  <!-- Skeleton -->
+  <div class="ltt-validate__skeleton" *ngIf="loading">
+    <div class="ltt-pending-card ltt-skeleton-card" *ngFor="let i of [1,2,3]"></div>
+  </div>
+
+  <!-- Empty -->
+  <div class="ltt-validate__empty" *ngIf="!loading && tours.length === 0">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    <p>No hay tours pendientes de validación</p>
+  </div>
+
+  <!-- Lista de pendientes -->
+  <div class="ltt-validate__list" *ngIf="!loading && tours.length > 0">
+    <div class="ltt-pending-card" *ngFor="let tour of tours">
+
+      <div class="ltt-pending-card__image-wrap" *ngIf="tour.imagen?.url">
+        <img [src]="tour.imagen.url" alt="" class="ltt-pending-card__image"
+             (error)="$any($event.target).src='assets/iconos/Default-Profile-Picture-PNG-Transparent-Image.png'">
+      </div>
+
+      <div class="ltt-pending-card__body">
+        <span class="ltt-pending-card__type">{{ tour.tipo_de_tour }}</span>
+        <h3 class="ltt-pending-card__title">{{ tour.titulo }}</h3>
+        <p class="ltt-pending-card__desc">{{ tour.descripcion | slice:0:120 }}{{ tour.descripcion?.length > 120 ? '…' : '' }}</p>
+
+        <div class="ltt-pending-card__meta">
+          <span>{{ tour.duracion }} min</span>
+          <span>{{ tour.recorrido }} km</span>
+          <span *ngIf="tour.pasos_count > 0">{{ tour.pasos_count }} pasos</span>
         </div>
-    </mat-card-content>    
-</mat-card>
+
+        <div class="ltt-pending-card__author">
+          {{ tour.user?.first_name }} {{ tour.user?.last_name }}
+          <span>· {{ tour.user?.email }}</span>
+          <span *ngIf="tour.created_at">· {{ tour.created_at }}</span>
+        </div>
+      </div>
+
+      <div class="ltt-pending-card__action">
+        <button mat-raised-button color="primary" (click)="openValidateDialog(tour)">
+          Revisar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

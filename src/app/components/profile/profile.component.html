@@ -1,30 +1,80 @@
-<div class="container-fluid mt-5 d-flex justify-content-center">
-    <mat-card class="container-card" *ngIf="profile">
-        <mat-card-header class="d-flex justify-content-center">
-            <mat-card-title>{{ 'PROFILE.My_profile' | translate }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="mt-3">
-            <div class="user-details">
-                <div class="profile-picture">
-                    <img [src]="profile.avatar || '../../../assets/iconos/Default-Profile-Picture-PNG-Transparent-Image.png'" alt="Profile Picture" class="profile-img">
-                    <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none;">
-                </div>
-                <h3>{{ 'PROFILE.Welcome_back' | translate }} {{ profile.first_name }} {{ profile.last_name }}!</h3>
-                <div class="content">
-                    <ul>
-                        <li><span class="subtitle">{{ 'PROFILE.Email' | translate }}: </span>{{ profile.email }}</li>
-                        <li><span class="subtitle">{{ 'PROFILE.Biography' | translate }}: </span>{{ profile.bio }}</li>
-                        <li><span class="subtitle">{{ 'PROFILE.Location' | translate }}: </span>{{ profile.location }}</li>
-                        <li><span class="subtitle">{{ 'PROFILE.Interests' | translate }}: </span>{{ profile.interests?.join(', ') ?? ('PROFILE.None' | translate) }}</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="user-actions d-flex justify-content-center mt-5">
-                <button mat-raised-button color="primary" class="custom-button-color" (click)="uploadTour()">{{ 'PROFILE.Upload_tour' | translate }}</button>
-                <button mat-raised-button color="primary" class="custom-button-color" routerLink="/edit-profile" (click)="editProfile()">{{ 'PROFILE.Edit_profile' | translate }}</button>
-                <button mat-raised-button color="primary" class="custom-button-color" routerLink="/history-tours" (click)="History()">{{ 'PROFILE.History_tours' | translate }}</button>
-                <button mat-raised-button color="primary" class="custom-button-color" routerLink="/my-tours" (click)="toursUploaded()">{{ 'PROFILE.Tours_uploaded' | translate }}</button>
-            </div>
-        </mat-card-content>
-    </mat-card>
+<div class="ltt-profile-skeleton" *ngIf="loading">
+  <div class="ltt-skeleton ltt-skeleton--avatar"></div>
+  <div class="ltt-skeleton ltt-skeleton--text"></div>
+  <div class="ltt-skeleton ltt-skeleton--text ltt-skeleton--short"></div>
+</div>
+
+<div class="ltt-profile" *ngIf="!loading && profile">
+
+  <!-- Cabecera -->
+  <div class="ltt-profile-header">
+    <div class="ltt-profile-avatar-wrap">
+      <img class="ltt-profile-avatar"
+           [src]="profile.avatar || 'assets/iconos/Default-Profile-Picture-PNG-Transparent-Image.png'"
+           alt="avatar"
+           (error)="$any($event.target).src='assets/iconos/Default-Profile-Picture-PNG-Transparent-Image.png'" />
+    </div>
+    <h1 class="ltt-profile-name">{{ profile.first_name }} {{ profile.last_name }}</h1>
+    <p class="ltt-profile-email">{{ profile.email }}</p>
+    <p class="ltt-profile-bio" *ngIf="profile.bio">{{ profile.bio }}</p>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="ltt-profile-stats">
+    <div class="ltt-profile-stat">
+      <span class="ltt-profile-stat__number">{{ toursCount }}</span>
+      <span class="ltt-profile-stat__label">{{ 'PROFILE.Tours_uploaded' | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Acciones -->
+  <div class="ltt-profile-actions">
+
+    <a class="ltt-profile-action" routerLink="/upload-tour">
+      <span class="ltt-profile-action__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+      </span>
+      <span>{{ 'PROFILE.Upload_tour' | translate }}</span>
+    </a>
+
+    <a class="ltt-profile-action" routerLink="/my-tours">
+      <span class="ltt-profile-action__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+        </svg>
+      </span>
+      <span>{{ 'PROFILE.Tours_uploaded' | translate }}</span>
+    </a>
+
+    <a class="ltt-profile-action" routerLink="/history-tours">
+      <span class="ltt-profile-action__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </span>
+      <span>{{ 'PROFILE.History_tours' | translate }}</span>
+    </a>
+
+    <a class="ltt-profile-action" routerLink="/edit-profile">
+      <span class="ltt-profile-action__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </span>
+      <span>{{ 'PROFILE.Edit_profile' | translate }}</span>
+    </a>
+
+  </div>
+
+  <!-- Cerrar sesión -->
+  <button class="ltt-profile-logout" (click)="logout()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+    </svg>
+    {{ 'PROFILE.Logout' | translate }}
+  </button>
+
 </div>

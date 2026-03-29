@@ -1,174 +1,219 @@
-import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SnackService } from 'src/app/services/snack.service';
-import { UploadTourService } from 'src/app/services/upload-tour.service'
+import { UploadTourService } from 'src/app/services/upload-tour.service';
+import { TranslateService } from '@ngx-translate/core';
 
+const DRAFT_KEY = 'ltt_tour_draft';
 
 @Component({
   selector: 'app-upload-tour',
   templateUrl: './upload-tour.component.html',
   styleUrls: ['./upload-tour.component.scss']
 })
-export class UploadTourComponent implements OnInit{
+export class UploadTourComponent implements OnInit {
   tourForm: FormGroup;
-  loading=false;
-  MAX_EXTRA_STEPS = 100;
-  @ViewChild('imagenInput') imagenInputElement!: ElementRef;
-  @ViewChild('audioInput') audioInputElement!: ElementRef;
+  loading = false;
+  hasDraft = false;
+  imagenFileName = '';
+  audioFileName = '';
+  private autoSaveTimer: any;
 
   opciones = [
-    { value: 'cultural', viewValue: 'Cultural Tour' },
-    { value: 'leisure', viewValue: 'Leisure Tour' },
-    { value: 'nature', viewValue: 'Nature Tour' },
+    { value: 'cultural', labelKey: 'GENERIC-CARD.Cultural' },
+    { value: 'leisure',  labelKey: 'GENERIC-CARD.Leisure' },
+    { value: 'nature',   labelKey: 'GENERIC-CARD.Nature' },
   ];
 
-  opciones_idioma = [
-    { value: 'es', viewValue: 'Español' },
-    { value: 'en', viewValue: 'Inglés' },
-  ];
-
-  constructor(private fb: FormBuilder, private uploadTourService: UploadTourService, 
-    private snackbarService:SnackService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private uploadTourService: UploadTourService,
+    private snackService: SnackService,
+    private router: Router,
+    private translate: TranslateService
+  ) {
     this.tourForm = this.fb.group({
-      tipo_de_tour: '',
-      titulo: '',
-      descripcion: '',
-      imagen: '',
-      audio: '',
-      latitude: '',
-      longitude: '',
-      duracion: '',
-      recorrido: '',  
-      idioma_destino: '',   
+      tipo_de_tour: ['', Validators.required],
+      titulo: ['', Validators.required],
+      descripcion: ['', Validators.required],
+      imagen: [''],
+      audio: [''],
+      latitude: ['', Validators.required],
+      longitude: ['', Validators.required],
+      duracion: ['', Validators.required],
+      recorrido: ['', Validators.required],
       extraSteps: this.fb.array([])
     });
   }
+
   ngOnInit(): void {
-    this.tourForm.valueChanges.subscribe(data=>{
-      console.log(' tour ', data);
+    this.hasDraft = !!localStorage.getItem(DRAFT_KEY);
+    this.tourForm.valueChanges.subscribe(() => {
+      clearTimeout(this.autoSaveTimer);
+      this.autoSaveTimer = setTimeout(() => this.saveDraft(), 1500);
     });
   }
+
   get extraSteps() {
     return this.tourForm.get('extraSteps') as FormArray;
   }
 
   addExtraStep() {
-    if (this.extraSteps.length < this.MAX_EXTRA_STEPS) {
-      const extraStepGroup = this.fb.group({
-        image: '',
-        audio: '',
-        latitude: '',
-        longitude: '',
-        description: '',
-        tittle: ''
-      });
-      this.extraSteps.push(extraStepGroup);
-    }
+    this.extraSteps.push(this.fb.group({
+      tittle: [''],
+      description: [''],
+      latitude: [''],
+      longitude: [''],
+      image: [''],
+      audio: [''],
+      imageFileName: [''],
+      audioFileName: ['']
+    }));
   }
+
   removeExtraStep(index: number): void {
     this.extraSteps.removeAt(index);
   }
 
-    
+  // ── Draft ──────────────────────────────────────────────
+
+  saveDraft(): void {
+    const v = this.tourForm.value;
+    const draft = {
+      tipo_de_tour: v.tipo_de_tour,
+      titulo: v.titulo,
+      descripcion: v.descripcion,
+      latitude: v.latitude,
+      longitude: v.longitude,
+      duracion: v.duracion,
+      recorrido: v.recorrido,
+      extraSteps: v.extraSteps.map((s: any) => ({
+        tittle: s.tittle,
+        description: s.description,
+        latitude: s.latitude,
+        longitude: s.longitude
+      }))
+    };
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    this.hasDraft = true;
+  }
+
+  restoreDraft(): void {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return;
+    const draft = JSON.parse(raw);
+    this.tourForm.patchValue({
+      tipo_de_tour: draft.tipo_de_tour || '',
+      titulo: draft.titulo || '',
+      descripcion: draft.descripcion || '',
+      latitude: draft.latitude || '',
+      longitude: draft.longitude || '',
+      duracion: draft.duracion || '',
+      recorrido: draft.recorrido || ''
+    });
+    (draft.extraSteps || []).forEach((s: any) => {
+      this.extraSteps.push(this.fb.group({
+        tittle: [s.tittle || ''],
+        description: [s.description || ''],
+        latitude: [s.latitude || ''],
+        longitude: [s.longitude || ''],
+        image: [''],
+        audio: [''],
+        imageFileName: [''],
+        audioFileName: ['']
+      }));
+    });
+    this.hasDraft = false;
+    this.snackService.openSnackBar(this.translate.instant('UPLOAD-TOUR.Draft_restored'), 'OK');
+  }
+
+  discardDraft(): void {
+    localStorage.removeItem(DRAFT_KEY);
+    this.hasDraft = false;
+  }
+
+  private clearDraft(): void {
+    localStorage.removeItem(DRAFT_KEY);
+    this.hasDraft = false;
+  }
+
+  // ── Submit ─────────────────────────────────────────────
 
   submitTour() {
+    if (this.tourForm.invalid) {
+      this.tourForm.markAllAsTouched();
+      this.snackService.openSnackBar(this.translate.instant('UPLOAD-TOUR.Validation_error'), 'OK');
+      return;
+    }
     const formData = this.prepareSave();
-    this.loading=true
-    this.uploadTourService.uploadTour(formData).subscribe(
-      (response: any) => {
-        this.snackbarService.openSnackBar(response.message,'OK');  
-        this.loading=false; 
-        //this.router.navigate([ '/home']);
+    this.loading = true;
+    this.uploadTourService.uploadTour(formData).subscribe({
+      next: (response: any) => {
+        this.loading = false;
+        this.clearDraft();
+        this.snackService.openSnackBar(response.message, 'OK');
+        this.router.navigate(['/my-tours']);
       },
-      (error: any) => {
-        this.loading=false;
-        console.log("Error uploading tour", error);
+      error: () => {
+        this.loading = false;
+        this.snackService.openSnackBar(this.translate.instant('UPLOAD-TOUR.Submit_error'), 'OK');
       }
-    );
+    });
   }
 
   private prepareSave(): FormData {
-    const formModel = this.tourForm.value;
+    const v = this.tourForm.value;
     const formData = new FormData();
-
     const lang: string = localStorage.getItem('language') ?? 'es';
-    // Append each form field to the FormData object
-    formData.append('tipo_de_tour', formModel.tipo_de_tour);
-    formData.append('titulo', formModel.titulo);
-    formData.append('descripcion', formModel.descripcion);
-    formData.append('imagen', this.tourForm.get('imagen')?.value);
-    formData.append('audio', this.tourForm.get('audio')?.value);
-    formData.append('latitude', formModel.latitude);
-    formData.append('longitude', formModel.longitude);
-    formData.append('duracion', formModel.duracion);
-    formData.append('recorrido', formModel.recorrido);
-    formData.append('idioma', lang);
-    formData.append('idioma_destino', formModel.idioma_destino);
-    
+    const idioma_destino = lang === 'es' ? 'en' : 'es';
 
-    formModel.extraSteps.forEach((extraStep: any, index: number) => {
-      if (extraStep.tittle) {
-        formData.append(`tittle_${index}`, extraStep.tittle);
-      }
-      if (extraStep.image) {
-        formData.append(`extra_step_image_${index}`, extraStep.image);
-      }
-      if (extraStep.audio) {
-        formData.append(`extra_step_audio_${index}`, extraStep.audio);
-      }
-      if (extraStep.description) {
-        formData.append(`description_${index}`, extraStep.description);
-      }
-      if (extraStep.latitude) {
-        formData.append(`extra_step_latitude_${index}`, extraStep.latitude);
-      }
-      if (extraStep.longitude) {
-          formData.append(`extra_step_longitude_${index}`, extraStep.longitude);
-      }
-      
-    });
-    for (let key of (formData as any).keys()) {
+    formData.append('tipo_de_tour', v.tipo_de_tour);
+    formData.append('titulo', v.titulo);
+    formData.append('descripcion', v.descripcion);
+    formData.append('latitude', v.latitude);
+    formData.append('longitude', v.longitude);
+    formData.append('duracion', v.duracion);
+    formData.append('recorrido', v.recorrido);
+    formData.append('idioma', lang);
+    formData.append('idioma_destino', idioma_destino);
+
+    if (this.tourForm.get('imagen')?.value) {
+      formData.append('imagen', this.tourForm.get('imagen')?.value);
     }
-    
+    if (this.tourForm.get('audio')?.value) {
+      formData.append('audio', this.tourForm.get('audio')?.value);
+    }
+
+    v.extraSteps.forEach((step: any, i: number) => {
+      if (step.tittle)       formData.append(`tittle_${i}`, step.tittle);
+      if (step.description)  formData.append(`description_${i}`, step.description);
+      if (step.latitude)     formData.append(`extra_step_latitude_${i}`, step.latitude);
+      if (step.longitude)    formData.append(`extra_step_longitude_${i}`, step.longitude);
+      if (step.image)        formData.append(`extra_step_image_${i}`, step.image);
+      if (step.audio)        formData.append(`extra_step_audio_${i}`, step.audio);
+    });
+
     return formData;
   }
-  openInput(fileInput: ElementRef) {
-    fileInput.nativeElement.click();
-  }
-  
 
-  onFileSelect(event: any, field: string) {
-    event.preventDefault();
-    const file = event.target.files[0];
-    if (file) {
-      this.tourForm.get(field)?.setValue(file);
+  // ── Archivos ───────────────────────────────────────────
 
-      let elementId = '';
+  onFileSelect(event: any, field: string, stepIndex?: number): void {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-      if (field.startsWith('extraSteps')) {
-        const [_, index, subField] = field.split('.');
-        if (subField === 'image') {
-          elementId = 'nombreImagenExtra' + index;
-        } else if (subField === 'audio') {
-          elementId = 'nombreAudioExtra' + index;
-        }
+    if (stepIndex !== undefined) {
+      const step = this.extraSteps.at(stepIndex);
+      if (field === 'image') {
+        step.patchValue({ image: file, imageFileName: file.name });
       } else {
-      switch(field) {
-        case 'imagen':
-          elementId = 'nombreImagen';
-          break;
-        case 'audio':
-          elementId = 'nombreAudio';
-          break;
+        step.patchValue({ audio: file, audioFileName: file.name });
       }
-    }
-    const displayElement = document.getElementById(elementId);
-    if (displayElement) {
-      displayElement.textContent = file.name;
+    } else {
+      this.tourForm.get(field)?.setValue(file);
+      if (field === 'imagen') this.imagenFileName = file.name;
+      if (field === 'audio') this.audioFileName = file.name;
     }
   }
-}
-
-
 }

@@ -1,72 +1,49 @@
-.container {
-    margin: 0px;
-    padding: 30px;
-}
+.ltt-reg-success {
+  max-width: 420px;
+  margin: 4rem auto;
+  padding: 2.5rem 1.5rem;
+  background: var(--ltt-surface);
+  border: 1.5px solid var(--ltt-border);
+  border-radius: var(--ltt-radius);
+  box-shadow: var(--ltt-shadow);
+  text-align: center;
 
-.row-buttons {
-    width: 50%;
-}
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #e8f5e9;
+    margin: 0 auto 1.5rem;
 
-.image {
-    border-radius: 20px 20px 0px 0px;
-    height: 145px;
-    width: 100%;
-}
+    svg {
+      width: 40px;
+      height: 40px;
+      stroke: var(--ltt-primary-mid);
+    }
+  }
 
-mat-mdc-card-title{
-    font-size: 18px;
-}
+  &__title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--ltt-text);
+    margin: 0 0 0.5rem;
+  }
 
-.container-card {
-    max-width: 80%;
-    margin: 50px auto;
-    height: auto;
-}
+  &__subtitle {
+    font-size: 0.9rem;
+    color: var(--ltt-muted);
+    margin: 0 0 2rem;
+    line-height: 1.5;
+  }
 
-.tour-card {
-    max-width: 18rem;   
-    max-height: 450px;
-    min-height: 450px;
-    scroll-behavior: auto;
+  &__actions {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-}
+    gap: 0.75rem;
 
-.mt-3 {
-    margin-top: 16px;
-}
-
-.my-icon {
-    fill: var(--ltt-primary-mid) !important;
-    color: var(--ltt-primary-mid) !important;
-}
-
-.mat-mdc-card-title {
-    color: black;
-    font-size: 1.25rem;
-    padding-left: 0;
-    font-weight: auto;
-
-}
-
-
-.custom-button-color {
-    background-color: var(--ltt-primary-mid) !important;
-
-    & .mat-button-wrapper {
-        color: white !important;
-    }
-}
-
-button.mat-raised-button.my-icon {
-    background-color: var(--ltt-primary-mid) !important;
-
-    .mat-button-wrapper {
-        color: white;
-    }
-}
-mat-card {
-    border-radius: 20px;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
+    button { width: 100%; }
+  }
 }

@@ -62,7 +62,7 @@
         <span class="ltt-reviews-toggle__arrow" [class.open]="reviewsOpen">&#9660;</span>
       </button>
       <div *ngIf="reviewsOpen">
-        <div class="ltt-review" *ngFor="let v of valoraciones">
+        <div class="ltt-review" *ngFor="let v of reviewsPage">
           <div class="ltt-review__header">
             <span class="ltt-review__stars">
               <span *ngFor="let s of starPositions" [style.color]="v.puntuacion >= s ? 'gold' : '#ccc'">&#9733;</span>
@@ -71,6 +71,11 @@
             <span class="ltt-review__date">{{ v.fecha | date:'mediumDate' }}</span>
           </div>
           <p class="ltt-review__comment">{{ v.comentario }}</p>
+        </div>
+        <div class="ltt-reviews-pagination" *ngIf="totalReviewPages > 1">
+          <button class="ltt-reviews-pagination__btn" (click)="reviewPage = reviewPage - 1" [disabled]="reviewPage === 0">&#8592;</button>
+          <span class="ltt-reviews-pagination__info">{{ reviewPage + 1 }} / {{ totalReviewPages }}</span>
+          <button class="ltt-reviews-pagination__btn" (click)="reviewPage = reviewPage + 1" [disabled]="reviewPage === totalReviewPages - 1">&#8594;</button>
         </div>
       </div>
     </div>

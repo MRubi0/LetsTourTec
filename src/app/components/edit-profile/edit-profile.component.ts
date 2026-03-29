@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ProfileService } from 'src/app/services/profile.service';
+import { SnackService } from 'src/app/services/snack.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-edit-profile',
@@ -8,79 +11,90 @@ import { ProfileService } from 'src/app/services/profile.service';
   styleUrls: ['./edit-profile.component.scss']
 })
 export class EditProfileComponent {
-  profileForm: FormGroup; 
-  imageSrc: string | ArrayBuffer | null = null; 
+  profileForm: FormGroup;
+  imageSrc: string | ArrayBuffer | null = null;
+  currentAvatar: string | null = null;
   fileName: string = '';
+  loading = false;
 
-  constructor(private fb: FormBuilder, private profileService: ProfileService) { 
+  constructor(
+    private fb: FormBuilder,
+    private profileService: ProfileService,
+    private snackService: SnackService,
+    private router: Router
+  ) {
     this.profileForm = this.fb.group({
-      firstName: [''], // Validators.required removido para permitir actualizaciones parciales
-      lastName: [''], // Lo mismo aquí
-      email: ['', [Validators.email]], // Si el email puede cambiarse, asegúrate de validar el formato correctamente
+      firstName: [''],
+      lastName: [''],
+      email: ['', [Validators.email]],
       bio: [''],
       profileImage: [null]
     });
-    
+  }
+
+  ngOnInit(): void {
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+    const decoded: any = jwtDecode(token);
+    this.profileService.getProfile(decoded.user_id).subscribe({
+      next: (res: any) => {
+        const u = res.user;
+        this.profileForm.patchValue({
+          firstName: u.first_name || '',
+          lastName: u.last_name || '',
+          email: u.email || '',
+          bio: u.bio || ''
+        });
+        this.currentAvatar = u.avatar || null;
+        this.profileForm.markAsPristine();
+      }
+    });
   }
 
   onFileSelect(event: any): void {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       this.fileName = file.name;
-  
-      // Actualiza el formulario reactivo con el archivo
-      this.profileForm.patchValue({
-        profileImage: file
-      });
-  
-      // Lee y muestra la vista previa de la imagen
+      this.profileForm.patchValue({ profileImage: file });
       const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imageSrc = e.target.result;
-      };
+      reader.onload = (e: any) => { this.imageSrc = e.target.result; };
       reader.readAsDataURL(file);
     }
   }
 
   updateProfile(): void {
     const formData = new FormData();
-  
-    // Marca si se detectaron cambios en el formulario
-    let cambiosDetectados = false;
-  
-    // Agrega solo los campos que han sido modificados al formData
+    let cambios = false;
+
     Object.keys(this.profileForm.controls).forEach(key => {
       const control = this.profileForm.get(key);
-  
-      // Considera solo los controles que han sido cambiados
-      if (control && control.dirty) {
+      if (control && control.dirty && key !== 'profileImage') {
         formData.append(key, control.value);
-        cambiosDetectados = true; // Marca que se han detectado cambios
+        cambios = true;
       }
     });
-  
-    // Maneja la imagen de perfil por separado, ya que no se une directamente al formulario reactivo
+
     if (this.fileName) {
       formData.append('profileImage', this.profileForm.value.profileImage, this.fileName);
-      cambiosDetectados = true; // Marca que se han detectado cambios
+      cambios = true;
     }
-  
-    if (cambiosDetectados) {
-      this.profileService.updateUserProfile(formData).subscribe({
-        next: (response: any) => {
-          console.log('Perfil actualizado con éxito', response);
-          // Aquí podrías redirigir al usuario o mostrar una notificación de éxito
-        },
-        error: (error: any) => {
-          console.error('Error al actualizar el perfil', error);
-          // Mostrar una notificación de error
-        }
-      });
-    } else {
-      console.log('No hay cambios para actualizar');
-      // Mostrar una notificación o acción relevante cuando no hay cambios
-    }
-  }
-  
 
+    if (!cambios) {
+      this.snackService.openSnackBar('No hay cambios que guardar', 'OK');
+      return;
+    }
+
+    this.loading = true;
+    this.profileService.updateUserProfile(formData).subscribe({
+      next: () => {
+        this.loading = false;
+        this.snackService.openSnackBar('Perfil actualizado correctamente', 'OK');
+        this.router.navigate(['/profile']);
+      },
+      error: () => {
+        this.loading = false;
+        this.snackService.openSnackBar('Error al actualizar el perfil', 'OK');
+      }
+    });
+  }
 }

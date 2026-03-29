@@ -48,12 +48,10 @@ export class LatestToursService {
       }));
   }
 
-  getAllToursValidation() {    
-    const lang = localStorage.getItem('language');
-    return this.http.get(`${environment.apiUrl}get_nearest_tours_valitation/?language=${lang}`)
-      .pipe(map((data: any) => {        
-        return data;
-      }));
+  getAllToursValidation() {
+    const lang = localStorage.getItem('language') ?? 'es';
+    return this.http.get(`${environment.apiUrl}admin/pending_tours/?language=${lang}`)
+      .pipe(map((data: any) => data));
   }
 
   

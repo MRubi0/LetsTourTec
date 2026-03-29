@@ -1,39 +1,93 @@
-<div class="container-fluid">
-    <div class="row mt-5">
-        <div class="col-6">
-            <mat-card appearance="outlined">
-                <mat-card class="tour-card">
-                    <mat-card-header class="p-0">     
-                        <img class="image mt-2" mat-card-image src="../../../assets/iconos/exchange-change.svg" alt="Image"
-                            routerLink="/admin-console">
-                    </mat-card-header>
-                    <mat-card-content class="content mt-2">
-                        <mat-card-title class="center-title"
-                            >Cambio de rol</mat-card-title>
-                            <p class="card-text">Aquí puede realizar el cambio de rol de cualquier usuario si tiene permisos.</p>
-                            
-                    </mat-card-content>
-                </mat-card>
+<div class="ltt-admin">
 
-            </mat-card>    
+  <div class="ltt-admin__header">
+    <div class="ltt-admin__header-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+      </svg>
+    </div>
+    <div>
+      <h1 class="ltt-admin__title">Panel de administración</h1>
+      <p class="ltt-admin__subtitle">Gestión y moderación de la plataforma</p>
+    </div>
+  </div>
 
-       </div>
-        <div class="col-6">
-            <mat-card appearance="outlined">
-                <mat-card class="tour-card">
-                    <mat-card-header class="p-0">     
-                        <img class="image mt-2" mat-card-image src="../../../assets/iconos/suitcase-fill.svg" alt="Image"
-                            routerLink="/validate-console"  >
-                    </mat-card-header>
-                    <mat-card-content class="content mt-2">
-                        <mat-card-title class="center-title"
-                            >Validacion de tours</mat-card-title>
-                            <p class="card-text">Aquí puede validar los tours.</p>
-                            
-                    </mat-card-content>
-                </mat-card>
+  <!-- Estadísticas -->
+  <div class="ltt-admin-stats" *ngIf="stats">
+    <div class="ltt-admin-stat">
+      <span class="ltt-admin-stat__number ltt-admin-stat__number--warn">{{ stats.pending_tours }}</span>
+      <span class="ltt-admin-stat__label">Pendientes</span>
+    </div>
+    <div class="ltt-admin-stat">
+      <span class="ltt-admin-stat__number">{{ stats.published_tours }}</span>
+      <span class="ltt-admin-stat__label">Publicados</span>
+    </div>
+    <div class="ltt-admin-stat">
+      <span class="ltt-admin-stat__number">{{ stats.total_users }}</span>
+      <span class="ltt-admin-stat__label">Usuarios</span>
+    </div>
+  </div>
+  <div class="ltt-admin-stats ltt-admin-stats--skeleton" *ngIf="!stats">
+    <div class="ltt-skeleton ltt-skeleton--stat"></div>
+    <div class="ltt-skeleton ltt-skeleton--stat"></div>
+    <div class="ltt-skeleton ltt-skeleton--stat"></div>
+  </div>
 
-            </mat-card> 
+  <!-- Tarjetas de acciones -->
+  <div class="ltt-admin__grid">
+
+    <a routerLink="/validate-console" class="ltt-admin-card">
+      <div class="ltt-admin-card__icon-wrap ltt-admin-card__icon-wrap--green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+        </svg>
+      </div>
+      <div class="ltt-admin-card__body">
+        <div class="ltt-admin-card__title-row">
+          <h2 class="ltt-admin-card__title">Validación de tours</h2>
+          <span class="ltt-admin-card__badge" *ngIf="stats?.pending_tours > 0">{{ stats.pending_tours }}</span>
         </div>
-    </div>    
+        <p class="ltt-admin-card__desc">Revisa y aprueba los tours enviados por los creadores.</p>
+      </div>
+      <div class="ltt-admin-card__arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+    </a>
+
+    <a routerLink="/manage-tours" class="ltt-admin-card">
+      <div class="ltt-admin-card__icon-wrap ltt-admin-card__icon-wrap--blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+        </svg>
+      </div>
+      <div class="ltt-admin-card__body">
+        <div class="ltt-admin-card__title-row">
+          <h2 class="ltt-admin-card__title">Tours publicados</h2>
+        </div>
+        <p class="ltt-admin-card__desc">Gestiona los tours activos: despublicar o eliminar.</p>
+      </div>
+      <div class="ltt-admin-card__arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+    </a>
+
+    <a routerLink="/admin-users" class="ltt-admin-card">
+      <div class="ltt-admin-card__icon-wrap ltt-admin-card__icon-wrap--purple">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </div>
+      <div class="ltt-admin-card__body">
+        <div class="ltt-admin-card__title-row">
+          <h2 class="ltt-admin-card__title">Usuarios</h2>
+        </div>
+        <p class="ltt-admin-card__desc">Lista de usuarios registrados, activar o desactivar cuentas.</p>
+      </div>
+      <div class="ltt-admin-card__arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+    </a>
+
+  </div>
+
 </div>

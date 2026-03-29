@@ -28,6 +28,8 @@ export class TourDetailComponent {
   valoraciones: any[] = [];
   reviewsOpen = false;
   starPositions = [1, 2, 3, 4, 5];
+  reviewPage = 0;
+  readonly reviewsPerPage = 5;
   $url!:any;
   image_url:string='';
   calificacion:number=0;
@@ -60,7 +62,9 @@ export class TourDetailComponent {
   loadData(id: any) {
     this.tour_id=id;
     this.toursDetailService.getValoracionesTour(id).subscribe((res: any) => {
-      this.valoraciones = res.valoraciones || [];
+      const all = res.valoraciones || [];
+      this.valoraciones = all.sort(() => Math.random() - 0.5);
+      this.reviewPage = 0;
     });
     this.toursDetailService.getMediaValoracion(id).subscribe((res: any) => {
       this.mediaPuntuacion = res.media_puntuacion ?? null;
@@ -126,6 +130,15 @@ export class TourDetailComponent {
     }
   }
 
+
+  get reviewsPage(): any[] {
+    const start = this.reviewPage * this.reviewsPerPage;
+    return this.valoraciones.slice(start, start + this.reviewsPerPage);
+  }
+
+  get totalReviewPages(): number {
+    return Math.ceil(this.valoraciones.length / this.reviewsPerPage);
+  }
 
   starFill(i: number): number {
     const rate = this.mediaPuntuacion ?? 0;

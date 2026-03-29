@@ -178,9 +178,7 @@ export class StepperComponent {
 
   data() {
     this.stepService.getTourDetail(this.tour_id).subscribe((data => {      
-      this.tour = data;         
-      let stepsWithOffset = [this.tour.steps[0], ...this.tour.steps];
-      this.tour.steps = stepsWithOffset;
+      this.tour = data;
 
       if (this.tour.steps.length) {
         this.checkIfMapModalIsRequired(this.tour.steps[0]);

@@ -1,58 +1,195 @@
-.mdc-button {
-    background-color: var(--ltt-primary-mid) !important;
+.ltt-upload {
+  max-width: 640px;
+  margin: 2rem auto;
+  padding: 0 1rem 4rem;
+  position: relative;
+}
 
-    .mat-button-wrapper {
-        color: white;
-    }
-}
-.upload-tour-container {
-    margin: auto;
-    max-width: 600px;
-    padding: 20px;
-  
-    .container-card {
-      margin-top: 20px;
-      padding: 20px;
-  
-      mat-card-title {
-        font-size: 24px;
-        margin-bottom: 20px;
-      }
-  
-      mat-form-field {
-        width: 100%;
-        margin-bottom: 16px;
-      }
-  
-      .tour-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 20px;
-      }
-    }
-  }
-.form-field > p {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-.form-field {
-    margin-bottom: 20px;
-}
-.tour-actions {
+/* ── Banner borrador ── */
+.ltt-draft-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  background: #fff8e1;
+  border: 1.5px solid #ffe082;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+
+  &__actions {
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-.spinner{
-    z-index: 100;
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    left: 50%;
-    top: 50%;
+    gap: 0.25rem;
+  }
 }
 
-.mat-progress-spinner circle, .mat-spinner circle {
-  stroke: #3fb53f !important;
+/* ── Card principal ── */
+.ltt-upload-card {
+  background: var(--ltt-surface);
+  border: 1.5px solid var(--ltt-border);
+  border-radius: var(--ltt-radius);
+  box-shadow: var(--ltt-shadow);
+  padding: 1.75rem 1.5rem;
+  transition: opacity 0.2s;
+
+  &--loading { opacity: 0.5; pointer-events: none; }
+
+  &__title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--ltt-text);
+    margin: 0 0 0.25rem;
   }
+
+  &__subtitle {
+    font-size: 0.85rem;
+    color: var(--ltt-muted);
+    margin: 0 0 1.75rem;
+  }
+}
+
+/* ── Secciones ── */
+.ltt-upload-section {
+  border-top: 1.5px solid var(--ltt-border);
+  padding-top: 1.25rem;
+  margin-bottom: 1.5rem;
+
+  &__title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ltt-muted);
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__hint {
+    font-size: 0.8rem;
+    color: var(--ltt-muted);
+    margin: -0.5rem 0 1rem;
+  }
+}
+
+/* ── Campos ── */
+.ltt-field {
+  margin-bottom: 0.75rem;
+
+  label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ltt-text);
+    margin-bottom: 0.2rem;
+  }
+
+  mat-form-field { width: 100%; }
+
+  &--file {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+
+    label { min-width: 80px; margin: 0; }
+  }
+}
+
+.ltt-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ltt-file-name {
+  font-size: 0.8rem;
+  color: var(--ltt-muted);
+  word-break: break-all;
+}
+
+.req { color: var(--ltt-primary-mid); }
+
+/* ── Pasos ── */
+.ltt-step-count {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--ltt-muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.ltt-step-card {
+  border: 1.5px solid var(--ltt-border);
+  border-radius: var(--ltt-radius);
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background: #fafafa;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  &__num {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--ltt-primary-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__remove {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    svg { width: 16px; height: 16px; stroke: #999; }
+    &:hover svg { stroke: #e53935; }
+  }
+}
+
+.ltt-step-files {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.ltt-add-step-btn {
+  width: 100%;
+  margin-top: 0.25rem;
+  border-style: dashed !important;
+}
+
+/* ── Acciones ── */
+.ltt-upload-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1.5px solid var(--ltt-border);
+  margin-top: 0.5rem;
+}
+
+/* ── Spinner ── */
+.ltt-upload-spinner {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.5);
+  z-index: 999;
+}

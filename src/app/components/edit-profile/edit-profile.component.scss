@@ -1,42 +1,55 @@
+.edit-profile-container {
+  max-width: 520px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
 .container-card {
-    margin-top: 20px;
-    padding: 20px;
+  padding: 1.5rem;
 
-    mat-card-title {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-
-    mat-form-field {
-      width: 100%;
-      margin-bottom: 16px;
-    }
-
-    .tour-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 20px;
-    }
+  mat-card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
   }
 
-  .mdc-button {
-    background-color: var(--ltt-primary-mid) !important;
+  mat-form-field {
+    width: 100%;
+  }
+}
 
-    .mat-button-wrapper {
-        color: white;
-    }
-}
-.form-field > p {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
 .form-field {
-    margin-bottom: 20px;
+  margin-bottom: 1.25rem;
+
+  p {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+  }
 }
+
+.avatar-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
 .profile-image-preview {
-  max-width: 150px; /* Ajusta el tamaño según tus necesidades */
-  height: auto;
-  display: block; /* Para que la imagen no esté inline */
-  margin-top: 10px; /* Espacio arriba de la imagen */
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e0e0e0;
+}
+
+.file-name {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }

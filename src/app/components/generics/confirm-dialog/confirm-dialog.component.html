@@ -1,0 +1,7 @@
+<div class="ltt-confirm">
+  <p class="ltt-confirm__message">{{ data.message }}</p>
+  <div class="ltt-confirm__actions">
+    <button mat-button (click)="dialogRef.close(false)">Cancelar</button>
+    <button mat-raised-button color="primary" (click)="dialogRef.close(true)">Confirmar</button>
+  </div>
+</div>

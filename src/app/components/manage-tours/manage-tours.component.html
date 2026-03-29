@@ -1,0 +1,56 @@
+<div class="ltt-manage">
+
+  <div class="ltt-manage__header">
+    <a routerLink="/admin-panel" class="ltt-manage__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      Panel
+    </a>
+    <h1 class="ltt-manage__title">Tours publicados</h1>
+    <p class="ltt-manage__subtitle">Gestiona los tours activos en la plataforma</p>
+  </div>
+
+  <!-- Skeleton -->
+  <div class="ltt-manage__skeleton" *ngIf="loading">
+    <div class="ltt-manage-row ltt-skeleton-row" *ngFor="let i of [1,2,3,4,5]"></div>
+  </div>
+
+  <!-- Empty -->
+  <div class="ltt-manage__empty" *ngIf="!loading && tours.length === 0">
+    <p>No hay tours publicados.</p>
+  </div>
+
+  <!-- Tabla -->
+  <div class="ltt-manage__table-wrap" *ngIf="!loading && tours.length > 0">
+    <div class="ltt-manage-row ltt-manage-row--header">
+      <span class="ltt-manage-row__image"></span>
+      <span class="ltt-manage-row__title">Título</span>
+      <span class="ltt-manage-row__type">Tipo</span>
+      <span class="ltt-manage-row__author">Autor</span>
+      <span class="ltt-manage-row__date">Fecha</span>
+      <span class="ltt-manage-row__actions"></span>
+    </div>
+
+    <div class="ltt-manage-row" *ngFor="let tour of tours">
+      <div class="ltt-manage-row__image">
+        <img [src]="tour.imagen?.url" alt="" class="ltt-manage-row__thumb"
+             *ngIf="tour.imagen?.url"
+             (error)="$any($event.target).style.display='none'">
+      </div>
+      <span class="ltt-manage-row__title">{{ tour.titulo }}</span>
+      <span class="ltt-manage-row__type">{{ tour.tipo_de_tour }}</span>
+      <span class="ltt-manage-row__author">{{ tour.user?.first_name }} {{ tour.user?.last_name }}</span>
+      <span class="ltt-manage-row__date">{{ tour.created_at }}</span>
+      <div class="ltt-manage-row__actions">
+        <button mat-stroked-button (click)="unpublish(tour)" class="ltt-manage-row__btn-unpublish">
+          Despublicar
+        </button>
+        <button mat-icon-button (click)="delete(tour)" class="ltt-manage-row__btn-delete" title="Eliminar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

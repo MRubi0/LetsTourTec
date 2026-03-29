@@ -72,9 +72,13 @@ import { MatTableModule } from '@angular/material/table';
 import { ValidateToursComponent } from './components/validate-tours/validate-tours.component';
 import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
 import { DonationComponent } from './components/donation/donation.component';
+import { ConfirmDialogComponent } from './components/generics/confirm-dialog/confirm-dialog.component';
+import { ValidateDialogComponent } from './components/generics/validate-dialog/validate-dialog.component';
+import { ManageToursComponent } from './components/manage-tours/manage-tours.component';
+import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json?v=4');
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json?v=7');
 }
 
 @NgModule({
@@ -115,7 +119,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     EdittoursComponent,   
     DonationComponent,
     CoordinateValidatorDirective, 
-    DragedittoursComponent, AdminCosoleComponent, ValidateToursComponent, AdminPanelComponent 
+    DragedittoursComponent, AdminCosoleComponent, ValidateToursComponent, AdminPanelComponent,
+    ConfirmDialogComponent, ValidateDialogComponent, ManageToursComponent, AdminUsersComponent
   ],
   imports: [
     BrowserModule,

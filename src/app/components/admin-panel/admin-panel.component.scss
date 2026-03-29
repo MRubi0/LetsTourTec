@@ -1,23 +1,185 @@
-mat-card {
-    border-radius: 20px;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-}
-.image {
-    border-radius: 20px 20px 0px 0px;
-    height: 145px;
-    width: 100%;
+.ltt-admin {
+  max-width: 640px;
+  margin: 2rem auto;
+  padding: 0 1rem 4rem;
 }
 
-mat-mdc-card-title {
-    font-size: 18px;
+/* ── Header ── */
+.ltt-admin__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
-.tour-card {
-    max-width: 18rem;
-    min-width: 10rem;
-    max-height: 450px;
-    min-height: 300px;
-    scroll-behavior: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+
+.ltt-admin__header-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  background: var(--ltt-primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 26px;
+    height: 26px;
+    stroke: #fff;
+  }
+}
+
+.ltt-admin__title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ltt-text);
+  margin: 0 0 0.15rem;
+}
+
+.ltt-admin__subtitle {
+  font-size: 0.85rem;
+  color: var(--ltt-muted);
+  margin: 0;
+}
+
+/* ── Stats ── */
+.ltt-admin-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+
+  &--skeleton { pointer-events: none; }
+}
+
+.ltt-admin-stat {
+  background: var(--ltt-surface);
+  border: 1.5px solid var(--ltt-border);
+  border-radius: var(--ltt-radius);
+  box-shadow: var(--ltt-shadow);
+  padding: 1rem;
+  text-align: center;
+
+  &__number {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--ltt-primary-mid);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+
+    &--warn { color: #e67e22; }
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    color: var(--ltt-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+.ltt-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--ltt-radius);
+
+  &--stat { height: 80px; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Grid de tarjetas ── */
+.ltt-admin__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Tarjeta ── */
+.ltt-admin-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--ltt-surface);
+  border: 1.5px solid var(--ltt-border);
+  border-radius: var(--ltt-radius);
+  box-shadow: var(--ltt-shadow);
+  padding: 1.25rem 1rem 1.25rem 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+
+  &:hover {
+    border-color: var(--ltt-primary-lite);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+    transform: translateY(-2px);
+  }
+}
+
+.ltt-admin-card__icon-wrap {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  &--green  { background: #e8f5e9; svg { stroke: var(--ltt-primary-mid); } }
+  &--blue   { background: #e3f2fd; svg { stroke: #1565c0; } }
+  &--purple { background: #f3e5f5; svg { stroke: #7b1fa2; } }
+}
+
+.ltt-admin-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ltt-admin-card__badge {
+  background: #e67e22;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: 99px;
+  line-height: 1.4;
+}
+
+.ltt-admin-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ltt-admin-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ltt-text);
+  margin: 0 0 0.25rem;
+}
+
+.ltt-admin-card__desc {
+  font-size: 0.825rem;
+  color: var(--ltt-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.ltt-admin-card__arrow {
+  flex-shrink: 0;
+  svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--ltt-muted);
+  }
 }

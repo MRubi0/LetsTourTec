@@ -22,9 +22,10 @@ import { MusicPlayerDetailComponent } from './components/generics/music-player-d
 import { ProfilecardsComponent } from './components/profilecards/profilecards.component';
 import { EdittoursComponent } from './components/edittours/edittours.component';
 import { DragedittoursComponent } from './components/dragedittours/dragedittours.component';
-import { AdminCosoleComponent } from './components/admin-cosole/admin-cosole.component';
 import { ValidateToursComponent } from './components/validate-tours/validate-tours.component';
 import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
+import { ManageToursComponent } from './components/manage-tours/manage-tours.component';
+import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 import { DonationComponent } from './components/donation/donation.component';
 
 
@@ -65,10 +66,6 @@ const routes: Routes = [
   {
      path: 'custom_tours_page', 
      component: CustomToursPageComponent 
-  },
-  {
-     path: 'registration-success',
-     component: RegistrationSuccessComponent 
   },
   {
     path: 'registration-success',
@@ -126,11 +123,6 @@ const routes: Routes = [
     component: ProfilecardsComponent,
   },
   {
-    path:'admin-console',
-    component: AdminCosoleComponent,
-    canActivate: [AuthGuard],
-  },
-  {
     path:'validate-console',
     component: ValidateToursComponent,
     canActivate: [AuthGuard],
@@ -138,6 +130,16 @@ const routes: Routes = [
   {
     path:'admin-panel',
     component: AdminPanelComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path:'manage-tours',
+    component: ManageToursComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path:'admin-users',
+    component: AdminUsersComponent,
     canActivate: [AuthGuard],
   },
   {

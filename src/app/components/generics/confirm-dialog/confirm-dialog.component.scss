@@ -1,0 +1,16 @@
+.ltt-confirm {
+  padding: 1.5rem;
+
+  &__message {
+    font-size: 1rem;
+    color: var(--ltt-text);
+    margin: 0 0 1.5rem;
+    line-height: 1.5;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+}

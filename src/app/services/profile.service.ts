@@ -19,12 +19,7 @@ export class ProfileService {
       }));
   }
   updateUserProfile(formData: FormData) {
-    const token = this.authService.getToken(); 
-    console.log(token)
-  const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`
-  });
-    return this.http.post(`${environment.apiUrl}ruta-para-actualizar-perfil`, formData).pipe(
+    return this.http.post(`${environment.apiUrl}profile/update/`, formData).pipe(
       map(response => {
         // Procesamiento de la respuesta si es necesario
         return response;

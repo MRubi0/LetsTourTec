@@ -25,31 +25,21 @@ export class LoginComponent {
   ) { }
 
 
-  ngOnInit(){
-    this.loginForm.valueChanges.subscribe(data=>{
-      console.log(data);
-    });
-  }
+  ngOnInit() {}
 
-  onSubmit() { 
-
+  onSubmit() {
     const email = this.loginForm.get('email')?.value || '';
     const password = this.loginForm.get('password')?.value || '';
 
-    this.authService.login(email, password).subscribe(
-      (response) => {       
-        this.authService.setToken(response.access, response.refresh); 
+    this.authService.login(email, password).subscribe({
+      next: () => {
         this.router.navigate(['/profile']);
       },
-      (error) => {
+      error: (error) => {
         this.loggingService.error('Login error: ' + JSON.stringify(error));
-        console.error(error);
         this.authenticationError = true;
       }
-    );
-    
-        
-        
-}
+    });
+  }
 
 }

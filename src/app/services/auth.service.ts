@@ -9,12 +9,6 @@ export interface AuthTokens {
   access: string;
   refresh: string;
 }
-
-
-export interface AuthTokens {
-    access: string;
-    refresh: string;
-  }
 @Injectable({
   providedIn: 'root'
 })
@@ -68,6 +62,7 @@ export class AuthService {
           error: (error) => {
             console.error('Error during token refresh', error);
             this.logout();
+            window.location.href = '/login';
           }
         });
       }      

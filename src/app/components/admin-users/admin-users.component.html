@@ -1,0 +1,52 @@
+<div class="ltt-users">
+
+  <div class="ltt-users__header">
+    <a routerLink="/admin-panel" class="ltt-users__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      Panel
+    </a>
+    <h1 class="ltt-users__title">Usuarios</h1>
+    <p class="ltt-users__subtitle">Últimos {{ users.length }} usuarios registrados</p>
+  </div>
+
+  <!-- Skeleton -->
+  <div class="ltt-users__skeleton" *ngIf="loading">
+    <div class="ltt-user-row ltt-skeleton-row" *ngFor="let i of [1,2,3,4,5]"></div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="ltt-users__table-wrap" *ngIf="!loading">
+    <div class="ltt-user-row ltt-user-row--header">
+      <span class="ltt-user-row__avatar"></span>
+      <span class="ltt-user-row__name">Nombre</span>
+      <span class="ltt-user-row__email">Email</span>
+      <span class="ltt-user-row__date">Registro</span>
+      <span class="ltt-user-row__role">Rol</span>
+      <span class="ltt-user-row__action"></span>
+    </div>
+
+    <div class="ltt-user-row" *ngFor="let user of users" [class.ltt-user-row--inactive]="!user.is_active">
+      <div class="ltt-user-row__avatar">
+        <img [src]="user.avatar || 'assets/iconos/Default-Profile-Picture-PNG-Transparent-Image.png'"
+             alt="" class="ltt-user-row__img"
+             (error)="$any($event.target).src='assets/iconos/Default-Profile-Picture-PNG-Transparent-Image.png'">
+      </div>
+      <span class="ltt-user-row__name">{{ user.first_name }} {{ user.last_name }}</span>
+      <span class="ltt-user-row__email">{{ user.email }}</span>
+      <span class="ltt-user-row__date">{{ user.date_joined }}</span>
+      <span class="ltt-user-row__role">
+        <span class="ltt-badge" [class.ltt-badge--staff]="user.is_staff">
+          {{ user.is_staff ? 'Admin' : 'Usuario' }}
+        </span>
+      </span>
+      <div class="ltt-user-row__action">
+        <button mat-stroked-button (click)="toggleActive(user)"
+          [class.ltt-btn-activate]="!user.is_active"
+          [class.ltt-btn-deactivate]="user.is_active">
+          {{ user.is_active ? 'Desactivar' : 'Activar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
