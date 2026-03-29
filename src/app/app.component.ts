@@ -14,9 +14,10 @@ export class AppComponent {
   ngAfterViewInit(){
     this.scrollService.init();
   }
-  initializeAppLanguage() {  
+  initializeAppLanguage() {
     const browserLang = this.translate.getBrowserLang() || 'en';
     const lang = localStorage.getItem('language') || (browserLang.match(/en|es/) ? browserLang : 'en');
+    this.translate.setDefaultLang('es');
     this.translate.use(lang);
   }
 }

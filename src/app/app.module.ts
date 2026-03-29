@@ -74,7 +74,7 @@ import { AdminPanelComponent } from './components/admin-panel/admin-panel.compon
 import { DonationComponent } from './components/donation/donation.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json?v=2');
 }
 
 @NgModule({
