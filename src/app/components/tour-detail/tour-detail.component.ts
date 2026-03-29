@@ -24,7 +24,8 @@ export class TourDetailComponent {
   private watchId: number | null = null;
   private control: L.Routing.Control | null = null;
   detail:any;
-  mediaPuntuacion: number | null = null; // Variable para almacenar la media de valoración
+  mediaPuntuacion: number | null = null;
+  valoraciones: any[] = [];
   $url!:any;
   image_url:string='';
   calificacion:number=0;
@@ -56,8 +57,11 @@ export class TourDetailComponent {
  }  
   loadData(id: any) {
     this.tour_id=id;
+    this.toursDetailService.getValoracionesTour(id).subscribe((res: any) => {
+      this.valoraciones = res.valoraciones || [];
+    });
     this.toursDetailService.getTourDetail(id).subscribe((data: any) => {
-      this.detail = data[0].fields;  
+      this.detail = data[0].fields;
       this.toursDetailService.getAdditionalLocations(id).subscribe((locationsData: any) => {
         const additionalLocations = locationsData.locations;
         this.convertedCoordinates = additionalLocations.map((coord:any) => [coord.long, coord.lat]);

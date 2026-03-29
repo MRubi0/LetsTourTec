@@ -71,7 +71,8 @@ export class ExitComponent implements AfterViewInit {
     this.finishForm.get('subpregunta19_1')?.disable();
   }
   ngAfterViewInit() {
-    console.log("ngAfterViewInit ejecutado");
+    const yaVoto = localStorage.getItem('voted_tour_' + this.id);
+    if (yaVoto) return;
     setTimeout(() => {
       this.dialog.open(VotacionModalComponent, {
         width: '90%',

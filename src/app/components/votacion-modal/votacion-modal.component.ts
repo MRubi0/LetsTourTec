@@ -55,9 +55,10 @@ export class VotacionModalComponent {
       console.log(this.data.tourId, this.calificacion, this.comentario);
       this.calificacionService.setCalificacion(calificacion);
       //sessionStorage.setItem('tourCalificacion', calificacion.toString());
-      this.StepService.enviarValoracion(this.data.tourId, this.calificacion, this.comentario).subscribe(
+      this.StepService.enviarValoracion(this.data.tourId, calificacion, comentario).subscribe(
         response => {
           console.log(response);
+          localStorage.setItem('voted_tour_' + this.data.tourId, '1');
           this.dialogRef.close();
         },
         error => {

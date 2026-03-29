@@ -22,7 +22,11 @@ export class ToursDetailService {
     return this.http.get<{media_puntuacion: number}>(`${environment.apiUrl}tour/${tourId}/media-valoracion/`);
   }
 
+  getValoracionesTour(tourId: number): Observable<any> {
+    return this.http.get(`${environment.apiUrl}tour/${tourId}/valoraciones/`);
+  }
+
   getAdditionalLocations(tourId: number): Observable<any> {
-    return this.http.get(`${environment.apiUrl}tour-locations/${tourId}`); 
+    return this.http.get(`${environment.apiUrl}tour-locations/${tourId}`);
   }
 }

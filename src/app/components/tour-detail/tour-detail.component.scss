@@ -129,6 +129,43 @@
   box-shadow: var(--ltt-shadow);
 }
 
+/* ── Reseñas ── */
+.ltt-review {
+  background: var(--ltt-surface);
+  border: 1.5px solid var(--ltt-border);
+  border-radius: var(--ltt-radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: var(--ltt-shadow);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.3rem;
+  }
+
+  &__user {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ltt-primary);
+  }
+
+  &__date {
+    font-size: 0.75rem;
+    color: var(--ltt-muted);
+    margin-left: auto;
+  }
+
+  &__comment {
+    font-size: 0.9rem;
+    color: var(--ltt-text);
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
 /* ── Botón CTA ── */
 .ltt-detail-cta {
   display: flex;
