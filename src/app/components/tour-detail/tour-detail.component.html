@@ -34,7 +34,7 @@
       <div class="ltt-stars" *ngIf="mediaPuntuacion !== null">
         <span class="ltt-star" *ngFor="let i of starPositions">
           <span class="ltt-star__bg">&#9733;</span>
-          <span class="ltt-star__fg" [style.width.%]="starFill(i)">&#9733;</span>
+          <span class="ltt-star__fg" [style.clip-path]="'inset(0 ' + (100 - starFill(i)) + '% 0 0)'">&#9733;</span>
         </span>
       </div>
       <span *ngIf="mediaPuntuacion" class="ltt-detail-rating__value">{{ mediaPuntuacion | number:'1.1-1' }}</span>
