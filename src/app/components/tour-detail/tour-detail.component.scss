@@ -100,25 +100,14 @@
 
 .ltt-stars {
   display: flex;
-  gap: 2px;
+  gap: 3px;
+  align-items: center;
 }
 
 .ltt-star {
-  position: relative;
-  display: inline-block;
-  font-size: 1.6rem;
-  line-height: 1;
-
-  &__bg {
-    color: #bbb;
-  }
-
-  &__fg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    color: gold;
-  }
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
 }
 
 /* ── Secciones (descripción, mapa) ── */
