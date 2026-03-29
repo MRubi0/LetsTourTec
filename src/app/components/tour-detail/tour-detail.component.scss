@@ -98,10 +98,28 @@
   }
 }
 
-::ng-deep ngb-rating > span {
-  cursor: default;
-  font-size: 1.75rem;
-  color: gold;
+.ltt-stars {
+  display: flex;
+  gap: 1px;
+
+  &__star {
+    position: relative;
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+
+  &__bg {
+    color: #ddd;
+  }
+
+  &__fg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    color: gold;
+    white-space: nowrap;
+  }
 }
 
 /* ── Secciones (descripción, mapa) ── */

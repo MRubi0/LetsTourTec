@@ -126,6 +126,15 @@ export class TourDetailComponent {
   }
 
 
+  // Devuelve el porcentaje de relleno de la estrella en posición i, redondeado al cuarto más cercano
+  starFill(i: number): number {
+    const rate = this.mediaPuntuacion ?? 0;
+    if (rate >= i) return 100;
+    if (rate <= i - 1) return 0;
+    const frac = rate - (i - 1);
+    return Math.round(frac * 4) / 4 * 100; // redondea a 0, 25, 50, 75 o 100
+  }
+
   getMediaValoracion(id: number): void {
     this.toursDetailService.getMediaValoracion(id).subscribe((response: { media_puntuacion: number }) => {
       this.mediaPuntuacion = response.media_puntuacion;
