@@ -23,7 +23,8 @@ export class ToursDetailService {
   }
 
   getValoracionesTour(tourId: number): Observable<any> {
-    return this.http.get(`${environment.apiUrl}tour/${tourId}/valoraciones/`);
+    const lang = localStorage.getItem('language') || 'es';
+    return this.http.get(`${environment.apiUrl}tour/${tourId}/valoraciones/?lang=${lang}`);
   }
 
   getAdditionalLocations(tourId: number): Observable<any> {
