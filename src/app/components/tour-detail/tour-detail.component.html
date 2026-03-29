@@ -64,7 +64,9 @@
       <div *ngIf="reviewsOpen">
         <div class="ltt-review" *ngFor="let v of valoraciones">
           <div class="ltt-review__header">
-            <ngb-rating [rate]="v.puntuacion" [max]="5" [readonly]="true"></ngb-rating>
+            <span class="ltt-review__stars">
+              <span *ngFor="let s of starPositions" [style.color]="v.puntuacion >= s ? 'gold' : '#ccc'">&#9733;</span>
+            </span>
             <span class="ltt-review__user">{{ v.usuario || ('TOUR-DETAIL.Anonymous' | translate) }}</span>
             <span class="ltt-review__date">{{ v.fecha | date:'mediumDate' }}</span>
           </div>
