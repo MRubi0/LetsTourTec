@@ -61,6 +61,9 @@ export class TourDetailComponent {
     this.toursDetailService.getValoracionesTour(id).subscribe((res: any) => {
       this.valoraciones = res.valoraciones || [];
     });
+    this.toursDetailService.getMediaValoracion(id).subscribe((res: any) => {
+      this.mediaPuntuacion = res.media_puntuacion ?? null;
+    });
     this.toursDetailService.getTourDetail(id).subscribe((data: any) => {
       this.detail = data[0].fields;
       this.toursDetailService.getAdditionalLocations(id).subscribe((locationsData: any) => {
