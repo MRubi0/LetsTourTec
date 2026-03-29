@@ -131,7 +131,8 @@ export class TourDetailComponent {
     const rate = this.mediaPuntuacion ?? 0;
     if (rate >= i) return 100;
     if (rate <= i - 1) return 0;
-    return Math.round((rate - (i - 1)) * 4) / 4 * 100;
+    const fill = (rate - (i - 1)) * 100;
+    return Math.min(fill + 10, 100);
   }
 
   getMediaValoracion(id: number): void {
