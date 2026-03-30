@@ -17,6 +17,7 @@ export class AuthService {
   public current = new BehaviorSubject<string | null>(this.getToken());
 
   private refresh_token='';
+  private refreshIntervalId: ReturnType<typeof setInterval> | null = null;
 
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
@@ -52,9 +53,10 @@ export class AuthService {
   }
 
   startTokenRefresh(): void {
-    setInterval(() => {
+    if (this.refreshIntervalId) return; // evitar duplicados
+    this.refreshIntervalId = setInterval(() => {
       const token = localStorage.getItem('refresh_token');
-      if(token){
+      if (token) {
         this.refreshToken().subscribe({
           next: (tokens: AuthTokens) => {
             this.saveTokens(tokens);
@@ -65,7 +67,7 @@ export class AuthService {
             window.location.href = '/login';
           }
         });
-      }      
+      }
     }, 55 * 60 * 1000); // cada 55 minutos (el token dura 1 hora)
   }
   
@@ -85,8 +87,13 @@ export class AuthService {
   }
 
   logout() {
+    if (this.refreshIntervalId) {
+      clearInterval(this.refreshIntervalId);
+      this.refreshIntervalId = null;
+    }
     this.removeTokens();
     localStorage.removeItem('currentUser');
+    this.isAuthenticatedSubject.next(false);
   }
   setToken(access: string, refresh:string): void {
     localStorage.setItem('access_token', access);
