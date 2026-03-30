@@ -1,5 +1,19 @@
+// El .row de Bootstrap añade márgenes negativos que hacen desbordar las tarjetas.
+// Se anulan aquí para que el contenedor padre no tenga overflow.
+:host {
+  display: block;
+  width: 100%;
+}
+
+.row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100%;
+}
+
 .container-card {
-  margin: 0.75rem;
+  margin: 0.75rem 0;
+  padding: 0 0.5rem;
   opacity: 1;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 

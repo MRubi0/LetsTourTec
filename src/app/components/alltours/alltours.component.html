@@ -1,14 +1,43 @@
-<mat-card class="container-card">
-    <mat-card-header class="mb-3">
-        <mat-card-title>{{ 'ALLTOURS.All_tours' | translate }}</mat-card-title>
-      </mat-card-header>      
-        <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px" class="mb-5">
-        <button mat-raised-button color="primary" class="custom-button-color" (click)="sortByDistance()">{{ 'ALLTOURS.Sort_by_distance' | translate }}</button>
-    </div>
+<div class="ltt-alltours">
 
-    <mat-card-content>        
-        <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px" class="card-contianer d-flex justify-content-center" *ngIf="alltours">       
-            <app-generic-card class="d-flex flex-wrap" [toursdata]=alltours.tours [all-tours]="true"></app-generic-card>
-        </div>
-    </mat-card-content>    
-</mat-card>
+  <!-- Cabecera -->
+  <div class="ltt-alltours__header">
+    <div>
+      <h1 class="ltt-alltours__title">{{ 'ALLTOURS.All_tours' | translate }}</h1>
+      <p class="ltt-alltours__subtitle" *ngIf="!geoError">
+        Tours ordenados por proximidad a tu ubicación
+      </p>
+      <p class="ltt-alltours__subtitle ltt-alltours__subtitle--warn" *ngIf="geoError">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        Ubicación no disponible — mostrando todos los tours
+      </p>
+    </div>
+    <button mat-stroked-button (click)="sortByDistance()" [disabled]="loading" class="ltt-alltours__sort-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 6h18M7 12h10M11 18h2"/>
+      </svg>
+      {{ 'ALLTOURS.Sort_by_distance' | translate }}
+    </button>
+  </div>
+
+  <!-- Badge de ordenado -->
+  <div class="ltt-alltours__badge" *ngIf="sortedByDistance && !loading">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>
+    Ordenado por distancia a tu ubicación
+  </div>
+
+  <!-- Skeleton loading -->
+  <div class="ltt-alltours__skeleton" *ngIf="loading">
+    <div class="ltt-alltours__grid">
+      <div class="ltt-skeleton-card" *ngFor="let i of [1,2,3,4,5,6]"></div>
+    </div>
+  </div>
+
+  <!-- Contenedor de tarjetas -->
+  <div class="ltt-alltours__cards" *ngIf="!loading && alltours">
+    <app-generic-card [toursdata]="alltours.tours" [all-tours]="true"></app-generic-card>
+  </div>
+
+</div>

@@ -1,72 +1,113 @@
-.container {
-    margin: 0px;
-    padding: 30px;
+.ltt-alltours {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem 4rem;
 }
 
-.row-buttons {
-    width: 50%;
+/* ── Cabecera ── */
+.ltt-alltours__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
 }
 
-.image {
-    border-radius: 20px 20px 0px 0px;
-    height: 145px;
+.ltt-alltours__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ltt-text);
+  margin: 0 0 0.25rem;
+}
+
+.ltt-alltours__subtitle {
+  font-size: 0.85rem;
+  color: var(--ltt-muted);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+
+  svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  &--warn {
+    color: #e67e22;
+    svg { stroke: #e67e22; }
+  }
+}
+
+.ltt-alltours__sort-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  svg { width: 16px; height: 16px; }
+}
+
+/* ── Badge ordenado ── */
+.ltt-alltours__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--ltt-primary-mid);
+  background: #e8f5e9;
+  border-radius: 99px;
+  padding: 0.25rem 0.75rem;
+  margin-bottom: 1rem;
+
+  svg { width: 14px; height: 14px; stroke: var(--ltt-primary-mid); }
+}
+
+/* ── Skeleton ── */
+.ltt-alltours__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.ltt-skeleton-card {
+  height: 440px;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Contenedor de tarjetas ── */
+.ltt-alltours__cards {
+  width: 100%;
+
+  // El generic-card usa Bootstrap .row internamente
+  // Anulamos el desbordamiento que causaba el problema
+  ::ng-deep .row {
+    margin-left: 0;
+    margin-right: 0;
     width: 100%;
+  }
 }
 
-mat-mdc-card-title{
-    font-size: 18px;
-}
+@media (max-width: 600px) {
+  .ltt-alltours {
+    padding: 0 1rem 3rem;
+  }
 
-.container-card {
-    max-width: 80%;
-    margin: 50px auto;
-    height: auto;
-}
-
-.tour-card {
-    max-width: 18rem;
-    max-height: 450px;
-    min-height: 450px;
-    scroll-behavior: auto;
-    display: flex;
+  .ltt-alltours__header {
     flex-direction: column;
-    justify-content: space-between;
-}
+    align-items: stretch;
+  }
 
-.mt-3 {
-    margin-top: 16px;
-}
-
-.my-icon {
-    fill: var(--ltt-primary-mid) !important;
-    color: var(--ltt-primary-mid) !important;
-}
-
-.mat-mdc-card-title {
-    color: black;
-    font-size: 1.25rem;
-    padding-left: 0;
-    font-weight: auto;
-
-}
-
-
-.custom-button-color {
-    background-color: var(--ltt-primary-mid) !important;
-
-    & .mat-button-wrapper {
-        color: white !important;
-    }
-}
-
-button.mat-raised-button.my-icon {
-    background-color: var(--ltt-primary-mid) !important;
-
-    .mat-button-wrapper {
-        color: white;
-    }
-}
-mat-card {
-    border-radius: 20px;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
+  .ltt-alltours__sort-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
