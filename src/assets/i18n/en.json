@@ -308,10 +308,11 @@
   "EXIT.Rate_tour_btn": "Rate the tour",
 
   "TOUR-DETAIL.Share": "Share",
-  "TOUR-DETAIL.Share_text": "🗺️ Look at this tour I found!\n\n📍 {{title}}\n⏱️ {{duracion}} min · 🚶 {{recorrido}} km\n\nWant to explore it? It's on Let's Tour Tec! 👇",
+  "TOUR-DETAIL.Share_text": "🗺️ Look at this tour I found!\n\n📍 {{title}}\n⏱️ {{duracion}} min · 🚶 {{recorrido}} km\n\nWant to explore it? It's on Let's Tour Tec! 👇\n{{url}}",
   "TOUR-DETAIL.Share_copied": "Link copied! Share it with whoever you want 🙌",
 
   "TOUR-DETAIL.Share_location_label": "📍 Starting point:",
+  "TOUR-DETAIL.Share_copied_full": "Message copied! Share it with whoever you want 🙌",
   "TOUR-DETAIL.Save_later": "Save for later",
   "TOUR-DETAIL.Save_login_required": "Log in to save tours to your pending list.",
   "TOUR-DETAIL.Saved": "Saved ✓",

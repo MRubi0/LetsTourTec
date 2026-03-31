@@ -301,10 +301,11 @@
   "EXIT.Rate_tour_btn": "Valorar el tour",
 
   "TOUR-DETAIL.Share": "Compartir",
-  "TOUR-DETAIL.Share_text": "🗺️ ¡Mira este tour que encontré!\n\n📍 {{title}}\n⏱️ {{duracion}} min · 🚶 {{recorrido}} km\n\n¿Te apuntas a explorarlo? ¡Está en Let's Tour Tec! 👇",
+  "TOUR-DETAIL.Share_text": "🗺️ ¡Mira este tour que encontré!\n\n📍 {{title}}\n⏱️ {{duracion}} min · 🚶 {{recorrido}} km\n\n¿Te apuntas a explorarlo? ¡Está en Let's Tour Tec! 👇\n{{url}}",
   "TOUR-DETAIL.Share_copied": "¡Enlace copiado! Compártelo con quien quieras 🙌",
 
   "TOUR-DETAIL.Share_location_label": "📍 Punto de inicio:",
+  "TOUR-DETAIL.Share_copied_full": "¡Mensaje copiado! Compártelo con quien quieras 🙌",
   "TOUR-DETAIL.Save_later": "Guardar para después",
   "TOUR-DETAIL.Save_login_required": "Inicia sesión para guardar tours en tus pendientes.",
   "TOUR-DETAIL.Saved": "Guardado ✓",

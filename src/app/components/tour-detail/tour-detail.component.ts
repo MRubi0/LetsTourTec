@@ -71,20 +71,22 @@ export class TourDetailComponent {
     const title = this.detail?.titulo || 'Let\'s Tour Tec';
     const duracion = this.detail?.duracion ?? '';
     const recorrido = this.detail?.recorrido ?? '';
-    let text = this.translateService.instant('TOUR-DETAIL.Share_text', { title, duracion, recorrido });
+
+    // La URL va dentro del texto para que el formato sea exacto en cualquier app
+    let text = this.translateService.instant('TOUR-DETAIL.Share_text', { title, duracion, recorrido, url });
 
     const shareLocation = localStorage.getItem('ltt_setting_share_location') === 'true';
     if (shareLocation && this.detail?.latitude && this.detail?.longitude) {
       const mapsUrl = `https://maps.google.com/?q=${this.detail.latitude},${this.detail.longitude}`;
       const locationLabel = this.translateService.instant('TOUR-DETAIL.Share_location_label');
-      text += `\n\n${locationLabel} ${mapsUrl}`;
+      text += `\n${locationLabel}\n${mapsUrl}`;
     }
 
     if (navigator.share) {
-      navigator.share({ title, text, url }).catch(() => {});
+      navigator.share({ title, text }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(url).then(() => {
-        this.translateService.get('TOUR-DETAIL.Share_copied').subscribe((msg: string) => {
+      navigator.clipboard.writeText(text).then(() => {
+        this.translateService.get('TOUR-DETAIL.Share_copied_full').subscribe((msg: string) => {
           this.snackBar.open(msg, '', { duration: 2500 });
         });
       });
