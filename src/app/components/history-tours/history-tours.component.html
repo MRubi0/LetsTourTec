@@ -1,29 +1,53 @@
-<mat-card-header class="mb-3">
-    <mat-card-title>{{ 'My_Tour_Records' | translate }}</mat-card-title>
-</mat-card-header>      
+<div class="ltt-history">
 
-<div *ngFor="let tour of tourRecords" class="tour-record">
-    <app-generic-card [toursdata]="[tour]"></app-generic-card>
+  <h1 class="ltt-history__title">{{ 'My_Tour_Records' | translate }}</h1>
 
-    <div *ngIf="tour.valoraciones && tour.valoraciones.length" class="valoraciones-container">
-      <mat-card class="valoracion-card">
-        <div class="valoracion-header">
-            <h3>Valoración:</h3>
-         </div>
+  <div class="ltt-history__empty" *ngIf="tourRecords && tourRecords.length === 0">
+    <p>{{ 'HISTORY.Empty' | translate }}</p>
+  </div>
 
-        <div *ngFor="let valoracion of tour.valoraciones" class="valoracion-content">
-            
-          <div class="valoracion-stars">
-            <img *ngFor="let _ of [].constructor(valoracion.puntuacion); let i = index" 
-                 src="../../../assets/iconos/star-mark-svgrepo-com.svg" 
-                 alt="Estrella de valoración"
-                 class="valoracion-estrella" />
-          </div>
-          <p class="valoracion-fecha">Fecha: {{ valoracion.fecha | date }}</p>
-          <div *ngIf="valoracion.comentario " class="valoracion-text">
-            <span>Comentario: {{ valoracion.comentario }} </span>           
-          </div>
+  <div class="ltt-history__list" *ngIf="tourRecords && tourRecords.length > 0">
+    <div class="ltt-history-item" *ngFor="let tour of tourRecords">
+
+      <app-generic-card [toursdata]="[tour]"></app-generic-card>
+
+      <!-- Fecha de finalización -->
+      <p class="ltt-history-item__date" *ngIf="tour.completed_at">
+        ✓ {{ 'HISTORY.Completed_on' | translate }} {{ tour.completed_at | date:'mediumDate' }}
+      </p>
+
+      <!-- Valoración del usuario -->
+      <div class="ltt-history-review" *ngIf="tour.valoraciones && tour.valoraciones.length > 0; else noRating">
+        <div class="ltt-history-review__header">
+          <span class="ltt-history-review__label">{{ 'HISTORY.Your_rating' | translate }}</span>
+          <button mat-icon-button class="ltt-history-review__edit-btn"
+                  (click)="openEditValoracion(tour, tour.valoraciones[0])"
+                  matTooltip="{{ 'HISTORY.Edit_rating' | translate }}">
+            <mat-icon>edit</mat-icon>
+          </button>
         </div>
-      </mat-card>
+        <div *ngFor="let v of tour.valoraciones">
+          <div class="ltt-history-review__stars">
+            <span *ngFor="let s of starPositions" [style.color]="v.puntuacion >= s ? 'gold' : '#ccc'" style="font-size:1.2rem">&#9733;</span>
+            <span class="ltt-history-review__score">{{ v.puntuacion }}/5</span>
+          </div>
+          <p class="ltt-history-review__comment" *ngIf="v.comentario">{{ v.comentario }}</p>
+          <p class="ltt-history-review__date">{{ v.fecha | date:'mediumDate' }}</p>
+        </div>
+      </div>
+
+      <!-- Sin valoración todavía -->
+      <ng-template #noRating>
+        <div class="ltt-history-review ltt-history-review--empty">
+          <span class="ltt-history-review__label">{{ 'HISTORY.No_rating' | translate }}</span>
+          <button mat-stroked-button color="primary" class="ltt-history-review__rate-btn"
+                  (click)="openEditValoracion(tour, null)">
+            {{ 'HISTORY.Rate_btn' | translate }}
+          </button>
+        </div>
+      </ng-template>
+
     </div>
   </div>
+
+</div>

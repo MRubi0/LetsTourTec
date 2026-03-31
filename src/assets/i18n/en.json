@@ -235,6 +235,9 @@
   "HISTORY.Empty": "You haven't completed any tour yet. Go explore!",
   "HISTORY.Completed_on": "Completed on",
   "HISTORY.Your_rating": "Your rating",
+  "HISTORY.Edit_rating": "Edit rating",
+  "HISTORY.No_rating": "You haven't rated this tour yet",
+  "HISTORY.Rate_btn": "Rate now",
 
   "PROFILE.Logout": "Log out",
   "REGISTRATION.Title": "Registration complete!",

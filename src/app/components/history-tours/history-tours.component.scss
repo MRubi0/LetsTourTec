@@ -1,101 +1,115 @@
-.valoraciones-container {
-    margin-top: 1rem;
-  }
-  
-  .valoracion-card {
-    padding: 1rem;
-    margin: 1rem auto; /* Centra la tarjeta con márgenes automáticos */
-    border-radius: 20px;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    max-width: 18rem;
-    min-width: 18rem;
-    max-height: 450px;
-    min-height: 150px;
-    scroll-behavior: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .valoracion-header h3 {
-    margin-bottom: 1rem;
-    font-weight: bold;
-  }
-  
-  .valoracion-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centra el contenido de la valoración */
-  }
-  
-  .valoracion-stars {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Centra las estrellas horizontalmente */
-  }
-  
-  .valoracion-estrella {
-    width: 20px;
-    margin: 0 2px;
-    color: var(--ltt-primary-mid); /* propaga currentColor a la estrella SVG */
-  }
-  
-  .valoracion-text {
-    font-weight: 200;
-    margin-top: 1rem;
-  }
-  .text_comment{
-    font-weight: bold;
-  }
-  
-  .valoracion-fecha {
-    color: #757575;
-    font-style: italic;
-    margin-bottom: 1rem; /* Añade espacio entre la fecha y las estrellas */
-  }
-  
+.ltt-history {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
 
-.tour-card img {
-    width: 100%;
-    height: auto;
-    /* Estilos para la imagen del tour */
+  &__title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ltt-primary);
+    margin-bottom: 1.25rem;
+    border-bottom: 1.5px solid var(--ltt-border);
+    padding-bottom: 0.5rem;
+  }
+
+  &__empty {
+    padding: 2rem 0;
+    text-align: center;
+    color: var(--ltt-muted);
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 }
 
-.valoraciones-container {
-    margin-top: 1rem;
+.ltt-history-item {
+  &__meta {
+    margin-top: 0.5rem;
+    padding: 0 0.25rem;
   }
-  
- 
-  .valoracion-header {
-    margin-bottom: 1rem;
+
+  &__date {
+    font-size: 0.8125rem;
+    color: var(--ltt-muted);
+    font-style: italic;
   }
-  .valoracion-titulo {
-    display: block; /* Asegúrate de que h3 se comporte como un bloque para aplicar alineación */
-    margin-top: 1rem; /* Añade espacio entre los títulos si es necesario */
-    text-align: center;
+
+  &__reviews {
+    margin-top: 0.75rem;
   }
-  .valoracion-content {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .valoracion-stars {
+}
+
+.ltt-history-review {
+  background: var(--ltt-surface);
+  border: 1.5px solid var(--ltt-border);
+  border-radius: var(--ltt-radius);
+  padding: 0.75rem 1rem;
+  margin-top: 0.5rem;
+  box-shadow: var(--ltt-shadow);
+
+  &--empty {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
-  
-  .valoracion-fecha {
-    color: #757575;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+  }
+
+  &__label {
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--ltt-primary);
+  }
+
+  &__edit-btn {
+    color: var(--ltt-muted) !important;
+    width: 32px !important;
+    height: 32px !important;
+    line-height: 32px !important;
+
+    .mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
+  }
+
+  &__stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 0.25rem;
+  }
+
+  &__score {
+    font-size: 0.8rem;
+    color: var(--ltt-muted);
+    margin-left: 0.4rem;
+  }
+
+  &__comment {
+    font-size: 0.875rem;
+    color: var(--ltt-text);
+    margin: 0.25rem 0;
     font-style: italic;
-    margin-bottom: 1rem; /* Añade espacio entre la fecha y las estrellas */
   }
-  
-  .valoracion-text {
-    margin-top: 1rem;
-    width: 100%;
+
+  &__date {
+    font-size: 0.75rem;
+    color: var(--ltt-muted);
+    margin: 0;
   }
-  
-  .valoracion-fecha {
-    color: #757575; /* o el color que prefieras */
-    font-style: italic;
+
+  &__rate-btn {
+    font-size: 0.8125rem !important;
+    height: 32px !important;
+    border-radius: 100px !important;
+    padding: 0 1rem !important;
   }
+}

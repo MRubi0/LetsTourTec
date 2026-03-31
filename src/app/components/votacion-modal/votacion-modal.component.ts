@@ -26,11 +26,21 @@ export class VotacionModalComponent {
   ) {}
 
   ngOnInit(){
-     
+    const initialPuntuacion = this.data?.puntuacion || null;
+    const initialComentario = this.data?.comentario || '';
+
     this.finishForm = this.formBuilder.group({
-      calificacion: [null, [Validators.required]], 
-      comentario: ['']
+      calificacion: [initialPuntuacion, [Validators.required]],
+      comentario: [initialComentario]
     });
+
+    if (initialPuntuacion) {
+      this.calificacion = initialPuntuacion;
+      this.onHover(initialPuntuacion);
+    }
+    if (initialComentario) {
+      this.comentario = initialComentario;
+    }
   }
 
  
@@ -52,21 +62,17 @@ export class VotacionModalComponent {
   enviarVotacion() {
     if (this.finishForm.valid) {
       const { calificacion, comentario } = this.finishForm.value;
-      console.log(this.data.tourId, this.calificacion, this.comentario);
-      this.calificacionService.setCalificacion(calificacion);
+this.calificacionService.setCalificacion(calificacion);
       //sessionStorage.setItem('tourCalificacion', calificacion.toString());
       this.StepService.enviarValoracion(this.data.tourId, calificacion, comentario).subscribe(
         response => {
-          console.log(response);
-          localStorage.setItem('voted_tour_' + this.data.tourId, '1');
+localStorage.setItem('voted_tour_' + this.data.tourId, '1');
           this.dialogRef.close();
         },
         error => {
-          console.error(error);
-        }
+}
       );
     } else {
-      console.error("Formulario inválido");
-    }
+}
   }
 }

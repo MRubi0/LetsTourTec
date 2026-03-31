@@ -275,6 +275,9 @@
   "HISTORY.Empty": "Aún no has completado ningún tour. ¡Anímate a explorar!",
   "HISTORY.Completed_on": "Completado el",
   "HISTORY.Your_rating": "Tu valoración",
+  "HISTORY.Edit_rating": "Editar valoración",
+  "HISTORY.No_rating": "Aún no has valorado este tour",
+  "HISTORY.Rate_btn": "Valorar ahora",
 
   "NOT_FOUND.Title": "Página no encontrada",
   "NOT_FOUND.Text": "La página que buscas no existe o ha sido movida.",
