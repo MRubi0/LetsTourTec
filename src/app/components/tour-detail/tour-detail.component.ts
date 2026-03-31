@@ -79,7 +79,7 @@ export class TourDetailComponent {
     if (shareLocation && this.detail?.latitude && this.detail?.longitude) {
       const mapsUrl = `https://maps.google.com/?q=${this.detail.latitude},${this.detail.longitude}`;
       const locationLabel = this.translateService.instant('TOUR-DETAIL.Share_location_label');
-      text += `\n${locationLabel}\n${mapsUrl}`;
+      text += `\n\n${locationLabel} ${mapsUrl}`;
     }
 
     if (navigator.share) {
