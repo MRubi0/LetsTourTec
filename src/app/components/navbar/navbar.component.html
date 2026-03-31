@@ -7,7 +7,7 @@
     </a>
 
     <!-- Hamburger (móvil) -->
-    <button class="ltt-hamburger" (click)="menuOpen = !menuOpen" aria-label="Menú">
+    <button class="ltt-hamburger" [class.open]="menuOpen" (click)="menuOpen = !menuOpen" aria-label="Menú">
       <span></span><span></span><span></span>
     </button>
 
@@ -23,7 +23,7 @@
       <ng-container *ngIf="isLoggedIn">
         <a class="ltt-link" routerLink="/profile" (click)="menuOpen=false">{{ 'NAVBAR.My_profile' | translate }}</a>
         <button class="ltt-link ltt-link--btn" (click)="logout()">{{ 'NAVBAR.Log_out' | translate }}</button>
-        <a class="ltt-link" routerLink="/admin-panel" (click)="menuOpen=false">{{ 'NAVBAR.Admin' | translate }}</a>
+        <a *ngIf="isAdmin" class="ltt-link" routerLink="/admin-panel" (click)="menuOpen=false">{{ 'NAVBAR.Admin' | translate }}</a>
       </ng-container>
 
       <!-- Banderas -->
