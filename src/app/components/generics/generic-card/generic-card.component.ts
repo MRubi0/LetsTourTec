@@ -4,6 +4,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { ToursDetailService } from 'src/app/services/tours-detail.service';
 
 
 
@@ -28,8 +29,9 @@ export class GenericCardComponent {
   showMore=false;
   show=false;
 
-  constructor(private sharedService: SharedService, private translate: TranslateService, 
-    private router: Router, private route: ActivatedRoute
+  constructor(private sharedService: SharedService, private translate: TranslateService,
+    private router: Router, private route: ActivatedRoute,
+    private toursDetailService: ToursDetailService
   ) {}
 
   ngOnInit(){
@@ -42,7 +44,11 @@ export class GenericCardComponent {
 
   ngOnChanges() {
     this.toursdata.forEach((tour: any) => {
-      this.showFullDescription[tour.id] = false;     
+      this.showFullDescription[tour.id] = false;
+      // Cargar la media real (combina valoraciones es+en en el backend)
+      this.toursDetailService.getMediaValoracion(tour.id).subscribe((res: any) => {
+        tour.mediaPuntuacion = res.media_puntuacion ?? null;
+      });
     });
     this.toursdata.map((data:any)=>{
       if(data.tipo_de_tour=='ocio'){
@@ -61,7 +67,7 @@ export class GenericCardComponent {
         data.translatedTourType = this.translate.instant(translatedKey);
       }
       return data;
-    });      
+    });
   }
   sendImage(image:string){
     //this.sharedService.setImage=image;

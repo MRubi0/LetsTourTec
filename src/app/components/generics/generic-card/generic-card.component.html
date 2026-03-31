@@ -66,19 +66,19 @@
                     <li><strong>{{ 'GENERIC-CARD.Covered_distance' | translate }}: </strong>{{tours.recorrido}} km</li>
                     <li (click)="loadUser(tours.user)"><strong>{{ 'GENERIC-CARD.Created_by' | translate }}: </strong><span
                             class="user">{{tours.user.first_name}} {{tours.user.last_name}}</span></li>
-                            <li *ngIf="tours.valoraciones && tours.valoraciones.length > 0">
+                            <li *ngIf="tours.mediaPuntuacion != null">
                                 <strong>{{ 'GENERIC-CARD.Average_rating' | translate }}: </strong>
-                                {{ tours.valoraciones[0]?.puntuacion |  number:'1.0-0'}}
-                            </li>
-                            <li *ngIf="!tours.valoraciones || tours.valoraciones.length === 0">
-                                <strong>{{ 'GENERIC-CARD.Average_rating' | translate }}: </strong>
-                                {{ '5.0'}}
+                                {{ tours.mediaPuntuacion | number:'1.1-1' }}
                             </li>
                 </ul>
             </mat-card-content>
-            <mat-card-actions class="d-flex justify-content-center">
+            <mat-card-actions class="d-flex justify-content-center" [class.has-edit]="show">
                 <button mat-raised-button color="primary" class="custom-button-color"
                     [routerLink]="['/tour/', tours.id]">{{ "GENERIC-CARD.Let's_do_it!" | translate }}</button>
+                <button *ngIf="show" mat-stroked-button class="edit-button"
+                    [routerLink]="['/edit-tours/', tours.id]">
+                  <mat-icon>edit</mat-icon> {{ 'GENERIC-CARD.Edit' | translate }}
+                </button>
             </mat-card-actions>
         </mat-card>
     </div>
