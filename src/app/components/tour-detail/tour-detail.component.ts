@@ -10,6 +10,8 @@ import { TranslateService } from '@ngx-translate/core';
 // import { GraphHopperRouting } from 'leaflet-routing-machine/dist/leaflet-routing-machine';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/enviroment/enviroment';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-tour-detail',
@@ -24,6 +26,7 @@ export class TourDetailComponent {
   private watchId: number | null = null;
   private control: L.Routing.Control | null = null;
   detail:any;
+  isLoading = true;
   mediaPuntuacion: number | null = null;
   valoraciones: any[] = [];
   reviewsOpen = false;
@@ -33,6 +36,7 @@ export class TourDetailComponent {
   $url!:any;
   image_url:string='';
   calificacion:number=0;
+  isSaved = false;
 
   convertedCoordinates: Array<any>=[];
   constructor(
@@ -42,7 +46,9 @@ export class TourDetailComponent {
     private mapService:MapService,
     private router:Router,
     private translateService: TranslateService,
-    private http: HttpClient // Inyección de HttpClient
+    private http: HttpClient,
+    private snackBar: MatSnackBar,
+    private authService: AuthService
     ){
       this.$url=this.sharedService.getImage;
       
@@ -58,12 +64,62 @@ export class TourDetailComponent {
   this.sharedService.setCoordinates=data;
   //this.router.navigate([`/maps/${data.latitude}/${data.longitude}/${this.tour_id}`]);
   this.router.navigate([`/stepper/${this.tour_id}`]);
- }  
+ }
+
+  shareTour() {
+    const url = window.location.href;
+    const title = this.detail?.titulo || 'Let\'s Tour Tec';
+    const duracion = this.detail?.duracion ?? '';
+    const recorrido = this.detail?.recorrido ?? '';
+    const text = this.translateService.instant('TOUR-DETAIL.Share_text', { title, duracion, recorrido });
+    if (navigator.share) {
+      navigator.share({ title, text, url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        this.translateService.get('TOUR-DETAIL.Share_copied').subscribe((msg: string) => {
+          this.snackBar.open(msg, '', { duration: 2500 });
+        });
+      });
+    }
+  }
+
+  toggleSaveTour() {
+    if (!this.authService.isAuthenticated()) {
+      this.translateService.get('TOUR-DETAIL.Save_login_required').subscribe((msg: string) => {
+        this.snackBar.open(msg, '', { duration: 3000 });
+      });
+      return;
+    }
+    const pending: any[] = JSON.parse(localStorage.getItem('ltt_pending_tours') || '[]');
+    if (this.isSaved) {
+      const updated = pending.filter((t: any) => t.id !== this.tour_id);
+      localStorage.setItem('ltt_pending_tours', JSON.stringify(updated));
+      this.isSaved = false;
+      this.translateService.get('TOUR-DETAIL.Save_removed').subscribe((msg: string) => {
+        this.snackBar.open(msg, '', { duration: 2000 });
+      });
+    } else {
+      pending.push({
+        id: this.tour_id,
+        titulo: this.detail.titulo,
+        imagen: `https://bucket-test-west2.s3.eu-west-2.amazonaws.com/${this.detail.imagen}`,
+        duracion: this.detail.duracion,
+        recorrido: this.detail.recorrido
+      });
+      localStorage.setItem('ltt_pending_tours', JSON.stringify(pending));
+      this.isSaved = true;
+      this.translateService.get('TOUR-DETAIL.Saved').subscribe((msg: string) => {
+        this.snackBar.open(msg, '', { duration: 2000 });
+      });
+    }
+  }  
   loadData(id: any) {
     this.tour_id=id;
+    const pending: any[] = JSON.parse(localStorage.getItem('ltt_pending_tours') || '[]');
+    this.isSaved = pending.some((t: any) => t.id === +id);
     this.toursDetailService.getValoracionesTour(id).subscribe((res: any) => {
       const all = res.valoraciones || [];
-      this.valoraciones = all.sort(() => Math.random() - 0.5);
+      this.valoraciones = all.sort((a: any, b: any) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
       this.reviewPage = 0;
     });
     this.toursDetailService.getMediaValoracion(id).subscribe((res: any) => {
@@ -71,12 +127,13 @@ export class TourDetailComponent {
     });
     this.toursDetailService.getTourDetail(id).subscribe((data: any) => {
       this.detail = data[0].fields;
+      this.isLoading = false;
       this.toursDetailService.getAdditionalLocations(id).subscribe((locationsData: any) => {
         const additionalLocations = locationsData.locations;
         this.convertedCoordinates = additionalLocations.map((coord:any) => [coord.long, coord.lat]);
         this.convertedCoordinates.unshift([this.detail.longitude,this.detail.latitude]);
         this.loadMap();
-      }); 
+      });
     }); 
     this.$url.subscribe((url: any) => {
       this.image_url = url;      
@@ -105,16 +162,14 @@ export class TourDetailComponent {
       
     });
     } catch (routeError) {
-      console.error('Error al crear la ruta:', routeError);
-    }  
+}  
   }
   ngAfterViewInit() {
             
   }
 
   stopEvent(e: MouseEvent): void {
-    console.log(e);
-    e.stopImmediatePropagation();
+e.stopImmediatePropagation();
     e.stopPropagation();
   }
 
@@ -274,12 +329,8 @@ export class TourDetailComponent {
     map.fitBounds(bounds);
   
     // Configurar y añadir el control de enrutamiento
-    console.log("Inicializando enrutamiento con waypoints:", [initialLatLng].concat(additionalLocations));
-
-    const waypoints = [initialLatLng].concat(additionalLocations.map(location => L.latLng(location.lat, location.long)));
-    console.log("Waypoints finales:", waypoints);
-
-    const routerControl = this.routingService.getRouter('5b3ce3597851110001cf624862b9e2a13b0d4ab2be7475a8d4915b1d');
+const waypoints = [initialLatLng].concat(additionalLocations.map(location => L.latLng(location.lat, location.long)));
+const routerControl = this.routingService.getRouter('5b3ce3597851110001cf624862b9e2a13b0d4ab2be7475a8d4915b1d');
     routerControl.setWaypoints(waypoints);
   routerControl.addTo(map);
   
