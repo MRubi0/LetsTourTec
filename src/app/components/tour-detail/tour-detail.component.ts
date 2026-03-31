@@ -71,7 +71,15 @@ export class TourDetailComponent {
     const title = this.detail?.titulo || 'Let\'s Tour Tec';
     const duracion = this.detail?.duracion ?? '';
     const recorrido = this.detail?.recorrido ?? '';
-    const text = this.translateService.instant('TOUR-DETAIL.Share_text', { title, duracion, recorrido });
+    let text = this.translateService.instant('TOUR-DETAIL.Share_text', { title, duracion, recorrido });
+
+    const shareLocation = localStorage.getItem('ltt_setting_share_location') === 'true';
+    if (shareLocation && this.detail?.latitude && this.detail?.longitude) {
+      const mapsUrl = `https://maps.google.com/?q=${this.detail.latitude},${this.detail.longitude}`;
+      const locationLabel = this.translateService.instant('TOUR-DETAIL.Share_location_label');
+      text += `\n\n${locationLabel} ${mapsUrl}`;
+    }
+
     if (navigator.share) {
       navigator.share({ title, text, url }).catch(() => {});
     } else {

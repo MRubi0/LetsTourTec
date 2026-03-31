@@ -65,6 +65,7 @@ import { CoordinateValidatorDirective } from './directives/coordinateValidatorDi
 import { DragedittoursComponent } from './components/dragedittours/dragedittours.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { CsrfInterceptor } from './interceptors/csrf.interceptor';
 import { JwtInterceptor } from './interceptors/jwt-interceptor.interceptor';
 import { AdminCosoleComponent } from './components/admin-cosole/admin-cosole.component';
@@ -76,9 +77,12 @@ import { ConfirmDialogComponent } from './components/generics/confirm-dialog/con
 import { ValidateDialogComponent } from './components/generics/validate-dialog/validate-dialog.component';
 import { ManageToursComponent } from './components/manage-tours/manage-tours.component';
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { PendingToursComponent } from './components/pending-tours/pending-tours.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json?v=7');
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json?v=10');
 }
 
 @NgModule({
@@ -120,7 +124,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     DonationComponent,
     CoordinateValidatorDirective, 
     DragedittoursComponent, AdminCosoleComponent, ValidateToursComponent, AdminPanelComponent,
-    ConfirmDialogComponent, ValidateDialogComponent, ManageToursComponent, AdminUsersComponent
+    ConfirmDialogComponent, ValidateDialogComponent, ManageToursComponent, AdminUsersComponent,
+    NotFoundComponent, PendingToursComponent, SettingsComponent
   ],
   imports: [
     BrowserModule,
@@ -148,6 +153,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DragDropModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
+    MatSlideToggleModule,
     MatTableModule,
     TranslateModule.forRoot({
       loader: {

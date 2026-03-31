@@ -27,6 +27,9 @@ import { AdminPanelComponent } from './components/admin-panel/admin-panel.compon
 import { ManageToursComponent } from './components/manage-tours/manage-tours.component';
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 import { DonationComponent } from './components/donation/donation.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { PendingToursComponent } from './components/pending-tours/pending-tours.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 
 const routes: Routes = [
@@ -88,12 +91,14 @@ const routes: Routes = [
     canActivate: [AuthGuard] 
   },
   {
-    path: 'my-tours', 
-    component: MyToursComponent
+    path: 'my-tours',
+    component: MyToursComponent,
+    canActivate: [AuthGuard]
   },
   {
-    path: 'history-tours', 
-    component: HistoryToursComponent
+    path: 'history-tours',
+    component: HistoryToursComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'edit-profile', 
@@ -145,7 +150,20 @@ const routes: Routes = [
   {
     path:'donation',
     component: DonationComponent,
-  }  
+  },
+  {
+    path: 'pending-tours',
+    component: PendingToursComponent
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: '**',
+    component: NotFoundComponent
+  }
 ];
 
 @NgModule({

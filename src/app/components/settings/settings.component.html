@@ -1,0 +1,22 @@
+<div class="ltt-settings">
+
+  <h1 class="ltt-settings__title">{{ 'SETTINGS.Title' | translate }}</h1>
+
+  <!-- Sección: Compartir -->
+  <section class="ltt-settings-section">
+    <h2 class="ltt-settings-section__title">{{ 'SETTINGS.Share_section' | translate }}</h2>
+
+    <div class="ltt-settings-row">
+      <div class="ltt-settings-row__info">
+        <span class="ltt-settings-row__label">{{ 'SETTINGS.Share_location_label' | translate }}</span>
+        <span class="ltt-settings-row__desc">{{ 'SETTINGS.Share_location_desc' | translate }}</span>
+      </div>
+      <mat-slide-toggle
+        [checked]="shareLocation"
+        (change)="onShareLocationChange($event.checked)"
+        color="primary">
+      </mat-slide-toggle>
+    </div>
+  </section>
+
+</div>

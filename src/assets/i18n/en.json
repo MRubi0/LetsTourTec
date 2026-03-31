@@ -311,12 +311,19 @@
   "TOUR-DETAIL.Share_text": "🗺️ Look at this tour I found!\n\n📍 {{title}}\n⏱️ {{duracion}} min · 🚶 {{recorrido}} km\n\nWant to explore it? It's on Let's Tour Tec! 👇",
   "TOUR-DETAIL.Share_copied": "Link copied! Share it with whoever you want 🙌",
 
+  "TOUR-DETAIL.Share_location_label": "📍 Starting point:",
   "TOUR-DETAIL.Save_later": "Save for later",
   "TOUR-DETAIL.Save_login_required": "Log in to save tours to your pending list.",
   "TOUR-DETAIL.Saved": "Saved ✓",
   "TOUR-DETAIL.Save_removed": "Removed from your pending adventures",
 
   "PROFILE.Pending_tours": "My pending adventures",
+  "PROFILE.Settings": "Settings",
+
+  "SETTINGS.Title": "Settings",
+  "SETTINGS.Share_section": "Share",
+  "SETTINGS.Share_location_label": "Include starting location",
+  "SETTINGS.Share_location_desc": "When sharing a tour, adds a Google Maps link with the starting point.",
 
   "PENDING-TOURS.Title": "My pending adventures",
   "PENDING-TOURS.Empty": "You haven't saved any tour yet. Explore and save the ones you want to do!",

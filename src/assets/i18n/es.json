@@ -304,12 +304,19 @@
   "TOUR-DETAIL.Share_text": "🗺️ ¡Mira este tour que encontré!\n\n📍 {{title}}\n⏱️ {{duracion}} min · 🚶 {{recorrido}} km\n\n¿Te apuntas a explorarlo? ¡Está en Let's Tour Tec! 👇",
   "TOUR-DETAIL.Share_copied": "¡Enlace copiado! Compártelo con quien quieras 🙌",
 
+  "TOUR-DETAIL.Share_location_label": "📍 Punto de inicio:",
   "TOUR-DETAIL.Save_later": "Guardar para después",
   "TOUR-DETAIL.Save_login_required": "Inicia sesión para guardar tours en tus pendientes.",
   "TOUR-DETAIL.Saved": "Guardado ✓",
   "TOUR-DETAIL.Save_removed": "Quitado de tus aventuras pendientes",
 
   "PROFILE.Pending_tours": "Mis aventuras pendientes",
+  "PROFILE.Settings": "Ajustes",
+
+  "SETTINGS.Title": "Ajustes",
+  "SETTINGS.Share_section": "Compartir",
+  "SETTINGS.Share_location_label": "Incluir ubicación de inicio",
+  "SETTINGS.Share_location_desc": "Al compartir un tour, añade un enlace de Google Maps con el punto de partida.",
 
   "PENDING-TOURS.Title": "Mis aventuras pendientes",
   "PENDING-TOURS.Empty": "Aún no has guardado ningún tour. ¡Explora y guarda los que quieras hacer!",
