@@ -7,7 +7,8 @@
       <div class="ltt-sicon">
         <img [src]="index === 0 ? url_icon_home
                   : (index === tour.steps.length - 1 ? url_icon_flag : url_icon)"
-             class="ltt-sicon__img" alt="">
+             class="ltt-sicon__img"
+             [attr.alt]="index === 0 ? ('STEPPER.Icon_start' | translate) : (index === tour.steps.length - 1 ? ('STEPPER.Icon_end' | translate) : ('STEPPER.Icon_stop' | translate))">
         <span *ngIf="index > 0 && index < tour.steps.length - 1"
               class="ltt-sicon__num">{{ index }}</span>
       </div>
@@ -17,7 +18,8 @@
       <div class="ltt-sicon">
         <img [src]="index === 0 ? url_icon_home
                   : (index === tour.steps.length - 1 ? url_icon_flag : url_icon)"
-             class="ltt-sicon__img" alt="">
+             class="ltt-sicon__img"
+             [attr.alt]="index === 0 ? ('STEPPER.Icon_start' | translate) : (index === tour.steps.length - 1 ? ('STEPPER.Icon_end' | translate) : ('STEPPER.Icon_stop' | translate))">
         <span *ngIf="index > 0 && index < tour.steps.length - 1"
               class="ltt-sicon__num">{{ index }}</span>
       </div>
@@ -27,7 +29,8 @@
       <div class="ltt-sicon">
         <img [src]="index === 0 ? url_icon_home
                   : (index === tour.steps.length - 1 ? url_icon_flag : url_icon)"
-             class="ltt-sicon__img" alt="">
+             class="ltt-sicon__img"
+             [attr.alt]="index === 0 ? ('STEPPER.Icon_start' | translate) : (index === tour.steps.length - 1 ? ('STEPPER.Icon_end' | translate) : ('STEPPER.Icon_stop' | translate))">
         <span *ngIf="index > 0 && index < tour.steps.length - 1"
               class="ltt-sicon__num">{{ index }}</span>
       </div>
@@ -49,7 +52,7 @@
 
           <!-- Imagen a ancho completo con overlay -->
           <div class="ltt-step-hero">
-            <img [src]="tour.image" [alt]="tour.titulo" class="ltt-step-hero__img">
+            <img [src]="tour.image" [alt]="tour.titulo" class="ltt-step-hero__img" loading="lazy">
             <div class="ltt-step-hero__overlay">
               <h2 class="ltt-step-hero__title">{{ tour.titulo }}</h2>
             </div>
@@ -89,7 +92,7 @@
         <div class="ltt-step-card" *ngIf="i > 0">
 
           <!-- Aviso de ubicación diferente -->
-          <div class="ltt-step-location-notice" *ngIf="step.latitude && step.longitude">
+          <div class="ltt-step-location-notice" *ngIf="locationChangedFrom(step, tour.steps, i)">
             <img src="../../../assets/iconos/location-pin.svg" alt="" class="ltt-step-location-notice__icon" onerror="this.style.display='none'">
             <span>{{ 'STEPPER.The_following_step_is_in_another_location,_open_the_map_to_continue_the_tour' | translate }}</span>
           </div>
@@ -104,7 +107,7 @@
             <p class="ltt-step-body__desc">{{ step.description }}</p>
 
             <!-- Botón mapa -->
-            <button *ngIf="step.latitude" class="ltt-map-btn" mat-stroked-button
+            <button *ngIf="locationChangedFrom(step, tour.steps, i)" class="ltt-map-btn" mat-stroked-button
                     (click)="openMapModal(step.latitude, step.longitude)" type="button">
               <img src="../../../assets/iconos/map_icon.svg" alt="" class="ltt-map-btn__icon" onerror="this.style.display='none'">
               {{ 'STEPPER.Open_map' | translate }}

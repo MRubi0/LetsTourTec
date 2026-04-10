@@ -14,12 +14,24 @@
   "LOGIN.Error_title": "Oh, something went wrong!",
   "LOGIN.Error_body": "Please check your credentials and try again.",
 
-  "SIGNUP.Title": "Sign up",
-  "SIGNUP.First_name": "First Name",
-  "SIGNUP.Last_name": "Last Name",
-  "SIGNUP.Repeat_password": "Repeat Password",
+  "SIGNUP.Title": "Create account",
+  "SIGNUP.First_name": "First name",
+  "SIGNUP.Last_name": "Last name",
+  "SIGNUP.Repeat_password": "Repeat password",
   "SIGNUP.Passwords_mismatch": "Passwords do not match.",
-  "SIGNUP.Submit": "Register",
+  "SIGNUP.Submit": "Create account",
+  "SIGNUP.Required": "Required field",
+  "SIGNUP.Server_error": "Something went wrong. Please check your details and try again.",
+  "SIGNUP.Already_account": "Already have an account?",
+  "SIGNUP.Go_login": "Log in",
+  "SIGNUP.Pw_min_length": "At least 8 characters",
+  "SIGNUP.Pw_not_only_numbers": "Cannot be entirely numbers",
+  "SIGNUP.Pw_not_only_letters": "Cannot be entirely letters",
+  "SIGNUP.Error_too_common": "This password is too common, please choose a more original one.",
+  "SIGNUP.Error_numeric": "The password cannot be entirely numeric.",
+  "SIGNUP.Error_too_short": "The password must be at least 8 characters long.",
+  "SIGNUP.Error_similar": "The password is too similar to your personal information.",
+  "SIGNUP.Error_generic": "The password does not meet security requirements.",
 
   "PROFILE.My_profile": "My Profile",
   "PROFILE.Welcome_back": "Welcome back,",
@@ -202,6 +214,9 @@
 
   "ALLTOURS.All_tours": "All tours",
   "ALLTOURS.Sort_by_distance": "Sort by distance",
+  "ALLTOURS.Sorted_by_proximity": "Tours sorted by proximity to your location",
+  "ALLTOURS.Location_unavailable": "Location unavailable — showing all tours",
+  "ALLTOURS.Sorted_badge": "Sorted by distance to your location",
 
 
 
@@ -225,6 +240,7 @@
 
   "VOTAR.Cancelar":"Cancel",
   "VOTAR.Votar":"Vote",
+  "VOTAR.Success": "Rating submitted! Thank you for your feedback.",
   "valoraciones": {
     "1": "A waste of time",
     "2": "I didn't like it very much",
@@ -245,6 +261,16 @@
   "REGISTRATION.Subtitle": "You're now part of LetsTourTec. What would you like to do?",
   "REGISTRATION.Go_profile": "View my profile",
   "REGISTRATION.Go_home": "Go to home",
+  "REGISTRATION.Check_email_title": "Almost there! Check your inbox",
+  "REGISTRATION.Check_email_subtitle": "We've sent you a confirmation email. Click the link inside to activate your account.",
+  "REGISTRATION.Check_email_hint": "Can't find it? Check your spam folder. The link expires in 48 hours.",
+
+  "VERIFY-EMAIL.Loading": "Verifying your email...",
+  "VERIFY-EMAIL.Success_title": "Email confirmed!",
+  "VERIFY-EMAIL.Success_body": "Your account is now active. You can log in and start exploring.",
+  "VERIFY-EMAIL.Error_title": "Invalid link",
+  "VERIFY-EMAIL.Error_body": "The link has expired or was already used. Register again if needed.",
+  "VERIFY-EMAIL.Go_login": "Log in",
   "UPLOAD-TOUR.Title": "Upload Tour",
   "UPLOAD-TOUR.Subtitle": "The tour will be automatically translated to the other language. It will be reviewed before being published.",
   "UPLOAD-TOUR.Section_basic": "Basic information",
@@ -275,6 +301,8 @@
   "UPLOAD-TOUR.Step_description": "Description",
   "UPLOAD-TOUR.Step_image": "Image",
   "UPLOAD-TOUR.Step_audio": "Audio",
+  "UPLOAD-TOUR.Leave_empty_if_same_location": "Leave empty if same location as previous step",
+  "UPLOAD-TOUR.Same_location_as_previous": "Same as previous step",
   "UPLOAD-TOUR.Add_step": "+ Add step",
   "UPLOAD-TOUR.Save_draft": "Save draft",
   "UPLOAD-TOUR.Submit": "Upload tour",
@@ -308,6 +336,7 @@
   "EXIT.Rate_tour_text": "Your rating helps other travelers choose their tours.",
   "EXIT.Rate_tour_btn": "Rate the tour",
 
+  "TOUR-DETAIL.Votes": "votes",
   "TOUR-DETAIL.Share": "Share",
   "TOUR-DETAIL.Share_text": "🗺️ Look at this tour I found!\n\n📍 {{title}}\n⏱️ {{duracion}} min · 🚶 {{recorrido}} km\n\nWant to explore it? It's on Let's Tour Tec! 👇\n{{url}}",
   "TOUR-DETAIL.Share_copied": "Link copied! Share it with whoever you want 🙌",
@@ -335,6 +364,24 @@
   "PENDING-TOURS.Min": "min",
   "PENDING-TOURS.Km": "km",
   "PENDING-TOURS.Completed_count": "{{count}} pending tour(s)",
+  "PENDING-TOURS.Remove_confirm": "Remove this tour from your pending list?",
 
-  "MY-TOURS.Title": "My uploaded tours"
+  "MY-TOURS.Title": "My uploaded tours",
+  "MY-TOURS.Empty": "You haven't uploaded any tour yet. Share your favourite route!",
+
+  "EDIT-PROFILE.Title": "Edit my profile",
+  "EDIT-PROFILE.Profile_image": "Profile image",
+  "EDIT-PROFILE.Change_photo": "Change photo",
+  "EDIT-PROFILE.First_name": "First name",
+  "EDIT-PROFILE.First_name_placeholder": "Your first name",
+  "EDIT-PROFILE.Last_name": "Last name",
+  "EDIT-PROFILE.Last_name_placeholder": "Your last name",
+  "EDIT-PROFILE.Email": "Email",
+  "EDIT-PROFILE.Email_placeholder": "Your email",
+  "EDIT-PROFILE.Email_invalid": "Please enter a valid email.",
+  "EDIT-PROFILE.Bio": "Biography",
+  "EDIT-PROFILE.Bio_placeholder": "Tell us something about you...",
+  "EDIT-PROFILE.Cancel": "Cancel",
+  "EDIT-PROFILE.Save": "Save changes",
+  "EDIT-PROFILE.Saving": "Saving..."
 }

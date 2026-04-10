@@ -53,8 +53,27 @@ export class StepperComponent {
   showFullTourDescription = false;
   readonly DESCRIPTION_LIMIT = 200;
 
-  checkIfMapModalIsRequired(step: any) {
-    this.audioControlsVisible = !(step.latitude && step.longitude);
+  locationChangedFrom(step: any, steps: any[], index: number): boolean {
+    if (!step?.latitude || !step?.longitude) return false;
+    if (index === 0) return true;
+    const prev = steps[index - 1];
+    if (!prev?.latitude || !prev?.longitude) return true;
+    return Math.abs(step.latitude - prev.latitude) >= 0.0001 ||
+           Math.abs(step.longitude - prev.longitude) >= 0.0001;
+  }
+
+  checkIfMapModalIsRequired(step: any, previousStep?: any) {
+    if (!step.latitude || !step.longitude) {
+      this.audioControlsVisible = true;
+      return;
+    }
+    if (!previousStep || !previousStep.latitude || !previousStep.longitude) {
+      this.audioControlsVisible = false;
+      return;
+    }
+    const sameLat = Math.abs(step.latitude - previousStep.latitude) < 0.0001;
+    const sameLon = Math.abs(step.longitude - previousStep.longitude) < 0.0001;
+    this.audioControlsVisible = sameLat && sameLon;
   }
 
   constructor(private router: Router, private dialog: MatDialog, private _formBuilder: FormBuilder,
@@ -76,8 +95,9 @@ export class StepperComponent {
   onStepChange(event: any) {
     this.isStepOpen.fill(false);
     this.isStepOpen[event.selectedIndex] = true; 
-    const currentStep = this.tour.steps[event.selectedIndex];   
-    this.checkIfMapModalIsRequired(currentStep); 
+    const currentStep = this.tour.steps[event.selectedIndex];
+    const previousStep = event.selectedIndex > 0 ? this.tour.steps[event.selectedIndex - 1] : null;
+    this.checkIfMapModalIsRequired(currentStep, previousStep);
       const tourSteps = {
       index: event.selectedIndex,
       tour:  this.tour.relation
@@ -233,7 +253,6 @@ export class StepperComponent {
     const tourId = this.tour_id;
     this.stepService.createTourRecord(tourId).subscribe(
       (response:any) => {
-        console.log('Tour finalizado:', response)
         this.router.navigate(['/exit/'+this.tour_id]);
       },
       (error:any)=>{

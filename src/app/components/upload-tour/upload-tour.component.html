@@ -149,13 +149,16 @@
               <div class="ltt-field">
                 <label>{{ 'UPLOAD-TOUR.Latitude' | translate }}</label>
                 <mat-form-field appearance="outline">
-                  <input matInput formControlName="latitude" type="number">
+                  <input matInput formControlName="latitude" type="number"
+                    [placeholder]="i === 0 ? '' : ('UPLOAD-TOUR.Same_location_as_previous' | translate)">
+                  <mat-hint *ngIf="i > 0" style="font-size:0.75rem;color:#666">{{ 'UPLOAD-TOUR.Leave_empty_if_same_location' | translate }}</mat-hint>
                 </mat-form-field>
               </div>
               <div class="ltt-field">
                 <label>{{ 'UPLOAD-TOUR.Longitude' | translate }}</label>
                 <mat-form-field appearance="outline">
-                  <input matInput formControlName="longitude" type="number">
+                  <input matInput formControlName="longitude" type="number"
+                    [placeholder]="i === 0 ? '' : ('UPLOAD-TOUR.Same_location_as_previous' | translate)">
                 </mat-form-field>
               </div>
             </div>
