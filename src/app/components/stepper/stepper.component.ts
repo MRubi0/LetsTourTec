@@ -46,6 +46,7 @@ export class StepperComponent {
   url = environment.bucket;
   audioControlsVisible = false;
   audioControlsVisibleTour = true;
+  locationChanges: boolean[] = [];
   evento: any
   last_step=true;
   rates=0;
@@ -197,10 +198,23 @@ export class StepperComponent {
   }
 
   data() {
-    this.stepService.getTourDetail(this.tour_id).subscribe((data => {      
+    this.stepService.getTourDetail(this.tour_id).subscribe((data => {
       this.tour = data;
 
       if (this.tour.steps.length) {
+        // Ordenar por step_number para garantizar el orden correcto
+        this.tour.steps.sort((a: any, b: any) => (a.step_number ?? 0) - (b.step_number ?? 0));
+
+        // Precomputar qué pasos están en una ubicación diferente al anterior
+        this.locationChanges = this.tour.steps.map((step: any, i: number) => {
+          if (!step?.latitude || !step?.longitude) return false;
+          if (i === 0) return true; // Primer paso: siempre mostrar mapa (punto de inicio)
+          const prev = this.tour.steps[i - 1];
+          if (!prev?.latitude || !prev?.longitude) return true;
+          return Math.abs(step.latitude - prev.latitude) >= 0.0001 ||
+                 Math.abs(step.longitude - prev.longitude) >= 0.0001;
+        });
+
         this.checkIfMapModalIsRequired(this.tour.steps[0]);
       } else {
         this.tour.steps.push('tour');

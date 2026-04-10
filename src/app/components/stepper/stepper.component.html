@@ -92,7 +92,7 @@
         <div class="ltt-step-card" *ngIf="i > 0">
 
           <!-- Aviso de ubicación diferente -->
-          <div class="ltt-step-location-notice" *ngIf="locationChangedFrom(step, tour.steps, i)">
+          <div class="ltt-step-location-notice" *ngIf="locationChanges[i]">
             <img src="../../../assets/iconos/location-pin.svg" alt="" class="ltt-step-location-notice__icon" onerror="this.style.display='none'">
             <span>{{ 'STEPPER.The_following_step_is_in_another_location,_open_the_map_to_continue_the_tour' | translate }}</span>
           </div>
@@ -107,7 +107,7 @@
             <p class="ltt-step-body__desc">{{ step.description }}</p>
 
             <!-- Botón mapa -->
-            <button *ngIf="locationChangedFrom(step, tour.steps, i)" class="ltt-map-btn" mat-stroked-button
+            <button *ngIf="locationChanges[i]" class="ltt-map-btn" mat-stroked-button
                     (click)="openMapModal(step.latitude, step.longitude)" type="button">
               <img src="../../../assets/iconos/map_icon.svg" alt="" class="ltt-map-btn__icon" onerror="this.style.display='none'">
               {{ 'STEPPER.Open_map' | translate }}
